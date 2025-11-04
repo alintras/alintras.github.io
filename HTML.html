@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Fundamentals</title>
+</head>
+<body>
+    <header>
+        <h1>HTML Complete Guide</h1>
+        <p>My personal documentation for web development fundamentals</p>
+    </header>
+    <nav>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="coding.html">Coding</a></li>
+    </nav>
+    <main>
+        <section id="introduction">
+            <h2>Introduction to HTML</h2>
+            <p>Every website is based on Hypertext Markup Language (HTML).<br>
+            HTML defines the content and structure of web content.<br>
+            A web browser is what translates HTML code into web pages.</p>
+            <p>It will allow you to:<br>
+            <ul>
+            <li>Create websites</li>
+            <li>Work more effectively with technical teams</li>
+            <li>Improve digital marketing skills</li>
+            </ul>
+            <p>You can then style the page with CSS.<br>
+            JavaScript is used to make pages interactive.</p>
+        </section>
+
+        <section id="basic-tags">
+            <h2>1. Basic Tags & Elements</h2>
+            <p>HTML code is based on tags using angel brackets: "< >".<br>
+            These angel brackets surround the name of the element you want to add to the page:</p>
+            <code>&lt;button&gt;</code></p>
+
+            <p>Many HTML elements require both opening and closing tags to indicate start and end.<br>
+            These are called container tags, otherwise they are just empty tags.</p>
+            
+            <h3>Examples:</h3>
+            <p><strong>Button: </strong><code>&lt;button&gt; Like &lt;/button&gt;</code>: <button> Like </button></p>
+            <p><strong>Image: </strong><code>&lt;img src = "forest.png" &gt;:</code> <img src = "forest.png"> </p>
+            <p><strong>Text paragraph: </strong><code>&lt;p> Hello World! &lt;/p&gt;:</code> Hello World!</p>
+            <p><strong>Table: </strong><code>&lt;table&gt; &lt;/table&gt;</code></p>
+        </section>
+
+        <section id="headings">
+            <h2>2. Headings</h2>
+            <p>Headings in HTML come in different levels. The most important one being h1.<br>
+            They are another element requiring opening and closing container tags.</p>
+            
+            <p><code>&lt;h1&gt; Heading 1 &lt;h1&gt;</code>: <h1>Heading 1</h1></p>
+            
+            <p>You can use up to 6 levels of headings in HTML. The tags for these heading elements are 
+            <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code> and <code>&lt;h6&gt;</code>.
+            </p>
+            <p><code>&lt;h1&gt;</code> is usually styled with the largest font, and <code>&lt;h6&gt;</code> with the smallest.</p>
+            <p>&lt;h6&gt; Heading 6 &lt;h6&gt;: <h6> Heading 6</h6></p>
+        </section>
+
+        <section id="comments-readability">
+            <h2>3. Comments & Readability</h2>
+            <p>Comments help humans to read your code. You can add them with the comment tag:<br>
+            <code>&lt;!-- … --&gt;</code></p>
+
+            <p>You can also use comments to temporarily disable parts of your code:<br>
+            <code>&lt;!--&lt;button&gt; OK &lt;/button&gt;--&gt;</code></p>
+
+            <p>Since HTML is a case-insensitive language, the web browser understands tags in both upper and lowercase form.</p>
+            <p>The web browser will also ignore white spaces and line breaks in your code.</p>
+            <p>It's still good practice to keep an organized structure for future work.</p>
+            <p>i.e.</p>
+            <p><code>&lt;p&gt;Welcome!<br>Enter your name&lt;/P&gt;</code></p>
+            <p>will still output: Welcome! Enter your name</p>
+
+            <p>In order to create a line break, the <code>&lt;br&gt;</code> tag will force a line break:</p>
+            <p>i.e.</p>
+            <p><code>&lt;p&gt;First line of text.&lt;br&gt; Second line of text:&lt;/p&gt;</code>
+            <p>First line of text.<br> Second line of text</p>
+
+            <p>Elements like headings and paragraphs automatically start on a new line.</p>
+        </section>
+        
+        <section id="standards">
+            <h2>4. Standards and best practices</h2>
+            <p>are needed to make:</p>
+            <ol>
+            <li>web pages compatible with different browser and devices</li>
+            <li>teamwork and collaboration more efficent</li>
+            </ol>
+
+            <p>The <code>&lt;body&gt;</code> container tag is used to group everything that gets displayed on a page when loaded in a browser.</p>
+
+            <pre><code>
+            &lt;body&gt;
+            &lt;h1&gt; Test1 &lt;/h1&gt;
+            &lt;p&gt; Test2 &lt;/p&gt;
+            &lt;/body&gt;
+            </code></pre>
+
+            <p>prints:</p>
+            <div style="border: 1px solid #ccc; padding: 10x;">
+            <h1>Test1</h1>
+            <p>Test2</p>
+            </div>
+        
+            <p>Body tags are needed to be compatible with all web browser. <br>
+            A web page can only contain one body element.<br>
+            All the content elements you need to display need to be inside the <code>&lt;body&gt;</code> container.<br>
+            When HTML tags go inside others, this is called <b>nesting</b>.</p>
+
+            <p>Websites do more than just display content.<br>
+            The <code>&lt;head&gt;</code> container tag is used to include technical information about the page:</p>
+
+            <pre><code>
+            &lt;head&gt;
+            &lt;title&gt;HTML&lt;/title&gt;
+            &lt;meta name="keywords" content="html, code"&gt;
+            &lt;meta name="author" content="Ali"&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+            &lt;p&gt;Content of the page&lt;/p&gt;
+            &lt;/body&gt;
+            </pre></code>
+
+            <p>You can use the head to help increase visibility and traffic for search engines.<br>
+            Title, description and keywords are nested in the head tag.</p>
+            <p>The head needs to be placed before the body.<br>
+            The information in the head is not displayed on the web page, only the title is shown in search engines and the browser tab.</p>
+            <p>Today most wrap their HTML code in <code>&lt;html&gt;</code> container tags. Head and body are nestes inside the <code>&lt;html&gt;</code> tags. </p>
+            <p>Indentation (the spaces at the beginning of lines) are considered good practice to improve readability:</p>
+    
+            <pre><code>
+            &lt;html&gt;
+            &nbsp;&nbsp;&nbsp;&lt;head&gt;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Title of the page&lt;/title&gt;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;meta name="author" content="Ali"&gt;
+            &nbsp;&nbsp;&nbsp;&lt;/head&gt;
+            &nbsp;&nbsp;&nbsp;&lt;body&gt;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;Content of the page&lt;/p&gt;
+            &nbsp;&nbsp;&nbsp;&lt;/body&gt;
+            &lt;html&gt;
+            </pre></code>
+        </section>
+
+        <section id="text-formatting">
+            <h2>5. Text formatting</h2>
+            <p>Helps visitors find the information they are looking for.<br>
+            It's used to highlight the important content.<br>
+            Formatting tags are container tags.</p>
+
+            <p>The bold tag <code>&lt;b&gt;</code> is used to display text in bold:<br>
+            <code>&lt;b&gt;Bold text&lt;/b&gt;</code>: <b>Bold Text</b></p>
+            <p>The italic tag <code>&lt;i&gt;</code> is used to display text in italics:<br>
+            <code>&lt;i&gt;Italic text&lt;/i&gt;</code>: <i>Italic Text</i></p>
+            <p>The underline tag <code>&lt;u&gt;</code> is used to underline text:<br>
+            <code>&lt;u&gt;Underlined text&lt;/u&gt;</code>: <u>Underlined Text</u></p>
+            <p>
+            Formatting tags are applied to text and are nested inside elements.<br>
+            <p>i.e.</p>
+            <code>&lt;p&gt; Movie: &lt;i&gt; E.T. &lt;/i&gt; &lt;/p&gt;</code>:
+            <p>Movie: <i> E.T. </i> </p>
+
+            <b>Accessibility</b>
+            <p>There are some HTML formatting tags you can use to make your web pages more accessible.</p>
+
+            <p>The strong tag <code>&lt;strong&gt;</code> is used to highlight important text:<br>
+            <code>&lt;strong&gt;Important text&lt;/strong&gt;</code>: <strong>Important text</strong></p>
+        
+            <p>Strong text is displayed in bold, just like the <code>&lt;b&gt;</code> tag.<br>
+            The difference is that the <code>&lt;strong&gt;</code> tag also has meaning and is used by screen readers.</p>
+
+            <p>The emphasis tag <code>&lt;em&gt;</code> is used to define emphasized text:<br>
+            <code>&lt;em&gt; Emphasized text &lt;/em&gt;</code>: <em>Emphasized text</em></p>
+
+            <p>Emphasized text is displayed in italic, just like the <code>&lt;i&gt;</code> tag.<br>
+            The difference is that the screen reader will verbally stress the words.</p>
+
+            <p>The <code>&lt;strong&gt;</code> and <code>&lt;em&gt;</code> tags are considered semantic formatting tags because they add meaning to the content.<br>
+            They can serve as an indication of emphasis to a screen reader.</p>
+        </section>
+
+        <section id="links"></section>
+            <h2>6. Links</h2>
+            <p>HyperText is what lets people jump from one web page to another, through links.<br>
+            The Web woudln't be possible without it.<br>
+            HyperText is text that contains a link to another page.<br>
+            Web pages are called HyperText documents because they are connected by <strong>Hypertext links</strong> (or <strong>hyperlinks</strong>).<br>
+            Hyperlinks allow users to move from one web page to another and share information across different machines and systems.</p>
+
+            <p>The anchor container tag <code>&lt;a&gt;</code> is used to create a hyperlink on a web page.</p>
+
+            <p>To create a link, you need "href" (hypertext reference) to add the destination URL:<br>
+            <code>&lt;a href = "https://alintras.github.io/"&gt;Link&lt;/a&gt;</code>: <a href ="https://alintras.github.io/">Link</a></p>
+
+            <p>The URL needs to be enclosed in macthing quotes (') or (") to work without errors.<br>
+            If you forget to add <strong>href</strong> or the quotes the <code>&lt;a&gt;</code> tag won't create a hyperlink.
+            <p>You can also use hyperlinks to connect pages of the same website.<br>
+            The part of the URL that stays the same for all pages of a website is called the <strong>domain name</strong>.</p>
+        </section>
+
+        <section id="lists">
+            <h2>7. Lists</h2>
+            <p>Lists are useful elements, even used to build navigation menus.</p>
+            <p>A list consist of list items <code>&lt;li&gt;</code></p>
+            <p>i.e.</p>
+
+            <pre><code>
+                &lt;li&gt; Item 1 &lt;/li&gt;
+                &lt;li&gt; Item 2 &lt;/li&gt;
+                &lt;li&gt; Item 3 &lt;/li&gt;
+            </code></pre>
+
+            <p><strong>Ordered Lists <code>&lt;ol&gt;</code></strong> show with numbers instead of bullet points<br>
+            i.e.<br></p>
+            <pre><code>
+                &lt;ol&gt;
+                &lt;li&gt;Coffee&lt;/li&gt;
+                &lt;li&gt;Tea&lt;/li&gt;
+                &lt;li&gt;Milk&lt;/li&gt;
+                &lt;/ol&gt;
+            </code></pre>
+            results in:<br></p>
+            <ol>
+            <li>Coffe</li>
+            <li>Tea</li>
+            <li>Milk</li>
+            </ol>
+
+            <p>Use <strong>unordered lists <code>&lt;ul&gt;</code></strong> when the order is not important:</p>
+            <pre><code>
+            &lt;ul&gt;
+            &lt;li&gt;Coffee&lt;/li&gt;
+            &lt;li&gt;Tea&lt;/li&gt;
+            &lt;li&gt;Milk&lt;/li&gt;
+            &lt;/ul&gt;
+            </pre></code>
+            <p>results in:<br></p>
+            <ul>
+            <li>Coffe</li>
+            <li>Tea</li>
+            <li>Milk</li>
+            </ul>
+            <p>Of course you can also nest a list inside another list.</p>
+        </section>
+
+        <section id="attributes">
+            <h2>8. Attributes</h2>
+            <p>You can have more control over HTML elements with attributes.<br>
+                They are modifiers that provide additional information about elements.</p>
+
+            <p>Attributes can be optional or required. The Image tag requires an attribute to work correctly.</p>
+            <code>&lt;img src = "http://www.img.png"&gt;</code>
+
+            <p>For container tags, attributes always go in the opening tag<br>
+            the anchor tag is another example of an HTML element that requires an attribute to work correctly.</p>
+            <code>&lt;a href = "https://z.com"&gt;Z&lt;/a&gt;</code>
+
+            <p><strong>href</strong> and <strong>src</strong> are examples of attributes.</p>
+
+            <p>It's best practice to describe what images are showing<br>
+            The <strong>alt</strong> attribute (alternative text) is used to add image descriptions.</p>
+            <code>&lt;img src="img_boy.jpg" alt="Boy in a hat"&gt;</code>
+            <p>The alt attribute can be:
+                <ul>
+                    <li>read aloud by screen readers</li>
+                    <li>shown when the image doesn't load</li>
+                    <li>read by search engines</li>
+                </ul>
+            </p>
+            <p>Attributes usually come in name/value pairs:</p>
+            <code>name="value"</code>
+            <p>i.e.<br>
+            Attribute name: src<br> 
+            Attribute value:"http://www.image.png"</p>
+
+        </section>
+    </main>
+
+    <footer>
+        <i>Documentation in progress</i>
+    </footer>
+</body>
+</html>
