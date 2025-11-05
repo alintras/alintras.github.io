@@ -11,14 +11,76 @@
         <p>My personal documentation for git fundamentals</p>
     </header>
     <nav>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="Coding.html">Coding</a></li>
+        <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="Coding.html">Coding</a></li>
+        </ul>
     </nav>
     <p>
-        
+        Git is a tool used to keep track of changes to files, especially the code of the projects.<br>
+        It is termed a distributed version control system because of its behaviour to allow multiple people to work on the same project, 
+        even if they are not connected to a common server.
     </p>
+    <table>
+        <tr>
+            <th>Command</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>git clone URL</td>
+            <td>copies a repository from GitHub to your computer</td>
+        </tr>
+        <tr>
+            <td>git pull origin main</td>
+            <td>updates your local repository with latest changes from GitHub</td>
+        </tr>
+        <tr>
+            <td>git status</td>
+            <td>shows which files were changed</td>
+        </tr>
+        <tr>
+            <td>git add .</td>
+            <td>adds all changes to the next commit</td>
+        </tr>
+        <tr>
+           <td>git commit -m "message"</td>
+           <td>saves your changes locally with a message</td>
+        </tr>
+        <tr>
+            <td>git push origin main</td>
+            <td>uploads local commits to GitHub</td>
+        </tr>
+        <tr>
+            <td>git reset --hard</td>
+            <td>discards all local changes since the last commit</td>
+        </tr>
+        <tr>
+            <td>git clean -fd</td>
+            <td>deletes untracked files and folders</td>
+        </tr>
+        <tr>
+            <td>git fetch origin</td>
+            <td>downloads info about changes on GitHub without merging them</td> 
+        </tr>
+        <tr>
+            <td>git reset --hard origin/main</td>
+            <td>makes your local copy exactly match the version on GitHub</td>
+        </tr>
+        <tr>
+            <td>git branch</td>
+            <td>lists all branches</td>
+        </tr>
+        <tr>
+            <td>git checkout -b new-branch</td>
+            <td>creates and switches to a new branch</td>
+        </tr>
+        <tr>
+            <td>git merge branchname</td>
+            <td>merges another branch into the current one</td>
+        </tr>
+    </table>
 <footer>
-    <i>Documentation in progress</i>
+    
 </footer>
 </body>
 </html>

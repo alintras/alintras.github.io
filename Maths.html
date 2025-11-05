@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <title>Maths</title>
+    <style>
+        
+    </style>
 </head>
 <body>
     <header>
@@ -24,6 +28,219 @@
     and to provide methods for the solution of classes of problems.<br>
     Ideally, including rigorous proofs verifiying the validity to the methods.
 </p>
+<section id="historical-introduction">
+    <h2>1.1 Historical Introduction</h2>
+
+    <h3>Early history in Babylon (modern-day Iraq) and Egypt:</h3>
+        <p><i>Babylonians (around 2000 BCE):</i> Systems of equations were solved approximately.<br>
+        With <em>a,b</em> given, the goal was to find <em>x,y</em>:</p>
+        \[
+        \left.
+        \begin{aligned}
+        x + y &= a \\
+        x \cdot y &= b
+        \end{aligned}
+        \right\}
+        \implies x^2 - a x + b = 0
+        \]
+        <p>This corresponds to solving quadratic equations, but with restrictions:<br>
+        no irrational numbers, no negative numvers, only first approximations.</p>
+
+    <h3>Egyptians (around 1700 BCE):</h3>
+        <p>Linear equations of the form:</p>
+        \[
+        \begin{aligned}
+        x + a \cdot x &= b
+        \end{aligned}
+        \]
+        \[
+        \begin{aligned}
+        x + c \cdot x + d \cdot x &= e
+        \end{aligned}
+        \]
+        <p>(with <em>a,b,c,d,e</em> given, solving for <em>x</em>) were solved using geometric methods.</p>
+
+    <h3>Peak of developement in ancient Greece:</h3>
+
+    <h3>Pythagoreans (around 600 BCE):</h3>
+        <p>Discovery of incommensurable lengths and therefore irrational numbers by <em>Hippasus of Metapontum.</em></p>
+
+    <h3>Euclid (around 300 BCE):</h3>
+        <p>Wrote the 13 books of the <em>Elements</em>.<br>
+        This remained the standard work in geometry and arithmetic until the 19th century 
+        (and was the second most widely distributed book after the Bible).<br> 
+        Euclid is credited with proving the irrationality of √2.</p>
+
+    <h3>Diophantus (between 100 BCE and 300 CE):</h3>
+    <p>Wrote the 13 books of <em>Arithmetica</em>, of which only six survive<br>
+    He seperated arithmetic and algebra from geometry.</p>
+
+    <h3>Further development:</h3>
+    <p>Mathematics advanced in the Arab-Persian and Indian worlds, peaking in the 7th - 9th centuries.</p>
+
+    <h3>Modern developement:</h3>
+    <p>It was only during the Renaissance in 16th-century Italy that mathematics
+        (and all other sciences) developed further in Europe.<br>
+        From the 18th centuryonwards , influential mathematicians such as 
+        <strong>Euler, Lagrange, Gauss, Galois, Abel, 
+        Jordan Hölder, Lie, Killing, Carta, Grassmann, Hamilton, 
+        Clifford, Cauchy, Ricci</strong> and <strong>Levi-Civita</strong>
+        shaped its further developement.
+    </p>
+</section>
+
+
+
+<section id="euclidean">
+    <h2>1.2 Euclidean Mathematics</h2>
+    <p>In ancient Greece (represented partcularly by <em>Euclid</em>), numbers and
+    arithmetic operations were based on <em>geometric intuition</em>.<br>
+    Mathematical proofs were carried out using geometry.<br>
+    We will consider a proof of the <em>irrationality</em> of √2.
+    </p>
+</section>
+    <section id="incommensurability">
+        <h3>1.2.1 Definition of Incommensurability:</h3>
+        <p>Two line segments are called <em>incommensurable</em> if the have no common measure.<br>
+        They are called <em>commensurable</em> if they share a common measure.<br>
+        If two line segments have a common measure, then they have a <em>greates common measure</em>, which is unique.<br>
+        <em>Proof: antanairesis / Euclidean algorithm</em></p>
+    </section>
+
+    <section id="gcd">
+        <h3>1.2.2 Definition of GCD:</h3>
+        <p>The greatest common measure of two natural numbers is the GCD (greatest common divisor).<br>
+        The <em>Euclidean Algorithm</em> for constructing the greatest common measure 
+        is the so-called <em>antanairesis</em> (<em>method of reciprocal or succesive subtraction</em>).
+        </p>
+        <p>
+            Let <i>X</i> and <i>Y</i> be two line segments.<br>
+            Without loss of generality, let <i>Y ≤ X</i>.<br>
+            To find their common measure (or for a natural number <i>X, Y</i>, their GCD),<br>
+            we repeatedly subtract <i>Y</i> from <i>X</i> 
+            until a remainder <i>r<sub>1</sub></i> remains, <i>0 ≤ r<sub>1</sub> &lt; Y</i>.
+        </p>
+        <p>
+            If <i>r<sub>1</sub> = 0</i>, then <i>Y = gcd(X,Y)</i>.<br>
+            If <i>r<sub>1</sub> &gt; 0</i>, subtract <i>r<sub>1</sub></i> from <i>Y</i> until a remainder <i>r<sub>2</sub></i> remains, <i>0 ≤ r<sub>2</sub> &lt; Y</i>.<br>
+            If <i>r<sub>2</sub> = 0</i>, then <i>r<sub>1</sub></i> = <i>gcd(X,Y)</i>.<br>
+            If <i>r<sub>2</sub> &gt; 0</i>, subtract <i>r<sub>2</sub></i> from <i>r<sub>1</sub> until a remainder <i>r<sub>3</sub></i> remains, and so on.</i>
+        </p>
+        <p>
+            Thus, we obtain the following system of equations 
+            (with <i>n<sub>i</sub> ∈ ℕ for all i = 0,...,k</i> and <i> Y = r<sub>0</sub></i>):
+        </p>
+        <p align="center"><i>
+            X = n<sub>0</sub>Y + r<sub>1</sub><br>
+            Y = n<sub>1</sub>r<sub>1</sub> + r<sub>2</sub><br>
+            r<sub>1</sub> = n<sub>2</sub>r<sub>2</sub> + r<sub>3</sub><br>
+            </i>⋮<br>
+            <i>r<sub>k-1</sub> = n<sub>k</sub>r<sub>k</sub> + r<sub>k+1</sub>
+        </i></p>
+        <p>If <i>r<sub>k+1</sub> = 0 &rArr; r<sub>k</sub> = gcd(X,Y)</i></p>
+
+        <p>The process of successive subtraction provides a unique characterization of the ratio
+            <i>X/Y</i> through the natural numbers <i>n<sub>0</sub>, n<sub>1</sub>, ..., n<sub>k</sub>:</i>
+        </p>
+        <div align="center">
+            $$\frac{X}{Y} = n_0 + \frac{r_1}{Y} = n_0 + \frac{1}{\frac{Y}{r_1}} = 
+            n_0 + \frac{1}{n_1 + \frac{r_2}{r_1}} = 
+            n_0 + \frac{1}{n_1 + \frac{1}{n_2 + \frac{r_3}{r_2}}} =
+            ... = n_0 + \frac{1}{n_1 + \frac{1}{n_2 + \frac{1}{... + \frac{1}{n_k}}}}$$
+        </div>
+        <p>If the continued fraction terminates, <i>X</i> and <i>Y</i> are commensurable.<br>
+        If it does not, they are incommensurable.
+        </p>
+    </section>
+
+    <section id="irrationals">
+        <h3>1.2.3 Definition of Irrational Numbers:</h3>
+        <p>The ratio of two incommensurable line segments is called and <em>irrational number</em>, <br>
+        the ratio of two commensurable line segments is called a <em>rational number</em>.</p>
+    </section>
+    <p><b>Example: </b>Continued fraction representation of \(\frac{5}{3}\) and \(\gcd(5, 3)\):</p>
+    <p>
+        $$5 = 1 \cdot 3 + 2$$
+        $$3 = 1 \cdot 2 + 1$$
+        $$2 = 2 \cdot 2 + 0$$
+        <br>
+        &rArr; \(\frac{5}{3} = 1 + \frac{1}{1 + \frac{1}{2}}\)
+    </p>
+    <p>Next, we consider the proof of the incommensurability of the side and diagonal of a square.<br>
+    From this follows the irrationality of √2.</p>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+<section id="square-diagonal">
+    <h3>1.2.4 Theorem of Diagonal of a Square:</h3>
+    <p>
+        <i>The side and diagonal of a square are incommensurable.</i>
+    </p>
+    <p><i>Proof:</i><br>
+        <ol>
+        <li>Start with a square of side \( a \) and diagonal \( d \).</li>  
+        <li>Place \( a \) along \( d \);<br>
+            a small remainder \( a_1 \) remains, so \( d = a + a_1 \).  
+        <li>This leftover \( a_1 \) forms the side of a smaller square with diagonal \( d_1 \),  
+        where \( a = a_1 + d_1 \).</li>
+        <li>Repeating the process — placing \( a_1 \) along \( d_1 \) — leaves another remainder \( a_2 \),  
+        so \( a = 2a_1 + a_2 \).</li>
+        </ol>  
+        Each step creates a new, smaller square, and the subtraction never ends.  
+        Therefore, the side and diagonal are <b>incommensurable</b>.
+    </p>
+
+    
+
+</section>
+
+<section id="propostional-calculus">
+    <h2>1. Mathematical Logic and Set Theory</h2>
+    <h3>1.1 Propositional Calculus</h3>
+    <section id="statements">
+        <h4>Statements</h4>
+        <p>By a <em>statement</em> or <em>proposition</em> we mean any sentence (any sequence of symbols) that can 
+        reasonably be assigned a <em>truth value</em>.<br>
+        i.e. a value of either <em>true</em>, abbreviated T, or <em>false</em>, abbreviated F.</p>
+
+        <p>Sentences that are statements:</p>
+        <ul>
+            <li>Every dog is an animal. (T)</li>
+            <li>Every animal is a dog. (F)</li>
+            <li>The number 4 is odd. (F)</li>
+            <li>2 + 3 = 5. (T)</li>
+            <li>√2 < 0. (F)</li>
+            <li>x + 1 > 0 holds for each natural number x. (T)</li>
+        </ul>
+
+        <p>Sentences that are <em>not</em> statements: </p>
+        <ul>
+            <li>Let's study calculus!</li>
+            <li>Who are you?</li>
+            <li>3 * 5 + 7.</li>
+            <li>x + 1 > 0.</li>
+            <li>All natural numbers are green.</li>
+        </ul>
+        <p><b>x + 1 > 0</b> is not a statement as it can not be said to be either true or false without further knowledge on x.<br>
+        <b>"All natural numbers are green"</b> is not a statement as it lacks any meaning. 
+        It would become a statement if give a definition of what it means for a natural number to be green.</p>
+    </section>
+    <section id="logical-operators">
+        <h4>Logical Operators</h4>
+        <p>
+            
+        </p>
+    </section>
+</section>
 </main>
 <footer>
     <i>Documentation in progress</i>

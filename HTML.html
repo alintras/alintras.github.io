@@ -41,7 +41,7 @@
             
             <h3>Examples:</h3>
             <p><strong>Button: </strong><code>&lt;button&gt; Like &lt;/button&gt;</code>: <button> Like </button></p>
-            <p><strong>Image: </strong><code>&lt;img src = "forest.png" &gt;:</code> <img src = "forest.png"> </p>
+            <p><strong>Image: </strong><code>&lt;img src = "forest2.png" &gt;:</code> <img src = "forest2.png"> </p>
             <p><strong>Text paragraph: </strong><code>&lt;p> Hello World! &lt;/p&gt;:</code> Hello World!</p>
             <p><strong>Table: </strong><code>&lt;table&gt; &lt;/table&gt;</code></p>
         </section>
@@ -71,12 +71,12 @@
             <p>Since HTML is a case-insensitive language, the web browser understands tags in both upper and lowercase form.</p>
             <p>The web browser will also ignore white spaces and line breaks in your code.</p>
             <p>It's still good practice to keep an organized structure for future work.</p>
-            <p>i.e.</p>
+            <p>e.g.</p>
             <p><code>&lt;p&gt;Welcome!<br>Enter your name&lt;/P&gt;</code></p>
             <p>will still output: Welcome! Enter your name</p>
 
             <p>In order to create a line break, the <code>&lt;br&gt;</code> tag will force a line break:</p>
-            <p>i.e.</p>
+            <p>e.g.</p>
             <p><code>&lt;p&gt;First line of text.&lt;br&gt; Second line of text:&lt;/p&gt;</code>
             <p>First line of text.<br> Second line of text</p>
 
@@ -159,7 +159,7 @@
             <code>&lt;u&gt;Underlined text&lt;/u&gt;</code>: <u>Underlined Text</u></p>
             <p>
             Formatting tags are applied to text and are nested inside elements.<br>
-            <p>i.e.</p>
+            <p>e.g.</p>
             <code>&lt;p&gt; Movie: &lt;i&gt; E.T. &lt;/i&gt; &lt;/p&gt;</code>:
             <p>Movie: <i> E.T. </i> </p>
 
@@ -205,7 +205,7 @@
             <h2>7. Lists</h2>
             <p>Lists are useful elements, even used to build navigation menus.</p>
             <p>A list consist of list items <code>&lt;li&gt;</code></p>
-            <p>i.e.</p>
+            <p>e.g.</p>
 
             <pre><code>
                 &lt;li&gt; Item 1 &lt;/li&gt;
@@ -214,7 +214,7 @@
             </code></pre>
 
             <p><strong>Ordered Lists <code>&lt;ol&gt;</code></strong> show with numbers instead of bullet points<br>
-            i.e.<br></p>
+            e.g.<br></p>
             <pre><code>
                 &lt;ol&gt;
                 &lt;li&gt;Coffee&lt;/li&gt;
@@ -262,7 +262,8 @@
 
             <p>It's best practice to describe what images are showing<br>
             The <strong>alt</strong> attribute (alternative text) is used to add image descriptions.</p>
-            <code>&lt;img src="img_boy.jpg" alt="Boy in a hat"&gt;</code>
+            <code>&lt;img src="forest2.png" alt="a green forest"&gt;</code><br>
+            <img src="forest2.png" alt="a green forest">
             <p>The alt attribute can be:
                 <ul>
                     <li>read aloud by screen readers</li>
@@ -272,9 +273,297 @@
             </p>
             <p>Attributes usually come in name/value pairs:</p>
             <code>name="value"</code>
-            <p>i.e.<br>
+            <p>e.g.<br>
             Attribute name: src<br> 
             Attribute value:"http://www.image.png"</p>
+
+            <p>You can control the size of images in your web page.<br>
+            <strong>width</strong> is an optional attribute:<br>
+            <code>&lt;img src="forest.png" width="300"&gt;</code> </p>
+            <img src="forest.png" width="300">
+            <p><strong>height</strong> is another optional attribute for the image element.<br>
+            <code>&lt;img src="forest.png" height="150"&gt;</code></p>
+            <img src="forest.png" height="150"><br>
+            <p>or together:<br>
+            <code>&lt;img src="forest.png" width="200" height="130&gt;</code></p>
+            <img src="forest.png" width="200" height="130">
+
+            <p>
+                When only one of the 2 attributes is given, the web browser will calculate
+                the other based on the <strong>aspect ratio</strong>, 
+                so the image is not stretched or squeezed.<br>
+                Changing the aspect ratio of an image causes distortion.
+            </p>
+        </section>
+
+        <section id="menus-navigation">
+            <h2>9. Menus & Navigation</h2>
+            <p>The way visitor navigate a website depends on its design.<br>
+            Websites come in 2 shapes:<br>
+            <ul>
+            <li>Multi-page websites</li>
+            <li>Single-page websites</li>
+            </ul>
+            Navigation has a big impact on user experience, Search Engine rankings and therefore sales.
+            </p>
+
+            <p><strong>Multi-page websites</strong> are made of more than one page.<br>
+            Navigating between pages requires the web browser to load different HTML files.</p>
+            <p>The <strong><code>&lt;nav&gt;</code></strong> container tag defines a set of links
+            that allows the user to navigate between pages of a website:</p>
+            <code> <pre>
+                &lt;nav&gt;
+                &lt;a href="index.html"&gt;Home&lt;/a&gt;
+                &lt;a href="Maths.html"&gt;Maths&lt;/a&gt;
+                &lt;a href="Coding.html"&gt;Coding&lt;/a&gt;
+                &lt;/nav&gt;
+            </pre> </code>
+            results in:
+            <nav>
+                    <a href="index.html">Home</a>
+                    <a href="Maths.html">Maths</a>
+                    <a href="Coding.html">Coding</a>
+            </nav>
+
+            <p>A <strong>single-page website</strong> has all its content on the home page.
+            Any navigation links take the visitor down to different sections (instead of loading new pages).<br>
+            (It's best practice to name your homepage <strong>index.html</strong> so that
+            the web browser can find and load it)</p>
+
+            <p>To jump to a specific part of a single-page website, 
+                first you need to mark the section with the <strong>id</strong> (ID) attribute.</p>
+                <code><pre>
+                    &lt;h2 id ="section-1"&gt;Section 1&lt;/h2&gt;
+                    &lt;section id="menus-navigation"&gt;
+                </pre></code>
+            <p>The <strong>id</strong> attribute is used to identify the element you want to target with the navigation link.<br>
+            Each id value must be:</p>
+            <ul>
+                <li>unique</li>
+                <li>within quotes</li>
+            </ul>
+            <p>
+                Once the element you want to jump to has been marked with an id, you can target it
+                with an anchor tag <code>&lt;a&gt;</code>
+            </p>
+            <code>
+                &lt;a href = "#menus-navigation"&gt;Go to Navigation&lt;/a&gt;
+            </code>
+            <p>results in:</p>
+            <a href = "#menus-navigation">Go to Navigation</a>
+            <p>The hash character (<strong>#</strong>) is needed to tell the web browser
+            that we are targeting a section of the same page.</p>
+        </section>
+
+
+        <h2 id="forms">10. Forms</h2>
+        <p>
+            You can interact with the visitors of your website and collect information from them using <strong>forms</strong>.
+            You can use them to let your visitors:
+        </p>
+        <ul>
+            <li>get in contact with you</li>
+            <li>send order, requests and other information</li>
+            <li>create an account or register</li>
+            <li>and more</li>
+        </ul>
+        <p>
+            Forms are mode of input elements like text fields, checkboxes, and submit buttons.<br>
+            These input elements are nested inside the &lt;<code><strong>form</strong></code>&gt; container tag.
+        </p>
+        <p>
+            The most common form element is <code><strong>&lt;input&gt;</strong></code>. There
+            are many forms of <code>&lt;input&gt;</code> element, depending on the <strong>type</strong> attribute.<br>
+            Form elements will be displayed in the same line unless we use the <strong>&lt;br&gt;</strong> (line break) tag.
+        </p>
+        <p>Labels can be added for the different input elements with the <code>&lt;label&gt; tag.</code></p>
+        <code><pre>
+            &lt;form&gt;
+            &lt;label&gt;Enter text: &lt;/label&gt;
+            &lt;input type="text"&gt;&lt;br&gt;
+            &lt;label&gt;Select the radio button: &lt;/label&gt;
+            &lt;input type="radio"&gt;&lt;br&gt;
+            &lt;label&gt;Check the box: &lt;/label&gt;
+            &lt;input type="checkbox"&gt;&lt;br&gt;
+            &lt;/form&gt;
+        </pre></code>
+        <p>results in:</p>
+        <form>
+            <label>Enter text: </label>
+            <input type="text"><br>
+            <label>Select the radio button: </label>
+            <input type="radio"><br>
+            <label>Check the box: </label>
+            <input type="checkbox"><br>
+        </form>
+        <p>
+            It's considered good practice to connect the label to the input elements
+            with the use of <strong>for</strong> and <strong>id</strong> attributes.
+        </p>
+        <code><pre>
+            &lt;input type="radio" id="r1"&gt;
+            &lt;label for="r1"&gt;Text&lt;/label&gt;
+        </pre></code>
+        <p>results in: </p>
+        <input type="radio" id="r1">
+        <label for="r1">Text</label>
+        <p>To connect labels and inputs their <strong>id</strong> and <strong>for</strong>
+        attribute values must match up exactly.</p>
+        <p>
+            <code>&lt;label&gt;</code>: for<br>
+            <code>&lt;input&gt;</code>: id
+        </p>
+        <p>
+            Connecting labels and inputes increases the <strong>hit area</strong> and improve accessibility.<br>
+            (Hit area = the area of a screen where users can interact with an element)
+        </p>
+        <form>
+            <input type="checkbox" id="c1">
+            <label for="c1">Art</label><br>
+            <input type="checkbox" id="c2">
+            <label for="c2">Sports</label><br>
+            <input type="checkbox" id="c3">
+            <label for="c3">Tech</label><br>
+        </form>
+
+        <section id="submitting-forms">
+            <h2>Submitting Forms</h2>
+            <p>
+                An HTML form is a convenient way to send data to a database hosted in a server.<br>
+                A <strong>submit</strong> button is used to send the data in a form.<br>
+                The <strong>submit</strong> type of input adds a button to the form.
+            </p>
+            <code><pre>
+                &lt;form&gt;
+                &lt;label for="em"&gt;email:&lt;/label&gt
+                &lt;input type = "text" id="em"&gt;&lt;br&gt;
+                &lt;input type = "submit"&gt;
+                &lt;/form&gt;
+            </pre></code>
+            <p>results in: </p>
+            <form>
+                <label for="em">email:</label>
+                <input type="text" id="em"><br>
+                <input type="submit">
+            </form>
+
+            <p>
+                The <strong>name</strong> attribute is used to reference the data after submitting the form
+            </p>
+            <code><pre>
+                &lt;form&gt;
+                &lt;input type = "text" name="email"&gt;
+                &lt;input type = "text" name="city"&gt;
+                &lt;input type = "submit"&gt;
+                &lt;/form&gt;
+            </pre></code>
+            <p>results in:</p>
+            <form>
+                <input type = "text" name="email">
+                <input type = "text" name="city">
+                <input type = "submit">
+            </form>
+            <p>
+            Only form elements with a <strong>name</strong> attribute will have
+            have their values passed to the databse when submitting a form.
+            </p>
+            <p>
+            The <strong>value</strong> attribute defines the value that is submitted
+            when the input is selected.
+            </p>
+            <p>
+            Names and values are needed to correctly store information in the database.<br>
+            The HTML code needs to include <b>where</b> and <b>what</b> to put in the database.
+            </p>
+            <p>
+                For the case of text inputs, you can use the value attribute to define a
+                <b>default value</b> that will be submitted unless a different value
+                is provided by the user.
+            </p>
+            <p>e.g.</p>
+            <code><pre>
+            &lt;form&gt;
+            &lt;label for="t1"&gt;Email&lt;/label&gt;
+            &lt;input type="text" id="t1"name="em"&gt;
+            &lt;label for="t2"&gt;Country&lt;/label&gt;
+            &lt;input type="text" id="t2"name="co"&gt;
+            &lt;input type="submit"&gt;
+            &lt;/form&gt;
+            </pre></code>
+            <p>results in:</p>
+            <form>
+                <label for="t1">Email</label>
+                <input type="text" id="t1"name="em">
+                <label for="t2">Country</label>
+                <input type="text" id="t2"name="co">
+                <input type="submit">
+            </form>        
+        </section>
+
+        <section id="drop-down">
+            <h2>Drop-down menus</h2>
+            <p>
+                Drop-down menus make your forms more efficient, accessible and organized.<br>
+                You can use the <strong><code>&lt;select&gt;</code> container tag</strong> to create a drop-down list.
+            </p>
+                <code><pre>
+                    &lt;select&gt;
+                    &lt;!--options--&gt;
+                    &lt;/select&gt;
+                </pre></code>
+            <p>
+                The <strong><code>&lt;option&gt;</code> container tag</strong> is used inside
+                a <code>&lt;select&gt;</code> tag to add choices for the user.
+            </p>
+                <code><pre>
+                    &lt;select&gt;
+                    &lt;option&gt;Option 1&lt;/option&gt;
+                    &lt;option&gt;Option 2&lt;/option&gt;
+                    &lt;option&gt;Option 3&lt;/option&gt;
+                    &lt;/select&gt;
+                </pre></code>
+                <p>results in: </p>
+                    <select>
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                    </select>
+                <p>
+                    You can use the <code><b>&lt;select&gt;</b></code> element as part of a
+                    form to collect user input.<br>
+                    Again, the <strong>name</strong> attribute is needed to submit the form data.<br>
+                    You can control the data each option sends with the <strong>value</strong> attribute.
+                </p>
+                <code><pre>
+                    &lt;form&gt;
+                    &lt;select name="color"&gt;
+                    &lt;option&gt;value="r"&gt;Red&lt;/option&gt;
+                    &lt;option&gt;value="b"&gt;Blue&lt;/option&gt;
+                    &lt;/select&gt;
+                    &lt;/form&gt;
+                </pre></code>
+                <p>The <strong>selected</strong> attribute creates a drop-down menu with a
+                pre-selected option. The pre-selected option will be displayed first.</p>
+                <code>
+                    &lt;option value="b" selected&gt;Blue&lt;/option&gt;
+                </code>
+                <p>
+                You can also add labels to drop-down menus.<br>
+                Labels and drop-down menus are connected with <b>for</b> and <b>id</b> attributes,
+                just like any other for element.
+                </p>
+                Labels and drop-down menus are connected with for and id attributes, just like any other form element.
+
+                <!-- &lt;form> 
+                &lt;label for="s1">Vehicle type:</label>      
+                    select name="vehicle" id="s1">        
+                    <option value="car">Car</option>        
+                    <option value="bus">Bus</option>      
+                    </select>    
+                </form>  -->
+
+
+                
 
         </section>
     </main>

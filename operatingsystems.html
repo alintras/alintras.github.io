@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OS</title>
+</head>
+<body>
+    <header>
+        <h1>Operating Systems</h1>
+        <p>My personal documentation for OS fundamentals</p>
+    </header>
+
+    <h2 section="introduction">Introduction</h2>
+    <h3>What is an operating system? (OS)</h3>
+    <p>
+    A collection of software that manages the hardware recources
+    of a computer system and makes them available to applications
+    in a suitable manner.</p>
+    <h3>First Task: Abstraction</h3>
+        <ul>
+            <li>Standardized interface for resources</li>
+            <ul>
+                <li>CPU, memory, hard drive, etc.</li>
+            </ul>
+            <li>Advantages</li>
+            <ul>
+                <li>Reuse of similar functionality</li>
+                <li>Same interface for different hardware</li>
+                <li>Additional functions, higher abstraction level</li>
+            </ul>
+            <li>Challenges</li>
+            <ul>
+                <li>What are the right abstractions?</li>
+                <li>How many hardware details need to be visible?</li>
+            </ul>
+        </ul>
+    <h3>Second Task: Resource Management</h3>
+    <ul>
+        <li>The operating system manages the resources and decides on their allocation</li>
+        <li>Advantages</li>
+        <ul>
+            <li>Protection of applications from accessing each other</li>
+            <li>Efficient use of resources (cost, time, energy)</li>
+            <li>Fair distribution of resources</li>
+        </ul>
+        <li>Challenges</li>
+        <ul>
+            <li>Which mechanisms are suitable?</li>
+            <li>Which policies are the right ones?</li>
+        </ul>
+    </ul>
+    <h3 section="history">Historical Overview</h3>
+    <ul>
+        <li><b>1955-1965: Mainframe Era</b></li>
+            <ul><li>Batch processing with human operators</li></ul>
+        <li><b>1965-1980: Operating System in the Narrow Sense</b></li>
+        <ul>
+            <li>System calls, concurrent execution of processes</li>
+            <li>MULTICS, UNIX</li>
+        </ul>
+        <li><b>1980-2000: Personal Computers</b></li>
+            <ul><li>DOS, Windows, MacOS, Linux</li></ul>
+        <li><b>2000-Present: Modern Operating System</b></li>
+            <ul><li>Windows NT, Linux, MacOS X, Android, iOS</li></ul>
+    </ul>
+
+    <h3 section="purpose">Purpose: </h3>
+    <ul>
+        <li>Develop, modify, or administer operating systems</li>
+        <li>Understand system perfomance</li>
+        <ul>
+            <li>The behaviour of the operating system affects the entire machine</li>
+            <li>Optimizing performance for specific workloads</li>
+            <li>Applications at many levels: computer architecture, programming languages, algoriths and data structures</li>
+        </ul>
+        <li>Enjoy the challenge of understanding large and complex systems</li>
+    </ul>
+
+    <h2 section="os-interaction">Interaction with the OS</h2>
+    <h3>in Java/Haskell</h3>
+    <p>
+        Java and Haskell heavily abstract from the details of the respective operating system.<br>
+        Programs run essentially unchanged on Windows / Linux / MacOS
+    </p>
+    <ol>
+        <li>User</li>
+        <li>Applications</li>
+        <li>GHC Runtime System / Java Virtual Machine</li>
+        <li>Operating System</li>
+        <li>Hardware</li>
+    </ol>
+
+    <h3>Systems Programming in C</h3>
+    <p>
+        To try out and better understand the concepts in operating system design,
+        we need to program as close to the system as possible.
+    </p>
+    <ul>
+        <li>Designed for the development of UNIX</li>
+            <ul>
+                <li>Low-level, imperative programming language</li>
+                <li>1969-1973 at AT&T Bell Labs by Dennis Ritchie & Ken Thompson</li>
+            </ul>
+        <li>Advantages over higher-level languages</li>
+            <ul>
+                <li>Better and more predictable performance</li>
+                <li>Access to low-level APIs, hardware, and CPU features</li>
+            </ul>
+        <li>Disadvantages</li>
+            <ul>
+                <li>Manual memory management (crashes, vulnerabilities)</li>
+                <li>Lower portability</li>
+            </ul>
+    </ul>
+    <h3>Build Process</h3>
+
+    <ol>
+        <li><b>Source Code</b> (human-readable C code)</li>
+        <li><b>Compile</b> (using clang/gcc compiler)</li>
+        <li><b>Binary</b> (machine code in hexadecimal)</li>
+        <li><b>Assembly</b> (human-readable machine instructions)</li>
+    </ol>
+
+    <!-- <h3>Programming in C (Crash Course)</h3>
+    <ul>
+        <li>Write source code in editor (e.g. VS Code) and save</li>
+        <li>Compile with clang (from LLVM Compiler Suite)</li>
+        <ul>
+            <li>Call with <code>clang -o binary_file source_file</code></li>
+            <li>without <code>-o</code> option, binary is called <code>a.out</code></li>
+        </ul>
+        <li>Start program</li>
+        <ul><li>In same directory with <code>./binary_file</code></li></ul>
+    </ul> -->
+
+    <footer>
+        <i>Documentation in progress</i>
+    </footer>
+</body>
+</html>
