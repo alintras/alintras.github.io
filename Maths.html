@@ -6,7 +6,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <title>Maths</title>
     <style>
-        
+
     </style>
 </head>
 <body>
@@ -29,7 +29,7 @@
     Ideally, including rigorous proofs verifiying the validity to the methods.
 </p>
 <section id="historical-introduction">
-    <h2>1.1 Historical Introduction</h2>
+    <h2>1. Historical Introduction</h2>
 
     <h3>Early history in Babylon (modern-day Iraq) and Egypt:</h3>
         <p><i>Babylonians (around 2000 BCE):</i> Systems of equations were solved approximately.<br>
@@ -92,7 +92,7 @@
 
 
 <section id="euclidean">
-    <h2>1.2 Euclidean Mathematics</h2>
+    <h2>1.1 Euclidean Mathematics</h2>
     <p>In ancient Greece (represented partcularly by <em>Euclid</em>), numbers and
     arithmetic operations were based on <em>geometric intuition</em>.<br>
     Mathematical proofs were carried out using geometry.<br>
@@ -100,7 +100,7 @@
     </p>
 </section>
     <section id="incommensurability">
-        <h3>1.2.1 Definition of Incommensurability:</h3>
+        <h3>1.1.1 Definition of Incommensurability:</h3>
         <p>Two line segments are called <em>incommensurable</em> if the have no common measure.<br>
         They are called <em>commensurable</em> if they share a common measure.<br>
         If two line segments have a common measure, then they have a <em>greates common measure</em>, which is unique.<br>
@@ -108,7 +108,7 @@
     </section>
 
     <section id="gcd">
-        <h3>1.2.2 Definition of GCD:</h3>
+        <h3>1.1.2 Definition of GCD:</h3>
         <p>The greatest common measure of two natural numbers is the GCD (greatest common divisor).<br>
         The <em>Euclidean Algorithm</em> for constructing the greatest common measure 
         is the so-called <em>antanairesis</em> (<em>method of reciprocal or succesive subtraction</em>).
@@ -154,7 +154,7 @@
     </section>
 
     <section id="irrationals">
-        <h3>1.2.3 Definition of Irrational Numbers:</h3>
+        <h3>1.1.3 Definition of Irrational Numbers:</h3>
         <p>The ratio of two incommensurable line segments is called and <em>irrational number</em>, <br>
         the ratio of two commensurable line segments is called a <em>rational number</em>.</p>
     </section>
@@ -170,30 +170,22 @@
     From this follows the irrationality of √2.</p>
 </section>
 
-
-
-
-
-
-
-
-
-
-
 <section id="square-diagonal">
-    <h3>1.2.4 Theorem of Diagonal of a Square:</h3>
+    <h3>1.1.4 Theorem of Diagonal of a Square:</h3>
     <p>
         <i>The side and diagonal of a square are incommensurable.</i>
     </p>
     <p><i>Proof:</i><br>
         <ol>
-        <li>Start with a square of side \( a \) and diagonal \( d \).</li>  
-        <li>Place \( a \) along \( d \);<br>
-            a small remainder \( a_1 \) remains, so \( d = a + a_1 \).  
-        <li>This leftover \( a_1 \) forms the side of a smaller square with diagonal \( d_1 \),  
-        where \( a = a_1 + d_1 \).</li>
-        <li>Repeating the process — placing \( a_1 \) along \( d_1 \) — leaves another remainder \( a_2 \),  
-        so \( a = 2a_1 + a_2 \).</li>
+        <li>Consider a square with side length \( a \) and diagonal \( d \).</li>  
+        <li>Place the side \( a \) along the diagonal \( d \).<br>
+            A small remainder \( a_1 \) remains, such that \( d = a + a_1 \).  
+        <li>Now using this smaller segment \( a_1 \), construct another square whose diagonal is \( d_1 \).<br>  
+            When placing \(a_1\) along \(d_1\), a new remainder \(a_2\) appears, satisfying
+            \( a = 2a_1 + a_2 \).</li>
+        <li>This process can be repeated indefinitely, each time producing a smaller remainder
+            (\(a_2\), \(a_3\), ...). 
+        </li>
         </ol>  
         Each step creates a new, smaller square, and the subtraction never ends.  
         Therefore, the side and diagonal are <b>incommensurable</b>.

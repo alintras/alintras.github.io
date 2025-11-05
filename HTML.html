@@ -204,7 +204,7 @@
         <section id="lists">
             <h2>7. Lists</h2>
             <p>Lists are useful elements, even used to build navigation menus.</p>
-            <p>A list consist of list items <code>&lt;li&gt;</code></p>
+            <p>A list consists of list items <code>&lt;li&gt;</code></p>
             <p>e.g.</p>
 
             <pre><code>
@@ -427,7 +427,7 @@
         </form>
 
         <section id="submitting-forms">
-            <h2>Submitting Forms</h2>
+            <h2>11. Submitting Forms</h2>
             <p>
                 An HTML form is a convenient way to send data to a database hosted in a server.<br>
                 A <strong>submit</strong> button is used to send the data in a form.<br>
@@ -501,7 +501,7 @@
         </section>
 
         <section id="drop-down">
-            <h2>Drop-down menus</h2>
+            <h2>12. Drop-down menus</h2>
             <p>
                 Drop-down menus make your forms more efficient, accessible and organized.<br>
                 You can use the <strong><code>&lt;select&gt;</code> container tag</strong> to create a drop-down list.
@@ -553,19 +553,201 @@
                 just like any other for element.
                 </p>
                 Labels and drop-down menus are connected with for and id attributes, just like any other form element.
-
-                <!-- &lt;form> 
-                &lt;label for="s1">Vehicle type:</label>      
-                    select name="vehicle" id="s1">        
-                    <option value="car">Car</option>        
-                    <option value="bus">Bus</option>      
-                    </select>    
-                </form>  -->
-
-
                 
+                <code><pre>
+                &lt;form&gt;
+                &lt;label for="s1"&gt;Vehicle type:&lt;/label&gt;      
+                &lt;select name="vehicle" id="s1"&gt;        
+                &lt;option value="car"&gt;Car&lt;/option&gt;        
+                &lt;option value="bus"&gt;Bus&lt;/option&gt;      
+                &lt;/select&gt;    
+                &lt;/form&gt; 
+                </pre></code>
+                <p>
+                    <code>&lt;label&gt;</code> gets the for attribute<br>
+                    <code>&lt;select&gt;</code> gets the id attribute
+                </p>
+                <p>
+                    <b>More input types:</b><br>
+                    <code>&lt;input type="email" id="email"&gt;</code>:<br>
+                    requires the user to enter a valid email<br><br>
+                    
+                    <code>&lt;input type="password" id="pass"&gt;</code>:<br>
+                    hides sensitive information<br><br>
 
+                    <code>&lt;input type="tel" id="tel"&gt;</code>:<br>
+                    requires the user to enter a phone number
+                </p>
         </section>
+
+        <section id="videos">
+            <h2>13. Videos</h2>
+            <p>
+                You can use the <b><code>&lt;video&gt;</code> container tag</b> to embed video files
+                into a web page.
+            </p>
+            <code><pre>
+                &lt;video&gt;
+                    &lt;!--video file--&gt;
+                &lt;/video&gt;
+            </pre></code>
+            <p>
+                Just like with images, the source (or location) URL of the video needs to be provided.
+            </p>
+            <p>Common video formats are: MP4, OGG and WebM</p>
+            <code><pre>
+                &lt;video&gt;
+                    &lt;source src="file.mp4" type ="video/mp4"&gt;
+                &lt;/video&gt;
+            </pre></code>
+            <p>
+                The <code>&lt;source&gt;</code> empty tag provides the location and format of the video file.<br>
+                The <code>src</code> attribute specifies the URL of the video file.<br>
+                The <code>type</code> attribute specifies the format of the video file.
+            </p>
+            <p>
+                Different media format are needed for compatibility with different browser and devices.<br>
+                The <code>&lt;source&gt;</code> tag allows you to add multiple files.
+            </p>
+            <code><pre>
+                &lt;video&gt;
+                    &lt;source src="file.mp4" type ="video/mp4"&gt;
+                    &lt;source src="file.webm" type ="video/webm"&gt;
+                &lt;/video&gt;
+            </pre></code>
+            <p>
+                When different <code>&lt;source&gt;</code> options are included, the browser
+                will choose the first one it supports.<br>
+                You can add text between the &lt;video&gt; tags. The text will only be displayed
+                in browsers that don't support the video element.
+            </p>
+            <code><pre>
+                &lt;video&gt;
+                    &lt;source src="file.mp4" type ="video/mp4"&gt;
+                    &lt;source src="file.webm" type ="video/webm"&gt;
+                    Video not supported
+                &lt;/video&gt;
+            </pre></code>
+            <p>You can display play/pause, volume and other default video controls with the <strong>controls</strong> attribute.</p>
+            <code><pre>
+                &lt;video controls&gt;
+                    &lt;source src="file.mp4" type ="video/mp4"&gt;
+                V   ideo not supported
+                &lt;/video&gt;
+            </pre></code>
+        </section>
+
+        <section id="music-audio">
+            <h2>14. Music & Audio</h2>
+            <p>
+                You can embed audio fies into web pages with the <code><b>&lt;audio&gt; container tag</b></code>
+            </p>
+            <code><pre>
+                &lt;audio&gt;
+                    &lt;!--audio files&gt;
+                &lt;/audio&gt;
+            </pre></code>
+            <p>
+                Just like video, the <code><b>source</b></code> tag is used to add source options for audio.
+            </p>
+            <code><pre>
+                &lt;audio&gt;
+                    &lt;source src="audiofile.mp3" type="audio/mpeg"&gt;
+                    &lt;source src="audiofile.ogg" type="audio/ogg"&gt;
+                &lt;/audio&gt;
+            </pre></code>
+            <p><b>mp3</b> files belong to the <b>mpeg</b> type</p>
+            <code><pre>
+                &lt;audio autoplay&gt;
+                    &lt;source src="file.mp3" type="audio/mpeg"&gt;
+                    &lt;source src="file.ogg" type="audio/ogg"&gt;
+                    Audio not supported
+                &lt;/audio&gt;
+            </pre></code>
+            <p>
+                You can also use <strong>autoplay</strong>, <strong>muted</strong> and <strong>loop</strong> 
+                to control the behaviour of multimedia elements.
+            </p>
+            <code><pre>
+                &lt;video autoplay muted&gt;
+                    &lt;source src="videofile.mp4" type="video/mp4"&gt;
+                    &lt;source src="videofile.ogg" type="video/ogg"&gt;
+                &lt;/video&gt;
+            </pre></code>
+        </section>
+
+        <section id="layout"></section>
+        <h2>15. Layout</h2>
+        <p>
+            The body of a web page can be divided into 3 parts.
+        </p>
+            <ul>
+                <li>Header: <code>&lt;header&gt;</code></li>
+                <li>Main content: <code>&lt;main&gt;</code></li>
+                <li>Footer: <code>&lt;footer&gt;</code></li>
+            </ul>
+        <p>
+            The <b><code>&lt;header&gt;</code></b> container tag usually contains introductory information.<br>
+            The header often contains navigation links, a menu and/or a search bar.<br>
+            Brand elements like logis are usually found in the header too.<br>
+            You can add several header elements to a web page.
+        </p>
+        <code><pre>
+            &lt;header&gt;
+            &lt;!--Introductory information--&gt;
+            &lt;/header&gt;
+        </pre></code>
+
+        <p>
+            The <b><code>&lt;main&gt;</code></b> container tag is used to include the main content of a web page.<br>
+            There must not be more than one <code>&lt;main&gt;</code> element in a document.
+        </p>
+        <code><pre>
+            &lt;main&gt;
+            &lt;!--main content--&gt;
+            &lt;/main&gt;
+        </pre></code>
+
+        <p>
+            The <b><code>&lt;footer&gt;</code></b> container tag often contains contact and legal information and links.<br>
+            You can have several <code>&lt;footer&gt;</code> elements in one document.
+        </p>
+        <code><pre>
+            &lt;footer&gt;
+            &lt;!--footer information--&gt;
+            &lt;/footer&gt;
+        </pre></code>
+
+        <p>
+            Futhermore, <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code> and <code>&lt;footer&gt;</code> elements 
+            are nested inside the <code>&lt;body&gt;</code> container tag
+        </p>
+        <code><pre>
+            &lt;body&gt;
+                &lt;header&gt;
+                    &lt;!--intro information--&gt; 
+                &lt;/header&gt;
+                &lt;main&gt;
+                    &lt;!--main content--&gt;
+                &lt;/main&gt;
+                &lt;footer&gt;
+                    &lt;!--footer information--&gt;
+                &lt;/footer&gt;
+            &lt;/body&gt;
+        </pre></code>
+        <p>
+            Don't confuse <code>&lt;header&gt;</code> with <code>&lt;head&gt;</code>.<br>
+            <code>&lt;head&gt;</code> is used to  include technical information about the 
+            page like title, description, author and keywords and <b>not</b> shown to the user.
+        </p>
+
+
+            <h3>Building a website involves two areas:</h3>
+        <p>
+            Front-end: What users see and interact with.
+            Back-end: Information requests, servers and databases.
+        </p>
+
     </main>
 
     <footer>
