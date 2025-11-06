@@ -743,15 +743,300 @@
 
 
             <h3>Building a website involves two areas:</h3>
-        <p>
-            Front-end: What users see and interact with.
-            Back-end: Information requests, servers and databases.
-        </p>
-
-    </main>
-
-    <footer>
-        <i>Documentation in progress</i>
-    </footer>
+            <p>
+                Front-end: What users see and interact with.<br>
+                Back-end: Information requests, servers and databases.
+            </p>
+        </section>
+    
+        <section id="more-layour">
+            <h2>16. More Layout</h2>
+            <p>
+                <code><strong>&lt;article&gt;</strong></code> 
+                represents an independent, self-contained piece of content,
+                that would make sense on its own.
+            </p>
+            <code><pre>            &lt;article&gt;
+                &lt;h1&gt;Top 10 Travel Destinations&lt;/h1&gt;
+                &lt;p&gt;Traveling is a way of living...&lt;/p&gt;
+                &lt;/article&gt;
+            </pre></code>
+            <p>
+                The <code>&lt;article&gt;</code> tag clearly indicates the
+                role for its content. It's used for content like news stories and blog posts.<br>
+                So <code>&lt;article&gt;</code> is an example of a <strong>semantic tag</strong>.
+            </p>
+            <p>
+                Layout tags like <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;main&gt;</code>
+                and <code>&lt;article&gt;</code> are semantic tags becausse they give 
+                information about what they contain.
+            </p>
+    
+            <p>
+                <code><strong>&lt;section&gt;</strong></code> helps to break down
+                the content into parts. It's another <b>semantic container tag</b>.<br>
+            </p>
+            <code><pre>            &lt;section&gt;
+                &lt;h2&gt;About Us&lt;/h2&gt;
+                &lt;p&gt;We are s small company...&lt;/p&gt;
+                &lt;/section&gt;
+            </pre></code>
+            <p>
+                <code><strong>&lt;aside&gt;</strong></code> is used for secondary,
+                additional or somehow related content.
+            </p>
+            <code><pre>            &lt;aside&gt;
+                &lt;h2&gt;Related Topics&lt;/h2&gt;
+                &lt;p&gt;Did you know...&lt;/p&gt;
+                &lt;/aside&gt;
+            </pre></code>
+            <p>
+                You can combine these elements to create a well-strucutred semantic
+                layour for your content.<br>
+                Semantic tags don't give any visual effect to the content,
+                but they give addition information to search engines.<br>
+                You can nest layout elements to create organized and accessible pages.
+            </p>
+            <p>
+                Nesting <code>&lt;aside&gt;</code> within <code>&lt;article&gt;</code> allows
+                you to provide addition, related content specific to that article.<br>
+                It enhances the user experience and makes the content more organized.<br>
+                e.g.
+            </p>
+            <code><pre>        &lt;html&gt;
+                &lt;head&gt;
+                    &lt;title&gt;Healthcare Blog&lt;/title&gt;
+                &lt;/head&gt;
+                &lt;body&gt;
+                    &lt;header&gt;
+                    &lt;h1&gt;Healthy Recipes Blog&lt;/h1&gt;
+                    &lt;/header&gt;
+                &lt;main&gt;
+                    &lt;article&gt;
+                    &lt;h2&gt;Vegan Stuffed Bell Peppers&lt;/h2&gt;
+                        &lt;section&gt;
+                        &lt;h3&gt;Ingredients&lt;/h3&gt;
+                            &lt;ul&gt;
+                            &lt;li&gt;1 cup cooked quinoa&lt;/li&gt;
+                            &lt;li&gt;...&lt;/li&gt;
+                            &lt;/ul&gt;
+                        &lt;/section&gt;
+    
+                        &lt;section&gt;
+                        &lt;h3&gt;Instructions&lt;/h3&gt;
+                            &lt;ol&gt;
+                            &lt;li&gt;Preheat oven to 375°F.&lt;/li&gt;
+                            &lt;li&gt;...&lt;/li&gt;
+                            &lt;/ol&gt;
+                        &lt;/section&gt;
+    
+                        &lt;!-- &lt;aside&gt; within the &lt;article&gt; adds
+                            more vegan recipes because the article 
+                            is about Vegan Stuffed Bell Peppers.--&gt;
+    
+                        &lt;aside&gt;
+                            &lt;h3&gt;More Vegan Recipes&lt;/h3&gt;
+                            &lt;ul&gt;
+                            &lt;li&gt;
+                            &lt;a href="#"&gt;Vegan Lentil Soup&lt;/a&gt;
+                            &lt;/li&gt;
+                            &lt;/ul&gt;
+                        &lt;/aside&gt;
+                    &lt;/article&gt;
+    
+                    &lt;!-- &lt;aside&gt; outside the &lt;article&gt; adds
+                        more recipes because it is related to 
+                        the entire web page content.--&gt;
+    
+                    &lt;aside&gt;
+                    &lt;h3&gt;Suggested Recipes&lt;/h3&gt;
+                        &lt;ul&gt;
+                        &lt;li&gt;&lt;a href="#"&gt;Fried Rice&lt;/a&gt;&lt;/li&gt;
+                        &lt;li&gt;&lt;a href="#"&gt;Chicken Rings&lt;/a&gt;&lt;/li&gt;
+                        &lt;/ul&gt;
+                    &lt;/aside&gt;
+                &lt;/main&gt;
+                &lt;footer&gt;
+                &lt;p&gt;Healthy Recipes Blog © 2023&lt;/p&gt;
+                &lt;/footer&gt;
+                &lt;/body&gt;
+            &lt;/html&gt;
+            </pre></code>
+        </section>
+    
+        <section id="style">
+            <h2>17. The style attribute</h2>
+            <p>
+                With the <strong>style</strong> attribute, you can fully customize
+                the visual presentation of your websites, from typography and colors
+                to layout and more.
+            </p>
+            <h3>Changing the color of text</h3>
+            <code><pre>            &lt;p style="color:green"&gt;
+                Green paragraph
+                &lt;/p&gt;
+            </pre></code>
+            <p style="color:green"> Green paragraph</p>
+            <p>
+                It can be used to define properties like color, 
+                font size and alignment.
+            </p>
+            <code><pre>        &lt;h1 style="color:blue"&gt;Blue Heading&lt;/h1&gt;
+            </pre></code>
+            <h1 style="color:blue">Blue Heading</h1>
+            <p>
+                The style attribute can simplify formatting a lot.<br>
+                You can customize multiple properties at the same time.<br>
+                Just seperate each property:value pair with a <strong>semicolon (;)</strong>.
+            </p>
+            <p>
+                You can control the alignment with the <code><strong>text-align</strong></code> attribute.
+            </p>
+            <code><pre>            &lt;p style="color:red; text-align:right"&gt;Some text&lt;/p&gt;
+            </pre></code>
+            <p style="color:red; text-align:right;">Some text</p>
+            <p>
+                Font size can be controlled with the <code><strong>font-size</strong></code> property.
+            </p>
+            <code><pre>            &lt;p style="font-size:large"&gt;Large paragraph&lt;/p&gt;
+            </pre></code>
+            <p style="font-size: large">Large paragraph</p>
+    
+            <p>
+                The <strong><code>background-color</code></strong> property is useful for styling elements like buttons.
+            </p>
+            <code><pre>            &lt;button style="background-color:green"&gt;OK&lt;/button&gt;
+            </pre></code>
+            <button style="background-color: green">OK</button>
+            <p>
+                The <strong>border</strong> property is a short and simple way to refer to 
+                3 different sub-properties. That's why it can take 3 values.<br>
+                It's an example of style attributes that "requires" multiple values.
+                The only really required border subproperty is the <strong>border-style</strong>.<br>
+                If the width is not specified the default value will be "medium".<br>
+                If the color is not specified, the default color of the text will be applied to the border.
+            </p>
+            <code><pre>            &lt;p style ="border: 1px solid red"&gt;Some text&lt;/p&gt;
+            </pre></code>
+            <p style="border: 1px solid red">Some text</p>
+    
+            <p>
+                You'll learn more about styling web pages with CSS.<br>
+                CSS makes your website styling more efficient, more consistent, and more in harmony.
+            </p>
+        </section>
+    
+        <section id="inline-block">
+            <h2>18. Inline and Block Elements</h2>
+            <p>
+                Every HTML element is either <strong>inline</strong> or <strong>block</strong>.<br>
+                This is one of the most important things for web designers and developers.
+            </p>
+            <p>
+                The <strong>border</strong> property is great for helping us see the difference
+                between these 2 types of HTML elements.
+            </p>
+            <code><pre>            &lt;button style="border:solid"&gt;Click me&lt;/button&gt;
+            </pre></code>
+            <p>
+                The borders of the different elements will help you spot the difference.
+            </p>
+            <code><pre>            &lt;h2&gt;Block-Level Elements&lt;/h2&gt;
+                &lt;!--Start on a new line--&gt;
+                    &lt;h3 style="border:solid"&gt;Heading&lt;/h3&gt;
+                    &lt;p style="border:solid"&gt;Paragraph&lt;/p&gt;
+                    &lt;ul style="border:solid"&gt;
+                        &lt;li&gt;List item A&lt;/li&gt;
+                        &lt;li&gt;List item B&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;h2&gt;Inline Elements&lt;/h2&gt;
+                &lt;!--Don't start on a new line--&gt;
+                    &lt;p&gt;&lt;b style="border:solid"&gt;Bold&lt;/b&gt; text&lt;/p&gt;
+                    &lt;button style="border:solid"&gt;Click me&lt;/button&gt;
+                    &lt;label style="border:solid"&gt;Label&lt;/label&gt;
+            </pre></code>
+                <h2>Block-Level Elements</h2>
+                <!--Start on a new line-->
+                <h3 style="border:solid">Heading</h3>
+                <p style="border:solid">Paragraph</p>
+                <ul style="border:solid">
+                    <li>List item A</li>
+                    <li>List item B</li>
+                </ul>
+                <h2>Inline Elements</h2>
+                <!--Don't start on a new line-->
+                <p><b style="border:solid">Bold</b> text</p>
+                <button style="border:solid">Click me</button>
+                <label style="border:solid">Label</label>
+            <p>
+                <strong>Block-level</strong> elements always start on a new line.
+                They take up the full width available.<br>
+                <strong>Inline</strong> elements don't start on a new line.
+                They only take up as much width as necessary.<br>
+            </p>
+            <p>
+                Format tags are inline elements:
+                </p><ul>
+                    <li>Bold:<code>&lt;b&gt;</code></li>
+                    <li>Italics:<code>&lt;i&gt;</code></li>
+                    <li>Underlined:<code>&lt;u&gt;</code></li>
+                </ul>
+            <p></p>
+            <p>
+                Inline elements can be nested inside block-level elements.
+            </p>
+            <p>
+                Line break <code>&lt;br&gt;</code> tags are used to used to force inline elements
+                to start on a new line.
+            </p>
+            <p>
+                Line break tags are usually included in forms, because
+                form elements like <code>&lt;input&gt;</code> and <code>&lt;label&gt;</code>
+                are inline elements.
+            </p>
+        </section>
+    
+        <section id="divide-conquer">
+            <h2>Divide &amp; Conquer</h2>
+            <p>
+                Grouping different HTML elements can make your pages faster
+                to load and easier to customize and maintain.
+            </p>
+            <p>
+                The <b><code>&lt;div&gt;</code> element</b> is a container for HTML
+                elements that keeps your pages organized.
+            </p>
+            <p>
+                The <code>&lt;div&gt;</code> element always takes up the full width available.<br>
+                This means the <code>&lt;div&gt;</code> element is a block-level element.<br>
+                This means it starts on a new line.
+            </p>
+            <p>Elements grouped in a <code>&lt;div&gt;</code> can be styled all at once.</p>
+            <code><pre>            &lt;div style="text-align:center"&gt;
+                    &lt;h2&gt;About Me&lt;/h2&gt;
+                    &lt;p&gt;Hi, I'm Ali&lt;/p&gt;
+                    &lt;img src="forest.png" width=50&gt;
+                &lt;/div&gt;
+            </pre></code>
+            <div style="text-align: center">
+                <h2>About me</h2>
+                <p>Hi, I'm Ali</p>
+                <img src="forest.png" width="50">
+            </div>
+            <p>
+                <code>&lt;div&gt;</code> itself doesn't add any visual effects
+                unless you add a style to it.<br>
+                It's often used to group and style HTML elements.
+            </p>
+            <p>
+                The style in a <b><code>&lt;div&gt;</code> container will apply
+                to all its nested elements unless you give them their own.
+            </p>
+        </section>
+        </main>
+    
+        <footer>
+            <i>Documentation in progress</i>
+        </footer>
 </body>
 </html>
