@@ -997,7 +997,7 @@
         </section>
     
         <section id="divide-conquer">
-            <h2>Divide &amp; Conquer</h2>
+            <h2>19. Divide &amp; Conquer</h2>
             <p>
                 Grouping different HTML elements can make your pages faster
                 to load and easier to customize and maintain.
@@ -1012,7 +1012,8 @@
                 This means it starts on a new line.
             </p>
             <p>Elements grouped in a <code>&lt;div&gt;</code> can be styled all at once.</p>
-            <code><pre>            &lt;div style="text-align:center"&gt;
+            <code><pre>            
+                &lt;div style="text-align:center"&gt;
                     &lt;h2&gt;About Me&lt;/h2&gt;
                     &lt;p&gt;Hi, I'm Ali&lt;/p&gt;
                     &lt;img src="forest.png" width=50&gt;
@@ -1024,13 +1025,225 @@
                 <img src="forest.png" width="50">
             </div>
             <p>
+
                 <code>&lt;div&gt;</code> itself doesn't add any visual effects
                 unless you add a style to it.<br>
                 It's often used to group and style HTML elements.
             </p>
             <p>
-                The style in a <b><code>&lt;div&gt;</code> container will apply
+                The style in a <b><code>&lt;div&gt;</code></b> container will apply
                 to all its nested elements unless you give them their own.
+            </p>
+        </section>
+        
+        <section id="tables">
+            <h2>20. Tables</h2>
+            <p>
+                Tables help you display data in a way that's easy to
+                scan, compare and and analyze.
+            </p>
+            <p>
+                You can add a table using the 
+                <code><strong>&lt;table&gt;</strong></code> container tag.
+            </p>
+            <code><pre>
+                &lt;table&gt;
+                &lt;!--rows and columns--&gt;
+                &lt;/table&gt;
+            </pre></code>
+
+            <p>
+                You can add rows to a table with a
+                <code><strong>&lt;tr&gt;</strong></code> (table row) container tag.<br>
+                Rows are nested inside the <code>&lt;table&gt;</code> tag.
+            </p>
+            <code><pre>
+                &lt;table&gt;
+                &lt;tr&gt;
+                &lt;!--row data--&gt;
+                &lt;/tr&gt;
+                &lt;/table&gt;
+            </pre></code>
+
+            <p>
+                You can add cells with the 
+                <code><strong>&lt;td&gt;</strong></code> (table data) container tag.<br>
+                They are nested inside rows.
+            </p>
+            <code><pre>
+                &lt;table&gt;
+                &lt;tr&gt;
+                &lt;td&gt;Cell 1&lt;/td&gt;
+                &lt;td&gt;Cell 2&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;/table&gt;
+            </pre></code>
+            <p>Borders can be added to tables, rows and cells with the style attribute.<br>
+            (I won't include them for better readability reasons)</p>
+            <table style="border:1px solid">
+                <tr style="border:1px solid">
+                    <td style="border:1px solid">Cell 1</td>
+                    <td style="border:1px solid">Cell 2</td>
+                </tr>
+            </table>
+
+            <p>
+                Tables usually include header, a special row at the top
+                of the table used to label each column.<br>
+                You can create header cells with
+                <code><strong>&lt;th&gt;</strong></code> (table header)
+            </p>
+            <code><pre>
+                &lt;table&gt;
+                &lt;tr&gt;
+                &lt;th&gt;Name&lt;/th&gt; &lt;th&gt;Age&lt;/th&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                &lt;td&gt;Luffy&lt;/td&gt;
+                &lt;td&gt;19&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                &lt;td&gt;Zoro&lt;/td&gt;
+                &lt;td&gt;21&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;/table&gt;
+            </pre></code>
+            <table style="border:1px solid; border-collapse: collapse;">
+            <tr>
+                <th style="border:1px solid; padding:5px;">Name</th>
+                <th style="border:1px solid; padding:5px;">Age</th>
+            </tr>
+            <tr>
+                <td style="border:1px solid; padding:5px;">Luffy</td>
+                <td style="border:1px solid; padding:5px;">19</td>
+            </tr>
+            <tr>
+                <td style="border:1px solid; padding:5px;">Zoro</td>
+                <td style="border:1px solid; padding:5px;">21</td>
+            </tr>
+            </table>
+            <p>
+                Remember:<br>
+                <code>&lt;tr&gt;</code> elements are nested inside <code>&lt;table&gt;</code><br>
+                <code>&lt;td&gt;</code> elements are nested inside <code>&lt;tr&gt;</code><br>
+                <code>&lt;th&gt;</code> elements are nested inside <code>&lt;tr&gt;</code>
+            </p>
+
+            <p>
+                You can make cells that take up multiple rows and/or columns,
+                using the attributes <strong>colspan</strong> and <strong>rowspan</strong>.<br>
+                This is called merging cells.<br><br>
+                <strong>colspan</strong> is for the number of columns a cell shoul span.
+            </p>
+
+            <code><pre>
+                &lt;td style="border:1px solid black; padding:5px;" colspan="2"&gt;Sum: 900&lt;/td&gt;
+            </pre></code>
+
+            <table style="border:1px solid black; border-collapse:collapse;">
+                <tr>
+                  <th style="border:1px solid black; padding:5px;">Month</th>
+                  <th style="border:1px solid black; padding:5px;">Budget ($)</th>
+                </tr>
+                <tr>
+                  <td style="border:1px solid black; padding:5px;">January</td>
+                  <td style="border:1px solid black; padding:5px;">500</td>
+                </tr>
+                <tr>
+                  <td style="border:1px solid black; padding:5px;">February</td>
+                  <td style="border:1px solid black; padding:5px;">400</td>
+                </tr>
+                <tr>
+                  <td style="border:1px solid black; padding:5px;" colspan="2">Sum: 900</td>
+                </tr>
+            </table>
+
+            <p>
+                The <strong>rowspan</strong> attribute specifies the number of rows
+                a cell should span.<br>You can use rowspan to merge cells vertically.
+            </p>
+            <code><pre>
+              &lt;td style="border:1px solid black; padding:5px;" rowspan="2"&gt;150&lt;/td&gt;
+            </pre></code>
+              <table style="border:1px solid black; border-collapse:collapse;">
+                <tr>
+                  <th style="border:1px solid black; padding:5px;">Month</th>
+                  <th style="border:1px solid black; padding:5px;">Budget ($)</th>
+                  <th style="border:1px solid black; padding:5px;">Savings ($)</th>
+                </tr>
+                <tr>
+                  <td style="border:1px solid black; padding:5px;">January</td>
+                  <td style="border:1px solid black; padding:5px;">500</td>
+                  <td style="border:1px solid black; padding:5px;" rowspan="2">150</td>
+                </tr>
+                <tr>
+                  <td style="border:1px solid black; padding:5px;">February</td>
+                  <td style="border:1px solid black; padding:5px;">400</td>
+                </tr>
+              </table>
+        </section>
+
+        <section id="javascript">
+            <h2>21. Introduction to JavaScript</h2>
+            <p>
+                JavaScript is used to make HTML web pages more interactive and engaging.
+            </p>
+            <p>
+                The <strong>onclick</strong> attribute is used to trigger
+                an action when an HTML element is clicked/tapped.
+            </p>
+            <code><pre>
+                &lt;button onclick=action&gt;Click&lt;/button&gt;
+            </pre></code>
+
+            <p>
+                One of the many actions you can trigger is the display of
+                an alert message.
+            </p>
+            <code><pre>
+                &lt;button onclick="alert('Message')"&gt;Click&lt;/button&gt;
+            </pre></code>
+            <button onclick="alert('Message')">Click</button>
+            
+            <p>
+                You can make other HTML elements interactive.
+            </p>
+            <code><pre>
+            &lt;img src="forest.png" width="100" onclick="alert('a picture of a forest')"&gt;
+            </pre></code>
+            <p>Try clicking on the picture</p>
+            <img src="forest.png" width="100" onclick="alert('a picture of a forest')">
+
+            <p>
+                A <strong>function</strong> is a piece of code that can be "called" and
+                reused in a program as many times as you need.
+            <br><br>
+                <strong><code>alert()</code></strong> is an example of a function that 
+                displays an alert box with a message and an OK button.
+            </p>
+            <p>
+                You can use JavaScript to make changes to HTML elements based on users' actions.
+                For example, this code changes the image when someone clicks the button:<br>
+            </p>
+            <code><pre>
+            &lt;img id="forest" src="forest.png" height="100" width="150"&gt;&lt;br&gt;
+            &lt;button onclick="forest.src='volcano.png'"&gt;Show Volcano&lt;/button&gt;
+            &lt;button onclick="forest.src='forest.png'"&gt;Show Forest&lt;/button&gt;
+            </pre></code>
+            <img id="forest" src="forest.png" height="100" width="150"><br>
+            <button onclick="forest.src='volcano.png'">Show Volcano</button>
+            <button onclick="forest.src='forest.png'">Show Forest</button>
+            <br>
+            <p>
+                JavaScript is one of the core web technologies alongside HTML and CSS.<br>
+                HTML controls the structure of a web page.<br>
+                CSS controls the presentation of a web page.<br>
+                JavaScript controls the behaviour of a web page.
+            </p>
+            <p>
+                While the internet and the web are not exactly the same thing,
+                the two terms are often used interchangeably.<br>
+                The web is the largest application on the internet.
             </p>
         </section>
         </main>

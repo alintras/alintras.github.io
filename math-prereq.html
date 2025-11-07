@@ -1,0 +1,173 @@
+<html>
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </head>
+    <body>
+        <header>
+            <h1>My Math Journey</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="Maths.html">Maths</a></li>
+            </ul>
+        </nav>
+        <main>
+            <h2>1. An Introduction to Propositional Logic</h2>
+            <p>
+                Logic forms the bedrock of mathematical reasoning. It provides the rules and
+                tools to determine the truth or falsehood of statements and to construct valid arguments.
+                This article explores the fundamentals of <strong>propositional logic</strong>.
+            </p>
+            <h3 section="1">1.1 Statements and Truth Values</h3>
+            <p>
+                At its core, propositional logic deals with <strong>statements</strong> (or <strong>propositions</strong>).
+                A statement is a declarative sentece that is unequivocally either <strong>true (T)</strong> or <strong>false (F)</strong>.
+            </p>
+            <p>
+                <b>Examples of Statements: </b>
+            </p>
+                <ul>
+                    <li>A: "4 is an even number." (T)</li>
+                    <li>B: "15 is divisible by 7". (F)</li>
+                    <li>C: "The square root of 2 is irrational." (T)</li>
+                </ul>
+            <p>
+                Sentences like "Let's go!" or "What is your name?" are not statements
+                because they cannot be assigned a truth value.
+            </p>
+            <h3 section="2">1.2 Logical Operators</h3>
+            <p>
+                Simple statements can be combined using <strong>logical operators</strong> or <strong>connectives</strong>
+                to form <strong>compound statements.</strong> The truth value of a compound statement
+                depends entirely on the truth values of its components and the connective used.
+                This is systematically analyzed using <strong>truth tables</strong>.
+            </p>
+            <p>
+                The primary operators are:
+            </p>
+            <ul>
+                <li><b><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="0" style="font-size: 101.6%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-texatom texclass="ORD"><mjx-mo class="mjx-n"><mjx-c class="mjx-cAC"></mjx-c></mjx-mo></mjx-texatom></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mo>¬</mo></mrow></math></mjx-assistive-mml></mjx-container> (NOT):</b> Negation. It reverses the truth value.</li>
+                <li><b><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="1" style="font-size: 101.6%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mo class="mjx-n"><mjx-c class="mjx-c2227"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo>∧</mo></math></mjx-assistive-mml></mjx-container> (AND):</b> Conjunction. <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="2" style="font-size: 101.6%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D434 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2227"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="3"><mjx-c class="mjx-c1D435 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi><mo>∧</mo><mi>B</mi></math></mjx-assistive-mml></mjx-container> is true only if <b>both</b> A and B are true.</li>
+                <li><b><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="3" style="font-size: 101.6%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mo class="mjx-n"><mjx-c class="mjx-c2228"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo>∨</mo></math></mjx-assistive-mml></mjx-container> (OR):</b> Disjunction. <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="4" style="font-size: 101.6%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D434 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="3"><mjx-c class="mjx-c2228"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="3"><mjx-c class="mjx-c1D435 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi><mo>∨</mo><mi>B</mi></math></mjx-assistive-mml></mjx-container> is true if <b>at least one</b> of A or B is true. This is the "inclusive or".</li>
+                <li><b><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="5" style="font-size: 101.6%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mo class="mjx-n"><mjx-c class="mjx-c21D2"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo stretchy="false">⇒</mo></math></mjx-assistive-mml></mjx-container> (IMPLIES):</b> <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="6" style="font-size: 101.6%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D434 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c21D2"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D435 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi><mo stretchy="false">⇒</mo><mi>B</mi></math></mjx-assistive-mml></mjx-container> means "if A, then B". <br>
+                    It is false <b>only</b> when A is true and B is false.<br> 
+                    If A is false, the implication is considered true
+                    by convention (<i>"from falsehood, anything follows").</i></li>
+                <li><b><mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="7" style="font-size: 101.6%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mo class="mjx-n"><mjx-c class="mjx-c21D4"></mjx-c></mjx-mo></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo stretchy="false">⇔</mo></math></mjx-assistive-mml></mjx-container> (IF AND ONLY IF):</b> Equivalence. <mjx-container class="MathJax CtxtMenu_Attached_0" jax="CHTML" tabindex="0" ctxtmenu_counter="8" style="font-size: 101.6%; position: relative;"><mjx-math class="MJX-TEX" aria-hidden="true"><mjx-mi class="mjx-i"><mjx-c class="mjx-c1D434 TEX-I"></mjx-c></mjx-mi><mjx-mo class="mjx-n" space="4"><mjx-c class="mjx-c21D4"></mjx-c></mjx-mo><mjx-mi class="mjx-i" space="4"><mjx-c class="mjx-c1D435 TEX-I"></mjx-c></mjx-mi></mjx-math><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi><mo stretchy="false">⇔</mo><mi>B</mi></math></mjx-assistive-mml></mjx-container> is true
+                    when A and B have the <b>same</b> truth value.</li>
+            </ul>
+        <h4>Truth Table for Key Operators:</h4>
+            <table style="border:1px solid; border-collapse: collapse;">
+                <tr style="border:1px solid; padding:5px;">
+                    <th style="border:1px solid; padding:5px;">A</th>
+                    <th style="border:1px solid; padding:5px;">B</th>
+                    <th style="border:1px solid; padding:5px;">A ∧ B</th>
+                    <th style="border:1px solid; padding:5px;">A ∨ B</th>
+                    <th style="border:1px solid; padding:5px;">A ⇒ B</th>
+                    <th style="border:1px solid; padding:5px;">A ⇔ B</th>
+                </tr>
+                <tr style="border:1px solid; padding:5px;">
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                </tr>
+                <tr style="border:1px solid; padding:5px;">
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">F</td>
+                    <td style="border:1px solid; padding:5px;">F</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">F</td>
+                    <td style="border:1px solid; padding:5px;">F</td>
+                </tr>
+                <tr style="border:1px solid; padding:5px;">
+                    <td style="border:1px solid; padding:5px;">F</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">F</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">F</td>
+                </tr>
+                <tr style="border:1px solid; padding:5px;">
+                    <td style="border:1px solid; padding:5px;">F</td>
+                    <td style="border:1px solid; padding:5px;">F</td>
+                    <td style="border:1px solid; padding:5px;">F</td>
+                    <td style="border:1px solid; padding:5px;">F</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                    <td style="border:1px solid; padding:5px;">T</td>
+                </tr>
+            </table>
+
+            <h3 section="3">1.3 Tautologies, Paradoxes and Equivalence</h3>
+            <p>
+                Some compound statements are special because their truth value is 
+                independent of their components.
+            </p>
+                <ul>
+                    <li>A <strong>Tautology</strong> is a statement that is <b>always true</b>.<br>
+                    Example: \(¬A ∨ A\) (The Law of the Excluded Middle)</li>
+                    <li>A <strong>Paradox</strong> (or Contradiction) is a statement
+                    that is <b>always false</b>.<br> Example: \(¬A ∧ A\)</li>
+                </ul>
+            <p>
+                Two statements are <strong>logically equivalent</strong> (\(A⇔B\)) if
+                they have identical truth tables.<br>
+                If \(A\) and \(B\) are equivalent, then \(A⇔B\) is a <strong>tautology</strong>.
+            </p>
+
+            <h3 section="4">1.4 Fundamental Logical Rules</h3>
+            <p>
+                Several equivalence rules allow us to simplify and manipulate logical expressions.
+            </p>
+            <ul>
+                <li><strong>Commutativity: </strong>
+                \(A ∧ B ⇔ B ∧ A\) and \(A ∨ B ⇔ B ∨ A\)
+                </li>
+                <li><strong>Associativity: </strong>
+                \((A ∧ B) ∧ C ⇔ A ∧ (B ∧ C)\) and \((A ∨ B) ∨ C ⇔ A ∨ (B ∨ C)\)
+                </li>
+                <li><strong>Distributivity: </strong>
+                \(A ∧ (B ∨ C) ⇔ (A ∧ B) ∨ (A ∧ C)\) and \(A ∨ (B ∧ C) ⇔ (A ∨ B) ∧ (A ∨ C)\)
+                </li>
+                <li><strong>De Morgan's Laws:</strong>
+                    <ul>
+                        <li>\(¬(A ∧ B) ⇔ ¬A ∨ ¬B\)</li>
+                        <li>\(¬(A ∨ B) ⇔ ¬A ∧ ¬B\)</li>
+                    </ul>
+                </li>
+                <li><strong>Double Negation: </strong>
+                \(¬(¬A) ⇔ A\)
+                </li>
+            </ul>
+
+            <h3 section="5">1.5 Crucial Implications and Proof Techniques</h3>
+            <p>
+            The relationship between implication and equivalence is fundamental to 
+            mathematical proof.
+            <ul>
+                <li><b>Equivalence of Implication and Contrapositive:</b><br>
+                \((A ⇒ B) ⇔ (¬B ⇒ ¬A)\)<br>
+                This means "If it rains, the street is wet" is logically equivalent
+                to "If the street is not wet, it did not rain". <br> Proving the
+                contrapositive is often an easier way to prove an original statement.
+                </li>
+                <li>
+                    <b>Equivalence and Implication:</b><br>
+                    \((A ⇔ B) ⇔ (A ⇒ B) ∧ (B ⇒ A)\)<br>
+                    This is a vital proof strategy.<br>
+                    To prove \(A\) and \(B\) are equivalent, you prove <b>both</b><br>
+                    \(A⇒ B\) (\(A\) is sufficient for \(B\))
+                    and \(B ⇒ A\) (\(B\) is sufficient for \(A\), or \(A\) is necessary for \(B\))
+                </li>
+                <li>
+                    
+                </li>
+            </ul>
+            </p>
+        </main>
+</html>
