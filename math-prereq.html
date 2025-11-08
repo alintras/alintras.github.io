@@ -3,181 +3,605 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        mjx-container {
+            background-color: #d3d3d3;
+        }
+        table{
+            border-collapse: collapse;
+            border: 1px solid;
+        }
+        th, td{
+            border: 1px solid;
+            padding: 5px
+        }
+    </style>
     </head>
     <body>
-        <header>
-            <nav>
-                <a href="index.html">Home</a>
-                <a href="Maths.html">Maths</a>
-            </nav>
-            <h1>Prerequisites</h1>
-        </header>
-        <main>
-            <h2>1. Propositional Logic</h2>
+    <header>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="Maths.html">Maths</a>
+        </nav>
+        <h1>Prerequisites</h1>
+    </header>
+    <main>
+        <h2>1. Propositional Logic</h2>
             <p>
                 Logic forms the bedrock of mathematical reasoning. It provides the rules and
                 tools to determine the truth or falsehood of statements and to construct valid arguments.
             </p>
-            <h3 section="1">1.1 Statements and Truth Values</h3>
+            
+        <h3 section="1">1.1 Statements and Truth Values</h3>
             <p>
-                A statement is a declarative sentece that is unequivocally either
-                <strong>true (T)</strong> or <strong>false (F)</strong>.
+                A <strong>statement</strong> (or <strong> proposition</strong>) is a declarative sentece that
+                is unequivocally either <strong>true (T)</strong> or <strong>false (F)</strong>.
             </p>
+            <h4>Examples of Statements: </h4>
+            <ul>
+                <li>"4 is an even number." (T)</li>
+                <li>"15 is divisible by 7". (F)</li>
+                <li>"The square root of 2 is irrational." (T)</li>
+            </ul>
+            <h4>Not statements:</h4>
+            <ul>
+                <li>"Let's go!"</li>
+                <li>"What is your name?"</li>
+                <li>"All natural numbers are green."</li>
+            </ul>
             <p>
-                <b>Examples of Statements: </b>
+                Because these can't be assigned a truth value.
             </p>
-                <ul>
-                    <li>A: "4 is an even number." (T)</li>
-                    <li>B: "15 is divisible by 7". (F)</li>
-                    <li>C: "The square root of 2 is irrational." (T)</li>
-                </ul>
+
+        <h3 section="2">1.2 Logical Operators</h3>
             <p>
-                Sentences like "Let's go!" or "What is your name?" are not statements
-                because they cannot be assigned a truth value.
-            </p>
-            <h3 section="2">1.2 Logical Operators</h3>
-            <p>
-                Simple statements can be combined using <strong>logical operators</strong>
+                We can comine simple statements using <strong>logical connectives</strong>
                 to form <strong>compound statements.</strong> The truth value of a compound statement
                 depends entirely on the truth values of its components and the connective used.
-                This is systematically analyzed using <strong>truth tables</strong>.
             </p>
+            <table>
+                <tr>
+                    <th>Operator</th>
+                    <th>Meaning</th>
+                    <th>Example</th>
+                    <th>Truth Condition</th>
+                </tr>
+                <tr>
+                    <td>\(\neg A\) </td>
+                    <td>NOT A (Negation)</td>
+                    <td>"Not raining"</td>
+                    <td>True if A is false</td>
+                </tr>
+                <tr>
+                    <td>\(A \wedge B\)</td>
+                    <td>A AND B (Conjunction)</td>
+                    <td>"Raining and cold"</td>
+                    <td>True only if both are true</td>
+                </tr>
+                <tr>
+                    <td>\(A \vee B\)</td>
+                    <td>A OR B (Disjunction)</td>
+                    <td>"Raining or cold"</td>
+                    <td>True if at least one true</td>
+                </tr>
+                <tr>
+                    <td>\(A \Rightarrow B\)</td>
+                    <td>IF A THEN B (Implication)</td>
+                    <td>"If raining, street is wet"</td>
+                    <td>False only if A true and B false<sup>*</sup></td>
+                </tr>
+                <tr>
+                    <td>\(A \Leftrightarrow B\)</td>
+                    <td>IF AND ONLY IF (Equivalence)</td>
+                    <td>"It rains exactly when the sky is cloudy"</td>
+                    <td>True if both have the same true value</td>
+                </tr>
+            </table>
             <p>
-                Primary operators:
+                <sup>*</sup>If A is false, the implication is considered true
+                by convention (<i>"from falsehood, anything follows").</i>
             </p>
-            <ul>
-                <li>\(¬\) <b>(NOT):</b> Negation. It reverses the truth value.</li>
-                <li>\(∧\) <b>(AND):</b> Conjunction. <span style="background-color: #d3d3d3;">\(A ∧ B\)</span> is true only if <b>both</b> A and B are true.</li>
-                <li>\(∨\) <b>(OR):</b> Disjunction. <span style="background-color: #d3d3d3;">\(A ∨ B\)</span> is true if <b>at least one</b> of A or B is true. This is the "inclusive or".</li>
-                <li>\(⇒\) <b>(IMPLIES):</b> <span style="background-color: #d3d3d3;">\(A ⇒ B\)</span> means "if A, then B". <br>
-                    It is false <b>only</b> when A is true and B is false.<br> 
-                    If A is false, the implication is considered true
-                    by convention (<i>"from falsehood, anything follows").</i></li>
-                <li>\(⇔\) <b>(IF AND ONLY IF):</b> Equivalence. <span style="background-color: #d3d3d3;">\(A ⇔ B\)</span> is true when A and B have the <b>same</b> truth value.</li>
-            </ul>
+ 
         <h4>Truth Table:</h4>
-            <table style="border:1px solid; border-collapse: collapse;">
-                <tr style="border:1px solid; padding:5px;">
-                    <th style="border:1px solid; padding:5px;">A</th>
-                    <th style="border:1px solid; padding:5px;">B</th>
-                    <th style="border:1px solid; padding:5px;">A ∧ B</th>
-                    <th style="border:1px solid; padding:5px;">A ∨ B</th>
-                    <th style="border:1px solid; padding:5px;">A ⇒ B</th>
-                    <th style="border:1px solid; padding:5px;">A ⇔ B</th>
+            <table>
+                <tr >
+                    <th >A</th>
+                    <th >B</th>
+                    <th >A ∧ B</th>
+                    <th >A ∨ B</th>
+                    <th >A ⇒ B</th>
+                    <th >A ⇔ B</th>
                 </tr>
-                <tr style="border:1px solid; padding:5px;">
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
+                <tr >
+                    <td >T</td>
+                    <td >T</td>
+                    <td >T</td>
+                    <td >T</td>
+                    <td >T</td>
+                    <td >T</td>
                 </tr>
-                <tr style="border:1px solid; padding:5px;">
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">F</td>
-                    <td style="border:1px solid; padding:5px;">F</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">F</td>
-                    <td style="border:1px solid; padding:5px;">F</td>
+                <tr >
+                    <td >T</td>
+                    <td >F</td>
+                    <td >F</td>
+                    <td >T</td>
+                    <td >F</td>
+                    <td >F</td>
                 </tr>
-                <tr style="border:1px solid; padding:5px;">
-                    <td style="border:1px solid; padding:5px;">F</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">F</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">F</td>
+                <tr >
+                    <td >F</td>
+                    <td >T</td>
+                    <td >F</td>
+                    <td >T</td>
+                    <td >T</td>
+                    <td >F</td>
                 </tr>
-                <tr style="border:1px solid; padding:5px;">
-                    <td style="border:1px solid; padding:5px;">F</td>
-                    <td style="border:1px solid; padding:5px;">F</td>
-                    <td style="border:1px solid; padding:5px;">F</td>
-                    <td style="border:1px solid; padding:5px;">F</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
-                    <td style="border:1px solid; padding:5px;">T</td>
+                <tr >
+                    <td >F</td>
+                    <td >F</td>
+                    <td >F</td>
+                    <td >F</td>
+                    <td >T</td>
+                    <td >T</td>
                 </tr>
             </table>
 
-            <h3 section="3">1.3 Tautologies, Paradoxes and Equivalence</h3>
+        <h3 section="3">1.3 Tautologies, Paradoxes and Equivalence</h3>
             <p>
                 Some compound statements are special because their truth value is 
-                independent of their components.
+                independent of their components.<br>
+                They are <strong>always true</strong> or <strong>always false</strong>,
+                no matter what.
             </p>
             <ul>
-                <li>A <strong>Tautology</strong> is a statement that is <b>always true</b>.<br>
-                    Example: <span style="background-color: #d3d3d3;">\(¬A ∨ A\)</span> (The Law of the Excluded Middle)</li>
-                <li>A <strong>Paradox</strong> (or Contradiction) is a statement
-                    that is <b>always false</b>.<br> Example: <span style="background-color: #d3d3d3;">\(¬A ∧ A\)</span></li>
+                <li>A <strong>Tautology</strong>: always true.<br>
+                    Example: \(¬A \vee A\) (The Law of the Excluded Middle)</li>
+                <li>A <strong>Paradox</strong>: always false.<br>
+                    Example: \(¬A \wedge A\)</li>
             </ul>
             <p>
-                Two statements are <strong>logically equivalent</strong> (\(A⇔B\)) if
+                Two statements are <strong>logically equivalent</strong> (\(A \Leftrightarrow B\)) if
                 they have identical truth tables.<br>
-                If <span style="background-color: #d3d3d3;">\(A\)</span> and <span style="background-color: #d3d3d3;">\(B\)</span>
-                are equivalent, then <span style="background-color: #d3d3d3;">\(A⇔B\)</span> is a <strong>tautology</strong>.
+                If \(A\) and \(B\) are equivalent,
+                then \(A \Leftrightarrow B\) is a <strong>tautology</strong>.
             </p>
 
-            <h3 section="4">1.4 Fundamental Logical Rules</h3>
+        <h3 section="4">1.4 Fundamental Logical Rules</h3>
             <p>
-                Several equivalence rules allow us to simplify and manipulate logical expressions.
+                Rules that let you simplify or manipulate logical expressions:
             </p>
             <ul>
                 <li><strong>Commutativity: </strong>
-                    <span style="background-color: #d3d3d3;">\(A ∧ B ⇔ B ∧ A\)</span> and 
-                    <span style="background-color: #d3d3d3;">\(A ∨ B ⇔ B ∨ A\)</span>
+                    \(A \wedge B \Leftrightarrow B \wedge A\) and \(A \vee B \Leftrightarrow B \vee A\)
                 </li>
                 <li><strong>Associativity: </strong>
-                    <span style="background-color: #d3d3d3;">\((A ∧ B) ∧ C ⇔ A ∧ (B ∧ C)\)</span>
-                    and <span style="background-color: #d3d3d3;">\((A ∨ B) ∨ C ⇔ A ∨ (B ∨ C)\)</span>
+                    \((A \wedge B) \wedge C \Leftrightarrow A \wedge (B \wedge C)\) and \((A \vee B) \vee C \Leftrightarrow A \vee (B \vee C)\)
                 </li>
                 <li><strong>Distributivity: </strong>
-                    <span style="background-color: #d3d3d3;">\(A ∧ (B ∨ C) ⇔ (A ∧ B) ∨ (A ∧ C)\)</span>
-                    and <span style="background-color: #d3d3d3;">\(A ∨ (B ∧ C) ⇔ (A ∨ B) ∧ (A ∨ C)\)</span>
+                    \(A \wedge (B \vee C) \Leftrightarrow (A \wedge B) \vee (A \wedge C)\)
+                    and \(A \vee (B \wedge C) \Leftrightarrow (A \vee B) \wedge (A \vee C)\)
                 </li>
                 <li><strong>De Morgan's Laws:</strong>
                     <ul>
-                        <li><span style="background-color: #d3d3d3;">\(¬(A ∧ B) ⇔ ¬A ∨ ¬B\)</span></li>
-                        <li><span style="background-color: #d3d3d3;">\(¬(A ∨ B) ⇔ ¬A ∧ ¬B\)</span></li>
+                        <li>\(\neg(A \wedge B) \Leftrightarrow \neg A \vee \neg B\)</li>
+                        <li>\(\neg(A \vee B) \Leftrightarrow \neg A \wedge \neg B\)</li>
                     </ul>
                 </li>
                 <li><strong>Double Negation:</strong>
-                    <span style="background-color: #d3d3d3;">\(¬(¬A) ⇔ A\)</span>
+                    \(\neg(\neg A) \Leftrightarrow A\)
                 </li>
                 <!--PRÜFEN-->
                 <li>
-                    <strong>Implication:</strong>
-                    <span style="background-color: #d3d3d3;">\((A ⇒ B) ⇔ (¬A ∨ B)\)</span>
+                    <strong>Implication rule:</strong>
+                    \((A \Rightarrow B) \Leftrightarrow (\neg A \vee B)\)
                 </li>
                 <!---->
                 <li>
                     <strong>Contraposition:</strong>
-                    <span style="background-color: #d3d3d3;">(\(A⇒ B) ⇔ (¬B ⇒ ¬A)\)</span>
+                    (\(A \Rightarrow B) \Leftrightarrow (\neg B \Rightarrow \neg A)\)
                 </li>
             </ul>
 
-            <h3 section="5">1.5 Crucial Implications and Proof Techniques</h3>
-            <p>
-            The relationship between implication and equivalence is fundamental to 
-            mathematical proof.
+        <h3 section="5">1.5 Proof and Implications Rules</h3>
             <ul>
-                <li><b>Equivalence of Implication and Contrapositive:</b><br>
-                \((A ⇒ B) ⇔ (¬B ⇒ ¬A)\)<br>
-                This means "If it rains, the street is wet" is logically equivalent
-                to "If the street is not wet, it did not rain". <br> Proving the
-                contrapositive is often an easier way to prove an original statement.
+                <li>
+                <strong>Equivalence of Implication and Contrapositive:</strong><br>
+                \((A \Rightarrow B) \Leftrightarrow (\neg B \Rightarrow \neg A)\)<br>
+                "If it rains, the street is wet" \(\Leftrightarrow\) "If the street is not wet, it did not rain". <br> 
+                Proving the contrapositive is often an easier way to prove an original statement.
                 </li>
                 <li>
-                    <b>Equivalence and Implication:</b><br>
-                    \((A ⇔ B) ⇔ (A ⇒ B) ∧ (B ⇒ A)\)<br>
-                    This is a vital proof strategy.<br>
-                    To prove \(A\) and \(B\) are equivalent, you prove <b>both</b><br>
-                    \(A⇒ B\) (\(A\) is sufficient for \(B\))
-                    and \(B ⇒ A\) (\(B\) is sufficient for \(A\), or \(A\) is necessary for \(B\))
+                <strong>Equivalence and Implication:</strong><br>
+                \((A \Rightarrow B) \Rightarrow (A \Rightarrow B) \wedge (B \Rightarrow A)\)<br>
+                This is a vital proof strategy.<br>
                 </li>
                 <li>
-
+                <strong>Transitivity:</strong><br>
+                \((A \Rightarrow B) \wedge (B \Rightarrow C) \Rightarrow (A \Rightarrow C)\)
+                and \( (A \Leftrightarrow B) \wedge (B \Leftrightarrow C) \Rightarrow (A \Leftrightarrow C)\)<br>
+                This allows to build complex proofs through a chain of simpler implications
+                </li>
+                <li>
+                <strong>Proof by Contradiction:</strong><br>
+                To prove \(A ⇒ B\) assume \(A ∧ ¬B\) and show this leads to a contradiction.<br>
+                This works because \((A ⇒ B) ⇔ ¬(A ∧ ¬B)\)
                 </li>
             </ul>
+
+        <h3 section="6">1.6 Predicate Logic and Quantifiers</h3>
+            <p>
+                Propositional logic deals with whole statements.<br>
+                <strong>Predicate logic</strong> introcudes more granularity
+                with variable and quantifiers.
             </p>
-        </main>
+            <h4>Quantifiers:</h4>
+            <table>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Meaning</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>\(\forall\)</td>
+                    <td>"for all" (The Universal Quantifier)</td>
+                    <td>\(\forall x, x^2 ≥ 0\)</td>
+                </tr>
+                <tr>
+                    <td>\(\exists\)</td>
+                    <td>"there exists" (The Existential Quantifier)</td>
+                    <td>\(\exists x: x^2 = 4\)</td>
+                </tr>
+                <tr>
+                    <td>\(\exists!\)</td>
+                    <td>"there exists exactly one"</td>
+                    <td>\(\exists! x: x+2=5\)</td>
+                </tr>
+            </table>
+            <h4>Negation Rules for Quantifiers:</h4>
+                <ul>
+                    <li>\(\neg(\forall x: P(x)) \Leftrightarrow \exists x: \neg P(x)\)</li>
+                    <li>\(\neg(\exists x: P(x)) \Leftrightarrow \forall x: \neg P(x)\)</li>
+                </ul>
+            <h4>Order matters:</h4>
+                <ul>
+                    <li>
+                        \(\forall k \in \mathbb{Z} \exists l \in \mathbb{Z}: l ≤ k\) is <b>true</b><br>
+                        (for every integer, there's a smaller or equal one)
+                    </li>
+                    <li>
+                        \(\exists l \in \mathbb{Z} \forall k \in \mathbb{Z}: l ≤ k\) is <b>false</b><br>
+                        (there's no single integer ≤ every integer)
+                    </li>
+                </ul>
+            <h4>Quantifiers over Sets:</h4>
+                <ul>
+                    <li>
+                        \(\forall x \in \mathbb{M}: P(x) \Leftrightarrow \forall x: (x \in \mathbb{M} \Rightarrow P(x))\)
+                    </li>
+                    <li>
+                        \(\exists x \in \mathbb{M}: P(x) \Leftrightarrow \exists x: (x \in \mathbb{M} \wedge P(x))\)
+                    </li>
+                </ul>
+
+        <h2>2. Set Theory</h2>
+        <h3 section="7">2.1 Basic Concepts</h3>
+            <p>
+                A <strong>set</strong> is a collection of distinct objects
+                (called <strong>elements</strong>).
+                <br><br>
+                Notation: \(x \in \mathbb{M}\) means "x is an element of M"
+            </p>
+            <h4>Important Sets:</h4>
+            <ul>
+                <li>\(\emptyset\) or \(\{\}\): the empty set</li>
+                <li>\(\mathbb{N} = \{1, 2, 3, ...\}\): natural numbers</li>
+                <li>\(\mathbb{N}_0 = \{0, 1, 2, 3, ...\}\): natural numbers with zero</li>
+                <li>\(\mathbb{Z} = \{..., -2, -1, 0, 1, 2, ...\}\): integers</li>
+                <li>\(\mathbb{Q} = \{p/q: p \in \mathbb{Z} \wedge q \in \mathbb{Z} \backslash \{\emptyset \}\}\): rational numbers</li>
+                <li>\(\mathbb{R}\): real numbers</li>
+                <li>\(\mathbb{C} = \{x + iy: x, y ∈ ℝ\}\): complex numbers</li>
+            </ul>
+                <h4>Russell's Paradox:</h4>
+                \(R = \{ x | x \notin x\} \) leads to the contradiction \(R \in R \Leftrightarrow R \notin R\)<br>
+                This motivated the development of <strong>axiomatic set theory</strong>.
+            </p>
+
+        <h3 section="8">2.2 Set Operations and Relations</h3>
+            <table>
+                <tr>
+                    <th>Operation</th>
+                    <th>Symbol</th>
+                    <th>Meaning</th>
+                </tr>
+                <tr>
+                    <td>Subset</td>
+                    <td>\(A \subseteq B\)</td>
+                    <td>Every element of \(A\) is in \(B\)</td>
+                </tr>
+                <tr>
+                    <td>Proper Subset</td>
+                    <td>\(A \subset B\)</td>
+                    <td>\(A \subseteq B\) but \(A \ne B\)</td>
+                </tr>
+                <tr>
+                    <td>Equality</td>
+                    <td>\(A = B\)</td>
+                    <td>A equals B</td>
+                </tr>
+                <tr>
+                    <td>Union</td>
+                    <td>\(A \cup B\)</td>
+                    <td>Elements in \(A\) or \(B\)</td>
+                </tr>
+                <tr>
+                    <td>Intersection</td>
+                    <td>\(A \cap B\)</td>
+                    <td>Elements in both</td>
+                </tr>
+                <tr>
+                    <td>Difference</td>
+                    <td>\(A \backslash B\)</td>
+                    <td>Elements in \(A\) not in \(B\)</td>
+                </tr>
+                <tr>
+                    <td>Complement</td>
+                    <td>\(A^c\)</td>
+                    <td>Everything not in \(A\) (within a universe)<sup>*</sup></td>
+                </tr>
+                <tr>
+                    <td>Power set</td>
+                    <td>\(\mathcal{P}A\)</td>
+                    <td>All subset of \(A\)</td>
+                </tr>
+                <tr>
+                    <td>Cartesian product</td>
+                    <td>\(A \times B\)</td>
+                    <td>All ordered pairs \((a,b)\)</td>
+                </tr>
+            </table>
+            <p>
+                <sup>*</sup>If \(A \subseteq \mathbb{U}\) (universe), then \(A^c = \mathbb{U} \backslash A\)
+            </p>
+        
+            <p>For families of sets \((A_i)_{i \in I}\) with index set I:</p>
+            <ul>
+                <li>
+                    <strong>Union</strong>:<br>
+                    \(\bigcup_{i \in I}\:A_i = \{x: \exists i \in I: x \in A_i\}\) 
+                    := "somewhere in at least one"
+                </li>
+                <li>
+                    <strong>Intersection</strong>:<br>
+                    \(\bigcap_{i \in I} \: A_i = \{x:\forall i \in I: x \in A_i\}\)
+                    := "in all of them"
+                </li>
+            </ul>
+            <img src="intersect-union.jpg" width="400">
+
+        <h3 section="9">2.3 Key Rules</h3>
+            <ul>
+                <li>
+                    <strong>De Morgan's Laws</strong>:<br>
+                    \((A \cap B)^c = A^c \cup B^c\) and \((A \cup B)^c = A^c \cap B^c\)
+                </li>
+                <li>
+                    <strong>Distributive Laws</strong>:<br>
+                    \(A \cap (B \cup C) = (A \cap B) \cup (A \cap B)\) and
+                    \(A \cup (B \cap C) = (A \cup B) \cap (A \cup B)\)
+                </li>
+                <li>
+                    <strong>Inclusion-Exclusion Principle</strong>:<br>
+                    For finite sets: \(|A \cup B\ | = |A| + |B| - |A \cap B|\)
+                </li>
+                <li>
+                    <strong>Power Set Cardinality</strong>:<br>
+                    For finite A: \(\mathcal{P}(A) = 2^{\{|A|\}}\)
+                </li>
+            </ul>
+        
+        <h2>3. Relations and Functions</h2>
+        <h3 section="10">3.1 Relations</h3>
+            <p>
+                A <strong>relation</strong> \(R \subseteq X \times Y\) links elements of \(X\) to \(Y\).<br>
+                Write \(xRy\) for "\((x,y) \in R\)".
+            </p>
+        <h4>Properties of Relations on a Set X:</h4>
+            <ul>
+                <li><strong>Reflexive</strong>:
+                    \(\forall x \in X: xRx\)</li>
+                <li><strong>Symmetric</strong>:
+                    \(\forall x,y \in X: xRy \Rightarrow yRx\)</li>
+                <li><strong>Antisymmetric</strong>:
+                    \(\forall x,y \in X: (xRy \wedge yRx) \implies x = y\)</li>
+                <li><strong>Transitive</strong>:
+                    \(\forall x,y,z \in X: (xRy \wedge yRz) \implies xRz\)
+                </li>
+            </ul>
+            <p>
+                <strong>Inverse Relation:</strong>
+                \(R^{-1} = \{(y,x): (x,y) \in R\}\)
+            </p>
+
+        <h3 section="11">3.2 Equivalence Relations</h3>
+            <p>
+                An <strong>equivalence relation</strong> is
+                <i>reflexive</i>, <i>symmetric</i> and <i>transitive</i>.
+                <br>
+                If \(R\) is an equivalence relation, then one
+                often writes \(x \sim y\) instead of \(xRy\).
+            </p>
+                <h4>Examples:</h4>
+            <ul>
+                <li>
+                    <strong>Equality</strong> (=):<br>
+                    Define \(xRy \Leftrightarrow x = y\).<br>
+                    <em>Reflexive</em>: \(x = x\)<br>
+                    <em>Symmetric</em>: \(x = y \Rightarrow y = x\)<br>
+                    <em>Transitive</em>: \(x = y \wedge y = z \Rightarrow x = z\)
+                </li>
+                <li>
+                    <strong>Congruence modulo m</strong>: \(x \equiv y \pmod{m} \Leftrightarrow m | (x - y)\)<br>
+                    Let \(m \in \mathbb{N}\) and \(x,y \in \mathbb{Z}\)<br>
+                    Define \(xRy :\Leftrightarrow m | (x-y)\)<br>
+                    Then:<br>
+                    <em>Reflexive</em>: \(m | (x-x) = 0\)<br>
+                    <em>Symmetric</em>: \(m | (x-y) \Rightarrow m | (y-x)\)<br>
+                    <em>Transitive</em>: \(m | (x-y)\) and \(m | (y-z) \Rightarrow m | (x-z)\)
+                </li>
+                <li>
+                    <strong>Equivalence by decomposition</strong>:<br>
+                    Suppose \(A = \dot{\bigcup}_{i \in I}A_i\) is a disjoint union of nonempty subsets \(A_i\).<br>
+                    Define \(xRy \Leftrightarrow \exists i \in I \text{ such that } x,y \in A_i\) to the same subset \(A_i\) for some \(i \in I\)<br>
+                    <em>Reflexive</em>: Every \(x \in A \) lies in some \(A_i\), so \(x,x \in A_i \Rightarrow xRx \)<br>
+                    <em>Symmetric</em>: If \(xRy\), then \(x,y \in A_i\) for some i; hence also \(y,x \in A_i \Rightarrow yRx\)<br>
+                    <em>Transitive</em>: If \(xRy\) and \(yRz\), then \(x,y \in A_i\) and \(y,z \in A_j\). Since the union is disjoint<br>
+                    and \(y \in A_i \cap A_j\), we get \(i = j\), so \(x,z \in A_i \Rightarrow xRz\)<br>
+                    Thus, \(R\) is an equivalence relation on \(A\).
+                </li>
+            </ul>
+
+        <h4>Equivalence Classes and Quotient Set:</h4>
+            <p>
+                The <strong>equivalence class</strong> of an Element \(a \in X\) under \(R\) is<br>
+                \([a] = \{x \in X : xRa \}\), the set of all elements equivalent to \(a\).<br>
+                So, \([a]\) contains all elements that are “equivalent” to \(a\) under the relation \(R\).<br><br>
+                Two key properties hold:<br>
+            </p>
+            <ol>
+                <li>
+                    <strong>Equality of Classes:</strong><br>
+                        \([a] = [b]\) if and only if \(aRb\)<br>
+                        This means:
+                    <ul>
+                        <li>
+                            If \(a\) and \(b\) are equivalent (related), then their
+                            equivalence classes are the same.
+                        </li>
+                        <li>
+                            Conversely, if two equivalence classes are equal,
+                            their representatives are related.
+                        </li>
+                    </ul>
+                    </li>
+                <li>
+                    <strong>Disjointness of Classes:</strong>
+                    \([a] \cap [b] = \emptyset\) if \(a\:R\not{b}\)<br>
+                    Meaning:<br>
+                    If \(a\) and \(b\) are <b>not</b> related, then their classes
+                    have no elements in common.
+                </li>
+            </ol>
+            <p>
+                The set of all distinct equivalence classes of \(X\) under \(R\) is
+                called the <strong>quotient set</strong> (or partition), denoted:<br>
+                \(X\backslash R := \{[x]:x \in X\}\)<br>
+                This partitions \(X\) into non-overlapping subsets (the equivalence classes),<br>
+                where each element of \(X\) belongs to exactly one class.<br>
+                It satisfies \(X = \dot{\bigcup}_{[x] \in X/R}[x] \)
+            </p>
+            <h4>Example:</h4>
+            <p>
+                Let \(X = \{1,2,3,4,5,6\}\) and define \(aRb\) if \(a\) and \(b\)
+                have the same remainer when divided by 3.
+                <br><br>
+                Then:<br>
+            </p>
+            <ul>
+                <li>\([1]=\{1,4\}\)</li>
+                <li>\([2]=\{2,5\}\)</li>
+                <li>\([3]=\{3,6\}\)</li>
+            </ul>
+            <p>
+                And the quotient set is:<br>
+                \(X/R=\{\{1,4\},\{2,5\},\{3,6\}\}\)
+            </p>
+
+        <h3 section="12">3.3 Order Relations</h3>
+            <p>
+                An <strong>order relation</strong> organizes elements by comparison.
+                <br><br>
+                A <strong>partial order</strong> is a relation that is:
+            <ul>
+                <li>reflexive</li>
+                <li>antisymmetric</li>
+                <li>transitive</li>
+            </ul>
+            <h4>Examples:</h4>
+            <ul>
+                <li>\(≤\) on \(\mathbb{R}\) (total order)</li>
+                <li>\(\subseteq\) on \(\mathcal{P}(A)\) (partial order)</li>
+                <li>Lexicographic (dictionary) order</li>
+            </ul>
+            <p>
+                A <strong>total order</strong> is a partial order where every two elements
+                are comparable.<br>
+                \(\forall a,b\) either \(aRb\) or \(bRa\)
+                <br><br>
+                So:
+            </p>
+            <ul>
+                <li>Partial order = some elements are comparable</li>
+                <li>Total order = every pair is comparable</li>
+            </ul>
+
+        <h3 section="13">3.4 Functions</h3>
+            <p>
+                A <strong>function</strong> \(\mathcal{f} : X \rightarrow Y\) is a relation
+                where each \(x \in X\) is related to exactly one \(y \in Y\)
+            <p>
+
+            <p>
+                Notation:
+                \(y = \mathcal{f}(x)\) where \(y\) is the <strong>image</strong> of \(x\),
+                and \(x\) is a <strong>preimage</strong> of \(y\).
+            </p>
+
+            <h4>For \(A \subseteq X\), \(B \subseteq Y\):</h4>
+            <ul>
+                <li>
+                    <strong>Image</strong>:
+                    \(\mathcal{f}(A) = \{\mathcal{f}(x): x \in A\}\)
+                </li>
+                <li>
+                    <strong>Preimage</strong>:
+                    \(\mathcal{f}^{-1}(B) = \{x \in X: \mathcal{f}(x_1) = \mathcal{f}(x_2) \Rightarrow x_1 = x_2\}\)
+                </li>
+            </ul>
+
+            <h4>Properties:</h4>
+            <ul>
+                <li>
+                    <strong>Injective (one-to-one):</strong>
+                    \(\forall x_1 x_2 \in X: \mathcal{f} (x_1) = \mathcal{f} (x_2)\Rightarrow x_1 = x_2\)
+                </li>
+                <li>
+                    <strong>Surjective (onto):</strong>
+                    \(\forall{y} \in{Y} \exists{x} \in{X} : \mathcal{f}(x) ={y}\)
+                </li>
+                <li>
+                    <strong>Bijective:</strong>
+                    Both injective and surjective
+                </li>
+            </ul>
+
+            <h4>Special Functions:</h4>
+            <ul>
+                <li>
+                    <strong>Identity:</strong>
+                    \(\mathcal{id}_x : X \rightarrow X\), \(\mathcal{id}_x (x) = x\)
+                </li>
+                <li>
+                    <strong>Inclusion:</strong>
+                    \(\mathcal{i}_a : A \rightarrow X\), \(\mathcal{i}_a (x) = x\) for
+                    \(A \subseteq X\)
+                </li>
+                <li>
+                    <strong>Restriction:</strong>
+                    \(\mathcal{f} |_a : A \rightarrow Y\), \(\mathcal{f} |_a (x) = \mathcal{f} (x) \) for \(A \subseteq X\)
+                </li>
+            </ul>
+    </main>
+    <footer>
+            <i>Documentation in progress</i>
+    </footer>
 </html>
