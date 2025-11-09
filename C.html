@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Fundamentals</title>
+    <style>
+        pre code {
+          background: #f5f5f5;        /* softer near-white gray */
+          border: 1px solid #e6e6e6;  /* light border for subtle definition */
+          border-radius: 6px;
+          padding: 8px 12px;
+          display: block;
+          font-family: Consolas, Monaco, "Courier New", monospace;
+          line-height: 1;
+          overflow-x: auto;
+          color: #333;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* faint shadow for depth */
+        }
+        
+        code {
+          background: #f2f2f2;        /* for inline snippets */
+          border-radius: 4px;
+          padding: 2px 4px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="Coding.html">Coding</a>
+    </nav>
+        <h1>C Guide</h1>
+        <p>My personal documentation for C fundamentals</p>
+</header>
+    <main>
+        <h2 section="1">Introducing C</h2>
+            <p>
+            <strong>C</strong> is a general-purpose programming language that has been around
+            for <span id="cyears"></span> years.
+            </p>
+            <script>
+                const currentYear = new Date().getFullYear();
+                const age = currentYear - 1972;
+                document.getElementById("cyears").textContent = age;
+            </script>
+            <p>
+                <strong>C</strong> has been used to write everything
+                from operating systems (including <strong>Windows</strong> and many others)<br>
+                to complex programs like the <strong>Python interpreter</strong>, <strong>Git</strong>,
+                <strong>Oracle database</strong>, and more.
+            </p>
+        <h3 section="2">Output</h3>
+            <p>
+            Most computer programs are designed to produce <strong>outputs</strong>.
+            </p>
+            <h4>Examples:</h4>
+            <ul>
+                <li>"You've got a new message" notifications</li>
+                <li>"Game over" displayed on the screen when playing video games</li>
+                <li>Your account balance when checking your online banking app</li>
+            </ul>
+            <p>The simplest output consists of displaying a message on the screen.</p>
+            <pre><code>
+                int main(){
+                printf("Hello World!");
+                return 0;
+                }
+            </pre></code>
+            <p>outputs a simple <strong>"Hello World!"</strong> message to the screen</p>
+    </main>
+    <footer>
+        <i>Documentation in progress</i>
+    </footer>
