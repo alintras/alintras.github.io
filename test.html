@@ -1,77 +1,489 @@
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-<h3 section="11">3.2 Equivalence Relations</h3>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Voltorb Flip — Canvas</title>
+<style>
+  :root{
+    --bg:#111;
+    --panel:#0f1720;
+    --accent:#ffd166;
+    --muted:#94a3b8;
+    --tile:#172032;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
+    background:linear-gradient(180deg,#071024 0%, #07182a 60%);
+    color:#e6eef6;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .app{
+    display:grid;
+    grid-template-columns: 420px 1fr;
+    gap:20px;
+    width:980px;
+    max-width:calc(100vw - 48px);
+  }
+  .panel{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
+    border:1px solid rgba(255,255,255,0.04);
+    padding:16px;
+    border-radius:10px;
+    box-shadow: 0 6px 30px rgba(2,6,23,0.6);
+  }
+  h1{margin:4px 0 12px 0; font-size:20px;}
+  canvas{background:var(--tile); display:block; border-radius:8px; cursor:pointer;}
+  .info{
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .row{
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .big{
+    font-size:20px; font-weight:600;
+  }
+  .muted{color:var(--muted); font-size:12px;}
+  button{
+    background:linear-gradient(180deg,var(--accent), #ffb84d);
+    border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600;
+    box-shadow: 0 4px 10px rgba(255,185,77,0.12);
+  }
+  button:disabled{opacity:0.5; cursor:not-allowed;}
+  .grid-info{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:8px; margin-top:12px;
+  }
+  .clue{
+    background:rgba(255,255,255,0.02); padding:8px; border-radius:8px; font-size:13px;
+  }
+  .clues-grid{
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap:6px;
+    margin-top:10px;
+  }
+  .clue-cell{ text-align:center; padding:6px; border-radius:6px; background:rgba(255,255,255,0.01); font-size:13px; }
+  .clue-head{ font-weight:700; color:var(--muted); font-size:11px; }
+  footer{ margin-top:12px; font-size:12px; color:var(--muted); }
+  .controls{ display:flex; gap:8px; margin-top:10px; }
+  .status{ margin-top:8px; font-weight:600; color:#ffdcdc; }
+  @media (max-width:900px){
+    .app{grid-template-columns: 1fr; width:100%;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="panel" style="display:flex; flex-direction:column; gap:10px;">
+    <h1>Voltorb Flip — Canvas</h1>
+    <div class="info">
+      <div class="row">
+        <div>
+          <div class="muted">Total banked score</div>
+          <div class="big" id="totalScore">0</div>
+        </div>
+        <div>
+          <div class="muted">Current run multiplier</div>
+          <div class="big" id="currentMult">1</div>
+        </div>
+      </div>
 
-<p>
-A <strong>relation</strong> \(R\) on a set \(X\) is called an <strong>equivalence relation</strong> 
-if it is <em>reflexive</em>, <em>symmetric</em>, and <em>transitive</em>:
-</p>
+      <div class="row controls">
+        <button id="bankBtn">Bank (Collect)</button>
+        <button id="newBtn">New Round</button>
+        <button id="revealBtn">Reveal Board</button>
+      </div>
 
-<ul>
-    <li><strong>Reflexive:</strong> 
-        \(\forall x \in X: xRx\)</li>
-    <li><strong>Symmetric:</strong> 
-        \(\forall x,y \in X: (xRy \implies yRx)\)</li>
-    <li><strong>Transitive:</strong> 
-        \(\forall x,y,z \in X: (xRy \wedge yRz) \implies xRz\)</li>
-</ul>
+      <div class="status" id="statusText">Click a tile to flip it.</div>
 
-<p>
-An equivalence relation can be viewed as a <em>weakened form of equality</em>.
-In particular, equality itself is an equivalence relation.
-</p>
+      <div class="grid-info">
+        <div>
+          <div class="muted">Row clues (sum / voltorbs)</div>
+          <div id="rowClues"></div>
+        </div>
+        <div>
+          <div class="muted">Col clues (sum / voltorbs)</div>
+          <div id="colClues"></div>
+        </div>
+      </div>
 
-<h4>Examples:</h4>
-<ol>
-    <li>
-        <strong>Equality (=):</strong><br>
-        For all \(x,y,z \in X\):<br>
-        Reflexive: \(x = x\);<br>
-        Symmetric: \(x = y \implies y = x\);<br>
-        Transitive: \(x = y \wedge y = z \implies x = z\).
-    </li>
-    <li>
-        <strong>Congruence modulo m:</strong><br>
-        Let \(m \in \mathbb{N}\) and \(x,y \in \mathbb{Z}\). Define<br>
-        \(xRy :\!\!\iff m \mid (x - y)\).<br>
-        Then:<br>
-        Reflexive: \(m \mid (x - x) = 0\);<br>
-        Symmetric: \(m \mid (x - y) \implies m \mid (y - x)\);<br>
-        Transitive: \(m \mid (x - y)\) and \(m \mid (y - z)\) 
-        \(\implies m \mid (x - z)\).<br>
-        This relation is written \(x \equiv y \pmod{m}\)
-        and is called <em>congruence modulo m</em>.
-    </li>
-    <li>
-        <strong>Equivalence by decomposition:</strong><br>
-        Suppose \(A = \dot{\bigcup}_{i \in I} A_i\) is a disjoint union of nonempty subsets.<br>
-        Define \(xRy :\!\!\iff \exists i \in I : x \in A_i \wedge y \in A_i.\)<br>
-        Then \(R\) is an equivalence relation on \(A\).
-    </li>
-</ol>
+      <footer>Rules: flip tiles. 2 doubles, 3 triples current multiplier. Flip a Voltorb and you lose the run. Bank to save multiplier to total score.</footer>
+    </div>
+  </div>
 
-<h4>Equivalence Classes and Quotient Set:</h4>
-<p>
-Given an equivalence relation \(R\) on \(X\),
-the <strong>equivalence class</strong> of an element \(a \in X\) is
-\[
-[a] := \{x \in X : xRa\}.
-\]
-Two key properties hold:
-</p>
+  <div class="panel" style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+    <canvas id="board" width="520" height="520"></canvas>
+    <div style="width:100%; display:flex; gap:8px; justify-content:center;">
+      <div style="text-align:center;">
+        <div class="muted">Tiles flipped</div>
+        <div id="flippedCount" class="big">0</div>
+      </div>
+      <div style="text-align:center;">
+        <div class="muted">Remaining tiles</div>
+        <div id="remainingCount" class="big">25</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<ul>
-    <li>\([a] = [b]\) if and only if \(aRb\)</li>
-    <li>\([a] \cap [b] = \emptyset\) if \(a \not R b\)</li>
-</ul>
+<script>
+/*
+  Voltorb Flip — Canvas implementation
+  - 5x5 board
+  - Tiles: {value: 0(voltorb)|1|2|3, revealed: bool}
+  - Clues: row/column sums + voltorb counts
+  - Scoring:
+      currentMultiplier starts at 1.
+      flipping 2 multiplies by 2, 3 multiplies by 3, 1 leaves multiplier unchanged.
+      flipping 0 (Voltorb): run ends with no gain.
+      Bank button: add currentMultiplier to totalScore and start new round (if multiplier > 1 or even 1 allowed).
+*/
 
-<p>
-The set of all equivalence classes
-\[
-X / R := \{ [x] : x \in X \}
-\]
-is called the <strong>quotient set</strong> (or partition) of \(X\) by \(R\).
-It satisfies
-\[
-X = \dot{\bigcup}_{[x] \in X/R} [x].
-\]
-</p>
+const canvas = document.getElementById('board');
+const ctx = canvas.getContext('2d', { alpha: false });
+
+// config
+const SIZE = 5;
+const TILE_GAP = 8;
+const PADDING = 20;
+const gridSize = Math.min(canvas.width, canvas.height) - 2 * PADDING;
+const TILE_SIZE = (gridSize - TILE_GAP * (SIZE - 1)) / SIZE;
+
+// game state
+let board = []; // matrix of {value, revealed}
+let rowClues = [];
+let colClues = [];
+let totalScore = 0;
+let currentMultiplier = 1;
+let flippedTiles = 0;
+let roundOver = false;
+
+// UI elements
+const totalScoreEl = document.getElementById('totalScore');
+const currentMultEl = document.getElementById('currentMult');
+const statusText = document.getElementById('statusText');
+const rowCluesEl = document.getElementById('rowClues');
+const colCluesEl = document.getElementById('colClues');
+const flippedCountEl = document.getElementById('flippedCount');
+const remainingCountEl = document.getElementById('remainingCount');
+const bankBtn = document.getElementById('bankBtn');
+const newBtn = document.getElementById('newBtn');
+const revealBtn = document.getElementById('revealBtn');
+
+bankBtn.addEventListener('click', () => {
+  if (roundOver) { startNewRound(); return; }
+  totalScore += currentMultiplier;
+  updateUI();
+  statusText.textContent = `Banked ${currentMultiplier}. New round started.`;
+  startNewRound();
+});
+newBtn.addEventListener('click', () => {
+  startNewRound();
+});
+revealBtn.addEventListener('click', () => {
+  revealAll();
+  render();
+});
+
+canvas.addEventListener('click', (e) => {
+  if (roundOver) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left - PADDING;
+  const y = e.clientY - rect.top - PADDING;
+  if (x < 0 || y < 0) return;
+  const col = Math.floor(x / (TILE_SIZE + TILE_GAP));
+  const row = Math.floor(y / (TILE_SIZE + TILE_GAP));
+  if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) return;
+  flipTile(row, col);
+  render();
+});
+
+// helpers: board generation
+function shuffleArray(a){
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function generateBoard(){
+  // Reasonable random distribution similar to the in-game variety:
+  // We'll place a random number of voltorbs and a selection of 2s and 3s,
+  // then fill the rest with 1s.
+  const totalTiles = SIZE * SIZE;
+
+  // tweak these ranges to change difficulty
+  const voltorbCount = randBetween(6, 10); // number of 0's
+  const threeCount = randBetween(1, 4);    // number of 3's
+  const twoCount = randBetween(4, 8);      // number of 2's
+
+  let values = [];
+  for(let i=0;i<voltorbCount;i++) values.push(0);
+  for(let i=0;i<threeCount;i++) values.push(3);
+  for(let i=0;i<twoCount;i++) values.push(2);
+  while(values.length < totalTiles) values.push(1);
+
+  shuffleArray(values);
+
+  // fill board matrix
+  const mat = [];
+  for(let r=0;r<SIZE;r++){
+    const row = [];
+    for(let c=0;c<SIZE;c++){
+      row.push({ value: values[r*SIZE + c], revealed:false });
+    }
+    mat.push(row);
+  }
+  return mat;
+}
+
+function computeClues(){
+  rowClues = [];
+  colClues = [];
+  for(let r=0;r<SIZE;r++){
+    let sum = 0, vol = 0;
+    for(let c=0;c<SIZE;c++){
+      const v = board[r][c].value;
+      if (v === 0) vol++; else sum += v;
+    }
+    rowClues.push({sum,vol});
+  }
+  for(let c=0;c<SIZE;c++){
+    let sum=0, vol=0;
+    for(let r=0;r<SIZE;r++){
+      const v = board[r][c].value;
+      if (v === 0) vol++; else sum += v;
+    }
+    colClues.push({sum,vol});
+  }
+}
+
+function randBetween(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+
+// game actions
+function startNewRound(){
+  board = generateBoard();
+  computeClues();
+  currentMultiplier = 1;
+  flippedTiles = 0;
+  roundOver = false;
+  statusText.textContent = "New round — good luck!";
+  updateUI();
+  render();
+}
+
+function flipTile(row, col){
+  const tile = board[row][col];
+  if (!tile || tile.revealed) return;
+  tile.revealed = true;
+  flippedTiles++;
+  if (tile.value === 0){
+    // voltorb -> round over and lose current multiplier
+    roundOver = true;
+    statusText.textContent = "Boom! You hit a Voltorb — run lost. Press Bank to start a new round.";
+    currentMultiplier = 0;
+    updateUI();
+    return;
+  } else if (tile.value === 1){
+    statusText.textContent = "Revealed a 1 — no change to multiplier.";
+  } else {
+    currentMultiplier *= tile.value;
+    statusText.textContent = `Nice! Revealed ${tile.value} — multiplier ×${tile.value}`;
+  }
+  if (flippedTiles === SIZE*SIZE) {
+    // all tiles revealed
+    roundOver = true;
+    statusText.textContent = "All tiles revealed — round over. Bank to collect or start new round.";
+  }
+  updateUI();
+}
+
+function revealAll(){
+  for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) board[r][c].revealed = true;
+  roundOver = true;
+  updateUI();
+}
+
+/* Rendering */
+function drawRoundedRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function render(){
+  // background
+  ctx.fillStyle = '#0b1220';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // draw grid
+  for(let r=0;r<SIZE;r++){
+    for(let c=0;c<SIZE;c++){
+      const x = PADDING + c*(TILE_SIZE + TILE_GAP);
+      const y = PADDING + r*(TILE_SIZE + TILE_GAP);
+      const tile = board[r][c];
+      // tile background
+      if (!tile.revealed){
+        ctx.fillStyle = '#1b2936';
+        drawRoundedRect(x,y,TILE_SIZE,TILE_SIZE,8);
+        // subtle highlight
+        ctx.fillStyle = 'rgba(255,255,255,0.02)';
+        ctx.fillRect(x,y+TILE_SIZE-4,TILE_SIZE,4);
+      } else {
+        // revealed style depends on value
+        if (tile.value === 0){
+          ctx.fillStyle = '#2b1b1b';
+          drawRoundedRect(x,y,TILE_SIZE,TILE_SIZE,8);
+          // draw voltorb (circle)
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(x + TILE_SIZE/2, y + TILE_SIZE/2 - 6, TILE_SIZE*0.22, 0, Math.PI*2);
+          ctx.fill();
+          ctx.fillStyle = '#d11b1b';
+          ctx.beginPath();
+          ctx.arc(x + TILE_SIZE/2, y + TILE_SIZE/2 + 6, TILE_SIZE*0.22, 0, Math.PI*2);
+          ctx.fill();
+          // little cross stroke
+          ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(x+TILE_SIZE*0.22, y+TILE_SIZE*0.22);
+          ctx.lineTo(x+TILE_SIZE*0.78, y+TILE_SIZE*0.78);
+          ctx.moveTo(x+TILE_SIZE*0.78, y+TILE_SIZE*0.22);
+          ctx.lineTo(x+TILE_SIZE*0.22, y+TILE_SIZE*0.78);
+          ctx.stroke();
+        } else {
+          // number tile
+          const colors = {1: '#dfeff9', 2: '#ffd166', 3:'#9ae6b4'};
+          ctx.fillStyle = '#101827';
+          drawRoundedRect(x,y,TILE_SIZE,TILE_SIZE,8);
+          // big number
+          ctx.fillStyle = colors[tile.value] || '#fff';
+          ctx.font = `${Math.floor(TILE_SIZE*0.5)}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(String(tile.value), x + TILE_SIZE/2, y + TILE_SIZE/2 + 2);
+        }
+      }
+
+      // tile border
+      ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x+0.5, y+0.5, TILE_SIZE-1, TILE_SIZE-1);
+    }
+  }
+
+  // draw row & column clues at borders
+  // columns at top
+  const clueBoxH = 46;
+  // top background
+  ctx.fillStyle = 'rgba(255,255,255,0.02)';
+  ctx.fillRect(PADDING, 8, gridSize, clueBoxH);
+
+  // draw column clues
+  for(let c=0;c<SIZE;c++){
+    const x = PADDING + c*(TILE_SIZE + TILE_GAP);
+    const clue = colClues[c];
+    drawClueBox(x, 10, TILE_SIZE, 40, clue.sum, clue.vol);
+  }
+  // left-side row clues
+  for(let r=0;r<SIZE;r++){
+    const y = PADDING + r*(TILE_SIZE + TILE_GAP);
+    const clue = rowClues[r];
+    drawLeftClueBox(8, y, 44, TILE_SIZE, clue.sum, clue.vol);
+  }
+
+  // UI overlays: hints in DOM
+  renderClueDom();
+  totalScoreEl.textContent = totalScore;
+  currentMultEl.textContent = currentMultiplier;
+  flippedCountEl.textContent = flippedTiles;
+  remainingCountEl.textContent = SIZE*SIZE - flippedTiles;
+
+  // disable/enable buttons sensibly
+  bankBtn.disabled = false;
+  newBtn.disabled = false;
+  revealBtn.disabled = false;
+}
+
+function drawClueBox(x,y,w,h,sum,vol){
+  // small rounded box with sum and voltorb count
+  ctx.fillStyle = 'rgba(255,255,255,0.01)';
+  ctx.beginPath();
+  ctx.roundRect = ctx.roundRect || function(x,y,w,h,r){ // fallback if missing
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+  };
+  // try modern rounded rect if available
+  if (ctx.roundRect) {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, 8);
+    ctx.fill();
+  } else {
+    drawRoundedRect(x, y, w, h, 8);
+  }
+
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.font = '14px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(sum, x + w/2, y + 16);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.font = '11px sans-serif';
+  ctx.fillText(vol + ' V', x + w/2, y + 30);
+}
+
+function drawLeftClueBox(x,y,w,h,sum,vol){
+  ctx.fillStyle = 'rgba(255,255,255,0.01)';
+  drawRoundedRect(x,y,w,h,8);
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.font = '14px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(sum, x + w/2, y + 18);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.font = '11px sans-serif';
+  ctx.fillText(vol + ' V', x + w/2, y + 34);
+}
+
+function renderClueDom(){
+  // produce row clue DOM
+  rowCluesEl.innerHTML = '';
+  colCluesEl.innerHTML = '';
+
+  rowClues.forEach((cl, i) => {
+    const el = document.createElement('div');
+    el.className = 'clue';
+    el.style.marginTop = (i? '6px':'6px');
+    el.textContent = `Row ${i+1}: sum ${cl.sum} — ${cl.vol} Voltorb(s)`;
+    rowCluesEl.appendChild(el);
+  });
+  colClues.forEach((cl, i) => {
+    const el = document.createElement('div');
+    el.className = 'clue';
+    el.style.marginTop = (i? '6px':'6px');
+    el.textContent = `Col ${i+1}: sum ${cl.sum} — ${cl.vol} Voltorb(s)`;
+    colCluesEl.appendChild(el);
+  });
+}
+
+startNewRound();
+</script>
+</body>
+</html>
