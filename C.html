@@ -5,23 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HTML Fundamentals</title>
     <style>
-        pre code {
-          background: #f5f5f5;        /* softer near-white gray */
-          border: 1px solid #e6e6e6;  /* light border for subtle definition */
-          border-radius: 6px;
-          padding: 8px 12px;
-          display: block;
-          font-family: Consolas, Monaco, "Courier New", monospace;
-          line-height: 1;
-          overflow-x: auto;
-          color: #333;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* faint shadow for depth */
+        /* --- Terminal Container --- */
+        .terminal {
+          background-color: #0d0d0d;
+          border-radius: 10px;
+          box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+          max-width: 800px;
+          margin: 1rem 0;
+          text-align: left;
+          overflow: hidden;
+          font-family: "Fira Code", "Consolas", monospace;
         }
-        
-        code {
-          background: #f2f2f2;        /* for inline snippets */
-          border-radius: 4px;
-          padding: 2px 4px;
+    
+        /* --- Titelleiste oben --- */
+        .terminal-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: #2b2b2b;
+          padding: 6px 12px;
+        }
+    
+        /* --- Die drei „Fensterknöpfe“ --- */
+        .terminal-header .dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+        }
+    
+        /* Farben automatisch über Position setzen */
+        .terminal-header .dot:nth-child(1) { background: #ff5f56; }
+        .terminal-header .dot:nth-child(2) { background: #ffbd2e; }
+        .terminal-header .dot:nth-child(3) { background: #27c93f; }
+    
+        /* --- Terminal-Inhalt (Code) --- */
+        .terminal pre {
+          color: #00ff88;
+          background: none;
+          margin: 0;
+          padding: 1rem;
+          font-size: 0.95rem;
+          white-space: pre-wrap;
+          word-break: break-word;
+        }
+    
+        /* --- Blinkender Cursor --- */
+        .terminal pre::after {
+          content: "█";
+          animation: blink 1s steps(2, start) infinite;
+        }
+    
+        @keyframes blink {
+          to { visibility: hidden; }
         }
     </style>
 </head>
@@ -35,42 +70,86 @@
         <h1>C Guide</h1>
         <p>My personal documentation for C fundamentals</p>
 </header>
-    <main>
-        <h2 section="1">Introducing C</h2>
-            <p>
-            <strong>C</strong> is a general-purpose programming language that has been around
-            for <span id="cyears"></span> years.
-            </p>
-            <script>
-                const currentYear = new Date().getFullYear();
-                const age = currentYear - 1972;
-                document.getElementById("cyears").textContent = age;
-            </script>
-            <p>
-                <strong>C</strong> has been used to write everything
-                from operating systems (including <strong>Windows</strong> and many others)<br>
-                to complex programs like the <strong>Python interpreter</strong>, <strong>Git</strong>,
-                <strong>Oracle database</strong>, and more.
-            </p>
-        <h3 section="2">Output</h3>
-            <p>
+
+<main>
+    <h2>Introducing C</h2>
+    <p>
+        <strong>C</strong> is a general-purpose programming language that has been around
+        for <span id="cyears"></span> years.
+    </p>
+
+    <p>
+        It has been used to write everything
+        from operating systems (including <strong>Windows</strong> and many others)<br>
+        to complex programs like the <strong>Python interpreter</strong>, <strong>Git</strong>,
+        <strong>Oracle database</strong>, and more.
+    </p>
+
+    <section id="output">
+        <h3>1. Output</h3>
+        <p>
             Most computer programs are designed to produce <strong>outputs</strong>.
-            </p>
-            <h4>Examples:</h4>
-            <ul>
-                <li>"You've got a new message" notifications</li>
-                <li>"Game over" displayed on the screen when playing video games</li>
-                <li>Your account balance when checking your online banking app</li>
-            </ul>
-            <p>The simplest output consists of displaying a message on the screen.</p>
-            <pre><code>
-                int main(){
-                printf("Hello World!");
-                return 0;
-                }
-            </pre></code>
-            <p>outputs a simple <strong>"Hello World!"</strong> message to the screen</p>
-    </main>
-    <footer>
+        </p>
+
+        <h4>Examples:</h4>
+        <ul>
+            <li>"You've got a new message" notifications</li>
+            <li>"Game over" displayed on the screen when playing video games</li>
+            <li>Your account balance when checking your online banking app</li>
+        </ul>
+
+        <p>The simplest output consists of displaying a message on the screen.</p>
+        <terminal-block>
+int main(){
+    printf("Hello World!");
+    return 0;
+}
+        </terminal-block>
+
+        <p>
+            The <strong>printf</strong> keyword is a function,
+            that creates the output.
+            The text you want to output needs to be inside parentheses.
+        </p>
+    </section>
+
+    <section id="statements">
+        <h3>2. Statements</h3>
+        <p>
+            A line of code is called a <strong>statement</strong>.
+            A statement performs a specifig task.<br>
+            The output command is an example of a statement.
+        </p>
+
+    </section>
+</main>
+
+<footer>
         <i>Documentation in progress</i>
-    </footer>
+</footer>
+
+<script>
+   // --- Age of C ---
+  const currentYear = new Date().getFullYear();
+  const age = currentYear - 1972;
+  document.getElementById("cyears").textContent = age;
+
+  // --- Terminal Component ---
+  customElements.define("terminal-block", class extends HTMLElement {
+    connectedCallback() {
+      const content = this.textContent;
+      this.innerHTML = `
+        <div class="terminal">
+          <div class="terminal-header">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <pre><code>${content.trim()}</code></pre>
+        </div>
+      `;
+    }
+  });
+</script>
+</body>
+</html>
