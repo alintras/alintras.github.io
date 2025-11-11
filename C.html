@@ -3,62 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Fundamentals</title>
-    <style>
-        /* --- Terminal Container --- */
-        .terminal {
-          background-color: #0d0d0d;
-          border-radius: 10px;
-          box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-          max-width: 800px;
-          margin: 1rem 0;
-          text-align: left;
-          overflow: hidden;
-          font-family: "Fira Code", "Consolas", monospace;
-        }
-    
-        /* --- Titelleiste oben --- */
-        .terminal-header {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          background: #2b2b2b;
-          padding: 6px 12px;
-        }
-    
-        /* --- Die drei „Fensterknöpfe“ --- */
-        .terminal-header .dot {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-        }
-    
-        /* Farben automatisch über Position setzen */
-        .terminal-header .dot:nth-child(1) { background: #ff5f56; }
-        .terminal-header .dot:nth-child(2) { background: #ffbd2e; }
-        .terminal-header .dot:nth-child(3) { background: #27c93f; }
-    
-        /* --- Terminal-Inhalt (Code) --- */
-        .terminal pre {
-          color: #00ff88;
-          background: none;
-          margin: 0;
-          padding: 1rem;
-          font-size: 0.95rem;
-          white-space: pre-wrap;
-          word-break: break-word;
-        }
-    
-        /* --- Blinkender Cursor --- */
-        .terminal pre::after {
-          content: "█";
-          animation: blink 1s steps(2, start) infinite;
-        }
-    
-        @keyframes blink {
-          to { visibility: hidden; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+    <title>C Fundamentals</title>
 </head>
 <body>
 
@@ -88,7 +35,8 @@
     <section id="output">
         <h3>1. Output</h3>
         <p>
-            Most computer programs are designed to produce <strong>outputs</strong>.
+            Most computer programs are designed to produce 
+            <span class=h><strong>outputs</strong></span>.
         </p>
 
         <h4>Examples:</h4>
@@ -100,16 +48,27 @@
 
         <p>The simplest output consists of displaying a message on the screen.</p>
         <terminal-block>
+#include &lt;stdio.h&gt;
+
 int main(){
     printf("Hello World!");
     return 0;
 }
+
+&gt; Hello World!
         </terminal-block>
 
         <p>
-            The <strong>printf</strong> keyword is a function,
-            that creates the output.
-            The text you want to output needs to be inside parentheses.
+            The <span class=h><strong>printf</strong></span> function is used
+            to display output on the screen.
+            The content to be displayed must be placed inside parentheses.
+        </p>
+        <h4>Displaying Text</h4>
+        <p>
+            When displaying text, it must be enclosed in double quotation
+            marks <span class=h><code>" "</code></span>.<br>
+            In programming, text enclosed in quotation marks is referred to 
+            as a <span class=h><strong>string</strong></span>.
         </p>
     </section>
 
@@ -117,10 +76,172 @@ int main(){
         <h3>2. Statements</h3>
         <p>
             A line of code is called a <strong>statement</strong>.
-            A statement performs a specifig task.<br>
+            A statement performs a specific task.<br>
             The output command is an example of a statement.
         </p>
+        <p>
+            Each statement in C ends with a semicolon 
+            <span class=h><code>;</code></span>.<br>
+            Without a semicolon, the program will not run
+            and produce an <u>error</u>.
+        </p>
+    </section>
 
+    <section id="program-structure">
+        <h3>3. Program Strucure</h3>
+        <h4>Header Files</h4>
+        <p>
+            The first line of the code adds the 
+            <u>standard input-output library</u> to the program.
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+        </terminal-block>
+        <p>
+            A header file contains definitions of functions and macros.<br>
+            The <span class=h><strong>stdio.h</strong></span> header file
+            contains the definition of the 
+            <span class=h><strong>printf</strong></span> function.<br>
+            This is why we need to include it at the beginning of our program.
+        </p>
+        <p>
+            The <span class=h><strong>#include</strong></span> command 
+            is used to add a header file to the program.
+        </p>
+
+        <h4>Main Function</h4>
+        <p>
+            The <span class=h><strong>main()</strong></span> function is 
+            the starting point of every C program.<br>
+            Curly brackets "<code>{ }</code>" indicate the beginning and the end of a function,
+            which can also be called a <strong>function's body</strong>.
+        </p>
+        <terminal-block>
+int main(){
+    printf("Hello World!");
+    return 0;
+}
+        </terminal-block>
+        <p>
+            When you run the code, 
+            <span class=h><strong>printf</strong></span> is executed,
+            because it is inside the 
+            <span class=h><strong>main()</strong></span> function.
+        </p>
+
+        <h4>Return Statement</h4>
+        <p>
+            The <span class=h><strong>return 0;</strong></span> statement 
+            indicates that the program ended successfully.
+        </p>
+
+        <h4>Example:</h4>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    printf("First");
+    printf("Second");
+    return 0;
+}
+
+> FirstSecond
+        </terminal-block>
+
+        <p>
+            This output is happening because the
+            <span class=h><strong>printf</strong></span> command
+            does not add a new line
+            at the end of the output by default.
+
+    </section>
+
+    <section id="output-formatting">
+        <h3>4. Output Formatting</h3>
+        <p>
+            In all previous examples, we have output 
+            <span class=h><strong>strings</strong></span>.<br>
+            A lot of programs work with <em>numbers</em>.
+            A game for example might need to display the player's score.<br>
+            If you try to output a number <u>without quotation marks</u>, like this:
+        </p>
+
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    printf(420);
+    return 0;
+}
+
+> Error: type mismatch in printf
+        </terminal-block>
+
+        <p>
+            You get an error, because the <span class="h"><strong>printf</strong></span>
+            function expects a 
+            <span class="h"><strong>string</strong></span> as input.<br>
+            To output numbers, we need to use <strong>format specifiers</strong>,
+            which allow to output numbers and output formatting:
+        </p>
+
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    printf("Score: %d", 420);
+    return 0;
+}
+        
+>Score: 420
+        </terminal-block>
+
+        <p>
+            Here, <span class="h"><code>%d</code></span> is a format specifier
+            that tells the <span class="h"><strong>printf</strong></span> function
+            to <u>expect an integer number</u> as input.<br>
+            The number <span class="h">420</span> is then inserted
+            <u>at the position of the format specifier</u> in the output string.
+        </p>
+        <h4>Common Format Specifiers:</h4>
+        <ul>
+            <li><strong>%d</strong>: Integer number (e.g. 42)</li>
+            <li><strong>%f</strong>: Floating-point number (e.g. 3.14)</li>
+            <li><strong>%c</strong>: Single character (e.g. 'A')</li>
+            <li><strong>%s</strong>: String of characters (e.g. "Hello")</li>
+        </ul>
+
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    printf("Integer: %d\n", 42);
+    printf("Float: %f\n", 3.14);
+    printf("Character: %c\n", 'A');
+    printf("String: %s\n", "Hello");
+    return 0;
+}
+
+> Integer: 42
+> Float: 3.140000
+> Character: A
+> String: Hello
+        </terminal-block>
+
+        <h4>Escape Sequences</h4>
+        <p>
+            In the example above, we used the 
+            <span class="h"><code>\n</code></span> escape sequence
+            to add a new line after each output.<br>
+
+        </p>
+        <h4>Common Escape Sequences:</h4>
+        <ul>
+            <li><strong>\n</strong>: New line</li>
+            <li><strong>\t</strong>: Tab space</li>
+            <li><strong>\\</strong>: Backslash</li>
+            <li><strong>\"</strong>: Double quotation mark</li>
+        </ul>
     </section>
 </main>
 
@@ -136,20 +257,23 @@ int main(){
 
   // --- Terminal Component ---
   customElements.define("terminal-block", class extends HTMLElement {
-    connectedCallback() {
-      const content = this.textContent;
-      this.innerHTML = `
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-          </div>
-          <pre><code>${content.trim()}</code></pre>
+  connectedCallback() {
+    const content = this.textContent.trim()
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    this.innerHTML = `
+      <div class="terminal">
+        <div class="terminal-header">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
         </div>
-      `;
-    }
-  });
+        <pre><code>${content}</code></pre>
+      </div>
+    `;
+  }
+});
+
 </script>
 </body>
 </html>
