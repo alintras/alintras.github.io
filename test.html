@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calendar Alignment Visualizer</title>
+<title>Multi-Calendar Alignment Simulator</title>
 <style>
   body {
     font-family: system-ui, sans-serif;
@@ -35,7 +35,7 @@
     position: relative;
     height: 40px;
     background: #e0e8f0;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     border-radius: 20px;
     overflow: hidden;
   }
@@ -46,21 +46,13 @@
     height: 100%;
     border-radius: 20px;
   }
-  #oldProgress { background: linear-gradient(90deg, #4a90e2, #007bff); }
-  #newProgress { background: linear-gradient(90deg, #50c878, #2ecc71); }
-  .marker {
-    position: absolute;
-    top: -10px;
-    width: 20px;
-    height: 60px;
-    background: #ff4757;
-    border-radius: 10px;
-    transform: translateX(-50%);
-  }
+  #cal1 { background: linear-gradient(90deg, #4a90e2, #007bff); }
+  #cal2 { background: linear-gradient(90deg, #50c878, #2ecc71); }
+  #cal3 { background: linear-gradient(90deg, #ffcc00, #ff8c00); }
   .result {
     text-align: center;
-    font-size: 1.2rem;
-    margin-top: 1.5rem;
+    font-size: 1.1rem;
+    margin-top: 1.2rem;
     background: #f0f7ff;
     padding: 1rem;
     border-radius: 8px;
@@ -82,105 +74,125 @@
 </head>
 <body>
   <div class="container">
-    <h1>📅 Calendar Alignment Visualizer</h1>
+    <h1>📆 Multi-Calendar Alignment Simulator</h1>
 
-    <label>Old month length (6–30 days): <span id="oldDaysLabel">30</span></label>
-    <input type="range" id="oldDays" min="6" max="30" value="30">
+    <label>Days passed: <span id="daysPassedLabel">0</span></label>
+    <input type="range" id="daysPassed" min="0" max="2000" value="0">
 
-    <label>New month length (6–30 days): <span id="newDaysLabel">25</span></label>
-    <input type="range" id="newDays" min="6" max="30" value="25">
+    <label>Calendar 1 months (comma separated):</label>
+    <input type="text" id="cal1Input" value="30,30,30">
 
-    <button id="startBtn">▶ Play Simulation</button>
+    <label>Calendar 2 months (comma separated):</label>
+    <input type="text" id="cal2Input" value="24,24,24">
 
-    <div class="timeline">
-      <div class="progress" id="oldProgress"></div>
-    </div>
-    <div style="text-align:center; font-weight:bold;">Old Calendar</div>
+    <label>Calendar 3 months (comma separated, optional):</label>
+    <input type="text" id="cal3Input" value="20,10,20,10">
 
-    <div class="timeline">
-      <div class="progress" id="newProgress"></div>
-    </div>
-    <div style="text-align:center; font-weight:bold;">New Calendar</div>
+    <button id="calcBtn">🔁 Calculate Alignment</button>
+
+    <div class="timeline"><div class="progress" id="cal1"></div></div>
+    <div style="text-align:center; font-weight:bold;">Calendar 1</div>
+
+    <div class="timeline"><div class="progress" id="cal2"></div></div>
+    <div style="text-align:center; font-weight:bold;">Calendar 2</div>
+
+    <div class="timeline"><div class="progress" id="cal3"></div></div>
+    <div style="text-align:center; font-weight:bold;">Calendar 3</div>
 
     <div class="result" id="result">
-      Waiting to start simulation...
+      Adjust sliders and click 🔁 to calculate.
     </div>
   </div>
 
   <script>
-    const oldDaysSlider = document.getElementById("oldDays");
-    const newDaysSlider = document.getElementById("newDays");
-    const oldLabel = document.getElementById("oldDaysLabel");
-    const newLabel = document.getElementById("newDaysLabel");
-    const oldProgress = document.getElementById("oldProgress");
-    const newProgress = document.getElementById("newProgress");
+    const daysPassedSlider = document.getElementById("daysPassed");
+    const daysLabel = document.getElementById("daysPassedLabel");
     const result = document.getElementById("result");
-    const startBtn = document.getElementById("startBtn");
+    const calcBtn = document.getElementById("calcBtn");
 
-    let running = false;
-    let day = 0, interval;
+    const cal1Input = document.getElementById("cal1Input");
+    const cal2Input = document.getElementById("cal2Input");
+    const cal3Input = document.getElementById("cal3Input");
+
+    const cal1 = document.getElementById("cal1");
+    const cal2 = document.getElementById("cal2");
+    const cal3 = document.getElementById("cal3");
+
+    function parseMonths(input) {
+      return input.split(",").map(x => parseInt(x.trim())).filter(x => !isNaN(x));
+    }
+
+    function totalDaysInCalendar(months) {
+      return months.reduce((a, b) => a + b, 0);
+    }
 
     function lcm(a, b) {
       const gcd = (x, y) => (y === 0 ? x : gcd(y, x % y));
       return Math.abs(a * b) / gcd(a, b);
     }
 
-    function updateLabels() {
-      oldLabel.textContent = oldDaysSlider.value;
-      newLabel.textContent = newDaysSlider.value;
-      result.textContent = "Ready. Click ▶ to start simulation.";
+    function lcmMultiple(arr) {
+      return arr.reduce((a, b) => lcm(a, b));
     }
 
-    function simulate() {
-      const oldLen = parseInt(oldDaysSlider.value);
-      const newLen = parseInt(newDaysSlider.value);
-      const cycle = lcm(oldLen, newLen);
-
-      day = 0;
-      clearInterval(interval);
-
-      interval = setInterval(() => {
-        day++;
-        const oldPos = (day % oldLen) / oldLen * 100;
-        const newPos = (day % newLen) / newLen * 100;
-
-        oldProgress.style.width = oldPos + "%";
-        newProgress.style.width = newPos + "%";
-
-        if (day % oldLen === 0 && day % newLen === 0) {
-          result.textContent = `Calendars align again after ${day} days.`;
-          clearInterval(interval);
-          running = false;
-          startBtn.textContent = "▶ Play Simulation";
-          return;
-        } else {
-          result.textContent = `Day ${day} — Old: ${(day % oldLen) + 1}/${oldLen}, New: ${(day % newLen) + 1}/${newLen}`;
-        }
-
-        if (day > cycle * 2) { // safety stop if something odd happens
-          result.textContent = "Stopped — no alignment found within 2 cycles.";
-          clearInterval(interval);
-          running = false;
-          startBtn.textContent = "▶ Play Simulation";
-        }
-      }, 50);
-    }
-
-    startBtn.addEventListener("click", () => {
-      if (!running) {
-        running = true;
-        startBtn.textContent = "⏸ Pause";
-        simulate();
-      } else {
-        running = false;
-        startBtn.textContent = "▶ Resume";
-        clearInterval(interval);
+    function findDate(days, months) {
+      let remaining = days;
+      for (let m = 0; m < months.length; m++) {
+        if (remaining < months[m]) return { month: m + 1, day: remaining + 1 };
+        remaining -= months[m];
       }
+      // overflow into next cycles
+      const total = totalDaysInCalendar(months);
+      const fullCycles = Math.floor(remaining / total);
+      remaining %= total;
+      for (let m = 0; m < months.length; m++) {
+        if (remaining < months[m]) return { month: m + 1, day: remaining + 1, cycle: fullCycles + 1 };
+        remaining -= months[m];
+      }
+      return { month: 1, day: 1, cycle: fullCycles + 1 };
+    }
+
+    function updateTimelines(days, m1, m2, m3) {
+      const total1 = totalDaysInCalendar(m1);
+      const total2 = totalDaysInCalendar(m2);
+      const total3 = totalDaysInCalendar(m3);
+
+      cal1.style.width = (days % total1) / total1 * 100 + "%";
+      cal2.style.width = (days % total2) / total2 * 100 + "%";
+      cal3.style.width = (days % total3) / total3 * 100 + "%";
+    }
+
+    function calculate() {
+      const days = parseInt(daysPassedSlider.value);
+      const months1 = parseMonths(cal1Input.value);
+      const months2 = parseMonths(cal2Input.value);
+      const months3 = parseMonths(cal3Input.value);
+
+      const date1 = findDate(days, months1);
+      const date2 = findDate(days, months2);
+      const date3 = findDate(days, months3);
+
+      const allTotals = [totalDaysInCalendar(months1), totalDaysInCalendar(months2), totalDaysInCalendar(months3)];
+      const alignAt = lcmMultiple(allTotals);
+
+      updateTimelines(days, months1, months2, months3);
+
+      result.innerHTML = `
+        <b>Days Passed:</b> ${days}<br><br>
+        📘 Calendar 1 → Month ${date1.month}, Day ${date1.day}<br>
+        📗 Calendar 2 → Month ${date2.month}, Day ${date2.day}<br>
+        📙 Calendar 3 → Month ${date3.month}, Day ${date3.day}<br><br>
+        🔁 Calendars align again after <b>${alignAt}</b> days.
+      `;
+    }
+
+    daysPassedSlider.addEventListener("input", () => {
+      daysLabel.textContent = daysPassedSlider.value;
+      calculate();
     });
 
-    oldDaysSlider.addEventListener("input", updateLabels);
-    newDaysSlider.addEventListener("input", updateLabels);
-    updateLabels();
+    calcBtn.addEventListener("click", calculate);
+    calculate();
   </script>
 </body>
 </html>
