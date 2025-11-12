@@ -3,89 +3,184 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calendar Date Converter</title>
+<title>Calendar Alignment Visualizer</title>
 <style>
-  body { font-family: system-ui, sans-serif; background: #f7f7fb; padding: 2rem; color: #222; }
-  h1 { text-align: center; }
-  .container { max-width: 800px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-  label { display: block; margin-top: 1rem; font-weight: bold; }
-  input[type=number], input[type=range] { width: 100%; }
-  .timeline { position: relative; height: 40px; background: #ddd; margin-top: 2rem; border-radius: 20px; }
-  .progress { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(90deg, #4a90e2, #50c878); border-radius: 20px; }
-  .marker { position: absolute; top: -10px; width: 20px; height: 60px; background: #ff4757; border-radius: 10px; transform: translateX(-50%); }
-  .result { text-align: center; font-size: 1.2rem; margin-top: 1.5rem; }
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f7faff;
+    padding: 2rem;
+    color: #222;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+  input[type=range] {
+    width: 100%;
+  }
+  .timeline {
+    position: relative;
+    height: 40px;
+    background: #e0e8f0;
+    margin-top: 1.5rem;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: 20px;
+  }
+  #oldProgress { background: linear-gradient(90deg, #4a90e2, #007bff); }
+  #newProgress { background: linear-gradient(90deg, #50c878, #2ecc71); }
+  .marker {
+    position: absolute;
+    top: -10px;
+    width: 20px;
+    height: 60px;
+    background: #ff4757;
+    border-radius: 10px;
+    transform: translateX(-50%);
+  }
+  .result {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-top: 1.5rem;
+    background: #f0f7ff;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  button {
+    display: block;
+    margin: 1.5rem auto 0 auto;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover { background: #3578d0; }
 </style>
 </head>
 <body>
   <div class="container">
-    <h1>📅 Calendar Date Converter</h1>
+    <h1>📅 Calendar Alignment Visualizer</h1>
 
-    <label>Start month (1–12):</label>
-    <input type="number" id="startMonth" min="1" max="12" value="1">
+    <label>Old month length (6–30 days): <span id="oldDaysLabel">30</span></label>
+    <input type="range" id="oldDays" min="6" max="30" value="30">
 
-    <label>Start day:</label>
-    <input type="number" id="startDay" min="1" max="31" value="1">
+    <label>New month length (6–30 days): <span id="newDaysLabel">25</span></label>
+    <input type="range" id="newDays" min="6" max="30" value="25">
 
-    <label>Days passed: <span id="daysPassedLabel">0</span></label>
-    <input type="range" id="daysPassed" min="0" max="365" value="0">
-
-    <label>Old month length (days): <span id="oldDaysLabel">30</span></label>
-    <input type="range" id="oldDays" min="20" max="40" value="30">
-
-    <label>New month length (days): <span id="newDaysLabel">25</span></label>
-    <input type="range" id="newDays" min="20" max="40" value="25">
+    <button id="startBtn">▶ Play Simulation</button>
 
     <div class="timeline">
-      <div class="progress" id="progress"></div>
-      <div class="marker" id="marker"></div>
+      <div class="progress" id="oldProgress"></div>
     </div>
+    <div style="text-align:center; font-weight:bold;">Old Calendar</div>
 
-    <div class="result" id="result">Resulting date: Month 1, Day 1</div>
+    <div class="timeline">
+      <div class="progress" id="newProgress"></div>
+    </div>
+    <div style="text-align:center; font-weight:bold;">New Calendar</div>
+
+    <div class="result" id="result">
+      Waiting to start simulation...
+    </div>
   </div>
 
   <script>
-    const startMonth = document.getElementById("startMonth");
-    const startDay = document.getElementById("startDay");
-    const daysPassed = document.getElementById("daysPassed");
-    const oldDays = document.getElementById("oldDays");
-    const newDays = document.getElementById("newDays");
-
+    const oldDaysSlider = document.getElementById("oldDays");
+    const newDaysSlider = document.getElementById("newDays");
+    const oldLabel = document.getElementById("oldDaysLabel");
+    const newLabel = document.getElementById("newDaysLabel");
+    const oldProgress = document.getElementById("oldProgress");
+    const newProgress = document.getElementById("newProgress");
     const result = document.getElementById("result");
-    const progress = document.getElementById("progress");
-    const marker = document.getElementById("marker");
+    const startBtn = document.getElementById("startBtn");
 
-    const daysPassedLabel = document.getElementById("daysPassedLabel");
-    const oldDaysLabel = document.getElementById("oldDaysLabel");
-    const newDaysLabel = document.getElementById("newDaysLabel");
+    let running = false;
+    let day = 0, interval;
 
-    function update() {
-      const startM = parseInt(startMonth.value);
-      const startD = parseInt(startDay.value);
-      const passed = parseInt(daysPassed.value);
-      const oldLen = parseInt(oldDays.value);
-      const newLen = parseInt(newDays.value);
-
-      daysPassedLabel.textContent = passed;
-      oldDaysLabel.textContent = oldLen;
-      newDaysLabel.textContent = newLen;
-
-      // total days from old system
-      let totalDays = (startM - 1) * oldLen + (startD - 1) + passed;
-
-      // convert to new system
-      let newMonth = Math.floor(totalDays / newLen) + 1;
-      let newDay = (totalDays % newLen) + 1;
-
-      result.textContent = `Resulting date: Month ${newMonth}, Day ${newDay}`;
-
-      // timeline visualization
-      const percent = Math.min((passed / 365) * 100, 100);
-      progress.style.width = percent + "%";
-      marker.style.left = percent + "%";
+    function lcm(a, b) {
+      const gcd = (x, y) => (y === 0 ? x : gcd(y, x % y));
+      return Math.abs(a * b) / gcd(a, b);
     }
 
-    document.querySelectorAll("input").forEach(inp => inp.addEventListener("input", update));
-    update();
+    function updateLabels() {
+      oldLabel.textContent = oldDaysSlider.value;
+      newLabel.textContent = newDaysSlider.value;
+      result.textContent = "Ready. Click ▶ to start simulation.";
+    }
+
+    function simulate() {
+      const oldLen = parseInt(oldDaysSlider.value);
+      const newLen = parseInt(newDaysSlider.value);
+      const cycle = lcm(oldLen, newLen);
+
+      day = 0;
+      clearInterval(interval);
+
+      interval = setInterval(() => {
+        day++;
+        const oldPos = (day % oldLen) / oldLen * 100;
+        const newPos = (day % newLen) / newLen * 100;
+
+        oldProgress.style.width = oldPos + "%";
+        newProgress.style.width = newPos + "%";
+
+        if (day % oldLen === 0 && day % newLen === 0) {
+          result.textContent = `Calendars align again after ${day} days.`;
+          clearInterval(interval);
+          running = false;
+          startBtn.textContent = "▶ Play Simulation";
+          return;
+        } else {
+          result.textContent = `Day ${day} — Old: ${(day % oldLen) + 1}/${oldLen}, New: ${(day % newLen) + 1}/${newLen}`;
+        }
+
+        if (day > cycle * 2) { // safety stop if something odd happens
+          result.textContent = "Stopped — no alignment found within 2 cycles.";
+          clearInterval(interval);
+          running = false;
+          startBtn.textContent = "▶ Play Simulation";
+        }
+      }, 50);
+    }
+
+    startBtn.addEventListener("click", () => {
+      if (!running) {
+        running = true;
+        startBtn.textContent = "⏸ Pause";
+        simulate();
+      } else {
+        running = false;
+        startBtn.textContent = "▶ Resume";
+        clearInterval(interval);
+      }
+    });
+
+    oldDaysSlider.addEventListener("input", updateLabels);
+    newDaysSlider.addEventListener("input", updateLabels);
+    updateLabels();
   </script>
 </body>
 </html>
