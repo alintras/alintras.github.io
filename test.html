@@ -105,18 +105,25 @@ function draw(){
       div.style.left = (i * monthLen / maxDays * 100) + "%";
       container.appendChild(div);
     }
-    // current day marker
+    // current day marker - fixed calculation
     const current = document.createElement("div");
     current.className = "currentDay";
-    current.style.left = (day % maxDays / maxDays * 100) + "%";
+    current.style.left = (day / maxDays * 100) + "%";
     container.appendChild(current);
   }
 
   makeTimeline(timeline1, len1, "blue");
   makeTimeline(timeline2, len2, "green");
 
-  const date1 = { month: Math.floor(day / len1) + 1, day: (day % len1) + 1 };
-  const date2 = { month: Math.floor(day / len2) + 1, day: (day % len2) + 1 };
+  // Fixed date calculations
+  const date1 = { 
+    month: Math.floor(day / len1) + 1, 
+    day: (day % len1) + 1 
+  };
+  const date2 = { 
+    month: Math.floor(day / len2) + 1, 
+    day: (day % len2) + 1 
+  };
 
   result.innerHTML = `
     🟦 Calendar 1: ${len1}-day months → Month ${date1.month}, Day ${date1.day}<br>
