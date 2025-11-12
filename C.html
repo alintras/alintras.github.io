@@ -54,9 +54,10 @@ int main(){
     printf("Hello World!");
     return 0;
 }
-
-&gt; Hello World!
         </terminal-block>
+        <terminal2-block>
+Hello World!
+        </terminal2-block>
 
         <p>
             The <span class=h><strong>printf</strong></span> function is used
@@ -144,9 +145,10 @@ int main(){
     printf("Second");
     return 0;
 }
-
-> FirstSecond
         </terminal-block>
+        <terminal2-block>
+FirstSecond
+        </terminal2-block>
 
         <p>
             This output is happening because the
@@ -173,9 +175,10 @@ int main(){
     printf(420);
     return 0;
 }
-
-> Error: type mismatch in printf
         </terminal-block>
+        <terminal2-block>
+Error: type mismatch in printf
+        </terminal2-block>
 
         <p>
             You get an error, because the <span class="h"><strong>printf</strong></span>
@@ -192,9 +195,10 @@ int main(){
     printf("Score: %d", 420);
     return 0;
 }
-        
->Score: 420
         </terminal-block>
+        <terminal2-block>
+Score: 420
+        </terminal2-block>
 
         <p>
             Here, <span class="h"><code>%d</code></span> is a format specifier
@@ -219,14 +223,16 @@ int main(){
     printf("Float: %f\n", 3.14);
     printf("Character: %c\n", 'A');
     printf("String: %s\n", "Hello");
+
     return 0;
 }
-
-> Integer: 42
-> Float: 3.140000
-> Character: A
-> String: Hello
         </terminal-block>
+        <terminal2-block>
+Integer: 42
+Float: 3.140000
+Character: A
+String: Hello
+        </terminal2-block>
 
         <h4>Escape Sequences</h4>
         <p>
@@ -242,6 +248,253 @@ int main(){
             <li><strong>\\</strong>: Backslash</li>
             <li><strong>\"</strong>: Double quotation mark</li>
         </ul>
+
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    printf("Hello,\n\tWorld!");
+    return 0;
+}
+</terminal-block>
+
+        <terminal2-block>
+Hello,
+    World!
+        </terminal2-block>
+
+
+    </section>
+
+    <section id="variable">
+        <h3>5. Variable</h3>
+        <p>
+            A <strong>variable</strong> lets you 
+            <strong>store a value</strong> (like a number or a string)
+            by <strong>giving it a name</strong>.<br>
+            You can then use this name to refer to the value
+            later in your code.
+        </p>
+        <p>
+            To create a variable, you need to declare it.<br>
+            A variable declaration consists of a <strong>data type</strong>
+            and a <strong>name</strong>.
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int score;
+    score = 111;
+
+    printf("Score: %d", score);
+
+    return 0;
+}
+</terminal-block>
+
+        <terminal2-block>
+Score: 111
+        </terminal2-block>
+        <p>
+            After declaring the variable <span class="h"><strong>score</strong></span>
+            of type <span class="h"><strong>int</strong></span> (integer),
+            we assign it the value <span class="h">100</span> using
+            the assignment operator <span class="h"><code>=</code></span>.<br>
+            We can then use the variable name <span class="h"><strong>score</strong></span>
+            in the <span class="h"><strong>printf</strong></span> function
+            to output its value.
+        </p>
+        <p>
+            Declaration and assignment can also be done in a single line:
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int score = 222;
+
+    printf("Score: %d", score);
+
+    return 0;
+}
+</terminal-block>
+
+        <terminal2-block>
+Score: 222
+        </terminal2-block>
+
+        <p>
+            A variable's value can be changed at any time:
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int score = 0;
+    score = 50;
+
+    printf("Score: %d", score);
+
+    return 0;
+}
+</terminal-block>
+
+        <terminal2-block>
+Score: 50
+        </terminal2-block>
+
+    </section>
+
+    <section id="data-types">
+        <h3>6. Data Types</h3>
+        <p>
+            Variables need a <strong>data type</strong> that defines
+            what kind of value they can store.<br>
+            Common data types in C include:
+        </p>
+        <ul>
+            <li><strong>int</strong>: Integer numbers (e.g. 42, -7)</li>
+            <li><strong>float</strong>: Floating-point numbers (e.g. 3.14, -0.001)</li>
+            <li><strong>char</strong>: Single characters (e.g. 'A', 'z')</li>
+            <li><strong>double</strong>: Double-precision floating-point numbers (e.g. 3.14159)</li>
+        </ul>
+        <h4>float vs double</h4>
+        <p>
+            <span class="h"><strong>float</strong></span> uses
+            less storage in the memory, but is not as precise as the
+            <span class="h"><strong>double</strong></span> type.<br>
+            So, calculations with float variables are faster than the ones
+            that use double, however, they are less accurate.
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    float pi_float = 3.14f;
+    double pi_double = 3.141592653589793;
+
+    printf("Float: %f\n", pi_float);
+    printf("Double: %lf\n", pi_double);
+
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Float: 3.140000
+Double: 3.141593
+        </terminal2-block>
+        <p>
+            Generally, <span class="h"><strong>float</strong></span> is 
+            sufficient for storing 7 decimal digits, while
+            <span class="h"><strong>double</strong></span> can store
+            up to 15 decimal digits.
+        </p>
+
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    char grade = 'A';
+
+    printf("Grade: %c", grade);
+
+    return 0;
+}
+        </terminal-block>
+        <terminal2-block>
+Grade: A
+        </terminal2-block>
+        <p>
+            The <span class="h"><strong>char</strong></span> data type
+            is used to store a single character enclosed in
+            single quotation marks <span class="h"><code>' '</code></span>.
+        </p>
+
+        <h4>Constants</h4>
+        <p>
+            Variables can be defines as <strong>constants</strong>.
+            Constants are values that cannot be changed.<br>
+            To define a constant, use the <span class="h"><strong>const</strong></span> keyword:
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    const float PI = 3.14159;
+    
+    printf("Value of PI: %f", PI);
+
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Value of PI: 3.141590
+        </terminal2-block>
+        <p>
+            Here, the variable <span class="h"><strong>PI</strong></span>
+            is defined as a constant of type <span class="h"><strong>float</strong></span>.<br>
+            Any attempt to change its value later in the code will result in an error.
+        </p>
+        <p>
+            Constants must be initialized at the time of declaration.
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    const float PI;
+    PI = 3.14159;
+
+    printf("Value of PI: %f", PI);
+
+    return 0;
+}
+        </terminal-block>
+        <terminal2-block>
+Error: assignment of read-only variable 'PI'
+        </terminal2-block>
+    </section>
+
+    <section id="doing-math">
+        <h3>7. Doing Math</h3>
+        <p>
+            C supports basic arithmetic operations like addition,
+            subtraction, multiplication, and division.
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int a = 10;
+    int b = 5;
+
+    printf("Addition: %d\n", a + b);
+    printf("Subtraction: %d\n", a - b);
+    printf("Multiplication: %d\n", a * b);
+    printf("Division: %d\n", a / b);
+
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Addition: 15
+Subtraction: 5
+Multiplication: 50
+Division: 2
+        </terminal2-block>
+        <p>
+            The operators for basic arithmetic are:
+        </p>
+        <ul>
+            <li><strong>+</strong>: Addition</li>
+            <li><strong>-</strong>: Subtraction</li>
+            <li><strong>*</strong>: Multiplication</li>
+            <li><strong>/</strong>: Division</li>
+        </ul>
     </section>
 </main>
 
@@ -250,30 +503,65 @@ int main(){
 </footer>
 
 <script>
-   // --- Age of C ---
-  const currentYear = new Date().getFullYear();
-  const age = currentYear - 1972;
-  document.getElementById("cyears").textContent = age;
-
-  // --- Terminal Component ---
-  customElements.define("terminal-block", class extends HTMLElement {
+    // --- Age of C ---
+   const currentYear = new Date().getFullYear();
+   const age = currentYear - 1972;
+   document.getElementById("cyears").textContent = age;
+ 
+   // --- Terminal Component ---
+   customElements.define("terminal-block", class extends HTMLElement {
+   connectedCallback() {
+     const content = this.textContent.trim()
+       .replace(/</g, "&lt;")
+       .replace(/>/g, "&gt;");
+     this.innerHTML = `
+       <div class="terminal">
+         <div class="terminal-header">
+           <span class="dot"></span>
+           <span class="dot"></span>
+           <span class="dot"></span>
+         </div>
+         <pre><code>${content}</code></pre>
+       </div>
+     `;
+   }
+ });
+ 
+ // --- Terminal2 Component with click functionality ---
+ customElements.define("terminal2-block", class extends HTMLElement {
   connectedCallback() {
     const content = this.textContent.trim()
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
+
     this.innerHTML = `
-      <div class="terminal">
-        <div class="terminal-header">
+      <div class="terminal2">
+        <div class="terminal2-header">
           <span class="dot"></span>
           <span class="dot"></span>
           <span class="dot"></span>
+          <span class="toggle-text">▶ Click to show</span>
+          <span class="output-label">Output</span>
         </div>
-        <pre><code>${content}</code></pre>
+        <div class="terminal2-content">
+          <pre><code>${content}</code></pre>
+        </div>
       </div>
     `;
+
+    const terminal2 = this.querySelector(".terminal2");
+    const header = this.querySelector(".terminal2-header");
+    const toggleText = this.querySelector(".toggle-text");
+
+    header.addEventListener("click", () => {
+      terminal2.classList.toggle("show");
+      toggleText.textContent = terminal2.classList.contains("show")
+        ? "▼ Click to hide"
+        : "▶ Click to show";
+    });
   }
 });
 
-</script>
+ </script>
 </body>
 </html>
