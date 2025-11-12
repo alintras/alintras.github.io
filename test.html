@@ -11,7 +11,7 @@
     padding: 2rem;
     color: #222;
   }
-  h1 { text-align: center; }
+  h1 { text-align: center; margin-bottom: 2rem; }
   .container {
     max-width: 900px;
     margin: auto;
@@ -20,8 +20,31 @@
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   }
-  label { display: block; margin-top: 1rem; font-weight: bold; }
-  input[type=range] { width: 100%; }
+  .control-group {
+    margin-bottom: 1.5rem;
+  }
+  label { 
+    display: block; 
+    margin-top: 1rem; 
+    font-weight: bold; 
+    margin-bottom: 0.5rem;
+  }
+  input[type=range] { 
+    width: 100%; 
+    margin-bottom: 0.5rem;
+  }
+  .days-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .days-input-container input {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
   .timeline {
     position: relative;
     height: 40px;
@@ -29,6 +52,7 @@
     border-radius: 20px;
     overflow: hidden;
     margin-top: 1rem;
+    border: 1px solid #d0d7e2;
   }
   .marker {
     position: absolute;
@@ -38,41 +62,83 @@
   }
   .marker.blue { background: #007bff; }
   .marker.green { background: #28a745; }
-  .currentDay { position: absolute; top: 0; width: 4px; height: 100%; background: #ff4757; }
-  .rowLabel { margin-top: 0.5rem; font-weight: bold; }
+  .currentDay { 
+    position: absolute; 
+    top: 0; 
+    width: 4px; 
+    height: 100%; 
+    background: #ff4757; 
+    z-index: 10;
+  }
+  .rowLabel { 
+    margin-top: 0.5rem; 
+    font-weight: bold; 
+    display: flex;
+    justify-content: space-between;
+  }
   .result {
     text-align: center;
     margin-top: 1.5rem;
     background: #f0f7ff;
     padding: 1rem;
     border-radius: 8px;
+    border: 1px solid #cce0ff;
+  }
+  .calendar-info {
+    font-size: 14px;
+    color: #666;
+  }
+  .timeline-container {
+    margin-bottom: 1.5rem;
   }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>📅 Two-Calendar Alignment</h1>
+  <h1>📅 Two-Calendar Alignment Calculator</h1>
 
-  <label>Days passed: <span id="daysLabel">0</span></label>
-  <input type="range" id="days" min="0" max="400" value="0">
+  <div class="control-group">
+    <label for="days">Days passed:</label>
+    <div class="days-input-container">
+      <input type="number" id="daysInput" min="0" max="400" value="0">
+      <span>or use slider:</span>
+    </div>
+    <input type="range" id="days" min="0" max="400" value="0">
+    <div class="calendar-info">Current day: <span id="daysLabel">0</span></div>
+  </div>
 
-  <label>Calendar 1 month length: <span id="m1Label">30</span> days</label>
-  <input type="range" id="m1" min="6" max="30" value="30">
+  <div class="control-group">
+    <label for="m1">Calendar 1 month length: <span id="m1Label">30</span> days</label>
+    <input type="range" id="m1" min="6" max="30" value="30">
+  </div>
 
-  <label>Calendar 2 month length: <span id="m2Label">20</span> days</label>
-  <input type="range" id="m2" min="6" max="30" value="20">
+  <div class="control-group">
+    <label for="m2">Calendar 2 month length: <span id="m2Label">20</span> days</label>
+    <input type="range" id="m2" min="6" max="30" value="20">
+  </div>
 
-  <div class="rowLabel">Calendar 1</div>
-  <div class="timeline" id="timeline1"></div>
+  <div class="timeline-container">
+    <div class="rowLabel">
+      <span>Calendar 1</span>
+      <span id="calendar1Info">Month 1, Day 1</span>
+    </div>
+    <div class="timeline" id="timeline1"></div>
+  </div>
 
-  <div class="rowLabel">Calendar 2</div>
-  <div class="timeline" id="timeline2"></div>
+  <div class="timeline-container">
+    <div class="rowLabel">
+      <span>Calendar 2</span>
+      <span id="calendar2Info">Month 1, Day 1</span>
+    </div>
+    <div class="timeline" id="timeline2"></div>
+  </div>
 
   <div class="result" id="result"></div>
 </div>
 
 <script>
 const days = document.getElementById("days");
+const daysInput = document.getElementById("daysInput");
 const daysLabel = document.getElementById("daysLabel");
 const m1 = document.getElementById("m1");
 const m2 = document.getElementById("m2");
@@ -81,6 +147,8 @@ const m2Label = document.getElementById("m2Label");
 const timeline1 = document.getElementById("timeline1");
 const timeline2 = document.getElementById("timeline2");
 const result = document.getElementById("result");
+const calendar1Info = document.getElementById("calendar1Info");
+const calendar2Info = document.getElementById("calendar2Info");
 
 function gcd(a,b){ return b ? gcd(b, a % b) : a; }
 function lcm(a,b){ return (a*b)/gcd(a,b); }
@@ -89,7 +157,10 @@ function draw(){
   const day = parseInt(days.value);
   const len1 = parseInt(m1.value);
   const len2 = parseInt(m2.value);
+  
+  // Update labels
   daysLabel.textContent = day;
+  daysInput.value = day;
   m1Label.textContent = len1;
   m2Label.textContent = len2;
 
@@ -106,10 +177,12 @@ function draw(){
       container.appendChild(div);
     }
     // current day marker - fixed calculation
-    const current = document.createElement("div");
-    current.className = "currentDay";
-    current.style.left = (day / maxDays * 100) + "%";
-    container.appendChild(current);
+    if (day <= maxDays) {
+      const current = document.createElement("div");
+      current.className = "currentDay";
+      current.style.left = (day / maxDays * 100) + "%";
+      container.appendChild(current);
+    }
   }
 
   makeTimeline(timeline1, len1, "blue");
@@ -124,15 +197,34 @@ function draw(){
     month: Math.floor(day / len2) + 1, 
     day: (day % len2) + 1 
   };
+  
+  // Update calendar info
+  calendar1Info.textContent = `Month ${date1.month}, Day ${date1.day}`;
+  calendar2Info.textContent = `Month ${date2.month}, Day ${date2.day}`;
 
   result.innerHTML = `
     🟦 Calendar 1: ${len1}-day months → Month ${date1.month}, Day ${date1.day}<br>
     🟩 Calendar 2: ${len2}-day months → Month ${date2.month}, Day ${date2.day}<br><br>
     🔁 Calendars align every <b>${align}</b> days.
+    ${day >= align ? `<br><span style="color: #28a745;">🌟 The calendars are currently aligned!</span>` : ''}
   `;
 }
 
+// Event listeners for sliders
 [days, m1, m2].forEach(el => el.addEventListener("input", draw));
+
+// Event listener for the days input field
+daysInput.addEventListener("input", function() {
+  let value = parseInt(this.value);
+  if (isNaN(value)) value = 0;
+  if (value < 0) value = 0;
+  if (value > 400) value = 400;
+  
+  days.value = value;
+  draw();
+});
+
+// Initialize the visualization
 draw();
 </script>
 </body>
