@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calendar Alignment (Simple)</title>
+<title>Two-Calendar Alignment with Days Passed</title>
 <style>
   body {
     font-family: system-ui, sans-serif;
@@ -38,13 +38,7 @@
   }
   .marker.blue { background: #007bff; }
   .marker.green { background: #28a745; }
-  .alignMarker {
-    position: absolute;
-    top: 0;
-    width: 4px;
-    height: 100%;
-    background: #ff4757;
-  }
+  .currentDay { position: absolute; top: 0; width: 4px; height: 100%; background: #ff4757; }
   .rowLabel { margin-top: 0.5rem; font-weight: bold; }
   .result {
     text-align: center;
@@ -56,29 +50,34 @@
 </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📅 Calendar Alignment (Equal-Length Months)</h1>
+<div class="container">
+  <h1>📅 Two-Calendar Alignment</h1>
 
-    <label>Calendar 1 month length: <span id="len1Label">30</span> days</label>
-    <input type="range" id="len1" min="6" max="30" value="30">
+  <label>Days passed: <span id="daysLabel">0</span></label>
+  <input type="range" id="days" min="0" max="400" value="0">
 
-    <label>Calendar 2 month length: <span id="len2Label">20</span> days</label>
-    <input type="range" id="len2" min="6" max="30" value="20">
+  <label>Calendar 1 month length: <span id="m1Label">30</span> days</label>
+  <input type="range" id="m1" min="6" max="30" value="30">
 
-    <div class="rowLabel">Calendar 1</div>
-    <div class="timeline" id="timeline1"></div>
+  <label>Calendar 2 month length: <span id="m2Label">20</span> days</label>
+  <input type="range" id="m2" min="6" max="30" value="20">
 
-    <div class="rowLabel">Calendar 2</div>
-    <div class="timeline" id="timeline2"></div>
+  <div class="rowLabel">Calendar 1</div>
+  <div class="timeline" id="timeline1"></div>
 
-    <div class="result" id="result"></div>
-  </div>
+  <div class="rowLabel">Calendar 2</div>
+  <div class="timeline" id="timeline2"></div>
+
+  <div class="result" id="result"></div>
+</div>
 
 <script>
-const len1 = document.getElementById("len1");
-const len2 = document.getElementById("len2");
-const len1Label = document.getElementById("len1Label");
-const len2Label = document.getElementById("len2Label");
+const days = document.getElementById("days");
+const daysLabel = document.getElementById("daysLabel");
+const m1 = document.getElementById("m1");
+const m2 = document.getElementById("m2");
+const m1Label = document.getElementById("m1Label");
+const m2Label = document.getElementById("m2Label");
 const timeline1 = document.getElementById("timeline1");
 const timeline2 = document.getElementById("timeline2");
 const result = document.getElementById("result");
@@ -87,43 +86,46 @@ function gcd(a,b){ return b ? gcd(b, a % b) : a; }
 function lcm(a,b){ return (a*b)/gcd(a,b); }
 
 function draw(){
-  const m1 = parseInt(len1.value);
-  const m2 = parseInt(len2.value);
-  len1Label.textContent = m1;
-  len2Label.textContent = m2;
+  const day = parseInt(days.value);
+  const len1 = parseInt(m1.value);
+  const len2 = parseInt(m2.value);
+  daysLabel.textContent = day;
+  m1Label.textContent = len1;
+  m2Label.textContent = len2;
 
-  // pick total visualization span = one full alignment period
-  const period = lcm(m1, m2);
-  const maxDays = period * 1; // show up to the first alignment
+  const align = lcm(len1, len2);
+  const maxDays = align; // visualize up to next alignment
 
   function makeTimeline(container, monthLen, color){
     container.innerHTML = "";
-    const count = Math.floor(maxDays / monthLen);
-    for(let i=1; i<=count; i++){
+    const months = Math.ceil(maxDays / monthLen);
+    for(let i=1;i<=months;i++){
       const div = document.createElement("div");
       div.className = "marker " + color;
-      div.style.left = (i * monthLen / maxDays) * 100 + "%";
+      div.style.left = (i * monthLen / maxDays * 100) + "%";
       container.appendChild(div);
     }
-    // Add alignment marker at end
-    const align = document.createElement("div");
-    align.className = "alignMarker";
-    align.style.left = "100%";
-    container.appendChild(align);
+    // current day marker
+    const current = document.createElement("div");
+    current.className = "currentDay";
+    current.style.left = (day % maxDays / maxDays * 100) + "%";
+    container.appendChild(current);
   }
 
-  makeTimeline(timeline1, m1, "blue");
-  makeTimeline(timeline2, m2, "green");
+  makeTimeline(timeline1, len1, "blue");
+  makeTimeline(timeline2, len2, "green");
+
+  const date1 = { month: Math.floor(day / len1) + 1, day: (day % len1) + 1 };
+  const date2 = { month: Math.floor(day / len2) + 1, day: (day % len2) + 1 };
 
   result.innerHTML = `
-    🟦 Calendar 1: ${m1}-day months<br>
-    🟩 Calendar 2: ${m2}-day months<br><br>
-    🔁 They align every <b>${period}</b> days.
+    🟦 Calendar 1: ${len1}-day months → Month ${date1.month}, Day ${date1.day}<br>
+    🟩 Calendar 2: ${len2}-day months → Month ${date2.month}, Day ${date2.day}<br><br>
+    🔁 Calendars align every <b>${align}</b> days.
   `;
 }
 
-len1.addEventListener("input", draw);
-len2.addEventListener("input", draw);
+[days, m1, m2].forEach(el => el.addEventListener("input", draw));
 draw();
 </script>
 </body>
