@@ -1,146 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HTML Fundamentals</title>
-  <style>
-    /* --- Terminal Container --- */
-    .terminal {
-      background-color: #0d0d0d;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-      max-width: 800px;
-      margin: 1rem 0;
-      text-align: left;
-      overflow: hidden;
-      font-family: "Fira Code", "Consolas", monospace;
-    }
-
-    /* --- Titelleiste oben --- */
-    .terminal-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #2b2b2b;
-      padding: 6px 12px;
-    }
-
-    /* --- Die drei „Fensterknöpfe“ --- */
-    .terminal-header .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-
-    /* Farben automatisch über Position setzen */
-    .terminal-header .dot:nth-child(1) { background: #ff5f56; }
-    .terminal-header .dot:nth-child(2) { background: #ffbd2e; }
-    .terminal-header .dot:nth-child(3) { background: #27c93f; }
-
-    /* --- Terminal-Inhalt (Code) --- */
-    .terminal pre {
-      color: #00ff88;
-      background: none;
-      margin: 0;
-      padding: 1rem;
-      font-size: 0.95rem;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    /* --- Blinkender Cursor --- */
-    .terminal pre::after {
-      content: "█";
-      animation: blink 1s steps(2, start) infinite;
-    }
-
-    @keyframes blink {
-      to { visibility: hidden; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar Date Converter</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #f7f7fb; padding: 2rem; color: #222; }
+  h1 { text-align: center; }
+  .container { max-width: 800px; margin: auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  label { display: block; margin-top: 1rem; font-weight: bold; }
+  input[type=number], input[type=range] { width: 100%; }
+  .timeline { position: relative; height: 40px; background: #ddd; margin-top: 2rem; border-radius: 20px; }
+  .progress { position: absolute; top: 0; left: 0; height: 100%; background: linear-gradient(90deg, #4a90e2, #50c878); border-radius: 20px; }
+  .marker { position: absolute; top: -10px; width: 20px; height: 60px; background: #ff4757; border-radius: 10px; transform: translateX(-50%); }
+  .result { text-align: center; font-size: 1.2rem; margin-top: 1.5rem; }
+</style>
 </head>
 <body>
+  <div class="container">
+    <h1>📅 Calendar Date Converter</h1>
 
-<header>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="Coding.html">Coding</a>
-  </nav>
-  <h1>C Guide</h1>
-  <p>My personal documentation for C fundamentals</p>
-</header>
+    <label>Start month (1–12):</label>
+    <input type="number" id="startMonth" min="1" max="12" value="1">
 
-<main>
-  <h2>Introducing C</h2>
-  <p>
-    <strong>C</strong> is a general-purpose programming language that has been around
-    for <span id="cyears"></span> years.
-  </p>
+    <label>Start day:</label>
+    <input type="number" id="startDay" min="1" max="31" value="1">
 
-  <p>
-    <strong>C</strong> has been used to write everything
-    from operating systems (including <strong>Windows</strong>)<br>
-    to complex programs like the <strong>Python interpreter</strong>, <strong>Git</strong>,
-    <strong>Oracle database</strong>, and more.
-  </p>
+    <label>Days passed: <span id="daysPassedLabel">0</span></label>
+    <input type="range" id="daysPassed" min="0" max="365" value="0">
 
-  <section id="output">
-    <h3>Output</h3>
-    <p>
-      Most computer programs are designed to produce <strong>outputs</strong>.
-    </p>
+    <label>Old month length (days): <span id="oldDaysLabel">30</span></label>
+    <input type="range" id="oldDays" min="20" max="40" value="30">
 
-    <h4>Examples:</h4>
-    <ul>
-      <li>"You've got a new message" notifications</li>
-      <li>"Game over" displayed on the screen when playing video games</li>
-      <li>Your account balance when checking your online banking app</li>
-    </ul>
+    <label>New month length (days): <span id="newDaysLabel">25</span></label>
+    <input type="range" id="newDays" min="20" max="40" value="25">
 
-    <p>The simplest output consists of displaying a message on the screen.</p>
+    <div class="timeline">
+      <div class="progress" id="progress"></div>
+      <div class="marker" id="marker"></div>
+    </div>
 
-    <!-- ✅ fixed closing tag -->
-    <terminal-block>
-int main() {
-    printf("Hello World!");
-    return 0;
-}
-    </terminal-block>
+    <div class="result" id="result">Resulting date: Month 1, Day 1</div>
+  </div>
 
-    <p>
-      The <strong>printf</strong> keyword is a function
-      that creates the output. The text you want to output needs to be inside parentheses.
-    </p>
-  </section>
-</main>
+  <script>
+    const startMonth = document.getElementById("startMonth");
+    const startDay = document.getElementById("startDay");
+    const daysPassed = document.getElementById("daysPassed");
+    const oldDays = document.getElementById("oldDays");
+    const newDays = document.getElementById("newDays");
 
-<footer>
-  <i>Documentation in progress</i>
-</footer>
+    const result = document.getElementById("result");
+    const progress = document.getElementById("progress");
+    const marker = document.getElementById("marker");
 
-<script>
-  // --- Age of C ---
-  const currentYear = new Date().getFullYear();
-  const age = currentYear - 1972;
-  document.getElementById("cyears").textContent = age;
+    const daysPassedLabel = document.getElementById("daysPassedLabel");
+    const oldDaysLabel = document.getElementById("oldDaysLabel");
+    const newDaysLabel = document.getElementById("newDaysLabel");
 
-  // --- Terminal Component ---
-  customElements.define("terminal-block", class extends HTMLElement {
-    connectedCallback() {
-      const content = this.textContent;
-      this.innerHTML = `
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-          </div>
-          <pre><code>${content.trim()}</code></pre>
-        </div>
-      `;
+    function update() {
+      const startM = parseInt(startMonth.value);
+      const startD = parseInt(startDay.value);
+      const passed = parseInt(daysPassed.value);
+      const oldLen = parseInt(oldDays.value);
+      const newLen = parseInt(newDays.value);
+
+      daysPassedLabel.textContent = passed;
+      oldDaysLabel.textContent = oldLen;
+      newDaysLabel.textContent = newLen;
+
+      // total days from old system
+      let totalDays = (startM - 1) * oldLen + (startD - 1) + passed;
+
+      // convert to new system
+      let newMonth = Math.floor(totalDays / newLen) + 1;
+      let newDay = (totalDays % newLen) + 1;
+
+      result.textContent = `Resulting date: Month ${newMonth}, Day ${newDay}`;
+
+      // timeline visualization
+      const percent = Math.min((passed / 365) * 100, 100);
+      progress.style.width = percent + "%";
+      marker.style.left = percent + "%";
     }
-  });
-</script>
+
+    document.querySelectorAll("input").forEach(inp => inp.addEventListener("input", update));
+    update();
+  </script>
 </body>
 </html>
