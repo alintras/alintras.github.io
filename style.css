@@ -135,31 +135,27 @@
     word-break: break-word;
   }
   
-/* --- Prevent line breaks inside terminal text --- */
-.terminal, 
+/* --- Fix terminal wrapping behavior --- */
+.terminal,
 .terminal2 {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  white-space: pre; /* keep intentional line breaks */
+  word-break: keep-all; /* don't break mid-word */
 }
 
-.terminal * {
-  white-space: nowrap;
-  display: inline-block;
-  max-width: 100%;
-}
-
-/* --- Font adjustment for smaller screens --- */
+/* Slightly shrink text on smaller screens */
 @media (max-width: 600px) {
-  .terminal, 
+  .terminal,
   .terminal2 {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 400px) {
-  .terminal, 
+  .terminal,
   .terminal2 {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
 }
   
