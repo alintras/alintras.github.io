@@ -135,15 +135,20 @@
     word-break: break-word;
   }
   
-  /* --- Prevent line breaks inside terminal text --- */
+/* --- Prevent line breaks inside terminal text --- */
 .terminal, 
 .terminal2 {
-  white-space: nowrap;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* --- Make font smaller on very narrow screens --- */
+.terminal * {
+  white-space: nowrap;
+  display: inline-block;
+  max-width: 100%;
+}
+
+/* --- Font adjustment for smaller screens --- */
 @media (max-width: 600px) {
   .terminal, 
   .terminal2 {
