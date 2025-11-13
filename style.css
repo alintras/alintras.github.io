@@ -135,26 +135,30 @@
     word-break: break-word;
   }
   
-/* --- Fix terminal wrapping behavior --- */
-.terminal,
-.terminal2 {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  white-space: pre; /* keep intentional line breaks */
-  word-break: keep-all; /* don't break mid-word */
+/* --- Fix wrapping only for terminal (input) --- */
+.terminal {
+  overflow: hidden; /* prevent container scrollbars */
 }
 
-/* Slightly shrink text on smaller screens */
+.terminal pre,
+.terminal-block {
+  white-space: pre;
+  word-break: keep-all;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Slight font scaling for small screens (only input terminal) */
 @media (max-width: 600px) {
-  .terminal,
-  .terminal2 {
+  .terminal pre,
+  .terminal-block {
     font-size: 0.9rem;
   }
 }
 
 @media (max-width: 400px) {
-  .terminal,
-  .terminal2 {
+  .terminal pre,
+  .terminal-block {
     font-size: 0.8rem;
   }
 }
@@ -164,9 +168,22 @@
     font-family: "Courier New", Courier, monospace;
   }*/
 
+  .ascii {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 1rem;
+    line-height: 1; /* tighter line spacing for ASCII */
+    white-space: pre; /* preserve exact formatting */
+    letter-spacing: 0;
+    background: #0d0d0d;
+    color: #00ff88;
+    padding: 1rem;
+    border-radius: 8px;
+    display: inline-block;
+  }
+
   /* === Inline Code Highlighting === */
 .h {
-    background-color: #111;
+    background-color: #2b2b2b;
     color: #ffffff;
     padding: 0.1rem 0.3rem;
     border-radius: 4px;

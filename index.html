@@ -32,8 +32,44 @@
                     <p>My very first experiences with anything programming-related were during my elementary school years using Windows Batch Scripting.</p>
                     <p>Later, I started building my first applications in Visual Studio Basic and dwelved into building small homepages before properly learning programming languages during school and university.</p>
                     <p>Currently, I'm a Computer Science major and Statistics minor at Ludwig-Maximilians University in Munich, Germany.</p>
-                    <p>Since then I've developed skills in Java, R, C, Haskell and am improving in Maths.</p>
+                    <p>Since then I've developed skills in Java, R, C, Haskell, HTML and am improving in Maths.</p>
                 </div>
+            </section>
+            <div id="ascii"></div>
+            <section id="ascii">
+                <script>
+                const frames = [
+` 
+ ,…,    ,_     ,…,    ,_     ,…,    ,_     ,…,    ,_ 
+[•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]   
+ """    """    """    """    """    """    """    """ 
+`,
+` 
+ ,_     ,…,    ,_     ,…,    ,_     ,…,    ,_     ,…,
+[•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  
+ """    """    """    """    """    """    """    """ 
+`
+                ];
+
+                let i = 0;
+                setInterval(() => {
+                document.getElementById("ascii").textContent = frames[i];
+                i = (i + 1) % frames.length;
+                }, 300);
+                </script>
+                
+                <style>
+                #ascii {
+                  font-family: "Courier New", monospace;
+                  white-space: pre;
+                }
+                </style>
+                
+                <!-- <pre class="ascii"><code>
+ ,…,     ,_        ,…,     ,_        ,…,     ,_        ,…,     ,_        
+[•.•]   [•.•]     [•.•]   [•.•]     [•.•]   [•.•]     [•.•]   [•.•]
+ “““     “““       “““     “““       “““     “““       “““     “““
+                </code></pre> -->
             </section>
         </main>
     </div>

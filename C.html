@@ -14,7 +14,7 @@
         <a href="index.html">Home</a>
         <a href="Coding.html">Coding</a>
     </nav>
-        <h1>C Guide</h1>
+        <h1>Learning C</h1>
         <p>My personal documentation for C fundamentals</p>
 </header>
 
@@ -390,8 +390,33 @@ Double: 3.141593
             sufficient for storing 7 decimal digits, while
             <span class="h"><strong>double</strong></span> can store
             up to 15 decimal digits.
+            To declare a float variable, it's common to add
+            the suffix <span class="h"><code>f</code></span> to the number.<br>
+            When using the <span class="h"><strong>printf</strong></span> function,
+            use <span class="h"><code>%f</code></span> for float
+            and <span class="h"><code>%lf</code></span> for double.<br>
+            Decimal lengths can be controlled by specifying the number of digits
+            after the decimal point, like this: <span class="h"><code>%.2f</code></span>
         </p>
 
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    float pi = 3.14159f;
+
+    printf("Pi (2 decimals): %.2f\n", pi);
+    printf("Pi (4 decimals): %.4f\n", pi);
+
+    return 0;
+}
+        </terminal-block>
+        <terminal2-block>
+Pi (2 decimals): 3.14
+Pi (4 decimals): 3.1416
+        </terminal2-block>
+
+<h4>Char</h4>
         <terminal-block>
 #include &lt;stdio.h&gt;
 
@@ -490,11 +515,264 @@ Division: 2
             The operators for basic arithmetic are:
         </p>
         <ul>
-            <li><strong>+</strong>: Addition</li>
-            <li><strong>-</strong>: Subtraction</li>
-            <li><strong>*</strong>: Multiplication</li>
-            <li><strong>/</strong>: Division</li>
+            <li><span class="h"><strong>+</strong></span> Addition</li>
+            <li><span class="h"><strong>-</strong></span> Subtraction</li>
+            <li><span class="h"><strong>*</strong></span> Multiplication</li>
+            <li><span class="h"><strong>/</strong></span> Division</li>
         </ul>
+
+        <p>
+            In case of division, if both operands are integers,
+            the result will also be an integer (the decimal part is truncated).
+        </p>
+
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int kb = 35800;
+    int mb = kb / 1024;
+
+    printf("Megabytes: %d", mb);
+
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Megabytes: 34
+        </terminal2-block>
+
+        <p>
+            To get a more precise result when dividing,
+            at least one of the operands must be a floating-point number:
+        </p>
+
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int kb = 35800;
+    float mb = kb / 1024.0f;
+
+    printf("Megabytes: %f", mb);
+    
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Megabytes: 34.960938
+        </terminal2-block>
+        <h4>Remainder</h4>
+        <p>
+            The modulus operator <span class="h"><strong>%</strong></span>
+            is used to get the remainder of a division:
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int items = 100;
+    int per_box = 8;
+    int leftover = items % per_box;
+
+    printf("Leftover items: %d", leftover);
+
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Leftover items: 4
+        </terminal2-block>
+    </section>
+
+    <section id="comments">
+        <h3>8. Comments</h3>
+        <p>
+            Comments are used to add notes or explanations
+            within the code.<br>
+            They are ignored by the compiler and do not affect
+            the program's execution.
+        </p>
+        <p>
+            In C, there are two types of comments:
+        </p>
+        <ul>
+            <li>
+                Single-line comments start with <span class="h"><code>//</code></span>
+                and continue to the end of the line.
+            </li>
+            <li>
+                Multi-line comments are enclosed between
+                <span class="h"><code>/*</code></span> and
+                <span class="h"><code>*/</code></span>.
+            </li>
+    </section>
+
+    <section id="taking-input">
+        <h3>9. Taking Input</h3>
+        <p>
+            The <span class="h"><strong>scanf</strong></span> function
+            is used to take input from the user based on the given format specifier.
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int age;
+
+    printf("Enter your age: ");
+    scanf("%d", &age);
+
+    printf("You are %d years old.", age);
+
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Enter your age: 25
+You are 25 years old.
+        </terminal2-block>
+        
+        <p>
+            The <span class="h"><strong>scanf</strong></span> function
+            reads the input provided by the user and stores it
+            in the variable specified.<br>
+            The ampersand symbol <span class="h"><code>&amp;</code></span>
+            is used to provide the <u>memory address</u> of the variable
+            where the input value should be stored. More on that later.
+        </p>
+
+        <h4>Multiple Inputs</h4>
+        You can take multiple inputs in a single
+        <span class="h"><strong>scanf</strong></span> call:
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int a, b;
+
+    printf("Enter two numbers: ");
+    scanf("%d %d", &a, &b);
+
+    printf("Sum: %d", a + b);
+
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Enter two numbers: 7 3
+Sum: 10
+        </terminal2-block>
+        <p>
+            Notice how we were able to declare two variables on a single line,
+            seperated by commas, because they are of the same type.
+        </p>
+    </section>
+
+    <section id="conditionals">
+        <h3>10. Conditionals</h3>
+        <p>
+            Conditionals allow you to execute certain parts of code
+            based on whether a specific condition is true or false.
+        </p>
+        <p>
+            The <span class="h"><strong>if</strong></span> statement
+            allows you to execute a block of code if a condition is true.
+        </p>
+        <terminal-block>
+if(confition){
+    // code to run if condition is true
+}
+        </terminal-block>
+
+        <p>
+            You can also use the <span class="h"><strong>else</strong></span>
+            statement to execute a block of code if the condition is false.
+        </p>
+
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int age;
+
+    printf("Enter your age: ");
+    scanf("%d", &age);
+
+    if(age >= 18){
+        printf("You are an adult.");
+    } else {
+        printf("You are a minor.");
+    }
+
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Enter your age: 20
+You are an adult.
+        </terminal2-block>
+
+        <p>
+            The following comparison operators may be used to form the condition:
+        </p>
+        <ul>
+            <li><span class="h"><code>&lt;</code></span>: less than</li>
+            <li><span class="h"><code>&lt;=</code></span>: less than or equal to</li>
+            <li><span class="h"><code>&gt;</code></span>: greater than</li>
+            <li><span class="h"><code>&gt;=</code></span>: greater than or equal to</li>
+            <li><span class="h"><code>==</code></span>: equal to</li>
+            <li><span class="h"><code>!=</code></span>: not equal to</li>
+        </ul>
+        <p>
+            Note that the assignment operator <span class="h"><code>=</code></span>
+            is different from the equality operator
+            <span class="h"><code>==</code></span> used in conditions.
+        </p>
+        <p>
+            In case you have multiple conditions to check,
+            you can use the <span class="h"><strong>else if</strong></span> statement:
+        </p>
+        <terminal-block>
+#include &lt;stdio.h&gt;
+
+int main(){
+    int score;
+
+    printf("Enter your score: ");
+    scanf("%d", &score);
+
+    if(score >= 90){
+        printf("Grade: A");
+    } else if(score >= 80){
+        printf("Grade: B");
+    } else if(score >= 70){
+        printf("Grade: C");
+    } else {
+        printf("Grade: F");
+    }
+
+    return 0;
+}
+        </terminal-block>
+
+        <terminal2-block>
+Enter your score: 85
+Grade: B
+        </terminal2-block>      
+    </section>
+
+    <section id="switch-statement">
+        <h3>11. The Switch Statement</h4>
+        <p>
+            
+        </p>
     </section>
 </main>
 
