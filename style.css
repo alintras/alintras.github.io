@@ -135,6 +135,29 @@
     word-break: break-word;
   }
   
+  /* --- Prevent line breaks inside terminal text --- */
+.terminal, 
+.terminal2 {
+  white-space: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* --- Make font smaller on very narrow screens --- */
+@media (max-width: 600px) {
+  .terminal, 
+  .terminal2 {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .terminal, 
+  .terminal2 {
+    font-size: 0.75rem;
+  }
+}
+  
   /* --- Global font override --- */
   * {
     font-family: "Courier New", Courier, monospace;
