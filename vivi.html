@@ -4,220 +4,130 @@
     <meta charset="UTF-8">
     <title>💖💖💖</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- ❤️ Emoji-Favicon (korrigiert) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💖</text></svg>">
-
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💖%3C/text%3E%3C/svg%3E">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body {
-            margin: 0;
-            height: 100vh;
+            margin: 0; height: 100vh;
             background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
-
         .card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 40px;
-            width: 340px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            animation: fadeIn 1s ease;
-            position: relative;
-            z-index: 10;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px);
+            border-radius: 24px; padding: 40px; width: 360px; text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); z-index: 10;
         }
-
-        h1 {
-            margin-bottom: 25px;
-            color: #333;
-        }
-
-        .buttons {
-            position: relative;
-            height: 120px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        button {
-            border: none;
-            border-radius: 999px;
-            padding: 14px 28px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        #yesBtn {
-            background: linear-gradient(135deg, #ff5f6d, #ffc371);
-            color: white;
-            box-shadow: 0 8px 20px rgba(255, 95, 109, 0.4);
-            position: relative;
-            z-index: 11;
-        }
-
+        .buttons { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; }
+        button { border: none; border-radius: 999px; padding: 14px 28px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        #yesBtn { background: linear-gradient(135deg, #ff5f6d, #ffc371); color: white; box-shadow: 0 8px 20px rgba(255, 95, 109, 0.4); }
         #noBtn {
-            background: #e0e0e0;
-            color: #555;
-            pointer-events: none;
-            position: relative;
-            z-index: 5;
-            transition: all 0.2s ease;
+            background: #e0e0e0; color: #555; position: absolute; z-index: 1000;
+            transition: left 0.3s cubic-bezier(0.2, 0, 0.2, 1), top 0.3s cubic-bezier(0.2, 0, 0.2, 1);
         }
-
-        .result {
-            display: none;
-            animation: fadeIn 0.8s ease;
-        }
-
-        .result img {
-            width: 100%;
-            border-radius: 16px;
-            margin-top: 20px;
-        }
-
-        .result p {
-            margin: 10px 0;
-        }
-
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: red;
-            top: -10px;
-            animation: fall 3s linear forwards;
-            z-index: 9999;
-        }
-
-        @keyframes fall {
-            to {
-                transform: translateY(110vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .result { display: none; animation: fadeIn 0.8s ease; }
+        .result img { width: 100%; border-radius: 16px; margin-top: 15px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .confetti { position: fixed; width: 10px; height: 10px; top: -10px; animation: fall 3s linear forwards; z-index: 9999; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h1 id="question">Willst du mein Valentine sein? 💘</h1>
-
-    <div class="buttons">
-        <button id="yesBtn">Ja! 💖</button>
-        <button id="noBtn">Nee... 🙃</button>
+<div class="card" id="card">
+    <div id="mainContent">
+        <h1>Vivi, Willst du mein Valentine sein? 💘</h1>
+        <div class="buttons">
+            <button id="yesBtn">Ja! 💖</button>
+            <div style="width: 110px; height: 45px;"></div>
+        </div>
     </div>
-
     <div class="result" id="result">
         <h1>Juhuuu! 💕</h1>
-        <p>Ich wusste es 😌</p>
-        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fe7%2F1e%2F5e%2Fe71e5ef5f13f20faa77efb81fda7060a.jpg&f=1&nofb=1" alt="Valentine">
+        <p>Ich wusste es doch! 😌</p>
+        <img src="https://gifdb.com/images/file/boa-hancock-luffy-hug-one-piece-mky2wqjlocxpo7zz.gif">
     </div>
 </div>
+
+<button id="noBtn">Nee... 🙃</button>
 
 <script>
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const result = document.getElementById("result");
+const mainContent = document.getElementById("mainContent");
 
-const triggerDistance = 70;
-let isMoving = false;
-let hasMovedOnce = false;
+const boxWidth = 800; 
+const boxHeight = 500;
+
+function updateNoButtonPos() {
+    const yesRect = yesBtn.getBoundingClientRect();
+    noBtn.style.transition = "none";
+    noBtn.style.left = (yesRect.right + 15) + "px";
+    noBtn.style.top = yesRect.top + "px";
+}
+window.addEventListener('load', updateNoButtonPos);
+
+// Hilfsfunktion: Prüft, ob ein Punkt (Cursor) nah an einer Linie (Weg des Buttons) liegt
+function intersectsCursor(x1, y1, x2, y2, cx, cy, radius) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const lengthSq = dx * dx + dy * dy;
+    let t = ((cx - x1) * dx + (cy - y1) * dy) / lengthSq;
+    t = Math.max(0, Math.min(1, t));
+    const closestX = x1 + t * dx;
+    const closestY = y1 + t * dy;
+    const distSq = (cx - closestX) ** 2 + (cy - closestY) ** 2;
+    return distSq < radius * radius;
+}
 
 document.addEventListener("mousemove", (e) => {
-    if (isMoving) return;
+    const btnRect = noBtn.getBoundingClientRect();
+    const bx = btnRect.left + btnRect.width / 2;
+    const by = btnRect.top + btnRect.height / 2;
+    const dist = Math.hypot(e.clientX - bx, e.clientY - by);
 
-    const rect = noBtn.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
+    if (dist < 90) {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        let nx, ny, attempts = 0;
 
-    const distance = Math.hypot(e.clientX - cx, e.clientY - cy);
+        do {
+            nx = (centerX - boxWidth / 2) + Math.random() * boxWidth;
+            ny = (centerY - boxHeight / 2) + Math.random() * boxHeight;
+            attempts++;
+        } while (Math.hypot(e.clientX - nx, e.clientY - ny) < 180 && attempts < 30);
 
-    if (distance < triggerDistance) {
-        isMoving = true;
-
-        // First time moving - switch to fixed positioning
-        if (!hasMovedOnce) {
-            noBtn.style.position = "fixed";
-            noBtn.style.left = rect.left + "px";
-            noBtn.style.top = rect.top + "px";
-            hasMovedOnce = true;
+        // Check: Würde der Button beim Gleiten die Maus berühren? (Radius 60px)
+        if (intersectsCursor(bx, by, nx, ny, e.clientX, e.clientY, 65)) {
+            noBtn.style.transition = "none"; // Teleport
+        } else {
+            noBtn.style.transition = "left 0.3s ease-out, top 0.3s ease-out"; // Sanftes Gleiten
         }
 
-        // Einfache sichere Berechnung
-        const btnWidth = 120; // Ungefähre Button-Breite
-        const btnHeight = 50; // Ungefähre Button-Höhe
-        const padding = 80;
-        
-        // Maximale Bereiche
-        const minX = padding;
-        const maxX = window.innerWidth - btnWidth - padding;
-        const minY = padding;
-        const maxY = window.innerHeight - btnHeight - padding;
-        
-        let newX, newY;
-        let attempts = 0;
-        
-        // Finde Position weit genug vom Cursor
-        do {
-            newX = minX + Math.random() * (maxX - minX);
-            newY = minY + Math.random() * (maxY - minY);
-            
-            const distFromCursor = Math.hypot(e.clientX - (newX + btnWidth/2), e.clientY - (newY + btnHeight/2));
-            
-            if (distFromCursor > 150 || attempts > 15) break;
-            attempts++;
-        } while (true);
-
-        // Setze Position
-        noBtn.style.left = newX + "px";
-        noBtn.style.top = newY + "px";
-
-        // Cooldown
-        setTimeout(() => {
-            isMoving = false;
-        }, 250);
+        noBtn.style.left = nx + "px";
+        noBtn.style.top = ny + "px";
     }
 });
 
-// Confetti animation
-function confetti() {
-    for (let i = 0; i < 80; i++) {
+function createConfetti() {
+    for (let i = 0; i < 70; i++) {
         const c = document.createElement("div");
         c.className = "confetti";
-        c.style.left = Math.random() * window.innerWidth + "px";
-        c.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
-        c.style.animationDuration = 2 + Math.random() * 2 + "s";
+        c.style.left = Math.random() * 100 + "vw";
+        c.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        c.style.animationDuration = (Math.random() * 2 + 2) + "s";
         document.body.appendChild(c);
-
         setTimeout(() => c.remove(), 4000);
     }
 }
 
 yesBtn.addEventListener("click", () => {
-    document.querySelector(".buttons").style.display = "none";
-    document.getElementById("question").style.display = "none";
+    mainContent.style.display = "none";
+    noBtn.style.display = "none";
     result.style.display = "block";
-    confetti();
+    createConfetti();
 });
 </script>
 
