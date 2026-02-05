@@ -65,12 +65,10 @@
         }
 
         #noBtn {
-            position: absolute;
-            left: 50%;
-            top: 60px;
-            transform: translateX(-50%);
+            position: fixed; /* 🔥 nicht mehr im Card-Layout gefangen */
             background: #e0e0e0;
             color: #555;
+            z-index: 9999;
         }
 
         .result {
@@ -115,16 +113,22 @@
     const buttons = document.getElementById("buttons");
     const result = document.getElementById("result");
 
-    document.addEventListener("mousemove", (e) => {
+document.addEventListener("mousemove", (e) => {
     const btnRect = noBtn.getBoundingClientRect();
+
+    const btnCenterX = btnRect.left + btnRect.width / 2;
+    const btnCenterY = btnRect.top + btnRect.height / 2;
+
     const distance = Math.hypot(
-        e.clientX - (btnRect.left + btnRect.width / 2),
-        e.clientY - (btnRect.top + btnRect.height / 2)
+        e.clientX - btnCenterX,
+        e.clientY - btnCenterY
     );
 
-    if (distance < 120) { // 👈 JE KLEINER, DESTO BRUTALER
-        const maxX = buttons.clientWidth - noBtn.offsetWidth;
-        const maxY = buttons.clientHeight - noBtn.offsetHeight;
+    if (distance < 180) { // (größer = böser)
+        const padding = 20;
+
+        const maxX = window.innerWidth - btnRect.width - padding;
+        const maxY = window.innerHeight - btnRect.height - padding;
 
         const randomX = Math.random() * maxX;
         const randomY = Math.random() * maxY;
@@ -134,12 +138,15 @@
     }
 });
 
+
     yesBtn.addEventListener("click", () => {
     document.getElementById("question").style.display = "none";
     buttons.style.display = "none";
     result.style.display = "block";
 });
-
+    
+noBtn.style.left = "50%";
+noBtn.style.top = "70%";
 </script>
 
 </body>
