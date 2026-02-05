@@ -93,7 +93,7 @@
 <body>
 
 <div class="card" id="card">
-    <h1>Willst du mein Valentine sein? 💘</h1>
+    <h1 id="question">Willst du mein Valentine sein? 💘</h1>
 
     <div class="buttons" id="buttons">
         <button id="yesBtn">Ja! 💖</button>
@@ -115,7 +115,14 @@
     const buttons = document.getElementById("buttons");
     const result = document.getElementById("result");
 
-    noBtn.addEventListener("mouseenter", () => {
+    document.addEventListener("mousemove", (e) => {
+    const btnRect = noBtn.getBoundingClientRect();
+    const distance = Math.hypot(
+        e.clientX - (btnRect.left + btnRect.width / 2),
+        e.clientY - (btnRect.top + btnRect.height / 2)
+    );
+
+    if (distance < 120) { // 👈 JE KLEINER, DESTO BRUTALER
         const maxX = buttons.clientWidth - noBtn.offsetWidth;
         const maxY = buttons.clientHeight - noBtn.offsetHeight;
 
@@ -124,12 +131,15 @@
 
         noBtn.style.left = randomX + "px";
         noBtn.style.top = randomY + "px";
-    });
+    }
+});
 
     yesBtn.addEventListener("click", () => {
-        buttons.style.display = "none";
-        result.style.display = "block";
-    });
+    document.getElementById("question").style.display = "none";
+    buttons.style.display = "none";
+    result.style.display = "block";
+});
+
 </script>
 
 </body>
