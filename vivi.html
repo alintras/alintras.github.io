@@ -5,6 +5,12 @@
     <title>💖💖💖</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- ❤️ Emoji als Seiten-Icon -->
+    <link rel="icon" href="data:image/svg+xml,
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+        <text y='.9em' font-size='90'>💖</text>
+    </svg>">
+
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
@@ -65,10 +71,11 @@
         }
 
         #noBtn {
-            position: fixed; /* 🔥 nicht mehr im Card-Layout gefangen */
+            position: fixed;
             background: #e0e0e0;
             color: #555;
             z-index: 9999;
+            transition: left 0.15s ease, top 0.15s ease;
         }
 
         .result {
@@ -102,51 +109,61 @@
         <h1>Juhuuu! 💕</h1>
         <p>Ich wusste es 😌</p>
 
-        <!-- 👉 HIER KANNST DU DAS BILD ERSETZEN -->
-        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fe7%2F1e%2F5e%2Fe71e5ef5f13f20faa77efb81fda7060a.jpg&f=1&nofb=1&ipt=85fb474834c89088a4ebc6bca881b833bd405596c60b049d3ecbe557f3469019" alt="boa & luffy:)">
+        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fe7%2F1e%2F5e%2Fe71e5ef5f13f20faa77efb81fda7060a.jpg&f=1&nofb=1" alt="boa & luffy:)">
     </div>
 </div>
 
 <script>
-    const noBtn = document.getElementById("noBtn");
-    const yesBtn = document.getElementById("yesBtn");
-    const buttons = document.getElementById("buttons");
-    const result = document.getElementById("result");
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const result = document.getElementById("result");
+
+const triggerDistance = 150;
+const padding = 12;
+let initialized = false;
+
+function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
+// 🔧 Startposition: exakt unter dem Ja-Button
+function initNoButton() {
+    const yesRect = yesBtn.getBoundingClientRect();
+
+    noBtn.style.left = yesRect.left + "px";
+    noBtn.style.top = (yesRect.bottom + 12) + "px";
+
+    initialized = true;
+}
+
+window.addEventListener("load", initNoButton);
 
 document.addEventListener("mousemove", (e) => {
-    const btnRect = noBtn.getBoundingClientRect();
+    if (!initialized) return;
 
-    const btnCenterX = btnRect.left + btnRect.width / 2;
-    const btnCenterY = btnRect.top + btnRect.height / 2;
+    const rect = noBtn.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
 
-    const distance = Math.hypot(
-        e.clientX - btnCenterX,
-        e.clientY - btnCenterY
-    );
+    const distance = Math.hypot(e.clientX - centerX, e.clientY - centerY);
 
-    if (distance < 180) { // (größer = böser)
-        const padding = 20;
+    if (distance < triggerDistance) {
+        const maxX = window.innerWidth - rect.width - padding;
+        const maxY = window.innerHeight - rect.height - padding;
 
-        const maxX = window.innerWidth - btnRect.width - padding;
-        const maxY = window.innerHeight - btnRect.height - padding;
+        const newX = clamp(Math.random() * maxX, padding, maxX);
+        const newY = clamp(Math.random() * maxY, padding, maxY);
 
-        const randomX = Math.random() * maxX;
-        const randomY = Math.random() * maxY;
-
-        noBtn.style.left = randomX + "px";
-        noBtn.style.top = randomY + "px";
+        noBtn.style.left = newX + "px";
+        noBtn.style.top = newY + "px";
     }
 });
 
-
-    yesBtn.addEventListener("click", () => {
+yesBtn.addEventListener("click", () => {
     document.getElementById("question").style.display = "none";
-    buttons.style.display = "none";
+    document.getElementById("buttons").style.display = "none";
     result.style.display = "block";
 });
-    
-noBtn.style.left = "50%";
-noBtn.style.top = "70%";
 </script>
 
 </body>
