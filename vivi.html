@@ -76,6 +76,7 @@
             pointer-events: none;
             position: relative;
             z-index: 5;
+            transition: all 0.3s ease; /* 🔥 Smooth Bewegung */
         }
 
         .result {
@@ -138,10 +139,13 @@ const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const result = document.getElementById("result");
 
-const triggerDistance = 200;
-const padding = 30; // 🔥 Mehr Abstand vom Rand
+const triggerDistance = 150; // 🔥 Mittlere Distanz
+const moveDistance = 120; // 🔥 Wie weit Button sich bewegt
+let isMoving = false;
 
 document.addEventListener("mousemove", (e) => {
+    if (isMoving) return; // 🔥 Verhindert zu schnelle Bewegungen
+
     const rect = noBtn.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -149,21 +153,32 @@ document.addEventListener("mousemove", (e) => {
     const distance = Math.hypot(e.clientX - cx, e.clientY - cy);
 
     if (distance < triggerDistance) {
-        // 🔥 Erst Button-Größe holen BEVOR wir Position ändern
-        const btnWidth = noBtn.offsetWidth;
-        const btnHeight = noBtn.offsetHeight;
+        isMoving = true;
+
+        // 🔥 Berechne Richtung AWAY vom Cursor
+        const angle = Math.atan2(cy - e.clientY, cx - e.clientX);
         
-        const maxX = window.innerWidth - btnWidth - padding;
-        const maxY = window.innerHeight - btnHeight - padding;
+        let newX = cx + Math.cos(angle) * moveDistance;
+        let newY = cy + Math.sin(angle) * moveDistance;
 
-        // 🔥 Sichere Berechnung innerhalb der Grenzen
-        let x = Math.max(padding, Math.min(maxX, padding + Math.random() * (maxX - padding)));
-        let y = Math.max(padding, Math.min(maxY, padding + Math.random() * (maxY - padding)));
+        // 🔥 Halte Button im sichtbaren Bereich
+        const btnWidth = rect.width;
+        const btnHeight = rect.height;
+        const padding = 40;
 
+        newX = Math.max(padding, Math.min(window.innerWidth - btnWidth - padding, newX - btnWidth/2));
+        newY = Math.max(padding, Math.min(window.innerHeight - btnHeight - padding, newY - btnHeight/2));
+
+        // 🔥 Smooth Position Update
         noBtn.style.position = "fixed";
-        noBtn.style.left = x + "px";
-        noBtn.style.top = y + "px";
+        noBtn.style.left = newX + "px";
+        noBtn.style.top = newY + "px";
         noBtn.style.zIndex = "5";
+
+        // 🔥 Cooldown damit Button nicht zu oft springt
+        setTimeout(() => {
+            isMoving = false;
+        }, 400);
     }
 });
 
