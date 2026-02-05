@@ -5,13 +5,12 @@
     <title>💖💖💖</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- ❤️ Emoji als Seiten-Icon -->
-    <link rel="icon" href="data:image/svg+xml,
+    <!-- ❤️ echtes Emoji-Favicon -->
+    <link rel="icon" href="data:image/svg+xml;utf8,
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
-        <text y='.9em' font-size='90'>💖</text>
+        <text y='0.9em' font-size='90'>💖</text>
     </svg>">
 
-    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
@@ -28,6 +27,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
         }
 
         .card {
@@ -39,6 +39,7 @@
             text-align: center;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             animation: fadeIn 1s ease;
+            z-index: 1;
         }
 
         h1 {
@@ -57,7 +58,6 @@
             padding: 14px 28px;
             font-size: 16px;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         #yesBtn {
@@ -66,15 +66,11 @@
             box-shadow: 0 8px 20px rgba(255, 95, 109, 0.4);
         }
 
-        #yesBtn:hover {
-            transform: scale(1.08);
-        }
-
         #noBtn {
-            position: fixed;
+            position: absolute;   /* 🔑 NICHT fixed */
             background: #e0e0e0;
             color: #555;
-            z-index: 9999;
+            z-index: 999;
             transition: left 0.15s ease, top 0.15s ease;
         }
 
@@ -89,6 +85,23 @@
             margin-top: 20px;
         }
 
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: red;
+            top: -10px;
+            animation: fall 3s linear forwards;
+            z-index: 9999;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -97,72 +110,79 @@
 </head>
 <body>
 
-<div class="card" id="card">
+<div class="card">
     <h1 id="question">Willst du mein Valentine sein? 💘</h1>
 
-    <div class="buttons" id="buttons">
+    <div class="buttons">
         <button id="yesBtn">Ja! 💖</button>
-        <button id="noBtn">Nee... 🙃</button>
     </div>
 
     <div class="result" id="result">
         <h1>Juhuuu! 💕</h1>
         <p>Ich wusste es 😌</p>
-
-        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fe7%2F1e%2F5e%2Fe71e5ef5f13f20faa77efb81fda7060a.jpg&f=1&nofb=1" alt="boa & luffy:)">
+        <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fe7%2F1e%2F5e%2Fe71e5ef5f13f20faa77efb81fda7060a.jpg&f=1&nofb=1">
     </div>
 </div>
+
+<button id="noBtn">Nee... 🙃</button>
 
 <script>
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const result = document.getElementById("result");
 
-const triggerDistance = 150;
+const triggerDistance = 140;
 const padding = 12;
-let initialized = false;
 
-function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-}
-
-// 🔧 Startposition: exakt unter dem Ja-Button
-function initNoButton() {
+// 🔹 Startposition: unter dem Ja-Button
+function placeNoButton() {
     const yesRect = yesBtn.getBoundingClientRect();
 
     noBtn.style.left = yesRect.left + "px";
-    noBtn.style.top = (yesRect.bottom + 12) + "px";
-
-    initialized = true;
+    noBtn.style.top = (yesRect.bottom + 10) + "px";
 }
 
-window.addEventListener("load", initNoButton);
+placeNoButton();
 
 document.addEventListener("mousemove", (e) => {
-    if (!initialized) return;
-
     const rect = noBtn.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
 
-    const distance = Math.hypot(e.clientX - centerX, e.clientY - centerY);
+    const distance = Math.hypot(e.clientX - cx, e.clientY - cy);
 
     if (distance < triggerDistance) {
         const maxX = window.innerWidth - rect.width - padding;
         const maxY = window.innerHeight - rect.height - padding;
 
-        const newX = clamp(Math.random() * maxX, padding, maxX);
-        const newY = clamp(Math.random() * maxY, padding, maxY);
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
 
-        noBtn.style.left = newX + "px";
-        noBtn.style.top = newY + "px";
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
     }
 });
 
+// 🎉 Konfetti
+function confetti() {
+    for (let i = 0; i < 80; i++) {
+        const c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = Math.random() * window.innerWidth + "px";
+        c.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
+        c.style.animationDuration = 2 + Math.random() * 2 + "s";
+        document.body.appendChild(c);
+
+        setTimeout(() => c.remove(), 4000);
+    }
+}
+
 yesBtn.addEventListener("click", () => {
     document.getElementById("question").style.display = "none";
-    document.getElementById("buttons").style.display = "none";
+    yesBtn.style.display = "none";
+    noBtn.style.display = "none";
     result.style.display = "block";
+    confetti();
 });
 </script>
 
