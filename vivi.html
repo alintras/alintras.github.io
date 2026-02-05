@@ -37,7 +37,7 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             animation: fadeIn 1s ease;
             position: relative;
-            z-index: 10; /* 🔥 Card über dem Nein-Button */
+            z-index: 10;
         }
 
         h1 {
@@ -47,7 +47,7 @@
 
         .buttons {
             position: relative;
-            height: 120px; /* 🔥 Platz für beide Buttons */
+            height: 120px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -73,9 +73,9 @@
         #noBtn {
             background: #e0e0e0;
             color: #555;
-            pointer-events: none; /* 🔥 Nicht klickbar */
+            pointer-events: none;
             position: relative;
-            z-index: 5; /* 🔥 Unter der Card */
+            z-index: 5;
         }
 
         .result {
@@ -138,8 +138,8 @@ const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const result = document.getElementById("result");
 
-const triggerDistance = 200; // 🔥 Noch größerer Abstand
-const padding = 20;
+const triggerDistance = 200;
+const padding = 30; // 🔥 Mehr Abstand vom Rand
 
 document.addEventListener("mousemove", (e) => {
     const rect = noBtn.getBoundingClientRect();
@@ -148,18 +148,22 @@ document.addEventListener("mousemove", (e) => {
 
     const distance = Math.hypot(e.clientX - cx, e.clientY - cy);
 
-    // 🔥 Bewegt sich früh weg
     if (distance < triggerDistance) {
-        const maxX = window.innerWidth - rect.width - padding;
-        const maxY = window.innerHeight - rect.height - padding;
+        // 🔥 Erst Button-Größe holen BEVOR wir Position ändern
+        const btnWidth = noBtn.offsetWidth;
+        const btnHeight = noBtn.offsetHeight;
+        
+        const maxX = window.innerWidth - btnWidth - padding;
+        const maxY = window.innerHeight - btnHeight - padding;
 
-        let x = padding + Math.random() * (maxX - padding);
-        let y = padding + Math.random() * (maxY - padding);
+        // 🔥 Sichere Berechnung innerhalb der Grenzen
+        let x = Math.max(padding, Math.min(maxX, padding + Math.random() * (maxX - padding)));
+        let y = Math.max(padding, Math.min(maxY, padding + Math.random() * (maxY - padding)));
 
         noBtn.style.position = "fixed";
         noBtn.style.left = x + "px";
         noBtn.style.top = y + "px";
-        noBtn.style.zIndex = "5"; // 🔥 Unter der Card bleiben
+        noBtn.style.zIndex = "5";
     }
 });
 
