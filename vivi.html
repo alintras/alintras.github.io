@@ -36,8 +36,8 @@
             text-align: center;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             animation: fadeIn 1s ease;
-            z-index: 1;
-            min-height: auto; /* Flexibel statt fest */
+            position: relative;
+            z-index: 10; /* 🔥 Card über dem Nein-Button */
         }
 
         h1 {
@@ -47,7 +47,11 @@
 
         .buttons {
             position: relative;
-            height: 50px; /* Nur Platz für Ja-Button */
+            height: 120px; /* 🔥 Platz für beide Buttons */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
 
         button {
@@ -62,15 +66,16 @@
             background: linear-gradient(135deg, #ff5f6d, #ffc371);
             color: white;
             box-shadow: 0 8px 20px rgba(255, 95, 109, 0.4);
+            position: relative;
+            z-index: 11;
         }
 
         #noBtn {
-            position: fixed;
             background: #e0e0e0;
             color: #555;
-            z-index: 999;
-            pointer-events: none; /* 🔥 WICHTIG: Button nicht klickbar */
-            transition: left 0.1s ease, top 0.1s ease;
+            pointer-events: none; /* 🔥 Nicht klickbar */
+            position: relative;
+            z-index: 5; /* 🔥 Unter der Card */
         }
 
         .result {
@@ -85,7 +90,7 @@
         }
 
         .result p {
-            margin: 10px 0; /* Kompakter */
+            margin: 10px 0;
         }
 
         .confetti {
@@ -118,6 +123,7 @@
 
     <div class="buttons">
         <button id="yesBtn">Ja! 💖</button>
+        <button id="noBtn">Nee... 🙃</button>
     </div>
 
     <div class="result" id="result">
@@ -127,31 +133,13 @@
     </div>
 </div>
 
-<button id="noBtn">Nee... 🙃</button>
-
 <script>
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const result = document.getElementById("result");
 
-const triggerDistance = 180; // 🔥 Größerer Abstand
+const triggerDistance = 200; // 🔥 Noch größerer Abstand
 const padding = 20;
-
-// 🔹 Startposition: perfekt unter dem Ja-Button
-function placeNoButton() {
-    const yesRect = yesBtn.getBoundingClientRect();
-    const noBtnRect = noBtn.getBoundingClientRect();
-    
-    // Zentriert unter dem Ja-Button
-    const centerX = yesRect.left + (yesRect.width / 2) - (noBtnRect.width / 2);
-    const belowY = yesRect.bottom + 15;
-
-    noBtn.style.left = centerX + "px";
-    noBtn.style.top = belowY + "px";
-}
-
-// Warte bis alles geladen ist
-window.addEventListener("load", placeNoButton);
 
 document.addEventListener("mousemove", (e) => {
     const rect = noBtn.getBoundingClientRect();
@@ -160,19 +148,18 @@ document.addEventListener("mousemove", (e) => {
 
     const distance = Math.hypot(e.clientX - cx, e.clientY - cy);
 
-    // 🔥 Bewegt sich früher weg
+    // 🔥 Bewegt sich früh weg
     if (distance < triggerDistance) {
         const maxX = window.innerWidth - rect.width - padding;
         const maxY = window.innerHeight - rect.height - padding;
 
-        let x, y;
-        do {
-            x = padding + Math.random() * (maxX - padding);
-            y = padding + Math.random() * (maxY - padding);
-        } while (Math.hypot(e.clientX - x, e.clientY - y) < triggerDistance * 1.5); // Nicht zu nah am Cursor spawnen
+        let x = padding + Math.random() * (maxX - padding);
+        let y = padding + Math.random() * (maxY - padding);
 
+        noBtn.style.position = "fixed";
         noBtn.style.left = x + "px";
         noBtn.style.top = y + "px";
+        noBtn.style.zIndex = "5"; // 🔥 Unter der Card bleiben
     }
 });
 
@@ -193,7 +180,6 @@ function confetti() {
 yesBtn.addEventListener("click", () => {
     document.querySelector(".buttons").style.display = "none";
     document.getElementById("question").style.display = "none";
-    noBtn.style.display = "none";
     result.style.display = "block";
     confetti();
 });
