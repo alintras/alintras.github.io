@@ -76,7 +76,7 @@
             pointer-events: none;
             position: relative;
             z-index: 5;
-            transition: all 0.3s ease; /* 🔥 Smooth Bewegung */
+            transition: all 0.2s ease;
         }
 
         .result {
@@ -139,12 +139,12 @@ const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const result = document.getElementById("result");
 
-const triggerDistance = 150; // 🔥 Mittlere Distanz
-const moveDistance = 120; // 🔥 Wie weit Button sich bewegt
+const triggerDistance = 70;
 let isMoving = false;
+let hasMovedOnce = false;
 
 document.addEventListener("mousemove", (e) => {
-    if (isMoving) return; // 🔥 Verhindert zu schnelle Bewegungen
+    if (isMoving) return;
 
     const rect = noBtn.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
@@ -155,34 +155,51 @@ document.addEventListener("mousemove", (e) => {
     if (distance < triggerDistance) {
         isMoving = true;
 
-        // 🔥 Berechne Richtung AWAY vom Cursor
-        const angle = Math.atan2(cy - e.clientY, cx - e.clientX);
+        // First time moving - switch to fixed positioning
+        if (!hasMovedOnce) {
+            noBtn.style.position = "fixed";
+            noBtn.style.left = rect.left + "px";
+            noBtn.style.top = rect.top + "px";
+            hasMovedOnce = true;
+        }
+
+        // Einfache sichere Berechnung
+        const btnWidth = 120; // Ungefähre Button-Breite
+        const btnHeight = 50; // Ungefähre Button-Höhe
+        const padding = 80;
         
-        let newX = cx + Math.cos(angle) * moveDistance;
-        let newY = cy + Math.sin(angle) * moveDistance;
+        // Maximale Bereiche
+        const minX = padding;
+        const maxX = window.innerWidth - btnWidth - padding;
+        const minY = padding;
+        const maxY = window.innerHeight - btnHeight - padding;
+        
+        let newX, newY;
+        let attempts = 0;
+        
+        // Finde Position weit genug vom Cursor
+        do {
+            newX = minX + Math.random() * (maxX - minX);
+            newY = minY + Math.random() * (maxY - minY);
+            
+            const distFromCursor = Math.hypot(e.clientX - (newX + btnWidth/2), e.clientY - (newY + btnHeight/2));
+            
+            if (distFromCursor > 150 || attempts > 15) break;
+            attempts++;
+        } while (true);
 
-        // 🔥 Halte Button im sichtbaren Bereich
-        const btnWidth = rect.width;
-        const btnHeight = rect.height;
-        const padding = 40;
-
-        newX = Math.max(padding, Math.min(window.innerWidth - btnWidth - padding, newX - btnWidth/2));
-        newY = Math.max(padding, Math.min(window.innerHeight - btnHeight - padding, newY - btnHeight/2));
-
-        // 🔥 Smooth Position Update
-        noBtn.style.position = "fixed";
+        // Setze Position
         noBtn.style.left = newX + "px";
         noBtn.style.top = newY + "px";
-        noBtn.style.zIndex = "5";
 
-        // 🔥 Cooldown damit Button nicht zu oft springt
+        // Cooldown
         setTimeout(() => {
             isMoving = false;
-        }, 400);
+        }, 250);
     }
 });
 
-// 🎉 Konfetti
+// Confetti animation
 function confetti() {
     for (let i = 0; i < 80; i++) {
         const c = document.createElement("div");
