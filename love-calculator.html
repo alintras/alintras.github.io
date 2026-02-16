@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Compatibility Calculator ❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        /* Ad Spaces */
+        .ad-space {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            border: 2px dashed #ddd;
+        }
+
+        .ad-space.top {
+            margin-bottom: 10px;
+        }
+
+        .ad-space.sidebar {
+            min-height: 600px;
+        }
+
+        /* Main Calculator */
+        .calculator-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .calculator {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #e91e63;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-family: 'Pacifico', cursive;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .name-input-wrapper {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #e91e63;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+        }
+
+        .heart-divider {
+            font-size: 2em;
+            color: #e91e63;
+            margin-top: 25px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10%, 30% { transform: scale(1.1); }
+            20%, 40% { transform: scale(1); }
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #e91e63, #f06292);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result-section {
+            margin-top: 40px;
+            text-align: center;
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .percentage-display {
+            font-size: 5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #e91e63, #f06292);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 20px 0;
+        }
+
+        .compatibility-bar {
+            width: 100%;
+            height: 40px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 30px 0;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .compatibility-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e91e63, #f06292, #ff6b9d);
+            border-radius: 20px;
+            transition: width 1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .message {
+            font-size: 1.5em;
+            color: #555;
+            margin: 20px 0;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .emoji-display {
+            font-size: 4em;
+            margin: 20px 0;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hearts-animation {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .floating-heart {
+            position: fixed;
+            font-size: 2em;
+            animation: float-up 4s ease-in forwards;
+            opacity: 0;
+            bottom: 0;
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .language-switcher {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.85em;
+        }
+
+        .language-switcher select {
+            border: none;
+            background: transparent;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            color: #666;
+        }
+
+        .language-switcher select:hover {
+            color: #e91e63;
+        }
+
+        .names-display {
+            font-size: 1.3em;
+            color: #e91e63;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-family: 'Pacifico', cursive;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .calculator-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .ad-space.sidebar {
+                min-height: 120px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .percentage-display {
+                font-size: 4em;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .input-section {
+                flex-direction: column;
+            }
+
+            .heart-divider {
+                margin-top: 0;
+            }
+
+            .calculator {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .percentage-display {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="language-switcher">
+        🌐 <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="it">Italiano</option>
+            <option value="pt">Português</option>
+            <option value="ru">Русский</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="zh">中文</option>
+            <option value="ar">العربية</option>
+            <option value="hi">हिन्दी</option>
+            <option value="tr">Türkçe</option>
+            <option value="pl">Polski</option>
+            <option value="nl">Nederlands</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <!-- Top Ad Space -->
+        <div class="ad-space top">
+            <div>Advertisement Space (728x90 Leaderboard)</div>
+        </div>
+
+        <div class="calculator-wrapper">
+            <!-- Main Calculator -->
+            <div class="calculator">
+                <h1>💕 Love Calculator 💕</h1>
+                <p class="subtitle">Discover your compatibility percentage!</p>
+
+                <div class="input-section">
+                    <div class="name-input-wrapper">
+                        <label for="name1">Your Name</label>
+                        <input type="text" id="name1" placeholder="Enter your name">
+                    </div>
+
+                    <div class="heart-divider">❤️</div>
+
+                    <div class="name-input-wrapper">
+                        <label for="name2">Their Name</label>
+                        <input type="text" id="name2" placeholder="Enter their name">
+                    </div>
+                </div>
+
+                <button id="calculateButton">Calculate Love! 💖</button>
+
+                <div class="result-section" id="resultSection">
+                    <div class="names-display" id="namesDisplay"></div>
+                    <div class="percentage-display" id="percentage">0%</div>
+                    <div class="compatibility-bar">
+                        <div class="compatibility-fill" id="compatibilityFill" style="width: 0%"></div>
+                    </div>
+                    <div class="emoji-display" id="emoji">❤️</div>
+                    <div class="message" id="message"></div>
+                </div>
+            </div>
+
+            <!-- Sidebar Ad Space -->
+            <div class="ad-space sidebar">
+                <div>Advertisement Space<br>(300x600 Sidebar)</div>
+            </div>
+        </div>
+
+        <!-- Bottom Ad Space -->
+        <div class="ad-space">
+            <div>Advertisement Space (728x90 Footer)</div>
+        </div>
+    </div>
+
+    <div class="hearts-animation" id="heartsContainer"></div>
+
+    <script>
+        // Translations
+        const translations = {
+            en: {
+                title: "Love Calculator",
+                subtitle: "Discover your compatibility percentage!",
+                yourName: "Your Name",
+                theirName: "Their Name",
+                yourNamePlaceholder: "Enter your name",
+                theirNamePlaceholder: "Enter their name",
+                calculate: "Calculate Love! 💖",
+                alertEmpty: "Please enter both names! 💕",
+                adTop: "Advertisement Space (728x90 Leaderboard)",
+                adSidebar: "Advertisement Space<br>(300x600 Sidebar)",
+                adFooter: "Advertisement Space (728x90 Footer)",
+                messages: {
+                    perfect: "Perfect match! You two are meant to be together! True love is in the air!",
+                    great: "Great compatibility! You have a strong connection and wonderful chemistry!",
+                    good: "Good match! There's definitely potential here. Keep nurturing your bond!",
+                    friends: "Friendship vibes! You might be better as friends, but who knows what the future holds!"
+                }
+            },
+            es: {
+                title: "Calculadora del Amor",
+                subtitle: "¡Descubre tu porcentaje de compatibilidad!",
+                yourName: "Tu Nombre",
+                theirName: "Su Nombre",
+                yourNamePlaceholder: "Ingresa tu nombre",
+                theirNamePlaceholder: "Ingresa su nombre",
+                calculate: "¡Calcular el Amor! 💖",
+                alertEmpty: "¡Por favor ingresa ambos nombres! 💕",
+                adTop: "Espacio Publicitario (728x90)",
+                adSidebar: "Espacio Publicitario<br>(300x600)",
+                adFooter: "Espacio Publicitario (728x90)",
+                messages: {
+                    perfect: "¡Pareja perfecta! ¡Ustedes están destinados a estar juntos! ¡El amor verdadero está en el aire!",
+                    great: "¡Gran compatibilidad! ¡Tienen una conexión fuerte y una química maravillosa!",
+                    good: "¡Buena pareja! Definitivamente hay potencial aquí. ¡Sigan cultivando su vínculo!",
+                    friends: "¡Vibras de amistad! Podrían ser mejores como amigos, ¡pero quién sabe qué depara el futuro!"
+                }
+            },
+            fr: {
+                title: "Calculateur d'Amour",
+                subtitle: "Découvrez votre pourcentage de compatibilité!",
+                yourName: "Votre Nom",
+                theirName: "Leur Nom",
+                yourNamePlaceholder: "Entrez votre nom",
+                theirNamePlaceholder: "Entrez leur nom",
+                calculate: "Calculer l'Amour! 💖",
+                alertEmpty: "Veuillez entrer les deux noms! 💕",
+                adTop: "Espace Publicitaire (728x90)",
+                adSidebar: "Espace Publicitaire<br>(300x600)",
+                adFooter: "Espace Publicitaire (728x90)",
+                messages: {
+                    perfect: "Match parfait! Vous êtes faits l'un pour l'autre! Le véritable amour est dans l'air!",
+                    great: "Grande compatibilité! Vous avez une connexion forte et une chimie merveilleuse!",
+                    good: "Bon match! Il y a définitivement du potentiel ici. Continuez à nourrir votre lien!",
+                    friends: "Vibes d'amitié! Vous pourriez être mieux en tant qu'amis, mais qui sait ce que l'avenir réserve!"
+                }
+            },
+            de: {
+                title: "Liebesrechner",
+                subtitle: "Entdecke euren Kompatibilitätsprozentsatz!",
+                yourName: "Dein Name",
+                theirName: "Ihr/Sein Name",
+                yourNamePlaceholder: "Gib deinen Namen ein",
+                theirNamePlaceholder: "Gib ihren/seinen Namen ein",
+                calculate: "Liebe Berechnen! 💖",
+                alertEmpty: "Bitte gib beide Namen ein! 💕",
+                adTop: "Werbefläche (728x90)",
+                adSidebar: "Werbefläche<br>(300x600)",
+                adFooter: "Werbefläche (728x90)",
+                messages: {
+                    perfect: "Perfektes Match! Ihr seid füreinander bestimmt! Wahre Liebe liegt in der Luft!",
+                    great: "Große Kompatibilität! Ihr habt eine starke Verbindung und wunderbare Chemie!",
+                    good: "Gutes Match! Hier ist definitiv Potenzial. Pflegt eure Bindung weiter!",
+                    friends: "Freundschafts-Vibes! Ihr könntet besser als Freunde sein, aber wer weiß, was die Zukunft bringt!"
+                }
+            },
+            it: {
+                title: "Calcolatore dell'Amore",
+                subtitle: "Scopri la tua percentuale di compatibilità!",
+                yourName: "Il Tuo Nome",
+                theirName: "Il Loro Nome",
+                yourNamePlaceholder: "Inserisci il tuo nome",
+                theirNamePlaceholder: "Inserisci il loro nome",
+                calculate: "Calcola l'Amore! 💖",
+                alertEmpty: "Per favore inserisci entrambi i nomi! 💕",
+                adTop: "Spazio Pubblicitario (728x90)",
+                adSidebar: "Spazio Pubblicitario<br>(300x600)",
+                adFooter: "Spazio Pubblicitario (728x90)",
+                messages: {
+                    perfect: "Match perfetto! Siete fatti l'uno per l'altra! Il vero amore è nell'aria!",
+                    great: "Grande compatibilità! Avete una connessione forte e una chimica meravigliosa!",
+                    good: "Buon match! C'è decisamente potenziale qui. Continuate a coltivare il vostro legame!",
+                    friends: "Vibrazioni di amicizia! Potreste essere migliori come amici, ma chissà cosa riserva il futuro!"
+                }
+            },
+            pt: {
+                title: "Calculadora do Amor",
+                subtitle: "Descubra sua porcentagem de compatibilidade!",
+                yourName: "Seu Nome",
+                theirName: "Nome Dele/Dela",
+                yourNamePlaceholder: "Digite seu nome",
+                theirNamePlaceholder: "Digite o nome dele/dela",
+                calculate: "Calcular o Amor! 💖",
+                alertEmpty: "Por favor, digite ambos os nomes! 💕",
+                adTop: "Espaço Publicitário (728x90)",
+                adSidebar: "Espaço Publicitário<br>(300x600)",
+                adFooter: "Espaço Publicitário (728x90)",
+                messages: {
+                    perfect: "Par perfeito! Vocês foram feitos um para o outro! O amor verdadeiro está no ar!",
+                    great: "Ótima compatibilidade! Vocês têm uma conexão forte e química maravilhosa!",
+                    good: "Bom par! Definitivamente há potencial aqui. Continue nutrindo seu vínculo!",
+                    friends: "Vibes de amizade! Vocês podem ser melhores como amigos, mas quem sabe o que o futuro reserva!"
+                }
+            },
+            ru: {
+                title: "Калькулятор Любви",
+                subtitle: "Узнайте ваш процент совместимости!",
+                yourName: "Ваше Имя",
+                theirName: "Их Имя",
+                yourNamePlaceholder: "Введите ваше имя",
+                theirNamePlaceholder: "Введите их имя",
+                calculate: "Рассчитать Любовь! 💖",
+                alertEmpty: "Пожалуйста, введите оба имени! 💕",
+                adTop: "Рекламное Место (728x90)",
+                adSidebar: "Рекламное Место<br>(300x600)",
+                adFooter: "Рекламное Место (728x90)",
+                messages: {
+                    perfect: "Идеальная пара! Вы созданы друг для друга! Настоящая любовь витает в воздухе!",
+                    great: "Отличная совместимость! У вас сильная связь и прекрасная химия!",
+                    good: "Хорошая пара! Здесь определенно есть потенциал. Продолжайте укреплять вашу связь!",
+                    friends: "Дружеская атмосфера! Возможно, вам лучше быть друзьями, но кто знает, что готовит будущее!"
+                }
+            },
+            ja: {
+                title: "恋愛相性占い",
+                subtitle: "相性パーセンテージを発見しよう！",
+                yourName: "あなたの名前",
+                theirName: "相手の名前",
+                yourNamePlaceholder: "あなたの名前を入力",
+                theirNamePlaceholder: "相手の名前を入力",
+                calculate: "相性を占う！ 💖",
+                alertEmpty: "両方の名前を入力してください！ 💕",
+                adTop: "広告スペース (728x90)",
+                adSidebar: "広告スペース<br>(300x600)",
+                adFooter: "広告スペース (728x90)",
+                messages: {
+                    perfect: "完璧なカップル！二人は運命の相手です！真実の愛が空気中に漂っています！",
+                    great: "素晴らしい相性！強い絆と素晴らしいケミストリーがあります！",
+                    good: "良いマッチ！ここには確実に可能性があります。絆を育み続けましょう！",
+                    friends: "友情の雰囲気！友達としての方が良いかもしれませんが、未来に何があるかわかりません！"
+                }
+            },
+            ko: {
+                title: "사랑 계산기",
+                subtitle: "당신의 궁합 퍼센트를 알아보세요!",
+                yourName: "당신의 이름",
+                theirName: "상대방 이름",
+                yourNamePlaceholder: "이름을 입력하세요",
+                theirNamePlaceholder: "상대방 이름을 입력하세요",
+                calculate: "사랑 계산하기! 💖",
+                alertEmpty: "두 이름을 모두 입력해주세요! 💕",
+                adTop: "광고 공간 (728x90)",
+                adSidebar: "광고 공간<br>(300x600)",
+                adFooter: "광고 공간 (728x90)",
+                messages: {
+                    perfect: "완벽한 커플! 두 분은 천생연분이에요! 진정한 사랑이 공기 중에 있어요!",
+                    great: "훌륭한 궁합! 강한 유대감과 멋진 케미스트리가 있어요!",
+                    good: "좋은 매치! 여기 확실히 가능성이 있어요. 계속 유대를 키워가세요!",
+                    friends: "우정 분위기! 친구로서 더 나을 수 있지만, 미래에 무슨 일이 일어날지 누가 알겠어요!"
+                }
+            },
+            zh: {
+                title: "爱情计算器",
+                subtitle: "发现你们的配对百分比！",
+                yourName: "你的名字",
+                theirName: "对方的名字",
+                yourNamePlaceholder: "输入你的名字",
+                theirNamePlaceholder: "输入对方的名字",
+                calculate: "计算爱情！ 💖",
+                alertEmpty: "请输入两个名字！ 💕",
+                adTop: "广告位 (728x90)",
+                adSidebar: "广告位<br>(300x600)",
+                adFooter: "广告位 (728x90)",
+                messages: {
+                    perfect: "完美配对！你们注定要在一起！真爱在空气中飘荡！",
+                    great: "很好的兼容性！你们有很强的联系和美妙的化学反应！",
+                    good: "不错的配对！这里肯定有潜力。继续培养你们的纽带！",
+                    friends: "友谊氛围！你们可能更适合做朋友，但谁知道未来会怎样！"
+                }
+            },
+            ar: {
+                title: "حاسبة الحب",
+                subtitle: "اكتشف نسبة التوافق الخاصة بك!",
+                yourName: "اسمك",
+                theirName: "اسمهم",
+                yourNamePlaceholder: "أدخل اسمك",
+                theirNamePlaceholder: "أدخل اسمهم",
+                calculate: "احسب الحب! 💖",
+                alertEmpty: "الرجاء إدخال كلا الاسمين! 💕",
+                adTop: "مساحة إعلانية (728x90)",
+                adSidebar: "مساحة إعلانية<br>(300x600)",
+                adFooter: "مساحة إعلانية (728x90)",
+                messages: {
+                    perfect: "توافق مثالي! أنتما مقدران لبعضكما البعض! الحب الحقيقي في الهواء!",
+                    great: "توافق رائع! لديكما ارتباط قوي وكيمياء رائعة!",
+                    good: "توافق جيد! هناك بالتأكيد إمكانات هنا. استمرا في رعاية رابطتكما!",
+                    friends: "أجواء صداقة! قد تكونان أفضل كأصدقاء، ولكن من يدري ما يخبئه المستقبل!"
+                }
+            },
+            hi: {
+                title: "प्रेम कैलकुलेटर",
+                subtitle: "अपना अनुकूलता प्रतिशत खोजें!",
+                yourName: "आपका नाम",
+                theirName: "उनका नाम",
+                yourNamePlaceholder: "अपना नाम दर्ज करें",
+                theirNamePlaceholder: "उनका नाम दर्ज करें",
+                calculate: "प्रेम की गणना करें! 💖",
+                alertEmpty: "कृपया दोनों नाम दर्ज करें! 💕",
+                adTop: "विज्ञापन स्थान (728x90)",
+                adSidebar: "विज्ञापन स्थान<br>(300x600)",
+                adFooter: "विज्ञापन स्थान (728x90)",
+                messages: {
+                    perfect: "परफेक्ट मैच! आप दोनों एक-दूसरे के लिए बने हैं! सच्चा प्यार हवा में है!",
+                    great: "शानदार अनुकूलता! आपका एक मजबूत संबंध और अद्भुत केमिस्ट्री है!",
+                    good: "अच्छा मैच! यहाँ निश्चित रूप से संभावना है। अपने बंधन को पोषित करते रहें!",
+                    friends: "दोस्ती के संकेत! आप दोस्तों के रूप में बेहतर हो सकते हैं, लेकिन कौन जानता है भविष्य में क्या होगा!"
+                }
+            },
+            tr: {
+                title: "Aşk Hesaplayıcı",
+                subtitle: "Uyumluluk yüzdenizi keşfedin!",
+                yourName: "Senin Adın",
+                theirName: "Onun Adı",
+                yourNamePlaceholder: "Adını gir",
+                theirNamePlaceholder: "Onun adını gir",
+                calculate: "Aşkı Hesapla! 💖",
+                alertEmpty: "Lütfen her iki ismi de girin! 💕",
+                adTop: "Reklam Alanı (728x90)",
+                adSidebar: "Reklam Alanı<br>(300x600)",
+                adFooter: "Reklam Alanı (728x90)",
+                messages: {
+                    perfect: "Mükemmel eşleşme! Birbiriniz için yaratılmışsınız! Gerçek aşk havada!",
+                    great: "Harika uyumluluk! Güçlü bir bağınız ve harika bir kimyanız var!",
+                    good: "İyi eşleşme! Burada kesinlikle potansiyel var. Bağınızı beslemeye devam edin!",
+                    friends: "Arkadaşlık havası! Arkadaş olarak daha iyi olabilirsiniz, ama geleceğin ne getireceğini kim bilebilir!"
+                }
+            },
+            pl: {
+                title: "Kalkulator Miłości",
+                subtitle: "Odkryj swój procent zgodności!",
+                yourName: "Twoje Imię",
+                theirName: "Ich Imię",
+                yourNamePlaceholder: "Wprowadź swoje imię",
+                theirNamePlaceholder: "Wprowadź ich imię",
+                calculate: "Oblicz Miłość! 💖",
+                alertEmpty: "Proszę wprowadzić oba imiona! 💕",
+                adTop: "Miejsce Reklamowe (728x90)",
+                adSidebar: "Miejsce Reklamowe<br>(300x600)",
+                adFooter: "Miejsce Reklamowe (728x90)",
+                messages: {
+                    perfect: "Idealne dopasowanie! Jesteście dla siebie stworzeni! Prawdziwa miłość jest w powietrzu!",
+                    great: "Świetna zgodność! Macie silną więź i wspaniałą chemię!",
+                    good: "Dobre dopasowanie! Jest tu zdecydowanie potencjał. Kontynuujcie pielęgnowanie waszej więzi!",
+                    friends: "Klimat przyjaźni! Możecie być lepsi jako przyjaciele, ale kto wie, co przyniesie przyszłość!"
+                }
+            },
+            nl: {
+                title: "Liefde Calculator",
+                subtitle: "Ontdek jullie compatibiliteitspercentage!",
+                yourName: "Jouw Naam",
+                theirName: "Hun Naam",
+                yourNamePlaceholder: "Voer je naam in",
+                theirNamePlaceholder: "Voer hun naam in",
+                calculate: "Bereken Liefde! 💖",
+                alertEmpty: "Voer alsjeblieft beide namen in! 💕",
+                adTop: "Advertentieruimte (728x90)",
+                adSidebar: "Advertentieruimte<br>(300x600)",
+                adFooter: "Advertentieruimte (728x90)",
+                messages: {
+                    perfect: "Perfecte match! Jullie zijn voor elkaar gemaakt! Ware liefde hangt in de lucht!",
+                    great: "Geweldige compatibiliteit! Jullie hebben een sterke connectie en geweldige chemie!",
+                    good: "Goede match! Er is hier zeker potentieel. Blijf jullie band koesteren!",
+                    friends: "Vriendschap vibes! Jullie zouden misschien beter vrienden kunnen zijn, maar wie weet wat de toekomst brengt!"
+                }
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        // Detect language from browser
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            const langCode = browserLang.split('-')[0];
+            
+            if (translations[langCode]) {
+                return langCode;
+            }
+            return 'en';
+        }
+
+        // Change language
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+            
+            // Update all text elements
+            document.querySelector('h1').innerHTML = `💕 ${t.title} 💕`;
+            document.querySelector('.subtitle').textContent = t.subtitle;
+            document.querySelector('label[for="name1"]').textContent = t.yourName;
+            document.querySelector('label[for="name2"]').textContent = t.theirName;
+            document.getElementById('name1').placeholder = t.yourNamePlaceholder;
+            document.getElementById('name2').placeholder = t.theirNamePlaceholder;
+            document.getElementById('calculateButton').innerHTML = t.calculate;
+            
+            // Update ad texts
+            document.querySelectorAll('.ad-space')[0].innerHTML = `<div>${t.adTop}</div>`;
+            document.querySelectorAll('.ad-space')[1].innerHTML = `<div>${t.adSidebar}</div>`;
+            document.querySelectorAll('.ad-space')[2].innerHTML = `<div>${t.adFooter}</div>`;
+            
+            // Update select dropdown
+            document.getElementById('languageSelect').value = lang;
+            
+            // If there's a result showing, update it
+            const resultSection = document.getElementById('resultSection');
+            if (resultSection.classList.contains('show')) {
+                const percentage = parseInt(document.getElementById('percentage').textContent);
+                updateResultMessage(percentage);
+            }
+        }
+
+        // Update result message based on current language
+        function updateResultMessage(percentage) {
+            const t = translations[currentLanguage];
+            const message = document.getElementById('message');
+            
+            if (percentage >= 80) {
+                message.textContent = t.messages.perfect;
+            } else if (percentage >= 60) {
+                message.textContent = t.messages.great;
+            } else if (percentage >= 40) {
+                message.textContent = t.messages.good;
+            } else {
+                message.textContent = t.messages.friends;
+            }
+        }
+
+        // Initialize language on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const detectedLang = detectLanguage();
+            changeLanguage(detectedLang);
+            
+            // Add event listener for language selector
+            document.getElementById('languageSelect').addEventListener('change', function() {
+                changeLanguage(this.value);
+            });
+            
+            // Add event listener for calculate button
+            document.getElementById('calculateButton').addEventListener('click', calculateLove);
+            
+            // Allow Enter key to calculate
+            document.getElementById('name1').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculateLove();
+            });
+            document.getElementById('name2').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculateLove();
+            });
+        });
+
+        let animationInterval = null;
+
+        function calculateLove() {
+            const name1 = document.getElementById('name1').value.trim().toLowerCase();
+            const name2 = document.getElementById('name2').value.trim().toLowerCase();
+
+            if (!name1 || !name2) {
+                alert(translations[currentLanguage].alertEmpty);
+                return;
+            }
+
+            // Deterministic calculation based on names
+            // Sort names to ensure same result regardless of input order
+            const sortedNames = [name1, name2].sort();
+            const combinedNames = sortedNames[0] + sortedNames[1];
+            let hash = 0;
+            
+            for (let i = 0; i < combinedNames.length; i++) {
+                const char = combinedNames.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+
+            // Convert hash to percentage (20-99%)
+            const percentage = 20 + (Math.abs(hash) % 80);
+
+            // Show result
+            displayResult(name1, name2, percentage);
+        }
+
+        function displayResult(name1, name2, percentage) {
+            const resultSection = document.getElementById('resultSection');
+            const namesDisplay = document.getElementById('namesDisplay');
+            const percentageDisplay = document.getElementById('percentage');
+            const compatibilityFill = document.getElementById('compatibilityFill');
+            const emoji = document.getElementById('emoji');
+            const message = document.getElementById('message');
+
+            // Clear any existing animation
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+
+            // Capitalize names
+            const capitalizedName1 = name1.charAt(0).toUpperCase() + name1.slice(1);
+            const capitalizedName2 = name2.charAt(0).toUpperCase() + name2.slice(1);
+
+            namesDisplay.textContent = `${capitalizedName1} ❤️ ${capitalizedName2}`;
+            
+            // Reset to 0 before animating
+            percentageDisplay.textContent = '0%';
+            compatibilityFill.style.width = '0%';
+            
+            // Animate percentage
+            let currentPercentage = 0;
+            animationInterval = setInterval(() => {
+                if (currentPercentage >= percentage) {
+                    clearInterval(animationInterval);
+                    animationInterval = null;
+                    createHearts(percentage);
+                } else {
+                    currentPercentage += 2;
+                    if (currentPercentage > percentage) {
+                        currentPercentage = percentage;
+                    }
+                    percentageDisplay.textContent = currentPercentage + '%';
+                    compatibilityFill.style.width = currentPercentage + '%';
+                }
+            }, 30);
+
+            // Set emoji and message based on percentage
+            const t = translations[currentLanguage];
+            if (percentage >= 80) {
+                emoji.textContent = '😍';
+                message.textContent = t.messages.perfect;
+            } else if (percentage >= 60) {
+                emoji.textContent = '💕';
+                message.textContent = t.messages.great;
+            } else if (percentage >= 40) {
+                emoji.textContent = '💖';
+                message.textContent = t.messages.good;
+            } else {
+                emoji.textContent = '💛';
+                message.textContent = t.messages.friends;
+            }
+
+            resultSection.classList.add('show');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function createHearts(percentage) {
+            const container = document.getElementById('heartsContainer');
+            // Clear any existing hearts first
+            container.innerHTML = '';
+            
+            const heartCount = percentage > 70 ? 15 : percentage > 40 ? 8 : 5;
+
+            for (let i = 0; i < heartCount; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-heart';
+                    heart.textContent = ['❤️', '💕', '💖', '💗', '💝'][Math.floor(Math.random() * 5)];
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.bottom = '0';
+                    heart.style.animationDelay = '0s';
+                    container.appendChild(heart);
+
+                    setTimeout(() => {
+                        if (heart.parentNode === container) {
+                            container.removeChild(heart);
+                        }
+                    }, 4000);
+                }, i * 200);
+            }
+        }
+    </script>
+</body>
+</html>
