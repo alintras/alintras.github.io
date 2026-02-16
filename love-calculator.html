@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google AdSense - Ersetze dies mit deinem eigenen Code nach der Anmeldung -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146"
+    crossorigin="anonymous"></script>
+    
     <style>
         * {
             margin: 0;
@@ -31,7 +37,7 @@
 
         /* Ad Spaces */
         .ad-space {
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%);
             border-radius: 12px;
             padding: 20px;
             text-align: center;
@@ -39,17 +45,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #666;
-            font-size: 14px;
-            border: 2px dashed #ddd;
+            color: #333;
+            font-size: 16px;
+            border: 4px dashed #e91e63;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .ad-space.top {
             margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+            border-color: #ff6b9d;
         }
 
         .ad-space.sidebar {
             min-height: 600px;
+            background: linear-gradient(135deg, #f5f5ff 0%, #e5e5ff 100%);
+            border-color: #a29bfe;
+        }
+
+        .ad-space.footer {
+            background: linear-gradient(135deg, #f0fff4 0%, #d5f4e6 100%);
+            border-color: #55efc4;
         }
 
         /* Main Calculator */
@@ -275,6 +293,121 @@
             color: #e91e63;
         }
 
+        /* Cookie Banner */
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 20px;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .cookie-banner.show {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .cookie-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cookie-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .cookie-text h3 {
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .cookie-text p {
+            font-size: 0.9em;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+
+        .cookie-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cookie-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Quicksand', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .cookie-btn.accept {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .cookie-btn.accept:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .cookie-btn.decline {
+            background: #f44336;
+            color: white;
+        }
+
+        .cookie-btn.decline:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+        }
+
+        .cookie-btn.settings {
+            background: #666;
+            color: white;
+        }
+
+        .cookie-btn.settings:hover {
+            background: #555;
+        }
+
+        @media (max-width: 600px) {
+            .cookie-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cookie-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .cookie-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+
         .names-display {
             font-size: 1.3em;
             color: #e91e63;
@@ -324,8 +457,6 @@
             }
         }
     </style>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146"
-    crossorigin="anonymous"></script>
 </head>
 <body>
     <!-- Language Switcher -->
@@ -352,6 +483,19 @@
     <div class="container">
         <!-- Top Ad Space -->
         <div class="ad-space top">
+            <!-- Google AdSense Code hier einfügen für 728x90 Banner -->
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146"
+            crossorigin="anonymous"></script>
+       <!-- liegend -->
+       <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-5829220477325146"
+            data-ad-slot="7394608271"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+       <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+       </script>
             <div>Advertisement Space (728x90 Leaderboard)</div>
         </div>
 
@@ -390,17 +534,60 @@
 
             <!-- Sidebar Ad Space -->
             <div class="ad-space sidebar">
+                <!-- Google AdSense Code hier einfügen für 300x600 Sidebar -->
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146"
+                crossorigin="anonymous"></script>
+           <!-- stehend -->
+           <ins class="adsbygoogle"
+                style="display:block"
+                data-ad-client="ca-pub-5829220477325146"
+                data-ad-slot="6230969333"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+           <script>
+                (adsbygoogle = window.adsbygoogle || []).push({});
+           </script>
                 <div>Advertisement Space<br>(300x600 Sidebar)</div>
             </div>
         </div>
 
         <!-- Bottom Ad Space -->
-        <div class="ad-space">
+        <div class="ad-space footer">
+            <!-- Google AdSense Code hier einfügen für 728x90 Footer -->
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146"
+            crossorigin="anonymous"></script>
+       <!-- liegend -->
+       <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-5829220477325146"
+            data-ad-slot="7394608271"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+       <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+       </script>
             <div>Advertisement Space (728x90 Footer)</div>
         </div>
     </div>
 
     <div class="hearts-animation" id="heartsContainer"></div>
+
+    <!-- Cookie Banner -->
+    <div class="cookie-banner" id="cookieBanner">
+        <div class="cookie-content">
+            <div class="cookie-text">
+                <h3>🍪 Cookie-Hinweis / Cookie Notice</h3>
+                <p>
+                    <strong>DE:</strong> Wir verwenden Cookies und ähnliche Technologien, um Inhalte zu personalisieren, Werbung anzuzeigen und die Website-Nutzung zu analysieren. 
+                    <strong>EN:</strong> We use cookies and similar technologies to personalize content, display advertising, and analyze website usage.
+                </p>
+            </div>
+            <div class="cookie-buttons">
+                <button class="cookie-btn accept" onclick="acceptCookies()">✓ Akzeptieren / Accept</button>
+                <button class="cookie-btn decline" onclick="declineCookies()">✗ Ablehnen / Decline</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Translations
@@ -418,6 +605,8 @@
                 adSidebar: "Advertisement Space<br>(300x600 Sidebar)",
                 adFooter: "Advertisement Space (728x90 Footer)",
                 messages: {
+                    soulmates: "SOULMATES! 💫 You two are absolutely perfect for each other! This is destiny!",
+                    nomatch: "No romantic connection here. Sometimes hearts just don't align.",
                     perfect: "Perfect match! You two are meant to be together! True love is in the air!",
                     great: "Great compatibility! You have a strong connection and wonderful chemistry!",
                     good: "Good match! There's definitely potential here. Keep nurturing your bond!",
@@ -437,6 +626,8 @@
                 adSidebar: "Espacio Publicitario<br>(300x600)",
                 adFooter: "Espacio Publicitario (728x90)",
                 messages: {
+                    soulmates: "¡ALMAS GEMELAS! 💫 ¡Ustedes son absolutamente perfectos el uno para el otro! ¡Esto es el destino!",
+                    nomatch: "No hay conexión romántica aquí. A veces los corazones simplemente no se alinean.",
                     perfect: "¡Pareja perfecta! ¡Ustedes están destinados a estar juntos! ¡El amor verdadero está en el aire!",
                     great: "¡Gran compatibilidad! ¡Tienen una conexión fuerte y una química maravillosa!",
                     good: "¡Buena pareja! Definitivamente hay potencial aquí. ¡Sigan cultivando su vínculo!",
@@ -784,20 +975,37 @@
                 return;
             }
 
-            // Deterministic calculation based on names
-            // Sort names to ensure same result regardless of input order
-            const sortedNames = [name1, name2].sort();
-            const combinedNames = sortedNames[0] + sortedNames[1];
-            let hash = 0;
+            // Special case
+            const names = [name1, name2];
+            const hasVivi = names.includes('vivi');
+            const hasAli = names.includes('ali');
             
-            for (let i = 0; i < combinedNames.length; i++) {
-                const char = combinedNames.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // Convert to 32-bit integer
+            let percentage;
+            
+            if (hasVivi && hasAli) {
+                percentage = 100;
             }
 
-            // Convert hash to percentage (20-99%)
-            const percentage = 20 + (Math.abs(hash) % 80);
+            else if (hasVivi && !hasAli) {
+                percentage = 0;
+            }
+            // For all other combinations, use deterministic calculation
+            else {
+                // Deterministic calculation based on names
+                // Sort names to ensure same result regardless of input order
+                const sortedNames = [name1, name2].sort();
+                const combinedNames = sortedNames[0] + sortedNames[1];
+                let hash = 0;
+                
+                for (let i = 0; i < combinedNames.length; i++) {
+                    const char = combinedNames.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash; // Convert to 32-bit integer
+                }
+
+                // Convert hash to percentage (20-99%)
+                percentage = 20 + (Math.abs(hash) % 80);
+            }
 
             // Show result
             displayResult(name1, name2, percentage);
@@ -845,7 +1053,13 @@
 
             // Set emoji and message based on percentage
             const t = translations[currentLanguage];
-            if (percentage >= 80) {
+            if (percentage === 100) {
+                emoji.textContent = '💞';
+                message.textContent = t.messages.soulmates || 'SOULMATES! 💫 You two are absolutely perfect for each other! This is destiny!';
+            } else if (percentage === 0) {
+                emoji.textContent = '💔';
+                message.textContent = t.messages.nomatch || 'No romantic connection here. Sometimes hearts just don\'t align.';
+            } else if (percentage >= 80) {
                 emoji.textContent = '😍';
                 message.textContent = t.messages.perfect;
             } else if (percentage >= 60) {
