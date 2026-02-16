@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Pinboard - Share Your Photos</title>
+    <a href="/../index.html">🏠Home</a>
+    <a href="/../pages/tools/tools.html">🛠️Tools & Fun</a>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1400px; width: 100%; }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1em; opacity: 0.9; }
+        .ad-placeholder {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            margin: 15px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .controls {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        .upload-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .admin-controls {
+            display: none;
+            gap: 10px;
+        }
+        .admin-controls.show {
+            display: flex;
+        }
+        .admin-btn {
+            padding: 12px 24px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .admin-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        .admin-btn.logout {
+            background: #6c757d;
+        }
+        .admin-btn.logout:hover {
+            background: #5a6268;
+        }
+        .pinboard {
+            background: #8b7355;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            min-height: 600px;
+            position: relative;
+            background-image: 
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+            background-size: 20px 20px;
+        }
+        .photo-pin {
+            position: absolute;
+            cursor: move;
+            transform-origin: center center;
+            transition: z-index 0s;
+        }
+        .photo-pin:active {
+            cursor: grabbing;
+        }
+        .photo-pin.dragging {
+            z-index: 10000 !important;
+        }
+        .photo-wrapper {
+            position: relative;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transform: rotate(var(--rotation));
+        }
+        .photo-img {
+            display: block;
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+        }
+        .pin-top {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #ff6b6b 0%, #c92a2a 100%);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 1;
+        }
+        .pin-top::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+        .delete-btn {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            width: 28px;
+            height: 28px;
+            background: #dc3545;
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+        .photo-pin.admin-mode .delete-btn {
+            display: flex;
+        }
+        .delete-btn:hover {
+            background: #c82333;
+            transform: scale(1.1);
+        }
+        .info-text {
+            text-align: center;
+            color: #fff;
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+        .tips {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .tips h3 { margin-bottom: 10px; }
+        .tips ul { list-style-position: inside; opacity: 0.9; }
+        .tips li { margin: 8px 0; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .pinboard { padding: 20px; min-height: 400px; }
+            .photo-img { max-width: 150px; max-height: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📌 Interactive Pinboard</h1>
+            <p class="subtitle">Upload and pin your photos to the board!</p>
+        </header>
+        
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        
+        <div class="controls">
+            <div class="file-input-wrapper">
+                <label class="upload-btn" for="photoUpload">
+                    📷 Upload Photo
+                </label>
+                <input type="file" id="photoUpload" accept="image/*">
+            </div>
+            <div class="admin-controls" id="adminControls">
+                <button class="admin-btn" id="clearAllBtn">Clear All</button>
+                <button class="admin-btn logout" id="logoutBtn">Exit</button>
+            </div>
+        </div>
+        
+        <div class="pinboard" id="pinboard"></div>
+        <div class="info-text" id="photoCount">0 photos pinned</div>
+        
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        
+        <div class="tips">
+            <h3>📝 How to Use:</h3>
+            <ul>
+                <li>Click "Upload Photo" to add your image to the pinboard</li>
+                <li>Drag photos anywhere on the board to arrange them</li>
+                <li>Photos can overlap - newer photos appear on top</li>
+                <li>All photos are saved and will persist across sessions</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const pinboard = document.getElementById('pinboard');
+        const photoUpload = document.getElementById('photoUpload');
+        const photoCount = document.getElementById('photoCount');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminControls = document.getElementById('adminControls');
+
+        let isAdmin = false;
+        let photos = [];
+        let highestZIndex = 1;
+        let draggedElement = null;
+        let offsetX = 0;
+        let offsetY = 0;
+        let clickCount = 0;
+        let clickTimer = null;
+
+        // SHA-256 hash function
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Admin setup function (hidden from regular users)
+        window.setAdminPassword = async function(password) {
+            const hash = await sha256(password);
+            localStorage.setItem('adminPasswordHash', hash);
+            console.log('✓ Admin password configured');
+        };
+
+        // Verify admin password
+        async function verifyAdminPassword(password) {
+            const storedHash = localStorage.getItem('adminPasswordHash');
+            if (!storedHash) return false;
+            const inputHash = await sha256(password);
+            return inputHash === storedHash;
+        }
+
+        // Hidden admin access via triple-click on header
+        let headerClickCount = 0;
+        let headerClickTimer = null;
+        document.querySelector('h1').addEventListener('click', () => {
+            headerClickCount++;
+            clearTimeout(headerClickTimer);
+            
+            if (headerClickCount === 3) {
+                const password = prompt('Admin password:');
+                if (password) {
+                    verifyAdminPassword(password).then(isValid => {
+                        if (isValid) {
+                            activateAdminMode();
+                        } else {
+                            alert('Invalid password');
+                        }
+                    });
+                }
+                headerClickCount = 0;
+            }
+            
+            headerClickTimer = setTimeout(() => {
+                headerClickCount = 0;
+            }, 500);
+        });
+
+        // Activate admin mode
+        function activateAdminMode() {
+            isAdmin = true;
+            adminControls.classList.add('show');
+            document.querySelectorAll('.photo-pin').forEach(pin => {
+                pin.classList.add('admin-mode');
+            });
+        }
+
+        // Deactivate admin mode
+        function deactivateAdminMode() {
+            isAdmin = false;
+            adminControls.classList.remove('show');
+            document.querySelectorAll('.photo-pin').forEach(pin => {
+                pin.classList.remove('admin-mode');
+            });
+        }
+
+        // Load photos from localStorage
+        function loadPhotos() {
+            const saved = localStorage.getItem('pinboardPhotos');
+            if (saved) {
+                try {
+                    photos = JSON.parse(saved);
+                    photos.forEach(photo => createPhotoElement(photo));
+                    updateCount();
+                } catch (e) {
+                    console.error('Error loading photos:', e);
+                }
+            }
+        }
+
+        // Save photos to localStorage
+        function savePhotos() {
+            const photosToSave = photos.map(p => ({
+                id: p.id,
+                src: p.src,
+                x: p.x,
+                y: p.y,
+                rotation: p.rotation,
+                zIndex: p.zIndex
+            }));
+            localStorage.setItem('pinboardPhotos', JSON.stringify(photosToSave));
+        }
+
+        // Create photo element
+        function createPhotoElement(photo) {
+            const photoPin = document.createElement('div');
+            photoPin.className = 'photo-pin';
+            if (isAdmin) photoPin.classList.add('admin-mode');
+            photoPin.style.left = photo.x + 'px';
+            photoPin.style.top = photo.y + 'px';
+            photoPin.style.zIndex = photo.zIndex || ++highestZIndex;
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'photo-wrapper';
+            wrapper.style.setProperty('--rotation', photo.rotation + 'deg');
+            
+            const pin = document.createElement('div');
+            pin.className = 'pin-top';
+            
+            const img = document.createElement('img');
+            img.className = 'photo-img';
+            img.src = photo.src;
+            
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '×';
+            deleteBtn.onclick = (e) => {
+                e.stopPropagation();
+                deletePhoto(photo.id);
+            };
+            
+            wrapper.appendChild(img);
+            photoPin.appendChild(pin);
+            photoPin.appendChild(wrapper);
+            photoPin.appendChild(deleteBtn);
+            
+            photoPin.addEventListener('mousedown', startDrag);
+            photoPin.addEventListener('touchstart', startDrag);
+            
+            pinboard.appendChild(photoPin);
+            photo.element = photoPin;
+        }
+
+        // Start dragging
+        function startDrag(e) {
+            e.preventDefault();
+            draggedElement = this;
+            draggedElement.classList.add('dragging');
+            draggedElement.style.zIndex = ++highestZIndex;
+            
+            const rect = draggedElement.getBoundingClientRect();
+            
+            if (e.type === 'touchstart') {
+                offsetX = e.touches[0].clientX - rect.left;
+                offsetY = e.touches[0].clientY - rect.top;
+            } else {
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+            }
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+            document.addEventListener('touchmove', drag);
+            document.addEventListener('touchend', stopDrag);
+        }
+
+        // Dragging
+        function drag(e) {
+            if (!draggedElement) return;
+            
+            const boardRect = pinboard.getBoundingClientRect();
+            let clientX, clientY;
+            
+            if (e.type === 'touchmove') {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            let x = clientX - boardRect.left - offsetX;
+            let y = clientY - boardRect.top - offsetY;
+            
+            x = Math.max(0, Math.min(x, boardRect.width - draggedElement.offsetWidth));
+            y = Math.max(0, Math.min(y, boardRect.height - draggedElement.offsetHeight));
+            
+            draggedElement.style.left = x + 'px';
+            draggedElement.style.top = y + 'px';
+        }
+
+        // Stop dragging
+        function stopDrag() {
+            if (draggedElement) {
+                draggedElement.classList.remove('dragging');
+                
+                const photo = photos.find(p => p.element === draggedElement);
+                if (photo) {
+                    photo.x = parseInt(draggedElement.style.left);
+                    photo.y = parseInt(draggedElement.style.top);
+                    photo.zIndex = parseInt(draggedElement.style.zIndex);
+                    savePhotos();
+                }
+                
+                draggedElement = null;
+            }
+            
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+            document.removeEventListener('touchmove', drag);
+            document.removeEventListener('touchend', stopDrag);
+        }
+
+        // Upload photo
+        photoUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const boardRect = pinboard.getBoundingClientRect();
+                const photo = {
+                    id: Date.now(),
+                    src: event.target.result,
+                    x: Math.random() * (boardRect.width - 220),
+                    y: Math.random() * (boardRect.height - 220),
+                    rotation: (Math.random() - 0.5) * 10,
+                    zIndex: ++highestZIndex
+                };
+                
+                photos.push(photo);
+                createPhotoElement(photo);
+                savePhotos();
+                updateCount();
+            };
+            reader.readAsDataURL(file);
+            
+            e.target.value = '';
+        });
+
+        // Delete photo
+        function deletePhoto(id) {
+            const index = photos.findIndex(p => p.id === id);
+            if (index !== -1) {
+                photos[index].element.remove();
+                photos.splice(index, 1);
+                savePhotos();
+                updateCount();
+            }
+        }
+
+        // Clear all photos
+        clearAllBtn.addEventListener('click', () => {
+            if (confirm('Remove all photos from the pinboard?')) {
+                photos.forEach(photo => photo.element.remove());
+                photos = [];
+                savePhotos();
+                updateCount();
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', deactivateAdminMode);
+
+        // Update photo count
+        function updateCount() {
+            photoCount.textContent = `${photos.length} photo${photos.length !== 1 ? 's' : ''} pinned`;
+        }
+
+        // Initialize
+        loadPhotos();
+        
+        // Setup hint for admin
+        if (!localStorage.getItem('adminPasswordHash')) {
+            console.log('%cAdmin Setup:', 'font-weight: bold; font-size: 14px;');
+            console.log('setAdminPassword("your-password")');
+        }
+    </script>
+</body>
+</html>
