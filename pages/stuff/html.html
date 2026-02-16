@@ -8,7 +8,7 @@
 <body>
     <header>
         <nav>
-            <a href="index.html">Home</a>
+            <a href="/../index.html">Home</a>
             <a href="stuff.html">Stuff</a>
         </nav>
         <h1>Learning HTML</h1>
@@ -289,7 +289,7 @@
             <p>It's best practice to describe what images are showing<br>
             The <strong>alt</strong> attribute (alternative text) is used to add image descriptions.</p>
             <code>&lt;img src="forest2.png" alt="a green forest"&gt;</code><br>
-            <img src="forest2.png" alt="a green forest">
+            <img src="/assets/images/forest2.png" alt="a green forest">
             <p>The alt attribute can be:
                 <ul>
                     <li>read aloud by screen readers</li>
@@ -306,13 +306,13 @@
             <p>You can control the size of images in your web page.<br>
             <strong>width</strong> is an optional attribute:<br>
             <code>&lt;img src="forest.png" width="300"&gt;</code> </p>
-            <img src="forest.png" width="300">
+            <img src="/assets/images/forest.png" width="300">
             <p><strong>height</strong> is another optional attribute for the image element.<br>
             <code>&lt;img src="forest.png" height="150"&gt;</code></p>
-            <img src="forest.png" height="150"><br>
+            <img src="/assets/images/forest.png" height="150"><br>
             <p>or together:<br>
             <code>&lt;img src="forest.png" width="200" height="130&gt;</code></p>
-            <img src="forest.png" width="200" height="130">
+            <img src="/assets/images/forest.png" width="200" height="130">
 
             <p>
                 When only one of the 2 attributes is given, the web browser will calculate
@@ -1048,7 +1048,7 @@
             <div style="text-align: center">
                 <h2>About me</h2>
                 <p>Hi, I'm Ali</p>
-                <img src="forest.png" width="50">
+                <img src="/assets/images/forest.png" width="50">
             </div>
             <p>
 
@@ -1238,7 +1238,7 @@
             &lt;img src="forest.png" width="100" onclick="alert('a picture of a forest')"&gt;
             </pre></code>
             <p>Try clicking on the picture</p>
-            <img src="forest.png" width="100" onclick="alert('a picture of a forest')">
+            <img src="/assets/images/forest.png" width="100" onclick="alert('a picture of a forest')">
 
             <p>
                 A <strong>function</strong> is a piece of code that can be "called" and
@@ -1256,9 +1256,9 @@
             &lt;button onclick="forest.src='volcano.png'"&gt;Show Volcano&lt;/button&gt;
             &lt;button onclick="forest.src='forest.png'"&gt;Show Forest&lt;/button&gt;
             </pre></code>
-            <img id="forest" src="forest.png" height="100" width="150"><br>
-            <button onclick="forest.src='volcano.png'">Show Volcano</button>
-            <button onclick="forest.src='forest.png'">Show Forest</button>
+            <img id="forest" src="/assets/images/forest.png" height="100" width="150"><br>
+            <button onclick="forest.src='/assets/images/volcano.png'">Show Volcano</button>
+            <button onclick="forest.src='/assets/images/forest.png'">Show Forest</button>
             <br>
             <p>
                 JavaScript is one of the core web technologies alongside HTML and CSS.<br>
