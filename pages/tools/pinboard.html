@@ -72,6 +72,14 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
+        .upload-btn.active {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: translateY(-2px) scale(1); }
+            50% { transform: translateY(-2px) scale(1.05); }
+        }
         .admin-controls {
             display: none;
             gap: 10px;
@@ -111,13 +119,32 @@
                 repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
             background-size: 20px 20px;
         }
+        .pinboard.placement-mode {
+            cursor: crosshair;
+        }
+        .pinboard.placement-mode::after {
+            content: 'Click anywhere to place your photo';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 10001;
+        }
         .photo-pin {
             position: absolute;
-            cursor: move;
+            cursor: default;
             transform-origin: center center;
-            transition: z-index 0s;
         }
-        .photo-pin:active {
+        .photo-pin.admin-draggable {
+            cursor: move;
+        }
+        .photo-pin.admin-draggable:active {
             cursor: grabbing;
         }
         .photo-pin.dragging {
@@ -224,7 +251,7 @@
         
         <div class="controls">
             <div class="file-input-wrapper">
-                <label class="upload-btn" for="photoUpload">
+                <label class="upload-btn" id="uploadBtnLabel" for="photoUpload">
                     📷 Upload Photo
                 </label>
                 <input type="file" id="photoUpload" accept="image/*">
@@ -247,8 +274,8 @@
         <div class="tips">
             <h3>📝 How to Use:</h3>
             <ul>
-                <li>Click "Upload Photo" to add your image to the pinboard</li>
-                <li>Drag photos anywhere on the board to arrange them</li>
+                <li>Click "Upload Photo" and select an image</li>
+                <li>Click anywhere on the board to place your photo</li>
                 <li>Photos can overlap - newer photos appear on top</li>
                 <li>All photos are saved and will persist across sessions</li>
             </ul>
@@ -258,6 +285,7 @@
     <script>
         const pinboard = document.getElementById('pinboard');
         const photoUpload = document.getElementById('photoUpload');
+        const uploadBtnLabel = document.getElementById('uploadBtnLabel');
         const photoCount = document.getElementById('photoCount');
         const clearAllBtn = document.getElementById('clearAllBtn');
         const logoutBtn = document.getElementById('logoutBtn');
@@ -266,11 +294,10 @@
         let isAdmin = false;
         let photos = [];
         let highestZIndex = 1;
+        let pendingPhoto = null;
         let draggedElement = null;
         let offsetX = 0;
         let offsetY = 0;
-        let clickCount = 0;
-        let clickTimer = null;
 
         // SHA-256 hash function
         async function sha256(message) {
@@ -280,7 +307,7 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // Admin setup function (hidden from regular users)
+        // Admin setup function
         window.setAdminPassword = async function(password) {
             const hash = await sha256(password);
             localStorage.setItem('adminPasswordHash', hash);
@@ -327,6 +354,7 @@
             adminControls.classList.add('show');
             document.querySelectorAll('.photo-pin').forEach(pin => {
                 pin.classList.add('admin-mode');
+                pin.classList.add('admin-draggable');
             });
         }
 
@@ -336,6 +364,7 @@
             adminControls.classList.remove('show');
             document.querySelectorAll('.photo-pin').forEach(pin => {
                 pin.classList.remove('admin-mode');
+                pin.classList.remove('admin-draggable');
             });
         }
 
@@ -370,7 +399,10 @@
         function createPhotoElement(photo) {
             const photoPin = document.createElement('div');
             photoPin.className = 'photo-pin';
-            if (isAdmin) photoPin.classList.add('admin-mode');
+            if (isAdmin) {
+                photoPin.classList.add('admin-mode');
+                photoPin.classList.add('admin-draggable');
+            }
             photoPin.style.left = photo.x + 'px';
             photoPin.style.top = photo.y + 'px';
             photoPin.style.zIndex = photo.zIndex || ++highestZIndex;
@@ -399,15 +431,20 @@
             photoPin.appendChild(wrapper);
             photoPin.appendChild(deleteBtn);
             
-            photoPin.addEventListener('mousedown', startDrag);
-            photoPin.addEventListener('touchstart', startDrag);
+            // Only allow dragging in admin mode
+            if (isAdmin) {
+                photoPin.addEventListener('mousedown', startDrag);
+                photoPin.addEventListener('touchstart', startDrag);
+            }
             
             pinboard.appendChild(photoPin);
             photo.element = photoPin;
         }
 
-        // Start dragging
+        // Start dragging (admin only)
         function startDrag(e) {
+            if (!isAdmin) return;
+            
             e.preventDefault();
             draggedElement = this;
             draggedElement.classList.add('dragging');
@@ -488,24 +525,48 @@
             
             const reader = new FileReader();
             reader.onload = (event) => {
-                const boardRect = pinboard.getBoundingClientRect();
-                const photo = {
-                    id: Date.now(),
+                pendingPhoto = {
                     src: event.target.result,
-                    x: Math.random() * (boardRect.width - 220),
-                    y: Math.random() * (boardRect.height - 220),
-                    rotation: (Math.random() - 0.5) * 10,
-                    zIndex: ++highestZIndex
+                    rotation: (Math.random() - 0.5) * 10
                 };
                 
-                photos.push(photo);
-                createPhotoElement(photo);
-                savePhotos();
-                updateCount();
+                // Enter placement mode
+                pinboard.classList.add('placement-mode');
+                uploadBtnLabel.classList.add('active');
+                uploadBtnLabel.textContent = '👆 Click on board to place';
             };
             reader.readAsDataURL(file);
             
             e.target.value = '';
+        });
+
+        // Click to place photo
+        pinboard.addEventListener('click', (e) => {
+            if (!pendingPhoto) return;
+            
+            const boardRect = pinboard.getBoundingClientRect();
+            const x = e.clientX - boardRect.left - 110; // Center the 200px photo (plus padding)
+            const y = e.clientY - boardRect.top - 110;
+            
+            const photo = {
+                id: Date.now(),
+                src: pendingPhoto.src,
+                x: Math.max(0, Math.min(x, boardRect.width - 220)),
+                y: Math.max(0, Math.min(y, boardRect.height - 220)),
+                rotation: pendingPhoto.rotation,
+                zIndex: ++highestZIndex
+            };
+            
+            photos.push(photo);
+            createPhotoElement(photo);
+            savePhotos();
+            updateCount();
+            
+            // Exit placement mode
+            pendingPhoto = null;
+            pinboard.classList.remove('placement-mode');
+            uploadBtnLabel.classList.remove('active');
+            uploadBtnLabel.textContent = '📷 Upload Photo';
         });
 
         // Delete photo
