@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Idle – Small Tools & Passive Games</title>
+    <link rel="stylesheet" href="idle.css">
+    <a href="/../index.html">🏠Home</a>
+    <a href="/../pages/tools/tools.html">🛠️Tools & Fun</a>
+</head>
+<body>
+
+<header>
+    <h1>Idle</h1>
+    <p>Small tools, idle games, and pointless experiments.</p>
+</header>
+
+<main class="grid">
+
+    <!-- IDLE ECONOMY -->
+    <section class="card">
+        <h2>🪙 Idle Points</h2>
+        <p class="big" id="points">0</p>
+        <p>Rate: <span id="rate">1</span> / sec</p>
+        <button onclick="buyUpgrade()">Upgrade (+1/sec)</button>
+    </section>
+
+    <!-- LOOT SIMULATOR -->
+    <section class="card">
+        <h2>🎲 Loot Simulator</h2>
+        <p id="lootResult">Open a box</p>
+        <div id="lootStats"></div>
+        <button onclick="openLoot()">Open Loot Box</button>
+    </section>
+
+    <!-- CLICK GAME -->
+    <section class="card">
+        <h2>🎯 Click Counter</h2>
+        <p class="big" id="clicks">0</p>
+        <button onclick="addClick()">Click</button>
+    </section>
+
+    <!-- RANDOM -->
+    <section class="card">
+        <h2>🔢 Random Number</h2>
+        <p id="randNum">–</p>
+        <button onclick="randomNumber()">Generate</button>
+    </section>
+
+    <!-- REACTION -->
+    <section class="card">
+        <h2>⏱ Reaction Test</h2>
+        <p id="reaction">Wait…</p>
+        <button onclick="startReaction()">Start</button>
+    </section>
+
+    <!-- FORTUNE -->
+    <section class="card">
+        <h2>🔮 Fortune</h2>
+        <p id="fortune">Your fate awaits</p>
+        <button onclick="fortune()">Reveal</button>
+    </section>
+
+</main>
+
+<footer>
+    <p>Idle is better when left open.</p>
+</footer>
+
+<script src="idle.js"></script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPS Test - 10 Second Click Speed Test</title>
+    <a href="/../index.html">🏠Home</a>
+    <a href="/../pages/tools/tools.html">🛠️Tools & Fun</a>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 900px; width: 100%; }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1em; opacity: 0.9; }
+        .ad-placeholder {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            margin: 15px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .stat {
+            text-align: center;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 12px;
+            color: white;
+            flex: 1;
+            min-width: 140px;
+        }
+        .stat-label { font-size: 0.9em; opacity: 0.9; margin-bottom: 5px; }
+        .stat-value { font-size: 2em; font-weight: bold; }
+        .timer-display {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .timer {
+            font-size: 4em;
+            font-weight: bold;
+            color: #f5576c;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .timer-label {
+            font-size: 1.2em;
+            color: #666;
+            margin-top: 10px;
+        }
+        .click-area {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 20px;
+            padding: 80px 40px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s ease;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .click-area:hover {
+            transform: scale(1.02);
+        }
+        .click-area:active {
+            transform: scale(0.98);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .click-area.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .click-area.disabled:hover {
+            transform: none;
+        }
+        .click-text {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .click-count {
+            font-size: 5em;
+            font-weight: bold;
+            color: white;
+            margin-top: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .btn-secondary { background: #f0f0f0; color: #666; }
+        .btn-secondary:hover { background: #e0e0e0; }
+        .result-message {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #f5576c;
+            min-height: 30px;
+        }
+        .tips {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .tips h3 { margin-bottom: 10px; }
+        .tips ul { list-style-position: inside; opacity: 0.9; }
+        .tips li { margin: 8px 0; }
+        .leaderboard {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+        }
+        .leaderboard h3 {
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .leaderboard-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            .stat { min-width: 120px; }
+            button { padding: 12px 20px; font-size: 1em; }
+            .click-text { font-size: 1.8em; }
+            .click-count { font-size: 3.5em; }
+            .timer { font-size: 3em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ CPS Test - 10 Seconds</h1>
+            <p class="subtitle">How fast can you click?</p>
+        </header>
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        <div class="game-area">
+            <div class="score-display">
+                <div class="stat">
+                    <div class="stat-label">Current CPS</div>
+                    <div class="stat-value" id="currentCPS">0.0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Best CPS</div>
+                    <div class="stat-value" id="bestCPS">0.0</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Total Tests</div>
+                    <div class="stat-value" id="totalTests">0</div>
+                </div>
+            </div>
+            <div class="timer-display">
+                <div class="timer" id="timer">10.0</div>
+                <div class="timer-label">seconds remaining</div>
+            </div>
+            <div class="click-area" id="clickArea">
+                <div class="click-text" id="clickText">Click to Start!</div>
+                <div class="click-count" id="clickCount">0</div>
+            </div>
+            <div class="controls">
+                <button class="btn-primary" id="resetBtn">Restart Test</button>
+                <button class="btn-secondary" id="clearStatsBtn">Clear History</button>
+            </div>
+            <div class="result-message" id="resultMessage"></div>
+        </div>
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        <div class="tips">
+            <h3>💡 Tips for Better CPS:</h3>
+            <ul>
+                <li>Use your index and middle fingers alternating (butterfly clicking)</li>
+                <li>Keep your hand relaxed to avoid fatigue</li>
+                <li>Position your mouse comfortably</li>
+                <li>Focus on consistency over speed at first</li>
+                <li>Average CPS: 5-7 | Good: 8-10 | Excellent: 11+</li>
+            </ul>
+        </div>
+        <div class="leaderboard">
+            <h3>📊 Your Recent Tests</h3>
+            <div id="historyList"></div>
+        </div>
+    </div>
+    <script>
+        const clickArea = document.getElementById('clickArea');
+        const clickText = document.getElementById('clickText');
+        const clickCount = document.getElementById('clickCount');
+        const timerDisplay = document.getElementById('timer');
+        const currentCPSEl = document.getElementById('currentCPS');
+        const bestCPSEl = document.getElementById('bestCPS');
+        const totalTestsEl = document.getElementById('totalTests');
+        const resultMessageEl = document.getElementById('resultMessage');
+        const resetBtn = document.getElementById('resetBtn');
+        const clearStatsBtn = document.getElementById('clearStatsBtn');
+        const historyList = document.getElementById('historyList');
+
+        let clicks = 0;
+        let timeLeft = 10;
+        let isRunning = false;
+        let hasStarted = false;
+        let timerInterval = null;
+        let bestCPS = parseFloat(localStorage.getItem('bestCPS') || '0');
+        let totalTests = parseInt(localStorage.getItem('totalTests') || '0');
+        let history = JSON.parse(localStorage.getItem('cpsHistory') || '[]');
+
+        bestCPSEl.textContent = bestCPS.toFixed(1);
+        totalTestsEl.textContent = totalTests;
+        updateHistory();
+
+        function startTest() {
+            if (isRunning) return;
+            hasStarted = true;
+            isRunning = true;
+            clicks = 0;
+            timeLeft = 10;
+            clickCount.textContent = clicks;
+            clickText.textContent = 'Click Fast!';
+            resultMessageEl.textContent = '';
+            
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                if (timeLeft <= 0) {
+                    timeLeft = 0;
+                    endTest();
+                }
+                timerDisplay.textContent = timeLeft.toFixed(1);
+                
+                const currentCPS = timeLeft < 10 ? clicks / (10 - timeLeft) : 0;
+                currentCPSEl.textContent = currentCPS.toFixed(1);
+            }, 100);
+        }
+
+        function endTest() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            hasStarted = false;
+            clickArea.classList.add('disabled');
+            
+            const finalCPS = clicks / 10;
+            currentCPSEl.textContent = finalCPS.toFixed(1);
+            clickText.textContent = 'Test Complete!';
+            
+            totalTests++;
+            totalTestsEl.textContent = totalTests;
+            localStorage.setItem('totalTests', totalTests.toString());
+            
+            history.unshift({
+                cps: finalCPS,
+                clicks: clicks,
+                date: new Date().toLocaleString()
+            });
+            if (history.length > 10) history = history.slice(0, 10);
+            localStorage.setItem('cpsHistory', JSON.stringify(history));
+            updateHistory();
+            
+            if (finalCPS > bestCPS) {
+                bestCPS = finalCPS;
+                bestCPSEl.textContent = bestCPS.toFixed(1);
+                localStorage.setItem('bestCPS', bestCPS.toString());
+                resultMessageEl.textContent = '🎉 New Personal Record!';
+            } else {
+                resultMessageEl.textContent = getRankMessage(finalCPS);
+            }
+            
+            setTimeout(() => {
+                clickArea.classList.remove('disabled');
+                clickText.textContent = 'Click to Start!';
+            }, 2000);
+        }
+
+        function getRankMessage(cps) {
+            if (cps >= 15) return '🏆 Legendary! Insane speed!';
+            if (cps >= 12) return '⭐ Outstanding! Professional level!';
+            if (cps >= 10) return '🔥 Excellent! Very impressive!';
+            if (cps >= 8) return '👍 Great job! Above average!';
+            if (cps >= 6) return '👌 Good! Keep practicing!';
+            if (cps >= 4) return '💪 Not bad! Room to improve!';
+            return '🎯 Keep trying! Practice makes perfect!';
+        }
+
+        function updateHistory() {
+            if (history.length === 0) {
+                historyList.innerHTML = '<div style="text-align:center;color:#ccc;padding:20px;">No tests yet</div>';
+                return;
+            }
+            
+            historyList.innerHTML = history.map((entry, index) => `
+                <div class="leaderboard-entry">
+                    <span>#${index + 1} - ${entry.cps.toFixed(1)} CPS (${entry.clicks} clicks)</span>
+                    <span style="opacity:0.7;font-size:0.9em">${entry.date}</span>
+                </div>
+            `).join('');
+        }
+
+        function reset() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+            }
+            hasStarted = false;
+            clicks = 0;
+            timeLeft = 10;
+            clickCount.textContent = clicks;
+            timerDisplay.textContent = '10.0';
+            currentCPSEl.textContent = '0.0';
+            clickText.textContent = 'Click to Start!';
+            resultMessageEl.textContent = '';
+            clickArea.classList.remove('disabled');
+        }
+
+        function clearStats() {
+            if (confirm('Are you sure you want to clear all your stats and history?')) {
+                bestCPS = 0;
+                totalTests = 0;
+                history = [];
+                bestCPSEl.textContent = '0.0';
+                totalTestsEl.textContent = '0';
+                localStorage.removeItem('bestCPS');
+                localStorage.removeItem('totalTests');
+                localStorage.removeItem('cpsHistory');
+                updateHistory();
+                reset();
+            }
+        }
+
+        clickArea.addEventListener('click', () => {
+            if (!hasStarted) {
+                startTest();
+            }
+            if (isRunning) {
+                clicks++;
+                clickCount.textContent = clicks;
+            }
+        });
+
+        clickArea.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!hasStarted) {
+                startTest();
+            }
+            if (isRunning) {
+                clicks++;
+                clickCount.textContent = clicks;
+            }
+        });
+
+        resetBtn.addEventListener('click', reset);
+        clearStatsBtn.addEventListener('click', clearStats);
+    </script>
+</body>
+</html>

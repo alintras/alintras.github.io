@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Quote Generator - Inspirational Quotes</title>
+    <a href="/../index.html">🏠Home</a>
+    <a href="/../pages/tools/tools.html">🛠️Tools & Fun</a>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 900px; width: 100%; }
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .subtitle { font-size: 1.1em; opacity: 0.9; }
+        .ad-placeholder {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            color: #999;
+            margin: 15px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-area {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .quote-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .quote-icon {
+            font-size: 3em;
+            color: #f5576c;
+            opacity: 0.3;
+            margin-bottom: 20px;
+        }
+        .quote-text {
+            font-size: 1.8em;
+            line-height: 1.6;
+            color: #333;
+            font-style: italic;
+            margin-bottom: 20px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quote-author {
+            font-size: 1.2em;
+            color: #666;
+            font-weight: bold;
+        }
+        .quote-author::before {
+            content: "— ";
+        }
+        .category-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .category-btn {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        .category-btn:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+        .category-btn.active {
+            background: white;
+            color: #f5576c;
+            border-color: white;
+        }
+        .tips {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .tips h3 { margin-bottom: 10px; }
+        .tips ul { list-style-position: inside; opacity: 0.9; }
+        .tips li { margin: 8px 0; }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            .quote-text { font-size: 1.3em; min-height: 100px; }
+            .quote-author { font-size: 1em; }
+            .main-area { padding: 25px; }
+            button { padding: 12px 20px; font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💭 Random Quote Generator</h1>
+            <p class="subtitle">Get inspired with wisdom from great minds</p>
+        </header>
+        <div class="category-filter" id="categoryFilter">
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="inspirational">Inspirational</button>
+            <button class="category-btn" data-category="motivational">Motivational</button>
+            <button class="category-btn" data-category="life">Life</button>
+            <button class="category-btn" data-category="success">Success</button>
+            <button class="category-btn" data-category="wisdom">Wisdom</button>
+        </div>
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        <div class="main-area">
+            <div class="quote-container">
+                <div class="quote-icon">"</div>
+                <div class="quote-text" id="quoteText">Click the button below to get a random quote!</div>
+                <div class="quote-author" id="quoteAuthor"></div>
+                <div class="category-badge" id="categoryBadge" style="display:none;"></div>
+            </div>
+            <div class="controls">
+                <button class="btn-primary" id="newQuoteBtn">New Quote</button>
+                <button class="btn-secondary" id="copyBtn">Copy Quote</button>
+                <button class="btn-secondary" id="tweetBtn">Tweet Quote</button>
+            </div>
+        </div>
+        <div class="ad-placeholder">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        <div class="tips">
+            <h3>✨ About These Quotes:</h3>
+            <ul>
+                <li>Curated collection of inspiring quotes from famous thinkers and leaders</li>
+                <li>Filter by category to find quotes that match your mood</li>
+                <li>Share quotes on Twitter or copy to clipboard</li>
+                <li>New quote every time you click the button</li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        const quotes = [
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", category: "success" },
+            { text: "Life is what happens when you're busy making other plans.", author: "John Lennon", category: "life" },
+            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt", category: "inspirational" },
+            { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle", category: "wisdom" },
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt", category: "motivational" },
+            { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins", category: "motivational" },
+            { text: "In the end, we only regret the chances we didn't take.", author: "Lewis Carroll", category: "life" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill", category: "success" },
+            { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela", category: "inspirational" },
+            { text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs", category: "life" },
+            { text: "If you want to lift yourself up, lift up someone else.", author: "Booker T. Washington", category: "wisdom" },
+            { text: "I have not failed. I've just found 10,000 ways that won't work.", author: "Thomas Edison", category: "success" },
+            { text: "The mind is everything. What you think you become.", author: "Buddha", category: "wisdom" },
+            { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb", category: "motivational" },
+            { text: "An unexamined life is not worth living.", author: "Socrates", category: "wisdom" },
+            { text: "Turn your wounds into wisdom.", author: "Oprah Winfrey", category: "inspirational" },
+            { text: "Whether you think you can or you think you can't, you're right.", author: "Henry Ford", category: "motivational" },
+            { text: "Life is 10% what happens to you and 90% how you react to it.", author: "Charles R. Swindoll", category: "life" },
+            { text: "The purpose of our lives is to be happy.", author: "Dalai Lama", category: "life" },
+            { text: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", author: "Buddha", category: "wisdom" },
+            { text: "Happiness is not something ready made. It comes from your own actions.", author: "Dalai Lama", category: "inspirational" },
+            { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius", category: "motivational" },
+            { text: "Everything you've ever wanted is on the other side of fear.", author: "George Addair", category: "inspirational" },
+            { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau", category: "success" },
+            { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson", category: "motivational" },
+            { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney", category: "success" },
+            { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky", category: "motivational" },
+            { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson", category: "inspirational" },
+            { text: "Go confidently in the direction of your dreams! Live the life you've imagined.", author: "Henry David Thoreau", category: "inspirational" },
+            { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson", category: "wisdom" }
+        ];
+
+        const quoteText = document.getElementById('quoteText');
+        const quoteAuthor = document.getElementById('quoteAuthor');
+        const categoryBadge = document.getElementById('categoryBadge');
+        const newQuoteBtn = document.getElementById('newQuoteBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const tweetBtn = document.getElementById('tweetBtn');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+
+        let currentCategory = 'all';
+        let currentQuote = null;
+
+        function getRandomQuote() {
+            let filteredQuotes = quotes;
+            
+            if (currentCategory !== 'all') {
+                filteredQuotes = quotes.filter(q => q.category === currentCategory);
+            }
+
+            if (filteredQuotes.length === 0) {
+                filteredQuotes = quotes;
+            }
+
+            const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+            currentQuote = filteredQuotes[randomIndex];
+            
+            quoteText.textContent = `"${currentQuote.text}"`;
+            quoteAuthor.textContent = currentQuote.author;
+            categoryBadge.textContent = currentQuote.category.charAt(0).toUpperCase() + currentQuote.category.slice(1);
+            categoryBadge.style.display = 'inline-block';
+        }
+
+        function copyQuote() {
+            if (!currentQuote) return;
+            
+            const text = `"${currentQuote.text}" — ${currentQuote.author}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                copyBtn.style.background = '#28a745';
+                copyBtn.style.color = 'white';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '';
+                    copyBtn.style.color = '';
+                }, 2000);
+            }).catch(() => {
+                alert('Failed to copy. Please try again.');
+            });
+        }
+
+        function tweetQuote() {
+            if (!currentQuote) return;
+            
+            const tweetText = `"${currentQuote.text}" — ${currentQuote.author}`;
+            const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+            window.open(tweetUrl, '_blank');
+        }
+
+        categoryButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                getRandomQuote();
+            });
+        });
+
+        newQuoteBtn.addEventListener('click', getRandomQuote);
+        copyBtn.addEventListener('click', copyQuote);
+        tweetBtn.addEventListener('click', tweetQuote);
+
+        // Load initial quote
+        getRandomQuote();
+    </script>
+</body>
+</html>
