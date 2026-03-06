@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infinite Tic Tac Toe</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+<a href="/../index.html">🏠Home</a></li>
+<a href="fun.html">🤣Fun</a></li>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--panel:#111;--border:#2a2a2a;--border2:#444;
+  --fg:#e8e8e8;--dim:#555;--dim2:#888;
+  --inv:#e8e8e8;--inv-bg:#0a0a0a;
+  --danger:#fff;--danger-bg:#0a0a0a;
+  --scanline:rgba(0,0,0,0.25);
+}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:'Share Tech Mono',monospace;overflow-x:hidden;cursor:default}
+
+/* scanline overlay */
+body::after{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,var(--scanline)2px,var(--scanline)4px)}
+
+.grid-bg{display:none}
+.vig{display:none}
+
+.scr{position:relative;z-index:1;display:none;min-height:100vh}
+.scr.on{display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* ── LANDING ── */
+#land{padding:2rem;text-align:center}
+.lsup{font-family:'Share Tech Mono',monospace;font-size:clamp(.6rem,2vw,.75rem);letter-spacing:.4em;color:var(--dim2);display:block;margin-bottom:.6rem}
+.logo{font-family:'VT323',monospace;font-size:clamp(3rem,10vw,7rem);font-weight:400;letter-spacing:.05em;line-height:.95;color:var(--fg)}
+.lsub{font-family:'Share Tech Mono',monospace;font-size:clamp(.55rem,1.6vw,.72rem);letter-spacing:.3em;color:var(--dim2);margin-top:.6rem;display:block}
+
+/* ascii divider */
+.ldiv{font-family:'Share Tech Mono',monospace;color:var(--border2);font-size:.7rem;letter-spacing:.05em;margin:1.2rem 0;overflow:hidden;white-space:nowrap}
+
+.tag{font-size:clamp(.8rem,2vw,.9rem);color:var(--dim2);margin:.8rem 0 2rem;max-width:460px;line-height:1.8}
+.tag strong{color:var(--fg)}
+
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:0;width:100%;max-width:700px;margin-bottom:1.5rem;border:1px solid var(--border2)}
+.mc{background:var(--bg);border:none;border-right:1px solid var(--border2);padding:1.4rem 1.1rem;cursor:pointer;position:relative;transition:background .15s;text-align:left}
+.mc:last-child{border-right:none}
+.mc:hover{background:var(--fg)}
+.mc:hover .mn,.mc:hover .md,.mc:hover .bdg{color:var(--bg)!important;border-color:var(--bg)!important}
+.mc .ico{font-size:1.5rem;margin-bottom:.6rem;display:block;filter:grayscale(1)}
+.mc .mn{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.15em;color:var(--fg);margin-bottom:.4rem;text-transform:uppercase}
+.mc .md{font-size:.75rem;color:var(--dim2);line-height:1.55}
+.mc .bdg{position:absolute;top:.6rem;right:.6rem;font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:.1em;padding:.15rem .45rem;border:1px solid var(--dim2);color:var(--dim2)}
+
+.dpanel{display:none;flex-direction:column;align-items:center;gap:.8rem;margin-bottom:1.5rem;border:1px solid var(--border2);padding:1.2rem 2rem}
+.dpanel.on{display:flex}
+.dl{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.3em;color:var(--dim2)}
+.dbs{display:flex;gap:0;flex-wrap:wrap;justify-content:center;border:1px solid var(--border2)}
+.db{background:none;border:none;border-right:1px solid var(--border2);color:var(--dim2);font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:.1em;padding:.45rem 1rem;cursor:pointer;transition:all .15s}
+.db:last-child{border-right:none}
+.db:hover,.db.sel{background:var(--fg);color:var(--bg)}
+.db.wg:hover,.db.wg.sel{background:var(--fg);color:var(--bg)}
+.go{background:var(--fg);border:none;color:var(--bg);font-family:'Share Tech Mono',monospace;font-size:.8rem;letter-spacing:.25em;padding:.65rem 2rem;cursor:pointer;margin-top:.6rem;transition:opacity .15s;text-transform:uppercase}
+.go:hover{opacity:.85}
+.hb{background:none;border:none;color:var(--dim2);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;margin-top:.3rem}
+.hb:hover{color:var(--fg)}
+.hb::before{content:'[ '}.hb::after{content:' ]'}
+
+/* ── MODAL ── */
+.mo{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:2rem}
+.mo.on{display:flex}
+.mb{background:var(--bg);border:1px solid var(--border2);max-width:560px;width:100%;padding:2rem;position:relative;max-height:90vh;overflow-y:auto}
+.mx{position:absolute;top:.8rem;right:1rem;background:none;border:none;color:var(--dim2);font-family:'Share Tech Mono',monospace;font-size:1rem;cursor:pointer;letter-spacing:.1em}
+.mx:hover{color:var(--fg)}
+.mb h2{font-family:'Share Tech Mono',monospace;font-size:.8rem;letter-spacing:.3em;color:var(--fg);margin-bottom:1.2rem;border-bottom:1px solid var(--border2);padding-bottom:.8rem}
+.ri{display:flex;gap:1rem;margin-bottom:1rem;align-items:flex-start}
+.rn{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--dim2);flex-shrink:0;margin-top:2px}
+.rn::before{content:'['}.rn::after{content:']'}
+.rt{font-size:.8rem;color:var(--dim2);line-height:1.65}
+.rt strong{color:var(--fg)}
+
+/* ── GAME ── */
+#game{flex-direction:column;padding:1rem;gap:.7rem}
+.tb{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:680px}
+.bb{background:none;border:1px solid var(--border2);color:var(--dim2);font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.15em;padding:.35rem .9rem;cursor:pointer;transition:all .15s}
+.bb:hover{border-color:var(--fg);color:var(--fg)}
+.gt{font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.3em;color:var(--dim)}
+.ml{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.15em;color:var(--fg);border:1px solid var(--border2);padding:.3rem .7rem}
+
+.ps{display:flex;width:100%;max-width:680px;gap:0;border:1px solid var(--border2)}
+.pp{flex:1;background:var(--bg);border-right:1px solid var(--border2);padding:.8rem 1rem;position:relative;transition:background .2s}
+.pp:last-child{border-right:none}
+.pp.at{background:var(--fg)}
+.pp.at .pl,.pp.at .pn,.pp.at .sc{color:var(--bg)!important}
+.pp.at .dot{border-color:var(--bg)!important}
+.pp.at .dot.on{background:var(--bg)!important}
+.pp.at .dot.wd{background:var(--bg)!important;border-color:var(--bg)!important}
+.pl{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.2em;color:var(--dim2);margin-bottom:.3rem}
+.pn{font-family:'VT323',monospace;font-size:1.6rem;color:var(--fg);line-height:1}
+.sc{position:absolute;top:.8rem;right:1rem;font-family:'VT323',monospace;font-size:2rem;color:var(--fg)}
+.pd{display:flex;gap:.4rem;margin-top:.5rem}
+.dot{width:8px;height:8px;border-radius:0;border:1px solid var(--border2);transition:all .25s}
+.dot.on{background:var(--fg);border-color:var(--fg)}
+.dot.wd{background:var(--fg);border-color:var(--fg);animation:dp .7s infinite}
+@keyframes dp{0%,100%{opacity:1}50%{opacity:.1}}
+
+/* timer */
+.tw{width:100%;max-width:680px}
+.ti{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.3rem}
+.tl{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.2em;color:var(--dim2)}
+.tn{font-family:'VT323',monospace;font-size:1.4rem;color:var(--fg)}
+.tn.rd{animation:tf .5s infinite}
+@keyframes tf{0%,100%{opacity:1}50%{opacity:.15}}
+.tt{height:2px;background:var(--border2)}
+.tba{height:100%;background:var(--fg);transition:width 1s linear}
+.tba.rd{animation:trd .5s infinite}
+@keyframes trd{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* status */
+.sw{width:100%;max-width:680px;text-align:center;min-height:1.3rem}
+.sm{font-family:'Share Tech Mono',monospace;font-size:clamp(.58rem,2.5vw,.7rem);letter-spacing:.15em;color:var(--dim2)}
+.sm.rd{color:var(--fg);animation:tf .8s infinite}
+
+/* ── BOARD ── */
+.bw{width:100%;max-width:440px;position:relative}
+#board{display:grid;grid-template-columns:repeat(3,1fr);width:100%;aspect-ratio:1/1;position:relative;border:1px solid var(--border2)}
+.cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;border-right:1px solid var(--border2);border-bottom:1px solid var(--border2);overflow:hidden}
+.cell:nth-child(3n){border-right:none}
+.cell:nth-child(n+7){border-bottom:none}
+.cell:not(.tk):hover{background:var(--border)}
+.cg{position:absolute;pointer-events:none;font-family:'VT323',monospace;font-size:clamp(2.5rem,10vw,5rem);opacity:0;transition:opacity .12s;color:var(--dim2)}
+.cell:not(.tk):hover .cg{opacity:.4}
+.cm{position:relative;z-index:1;pointer-events:none;font-family:'VT323',monospace;font-size:clamp(2.5rem,10vw,5rem);opacity:0;transform:scale(.3);transition:opacity .22s,transform .22s cubic-bezier(.175,.885,.32,1.275)}
+.cell.fl .cm{opacity:1;transform:scale(1)}
+.cell.cx .cm{color:var(--fg)}
+.cell.co .cm{color:var(--fg)}
+
+/* oldest piece — invert cell */
+.cell.old{background:var(--border)}
+.cell.old::after{content:'';position:absolute;inset:0;border:1px solid var(--fg);animation:db .6s step-end infinite;pointer-events:none;z-index:3}
+@keyframes db{0%,100%{opacity:1}50%{opacity:0}}
+
+/* vanish */
+.cell.vn .cm{animation:va .36s ease forwards}
+@keyframes va{0%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.4)}100%{opacity:0;transform:scale(0)}}
+
+/* win */
+.cell.win{background:var(--fg)}
+.cell.win .cm{color:var(--bg)!important;animation:wb .55s step-end infinite}
+@keyframes wb{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* win line */
+.wl{position:absolute;height:2px;transform-origin:left center;pointer-events:none;z-index:10;background:var(--fg);animation:la .3s ease forwards}
+@keyframes la{from{transform-origin:left center;transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* cpu dots */
+.cd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .3s;z-index:20;font-family:'Share Tech Mono',monospace;font-size:.75rem;letter-spacing:.3em;color:var(--dim2)}
+.cd.on{opacity:1}
+.dd{display:none}
+
+/* ── WIN OVERLAY ── */
+.wo{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.92);align-items:center;justify-content:center;flex-direction:column;gap:1.5rem}
+.wo.on{display:flex}
+.wb{font-family:'VT323',monospace;font-size:clamp(3rem,12vw,7rem);font-weight:400;letter-spacing:.05em;text-align:center;color:var(--fg);animation:pi .4s step-end forwards}
+@keyframes pi{0%{opacity:0}100%{opacity:1}}
+.ws{font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.35em;color:var(--dim2);text-transform:uppercase}
+.wbs{display:flex;gap:0;flex-wrap:wrap;justify-content:center;border:1px solid var(--border2)}
+.wbt{background:none;font-family:'Share Tech Mono',monospace;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:.65rem 1.8rem;cursor:pointer;border:none;border-right:1px solid var(--border2);transition:all .15s;color:var(--dim2)}
+.wbt:last-child{border-right:none}
+.wbt:hover{background:var(--fg);color:var(--bg)}
+
+/* ── ONLINE ── */
+.os{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.95);align-items:center;justify-content:center;flex-direction:column;gap:1.2rem;text-align:center;padding:2rem}
+.os.on{display:flex}
+.pr{font-family:'Share Tech Mono',monospace;font-size:.75rem;letter-spacing:.3em;color:var(--dim2);animation:pg 1.2s step-end infinite}
+@keyframes pg{0%{content:'[ SEARCHING .   ]'}25%{opacity:.6}50%{opacity:1}75%{opacity:.3}100%{opacity:1}}
+.os h2{font-family:'VT323',monospace;font-size:2.5rem;color:var(--fg);letter-spacing:.1em}
+.os p{color:var(--dim2);font-size:.8rem;line-height:1.65;max-width:400px;font-family:'Share Tech Mono',monospace}
+
+@media(max-width:500px){
+  .ps{flex-direction:row}
+  .pp{padding:.6rem .7rem}
+  .sc{font-size:1.5rem}
+  .pn{font-size:1.3rem}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="vig"></div>
+
+<!-- LANDING -->
+<div id="land" class="scr on">
+  <div>
+    <span class="lsup">EVOLVED STRATEGY GAME</span>
+    <div class="logo">INFINITE</div>
+    <div class="logo">TIC TAC TOE</div>
+    <span class="lsub">3-PIECE LIMIT &nbsp;&#183;&nbsp; NO DRAWS &nbsp;&#183;&nbsp; PURE STRATEGY</span>
+  </div>
+  <div class="ldiv">+--------------------------------------------------+</div>
+  <p class="tag">Each player holds only <strong>3 pieces</strong>. Place a 4th &mdash; your oldest piece <strong>vanishes</strong>. Master the loop. Trap your opponent. There are no draws here.</p>
+  <div class="modes">
+    <div class="mc" onclick="startMode('cpu')"><span class="bdg bh">AI</span><span class="ico">&gt;_</span><div class="mn">VS CPU</div><div class="md">Face our adaptive AI. Choose difficulty -- up to WARGOD mode.</div></div>
+    <div class="mc" onclick="startMode('local')"><span class="bdg bn">PVP</span><span class="ico">2P</span><div class="mn">LOCAL PVP</div><div class="md">Two players, one board. Pass and play on the same device.</div></div>
+    <div class="mc" onclick="startMode('online')"><span class="ico">~~</span><div class="mn">PLAY ONLINE</div><div class="md">Global matchmaking. Find an opponent anywhere in the world.</div></div>
+  </div>
+  <div class="dpanel" id="dpanel">
+    <span class="dl">SELECT DIFFICULTY</span>
+    <div class="dbs">
+      <button class="db sel" onclick="pickD('easy',this)">EASY</button>
+      <button class="db" onclick="pickD('medium',this)">MEDIUM</button>
+      <button class="db" onclick="pickD('hard',this)">HARD</button>
+      <button class="db wg" onclick="pickD('wargod',this)">&#9889; WARGOD</button>
+    </div>
+    <button class="go" onclick="launchCPU()">START MATCH &#8594;</button>
+  </div>
+  <button class="hb" onclick="openH()">HOW TO PLAY</button>
+</div>
+
+<!-- GAME -->
+<div id="game" class="scr">
+  <div class="tb">
+    <button class="bb" onclick="goHome()">&#8592; MENU</button>
+    <span class="gt">INFINITE TTT</span>
+    <span class="ml" id="ml">VS CPU</span>
+  </div>
+  <div class="ps">
+    <div class="pp xp at" id="px">
+      <div class="pl">PLAYER 1</div>
+      <div class="pn" id="nx">YOU</div>
+      <div class="sc" id="sx">0</div>
+      <div class="pd" id="dx"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+    <div class="pp op" id="po">
+      <div class="pl">PLAYER 2</div>
+      <div class="pn" id="no">CPU</div>
+      <div class="sc" id="so">0</div>
+      <div class="pd" id="do"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+  </div>
+  <div class="tw">
+    <div class="ti"><span class="tl">TIME REMAINING</span><span class="tn" id="tn">15</span></div>
+    <div class="tt"><div class="tba" id="tb2"></div></div>
+  </div>
+  <div class="sw"><div class="sm" id="sm">YOUR TURN &mdash; PLACE YOUR MARK</div></div>
+  <div class="bw">
+    <div id="board"></div>
+    <div class="cd" id="cd">[ THINKING... ]</div>
+  </div>
+</div>
+
+<!-- HOW TO PLAY -->
+<div class="mo" id="hm">
+  <div class="mb">
+    <button class="mx" onclick="closeH()">&#215;</button>
+    <h2>HOW TO PLAY</h2>
+    <div class="ri"><div class="rn">01</div><div class="rt"><strong>Choose a mode</strong> &mdash; face the CPU, play locally, or go online.</div></div>
+    <div class="ri"><div class="rn">02</div><div class="rt"><strong>Goal:</strong> Align 3 marks in a row &mdash; horizontal, vertical, or diagonal.</div></div>
+    <div class="ri"><div class="rn">03</div><div class="rt"><strong>3-Piece Limit:</strong> Max 3 pieces per player. Placing a 4th <strong>removes your oldest</strong> automatically.</div></div>
+    <div class="ri"><div class="rn">04</div><div class="rt"><strong>Warning:</strong> Your oldest piece <strong style="color:var(--danger)">flashes red</strong> &mdash; it vanishes on your next move.</div></div>
+    <div class="ri"><div class="rn">05</div><div class="rt"><strong>Timer:</strong> 15 seconds per move. Run out and your oldest piece is removed, forfeiting your turn.</div></div>
+    <div class="ri"><div class="rn">06</div><div class="rt"><strong>&#9889; WARGOD:</strong> AI that calculates vanishing moves <strong>12 steps ahead</strong>. Good luck.</div></div>
+  </div>
+</div>
+
+<!-- WIN -->
+<div class="wo" id="win">
+  <div class="wb cx" id="wbn">X WINS</div>
+  <div class="ws" id="wsu">MATCH COMPLETE</div>
+  <div class="wbs"><button class="wbt p" onclick="rematch()">REMATCH</button><button class="wbt s" onclick="goHome()">MENU</button></div>
+</div>
+
+<!-- ONLINE -->
+<div class="os" id="os">
+  <div class="pr">[ SEARCHING ... ]</div>
+  <h2>COMING SOON</h2>
+  <p>Online matchmaking is in development. Play locally or challenge the CPU for now.</p>
+  <button class="wbt s" onclick="closeO()">&#8592; BACK TO MENU</button>
+</div>
+
+<script>
+'use strict';
+const LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+const CAP=3, TSEC=15;
+let gm='cpu', df='easy', board, xt, qs, sc, alive, busy, tiv, tl;
+
+function newGame(){
+  board=Array(9).fill(null); xt=true; qs={X:[],O:[]}; alive=true; busy=false;
+  clearInterval(tiv); tiv=null;
+  document.getElementById('sx').textContent=sc.X;
+  document.getElementById('so').textContent=sc.O;
+  document.querySelectorAll('#board .wl').forEach(e=>e.remove());
+  render(); ui(); startT();
+}
+
+function render(){
+  const b=document.getElementById('board');
+  b.innerHTML='';
+  const cur=xt?'X':'O';
+  for(let i=0;i<9;i++){
+    const c=document.createElement('div'); c.className='cell';
+    const g=document.createElement('div'); g.className='cg';
+    g.textContent=cur; g.style.color='var(--dim2)';
+    const m=document.createElement('div'); m.className='cm';
+    c.appendChild(g); c.appendChild(m);
+    if(board[i]!==null){
+      const w=board[i]; m.textContent=w;
+      c.classList.add('fl','tk',w==='X'?'cx':'co');
+      const myT=(w==='X')===xt;
+      if(myT&&qs[w].length===CAP&&qs[w][0]===i) c.classList.add('old');
+    }
+    c.addEventListener('click',()=>click(i));
+    b.appendChild(c);
+  }
+}
+
+function click(i){
+  if(!alive||busy) return;
+  if(board[i]!==null) return;
+  if(gm==='cpu'&&!xt) return;
+  move(i);
+}
+
+function move(idx){
+  if(!alive||busy) return;
+  busy=true; clearInterval(tiv); tiv=null;
+  const who=xt?'X':'O', q=qs[who];
+  if(q.length===CAP){
+    const old=q[0];
+    const els=document.getElementById('board').children;
+    const el=els[old];
+    if(el){ el.classList.add('vn'); setTimeout(()=>{q.shift();board[old]=null;commit(idx,who);},380); }
+    else  { q.shift();board[old]=null;commit(idx,who); }
+  } else { commit(idx,who); }
+}
+
+function commit(idx,who){
+  board[idx]=who; qs[who].push(idx);
+  const w=chkWin();
+  render();
+  if(w){ markWin(w.line); end(who); return; }
+  xt=!xt; busy=false; ui(); startT();
+  if(gm==='cpu'&&!xt&&alive) cpu();
+}
+
+function chkWin(){
+  for(const[a,b,c]of LINES) if(board[a]&&board[a]===board[b]&&board[a]===board[c]) return{who:board[a],line:[a,b,c]};
+  return null;
+}
+
+function winOf(b){
+  for(const[a,x,c]of LINES) if(b[a]&&b[a]===b[x]&&b[a]===b[c]) return b[a];
+  return null;
+}
+
+function markWin(line){
+  const cs=document.getElementById('board').children;
+  line.forEach(i=>cs[i].classList.add('win'));
+  const be=document.getElementById('board');
+  const W=be.offsetWidth, H=be.offsetHeight, cw=W/3, ch=H/3;
+  const cx=i=>(i%3+.5)*cw, cy=i=>(Math.floor(i/3)+.5)*ch;
+  const[a,,c]=line;
+  const x1=cx(a),y1=cy(a),x2=cx(c),y2=cy(c),dx=x2-x1,dy=y2-y1;
+  const len=Math.sqrt(dx*dx+dy*dy), ang=Math.atan2(dy,dx)*180/Math.PI, pad=cw*.35;
+  const ln=document.createElement('div'); ln.className='wl';
+  ln.style.cssText=`width:${len+pad*2}px;left:${x1-pad}px;top:${y1-2}px;transform:rotate(${ang}deg)`;
+  be.appendChild(ln);
+}
+
+function end(who){
+  alive=false; busy=false; clearInterval(tiv); tiv=null;
+  sc[who]++;
+  setTimeout(()=>{
+    const nm=document.getElementById(who==='X'?'nx':'no').textContent;
+    const bn=document.getElementById('wbn');
+    bn.textContent=nm+' WINS'; bn.className='wb '+(who==='X'?'cx':'co');
+    document.getElementById('wsu').textContent=gm==='cpu'?(who==='X'?'VICTORY':'DEFEAT'):'MATCH COMPLETE';
+    document.getElementById('sx').textContent=sc.X;
+    document.getElementById('so').textContent=sc.O;
+    document.getElementById('win').classList.add('on');
+  },850);
+}
+
+function ui(){
+  document.getElementById('px').classList.toggle('at', xt);
+  document.getElementById('po').classList.toggle('at',!xt);
+  dots('X', xt); dots('O',!xt);
+  const sm=document.getElementById('sm');
+  if(gm==='cpu'&&!xt){sm.textContent='CPU IS THINKING...';sm.className='sm';return;}
+  const who=xt?'X':'O', nm=document.getElementById(xt?'nx':'no').textContent;
+  if(qs[who].length===CAP){sm.textContent=nm+' \u2014 OLDEST PIECE WILL VANISH';sm.className='sm rd';}
+  else{sm.textContent=nm+' \u2014 PLACE YOUR MARK';sm.className='sm';}
+}
+
+function dots(who,act){
+  const cnt=qs[who].length, cap=act&&cnt===CAP;
+  const d=document.getElementById('d'+who.toLowerCase()).children;
+  for(let i=0;i<d.length;i++){d[i].className='dot';if(i<cnt)d[i].classList.add(i===0&&cap?'wd':'on');}
+}
+
+function startT(){
+  tl=TSEC; rT();
+  tiv=setInterval(()=>{tl--;rT();if(tl<=0){clearInterval(tiv);tiv=null;timeout();}},1000);
+}
+
+function rT(){
+  const n=document.getElementById('tn'),b=document.getElementById('tb2'),r=tl<=5;
+  n.textContent=tl; n.className='tn'+(r?' rd':'');
+  b.style.width=(tl/TSEC*100)+'%'; b.className='tba'+(r?' rd':'');
+}
+
+function timeout(){
+  if(!alive||busy) return;
+  const who=xt?'X':'O';
+  if(qs[who].length>0){board[qs[who].shift()]=null;}
+  xt=!xt; render(); ui(); startT();
+  if(gm==='cpu'&&!xt&&alive) cpu();
+}
+
+/* CPU */
+function cpu(){
+  busy=true;
+  document.getElementById('cd').classList.add('on');
+  const dl={easy:650,medium:850,hard:1000,wargod:1200}[df]||800;
+  setTimeout(()=>{
+    document.getElementById('cd').classList.remove('on');
+    if(!alive){busy=false;return;}
+    const mv=best();
+    busy=false;
+    if(mv!==-1) move(mv);
+  },dl);
+}
+
+function best(){
+  if(df==='easy') return rnd();
+  if(df==='medium') return Math.random()<.6?smart():rnd();
+  return mmRoot(df==='hard'?6:12);
+}
+
+function emp(b){return b.reduce((a,v,i)=>v===null?[...a,i]:a,[]);}
+function rnd(){const e=emp(board);return e.length?e[0|Math.random()*e.length]:-1;}
+
+function smart(){
+  for(const i of emp(board)){const b2=board.slice(),q2=qs.O.slice();if(q2.length===CAP)b2[q2[0]]=null;b2[i]='O';if(winOf(b2)==='O')return i;}
+  for(const i of emp(board)){const b2=board.slice(),q2=qs.X.slice();if(q2.length===CAP)b2[q2[0]]=null;b2[i]='X';if(winOf(b2)==='X')return i;}
+  return rnd();
+}
+
+function mmRoot(depth){
+  let best=-Infinity,mv=-1;
+  for(const i of emp(board)){
+    const b2=board.slice(),qx=qs.X.slice(),qo=qs.O.slice();
+    if(qo.length===CAP){b2[qo.shift()]=null;}
+    b2[i]='O';qo.push(i);
+    const s=mm(b2,qx,qo,true,depth-1,-Infinity,Infinity);
+    if(s>best){best=s;mv=i;}
+  }
+  return mv;
+}
+
+function mm(b,qx,qo,xT,d,a,be){
+  const w=winOf(b);
+  if(w==='O') return 100+d;
+  if(w==='X') return-(100+d);
+  const e=emp(b);
+  if(!e.length||d===0) return ev(b);
+  const who=xT?'X':'O';
+  let best=xT?Infinity:-Infinity;
+  for(const i of e){
+    const b2=b.slice(),qx2=qx.slice(),qo2=qo.slice(),qc=xT?qx2:qo2;
+    if(qc.length===CAP){b2[qc.shift()]=null;}
+    b2[i]=who;qc.push(i);
+    const s=mm(b2,qx2,qo2,!xT,d-1,a,be);
+    if(xT){if(s<best)best=s;be=Math.min(be,best);}
+    else{if(s>best)best=s;a=Math.max(a,best);}
+    if(be<=a) break;
+  }
+  return best;
+}
+
+function ev(b){
+  let s=0;
+  for(const[a,x,c]of LINES){
+    const seg=[b[a],b[x],b[c]];
+    const o=seg.filter(v=>v==='O').length,xc=seg.filter(v=>v==='X').length;
+    if(o===2&&xc===0)s+=5;if(xc===2&&o===0)s-=5;
+    if(o===1&&xc===0)s+=1;if(xc===1&&o===0)s-=1;
+  }
+  if(b[4]==='O')s+=2;if(b[4]==='X')s-=2;
+  return s;
+}
+
+/* NAV */
+function startMode(m){
+  if(m==='online'){document.getElementById('os').classList.add('on');return;}
+  if(m==='cpu'){document.getElementById('dpanel').classList.add('on');}
+  else{document.getElementById('dpanel').classList.remove('on');launchLocal();}
+}
+
+function pickD(d,el){
+  df=d;
+  document.querySelectorAll('.db').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function launchCPU(){
+  gm='cpu';sc={X:0,O:0};
+  document.getElementById('nx').textContent='YOU';
+  document.getElementById('no').textContent=df==='wargod'?'WARGOD':df==='hard'?'HARD CPU':df==='medium'?'MED CPU':'CPU';
+  document.getElementById('ml').textContent=df==='wargod'?'WARGOD MODE':'VS CPU';
+  show();
+}
+
+function launchLocal(){
+  gm='local';sc={X:0,O:0};
+  document.getElementById('nx').textContent='P1';
+  document.getElementById('no').textContent='P2';
+  document.getElementById('ml').textContent='LOCAL PVP';
+  show();
+}
+
+function show(){
+  document.getElementById('land').classList.remove('on');
+  document.getElementById('game').classList.add('on');
+  document.getElementById('win').classList.remove('on');
+  newGame();
+}
+
+function goHome(){
+  clearInterval(tiv);tiv=null;alive=false;busy=false;
+  document.getElementById('game').classList.remove('on');
+  document.getElementById('land').classList.add('on');
+  document.getElementById('win').classList.remove('on');
+  document.getElementById('dpanel').classList.remove('on');
+}
+
+function rematch(){
+  document.getElementById('win').classList.remove('on');
+  newGame();
+}
+
+function closeO(){document.getElementById('os').classList.remove('on');}
+function openH(){document.getElementById('hm').classList.add('on');}
+function closeH(){document.getElementById('hm').classList.remove('on');}
+document.getElementById('hm').addEventListener('click',e=>{if(e.target===e.currentTarget)closeH();});
+</script>
+</body>
+</html>

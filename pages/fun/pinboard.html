@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Pinboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            color: #ffffff;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 14px;
+            padding: 20px;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+            pointer-events: none;
+            z-index: 9999;
+        }
+        a { color: #ffffff; }
+        h1 { font-family: 'VT323', monospace; font-size: 2rem; margin-bottom: 12px; }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        select, button, label {
+            background: #000;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            padding: 3px 8px;
+            cursor: pointer;
+        }
+        button:hover, label:hover { background: #ffffff; color: #000; }
+        #fileInput { display: none; }
+
+        #boardWrap {
+            position: relative;
+            width: 1000px;
+            height: 600px;
+            border: 1px solid #ffffff;
+            background: #050505;
+            cursor: crosshair;
+            overflow: hidden;
+        }
+
+        .placed-img {
+            position: absolute;
+            display: block;
+            image-rendering: pixelated;
+        }
+
+        #ghost {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.45;
+            border: 1px dashed #ffffff;
+            display: none;
+            z-index: 500;
+            background-size: 100% 100%;
+        }
+
+        #status { margin-top: 8px; opacity: 0.6; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <a href="/../index.html">HOME</a> | <a href="/../pages/tools/tools.html">TOOLS</a>
+    <h1>PIXEL PINBOARD</h1>
+
+    <div class="controls">
+        <span>BLOCK SIZE:</span>
+        <select id="sizeSelect">
+            <option value="5,5">5×5</option>
+            <option value="10,10" selected>10×10</option>
+            <option value="20,10">20×10</option>
+            <option value="20,20">20×20</option>
+            <option value="30,20">30×20</option>
+            <option value="40,30">40×30</option>
+            <option value="50,50">50×50</option>
+            <option value="100,50">100×50</option>
+        </select>
+        <label for="fileInput">[ UPLOAD IMAGE ]</label>
+        <input type="file" id="fileInput" accept="image/*">
+        <span id="readyHint" style="display:none;">▶ CLICK BOARD TO PLACE</span>
+    </div>
+
+    <div id="boardWrap">
+        <div id="ghost"></div>
+    </div>
+    <div id="status">0 images placed</div>
+
+<script>
+const CELL = 10;
+const board = document.getElementById('boardWrap');
+const ghost = document.getElementById('ghost');
+const sizeSelect = document.getElementById('sizeSelect');
+const fileInput = document.getElementById('fileInput');
+const readyHint = document.getElementById('readyHint');
+const statusEl = document.getElementById('status');
+
+let pendingSrc = null;
+let images = [];
+let nextZ = 1;
+let isAdmin = false;
+
+function getSize() {
+    const [w, h] = sizeSelect.value.split(',').map(Number);
+    return { w: w * CELL, h: h * CELL };
+}
+
+function snap(px) { return Math.round(px / CELL) * CELL; }
+
+function load() {
+    try {
+        JSON.parse(localStorage.getItem('pixelPinboard') || '[]').forEach(d => placeImage(d));
+    } catch(e) {}
+}
+
+function save() {
+    localStorage.setItem('pixelPinboard', JSON.stringify(
+        images.map(i => ({ src: i.src, x: i.x, y: i.y, w: i.w, h: i.h, z: i.z }))
+    ));
+}
+
+function updateStatus() {
+    statusEl.textContent = `${images.length} image${images.length !== 1 ? 's' : ''} placed`;
+}
+
+function placeImage(data) {
+    const img = document.createElement('img');
+    img.className = 'placed-img';
+    img.src = data.src;
+    img.style.cssText = `left:${data.x}px;top:${data.y}px;width:${data.w}px;height:${data.h}px;z-index:${data.z}`;
+    img.draggable = false;
+    if (isAdmin) setupAdmin(img, data);
+    board.appendChild(img);
+    images.push({ ...data, el: img });
+    if (data.z >= nextZ) nextZ = data.z + 1;
+    updateStatus();
+}
+
+function setupAdmin(img, data) {
+    img.style.cursor = 'move';
+    img.title = 'drag to move | double-click to delete';
+    let ox, oy, dragging = false;
+
+    img.addEventListener('mousedown', e => {
+        e.stopPropagation();
+        dragging = true;
+        const r = board.getBoundingClientRect();
+        ox = e.clientX - r.left - data.x;
+        oy = e.clientY - r.top - data.y;
+        img.style.zIndex = ++nextZ;
+    });
+    document.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        const r = board.getBoundingClientRect();
+        data.x = snap(Math.max(0, Math.min(e.clientX - r.left - ox, board.offsetWidth - data.w)));
+        data.y = snap(Math.max(0, Math.min(e.clientY - r.top - oy, board.offsetHeight - data.h)));
+        img.style.left = data.x + 'px';
+        img.style.top = data.y + 'px';
+    });
+    document.addEventListener('mouseup', () => { if (dragging) { dragging = false; data.z = parseInt(img.style.zIndex); save(); } });
+    img.addEventListener('dblclick', e => {
+        e.stopPropagation();
+        img.remove();
+        images = images.filter(i => i.el !== img);
+        save(); updateStatus();
+    });
+}
+
+board.addEventListener('mousemove', e => {
+    if (!pendingSrc) { ghost.style.display = 'none'; return; }
+    const r = board.getBoundingClientRect();
+    const { w, h } = getSize();
+    const gx = snap(Math.max(0, Math.min(e.clientX - r.left - w/2, board.offsetWidth - w)));
+    const gy = snap(Math.max(0, Math.min(e.clientY - r.top - h/2, board.offsetHeight - h)));
+    Object.assign(ghost.style, { display:'block', left:gx+'px', top:gy+'px', width:w+'px', height:h+'px', backgroundImage:`url(${pendingSrc})` });
+});
+board.addEventListener('mouseleave', () => { ghost.style.display = 'none'; });
+
+board.addEventListener('click', e => {
+    if (!pendingSrc) return;
+    const r = board.getBoundingClientRect();
+    const { w, h } = getSize();
+    const x = snap(Math.max(0, Math.min(e.clientX - r.left - w/2, board.offsetWidth - w)));
+    const y = snap(Math.max(0, Math.min(e.clientY - r.top - h/2, board.offsetHeight - h)));
+    placeImage({ src: pendingSrc, x, y, w, h, z: nextZ++ });
+    save();
+    pendingSrc = null;
+    ghost.style.display = 'none';
+    readyHint.style.display = 'none';
+});
+
+fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => { pendingSrc = ev.target.result; readyHint.style.display = 'inline'; };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+});
+
+// Admin: triple-click h1
+let clicks = 0, timer;
+document.querySelector('h1').addEventListener('click', () => {
+    if (++clicks === 3) {
+        clicks = 0;
+        const pw = prompt('admin password:');
+        if (!pw) return;
+        sha256(pw).then(hash => {
+            const stored = localStorage.getItem('ppb_admin');
+            if (!stored) { localStorage.setItem('ppb_admin', hash); enableAdmin(); }
+            else if (hash === stored) enableAdmin();
+            else alert('wrong password');
+        });
+    }
+    clearTimeout(timer);
+    timer = setTimeout(() => clicks = 0, 600);
+});
+
+function enableAdmin() {
+    isAdmin = true;
+    images.forEach(d => setupAdmin(d.el, d));
+}
+
+async function sha256(msg) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+load();
+</script>
+</body>
+</html>
