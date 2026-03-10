@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Castaway</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -54,7 +54,6 @@
       margin-bottom: 4px;
     }
 
-    /* Shared button styles */
     .dpad-btn, .action-btn {
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.18);
@@ -65,7 +64,7 @@
       justify-content: center;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      touch-action: none;
+      touch-action: manipulation;
     }
 
     .dpad-btn.pressed,
@@ -80,7 +79,6 @@
       margin-top: 14px;
       user-select: none;
       -webkit-user-select: none;
-      touch-action: none;
     }
 
     #mobile-controls .controls-row {
@@ -124,7 +122,7 @@
       padding: 0 8px;
     }
 
-    /* Landscape overlay controls */
+    /* Landscape overlay */
     #landscape-controls {
       display: none;
       position: absolute;
@@ -172,7 +170,6 @@
     #landscape-controls .action-btn .key   { font-size: 0.75rem; }
     #landscape-controls .action-btn .label { opacity: 0.4; font-size: 0.5rem; }
 
-    /* Overlay bar: toggle + fullscreen */
     #overlay-bar {
       position: absolute;
       top: 8px;
@@ -193,18 +190,16 @@
       padding: 4px 8px;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
-      touch-action: none;
+      touch-action: manipulation;
       white-space: nowrap;
     }
 
-    /* ── Landscape on touch device ── */
     @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
       #mobile-controls { display: block; }
       #info { display: none; }
     }
 
     @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
-      /* Kill normal layout, go fullscreen-style */
       html, body {
         height: 100%;
         overflow: hidden;
@@ -216,7 +211,6 @@
       h1, #info, #mobile-controls { display: none !important; }
 
       #game-wrap {
-        /* Fill viewport height, maintain 4:3, never overflow width */
         height: 100svh;
         width: auto;
         max-width: 100vw;
@@ -264,7 +258,6 @@
 
     <div id="overlay-bar">
       <button class="overlay-btn" id="toggle-controls">hide controls</button>
-      <button class="overlay-btn" id="fullscreen-btn">⛶ fullscreen</button>
     </div>
 
   </div>
@@ -316,7 +309,8 @@
     window.RufflePlayer.config = {
       publicPath: "../ruffle/",
       autoplay: "on",
-      unmuteOverlay: "hidden"
+      unmuteOverlay: "hidden",
+      scale: "showAll"
     };
   </script>
   <script src="../ruffle/ruffle.js"></script>
@@ -333,6 +327,13 @@
       player.style.left = "0";
       player.ruffle().load("Castaway.swf");
 
+      // Re-fit player on resize/zoom
+      var resizeObserver = new ResizeObserver(function () {
+        player.style.width  = container.offsetWidth  + "px";
+        player.style.height = container.offsetHeight + "px";
+      });
+      resizeObserver.observe(container);
+
       // Toggle controls
       var landscapeControls = document.getElementById("landscape-controls");
       var toggleBtn = document.getElementById("toggle-controls");
@@ -344,29 +345,6 @@
         controlsVisible = !controlsVisible;
         landscapeControls.classList.toggle('hidden', !controlsVisible);
         toggleBtn.textContent = controlsVisible ? 'hide controls' : 'show controls';
-      });
-
-      // Fullscreen — request on the document element for broadest mobile support
-      var fsBtn = document.getElementById("fullscreen-btn");
-      fsBtn.addEventListener('pointerdown', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var el = document.documentElement;
-        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-          (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
-          fsBtn.textContent = '✕ exit fs';
-        } else {
-          (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-          fsBtn.textContent = '⛶ fullscreen';
-        }
-      });
-
-      ['fullscreenchange','webkitfullscreenchange'].forEach(function(evt) {
-        document.addEventListener(evt, function () {
-          if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-            fsBtn.textContent = '⛶ fullscreen';
-          }
-        });
       });
 
       // Wire up all buttons
