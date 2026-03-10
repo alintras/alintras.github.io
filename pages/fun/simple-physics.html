@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Particle Sys</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: #0d0d0d;
+  overflow: hidden;
+  cursor: none;
+  user-select: none;
+  font-family: 'Courier New', monospace;
+}
+canvas { display:block; }
+#hud {
+  position: fixed;
+  top: 14px; right: 18px;
+  pointer-events: none;
+  z-index: 10;
+}
+#ncount {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.4);
+  transition: color 0.1s;
+}
+#mode-btn {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  background: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.5);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  padding: 7px 14px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  text-transform: uppercase;
+  z-index: 10;
+}
+#mode-btn:hover { border-color: rgba(255,255,255,0.6); color: rgba(255,255,255,0.9); }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud"><span id="ncount">0</span></div>
+<button id="mode-btn">REPEL</button>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const ncountEl = document.getElementById('ncount');
+const modeBtn = document.getElementById('mode-btn');
+
+let W = canvas.width = window.innerWidth;
+let H = canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; });
+
+let mouse = { x: W/2, y: H/2, down: false, downSince: 0 };
+let mode = 'attract';
+let frame = 0;
+let holdTime = 0;
+let chaosLevel = 0;
+const crazyColors = ['#ff0040','#ff8800','#ffee00','#00ff88','#00ccff','#aa00ff','#ff00cc','#ff4400','#44ff00'];
+
+// ─── AUDIO ENGINE ────────────────────────────────────────────────────────────
+let audioCtx = null;
+let chaosNodes = {}; // running oscillators/sources
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+// Master gain for chaos music
+let masterGain = null;
+function getMaster() {
+  if (!masterGain) {
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0;
+    masterGain.connect(audioCtx.destination);
+  }
+  return masterGain;
+}
+
+// Build a gnarly chaos synth: bass kick pulse + detuned sawtooth drone + noise hi-hat
+function startChaosMusic() {
+  ensureAudio();
+  if (chaosNodes.running) return;
+  chaosNodes.running = true;
+
+  const master = getMaster();
+  master.gain.cancelScheduledValues(audioCtx.currentTime);
+  master.gain.setTargetAtTime(0.55, audioCtx.currentTime, 0.3);
+
+  const now = audioCtx.currentTime;
+
+  // --- Distorted bass drone: multiple detuned saws ---
+  const bassGain = audioCtx.createGain();
+  bassGain.gain.value = 0.3;
+  const bassFilter = audioCtx.createBiquadFilter();
+  bassFilter.type = 'lowpass';
+  bassFilter.frequency.value = 400;
+  bassFilter.Q.value = 8;
+  bassGain.connect(bassFilter);
+  bassFilter.connect(master);
+  chaosNodes.bassGain = bassGain;
+  chaosNodes.bassFilter = bassFilter;
+
+  const bassFreqs = [55, 55.3, 110.1, 82.4];
+  chaosNodes.bassOscs = bassFreqs.map(f => {
+    const o = audioCtx.createOscillator();
+    o.type = 'sawtooth';
+    o.frequency.value = f;
+    o.connect(bassGain);
+    o.start();
+    return o;
+  });
+
+  // --- Screaming lead: detuned squares rapidly modulated ---
+  const leadGain = audioCtx.createGain();
+  leadGain.gain.value = 0.12;
+  const leadFilter = audioCtx.createBiquadFilter();
+  leadFilter.type = 'bandpass';
+  leadFilter.frequency.value = 1200;
+  leadFilter.Q.value = 12;
+  leadGain.connect(leadFilter);
+  leadFilter.connect(master);
+  chaosNodes.leadGain = leadGain;
+
+  const leadFreqs = [220, 233, 440, 466];
+  chaosNodes.leadOscs = leadFreqs.map(f => {
+    const o = audioCtx.createOscillator();
+    o.type = 'square';
+    o.frequency.value = f;
+    o.connect(leadGain);
+    o.start();
+    return o;
+  });
+
+  // --- LFO for pitch-bend madness on lead ---
+  const lfo = audioCtx.createOscillator();
+  lfo.frequency.value = 7;
+  const lfoGain = audioCtx.createGain();
+  lfoGain.gain.value = 60;
+  lfo.connect(lfoGain);
+  chaosNodes.leadOscs.forEach(o => lfoGain.connect(o.frequency));
+  lfo.start();
+  chaosNodes.lfo = lfo;
+  chaosNodes.lfoGain = lfoGain;
+
+  // --- Filter LFO sweep ---
+  const filterLfo = audioCtx.createOscillator();
+  filterLfo.frequency.value = 3.1;
+  const filterLfoGain = audioCtx.createGain();
+  filterLfoGain.gain.value = 300;
+  filterLfo.connect(filterLfoGain);
+  filterLfoGain.connect(bassFilter.frequency);
+  filterLfo.start();
+  chaosNodes.filterLfo = filterLfo;
+  chaosNodes.filterLfoGain = filterLfoGain;
+
+  // --- Noise burst rhythm (kick-like) ---
+  function kickPulse() {
+    if (!chaosNodes.running) return;
+    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.08, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random()*2-1) * (1 - i/data.length);
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.5, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+    const f = audioCtx.createBiquadFilter();
+    f.type = 'lowpass'; f.frequency.value = 200;
+    src.connect(f); f.connect(g); g.connect(master);
+    src.start();
+    // tempo speeds up with chaos
+    const bpm = 160 + Math.min(chaosLevel * 30, 200);
+    const interval = (60 / bpm) * 500;
+    chaosNodes.kickTimer = setTimeout(kickPulse, interval);
+  }
+  kickPulse();
+
+  // --- Hi-hat noise ---
+  function hihat() {
+    if (!chaosNodes.running) return;
+    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.03, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random()*2-1);
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+    const f = audioCtx.createBiquadFilter();
+    f.type = 'highpass'; f.frequency.value = 8000;
+    src.connect(f); f.connect(g); g.connect(master);
+    src.start();
+    const bpm = 160 + Math.min(chaosLevel * 30, 200);
+    const interval = (60 / bpm) * 250;
+    chaosNodes.hihatTimer = setTimeout(hihat, interval);
+  }
+  hihat();
+}
+
+function stopChaosMusic(fast) {
+  if (!chaosNodes.running) return;
+  chaosNodes.running = false;
+  clearTimeout(chaosNodes.kickTimer);
+  clearTimeout(chaosNodes.hihatTimer);
+
+  const fadeTime = fast ? 0.15 : 0.8;
+  if (masterGain) {
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setTargetAtTime(0, audioCtx.currentTime, fadeTime * 0.4);
+  }
+
+  const stop = (nodes) => {
+    if (!nodes) return;
+    (Array.isArray(nodes) ? nodes : [nodes]).forEach(n => {
+      try { n.stop(audioCtx.currentTime + fadeTime); } catch(e) {}
+    });
+  };
+  stop(chaosNodes.bassOscs);
+  stop(chaosNodes.leadOscs);
+  stop(chaosNodes.lfo);
+  stop(chaosNodes.filterLfo);
+  chaosNodes = {};
+}
+
+// Update chaos music intensity in real time
+function updateChaosSound(crazy) {
+  if (!chaosNodes.running || !audioCtx) return;
+  const t = audioCtx.currentTime;
+  const intensity = crazy / 4;  // NO CAP
+
+  // Bass gets lower + more detuned
+  if (chaosNodes.bassOscs) {
+    const freqs = [Math.max(20,55 - intensity*12), 55.3 + intensity*8, 110.1 + intensity*40, Math.max(20,82.4 - intensity*8)];
+    chaosNodes.bassOscs.forEach((o,i) => o.frequency.setTargetAtTime(freqs[i], t, 0.1));
+  }
+  // Lead pitch rises
+  if (chaosNodes.leadOscs) {
+    const freqs = [220 + intensity*300, 233 + intensity*350, 440 + intensity*500, 466 + intensity*480];
+    chaosNodes.leadOscs.forEach((o,i) => o.frequency.setTargetAtTime(freqs[i], t, 0.05));
+  }
+  // LFO goes crazy faster
+  if (chaosNodes.lfo) chaosNodes.lfo.frequency.setTargetAtTime(3 + intensity*60, t, 0.1);
+  if (chaosNodes.lfoGain) chaosNodes.lfoGain.gain.setTargetAtTime(40 + intensity*400, t, 0.1);
+  if (chaosNodes.filterLfo) chaosNodes.filterLfo.frequency.setTargetAtTime(1 + intensity*30, t, 0.1);
+  if (chaosNodes.bassFilter) chaosNodes.bassFilter.frequency.setTargetAtTime(200 + intensity*3500, t, 0.1);
+}
+
+// ─── PARTICLES ───────────────────────────────────────────────────────────────
+let parts = [];
+
+function makePart(x, y) {
+  const sides = [3,4,4,5,6,8][Math.floor(Math.random()*6)];
+  return {
+    x: x != null ? x : Math.random()*W,
+    y: y != null ? y : Math.random()*H,
+    vx: (Math.random()-0.5)*3,
+    vy: (Math.random()-0.5)*3,
+    r: 4 + Math.random()*18,
+    sides,
+    rot: Math.random()*Math.PI*2,
+    rotV: (Math.random()-0.5)*0.08,
+    col: '#e8e8e8',
+    alpha: 0.75,
+    idx: Math.floor(Math.random()*crazyColors.length),
+  };
+}
+for (let i = 0; i < 32; i++) parts.push(makePart());
+
+let sparks = [];
+function spawnSparks(x, y, col, n) {
+  for (let i = 0; i < (n||4); i++) {
+    const a = Math.random()*Math.PI*2, spd = 1.5+Math.random()*5;
+    sparks.push({ x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd-1, life: 1, decay: 0.06+Math.random()*0.06, col, len: 4+Math.random()*8 });
+  }
+}
+
+// ─── DISTORTION OFFSCREEN ────────────────────────────────────────────────────
+// We draw everything to offscreen, then redraw with barrel/wave distortion per scanline
+const off = document.createElement('canvas');
+const offCtx = off.getContext('2d');
+function resizeOff() { off.width = W; off.height = H; }
+resizeOff();
+window.addEventListener('resize', resizeOff);
+
+function drawPolyOn(c, px, py, r, sides, rot, col, alpha, wobble) {
+  if (r <= 0.5) return;
+  c.save();
+  c.translate(px, py);
+  c.rotate(rot);
+  c.beginPath();
+  for (let i = 0; i <= sides; i++) {
+    const a = (i/sides)*Math.PI*2;
+    const dr = Math.max(0.5, r + (wobble > 0 ? Math.sin(frame*0.3 + i*2.1)*r*wobble : 0));
+    i === 0 ? c.moveTo(Math.cos(a)*dr, Math.sin(a)*dr) : c.lineTo(Math.cos(a)*dr, Math.sin(a)*dr);
+  }
+  c.closePath();
+  c.globalAlpha = Math.min(1, Math.max(0, alpha));
+  c.strokeStyle = col;
+  c.lineWidth = 1 + wobble;
+  c.stroke();
+  if (wobble > 0.3) {
+    c.globalAlpha = Math.min(1, alpha * wobble * 0.2);
+    c.fillStyle = col;
+    c.fill();
+  }
+  c.globalAlpha = 1;
+  c.restore();
+}
+
+// Barrel distort: render offscreen then blit each scanline with horizontal wave shift
+function applyDistortion(crazy) {
+  // Blit the offscreen to main canvas with per-row horizontal shift
+  const waveAmp = crazy * 18;
+  const waveFreq = 0.04 + crazy * 0.04;
+  const waveSpd = frame * 0.08;
+
+  // Also do a vertical squeeze toward center (fisheye feel)
+  const barrelStr = crazy * 0.08;
+
+  const sliceH = 4; // rows per slice for perf
+  for (let y = 0; y < H; y += sliceH) {
+    const ny = (y / H) * 2 - 1; // -1..1
+    const barrelShiftY = ny * Math.abs(ny) * barrelStr * H * 0.5;
+    const waveX = Math.sin(y * waveFreq + waveSpd) * waveAmp;
+    const waveX2 = Math.cos(y * waveFreq * 0.7 + waveSpd * 1.3) * waveAmp * 0.4;
+
+    ctx.drawImage(
+      off,
+      0, y, W, sliceH,
+      waveX + waveX2, y + barrelShiftY, W, sliceH
+    );
+  }
+
+  // Chromatic aberration: draw whole offscreen twice with colour channels offset
+  const shift = crazy * 5;
+  if (shift > 0.5) {
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+    ctx.globalAlpha = Math.min(0.85, 0.1 + crazy * 0.08);
+    // Red channel offset left
+    ctx.filter = 'url(#redchan)'; // fallback: just tint
+    ctx.drawImage(off, -shift, 0);
+    // Blue channel offset right
+    ctx.drawImage(off, shift, 0);
+    ctx.filter = 'none';
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+}
+
+// ─── MAIN LOOP ────────────────────────────────────────────────────────────────
+function loop() {
+  frame++;
+
+  // ── chaos level ──
+  if (mouse.down) {
+    holdTime = (Date.now() - mouse.downSince) / 1000;
+    if (holdTime > 3) {
+      // accelerates the longer you hold
+      chaosLevel += 0.012 + (holdTime - 3) * 0.004;
+    }
+    // start music after 3s hold
+    if (holdTime > 3 && !chaosNodes.running) startChaosMusic();
+  } else {
+    holdTime = 0;
+    // FAST drop-off — feels instant
+    chaosLevel = Math.max(0, chaosLevel - 0.18);
+    if (chaosLevel < 0.05) stopChaosMusic(true);
+  }
+
+  const crazy = chaosLevel;            // unbounded growth
+  const crazyN = crazy;                  // NO CAP — keeps escalating
+
+  if (chaosNodes.running) updateChaosSound(crazy);
+
+  // ── draw to OFFSCREEN ──
+  const bgAlpha = Math.max(0.08, 0.84 - crazy * 0.14);
+  if (crazy > 0) {
+    offCtx.fillStyle = `rgba(${Math.min(255,8+crazy*8)},${3},${Math.min(255,8+crazy*5)},${bgAlpha})`;
+  } else {
+    offCtx.fillStyle = 'rgba(13,13,13,0.84)';
+  }
+  offCtx.fillRect(0, 0, W, H);
+
+  // grid
+  const gridA = Math.min(0.7, 0.03 + crazy * 0.08);
+  const step = Math.max(6, 80 - crazy * 9);
+  offCtx.lineWidth = 1;
+  offCtx.strokeStyle = crazy > 0
+    ? `hsla(${frame*5%360},90%,60%,${gridA})`
+    : `rgba(255,255,255,${gridA})`;
+  for (let x = 0; x < W; x += step) { offCtx.beginPath(); offCtx.moveTo(x,0); offCtx.lineTo(x,H); offCtx.stroke(); }
+  for (let y = 0; y < H; y += step) { offCtx.beginPath(); offCtx.moveTo(0,y); offCtx.lineTo(W,y); offCtx.stroke(); }
+
+  // ── particles ──
+  for (let p of parts) {
+    p.col = crazy > 0 ? crazyColors[(Math.floor(frame*0.5)+p.idx)%crazyColors.length] : '#e8e8e8';
+    p.alpha = 0.75;
+
+    const dx = p.x - mouse.x, dy = p.y - mouse.y;
+    const dist = Math.sqrt(dx*dx+dy*dy)||1;
+    const influenceR = mouse.down ? 260 + crazy*80 : 130;
+    if (dist < influenceR) {
+      const force = (influenceR-dist)/influenceR;
+      const strength = mouse.down ? (4 + crazy*12) : 2;
+      const dir = mode==='repel' ? 1 : -1;
+      p.vx += (dx/dist)*force*strength*dir;
+      p.vy += (dy/dist)*force*strength*dir;
+    }
+
+    if (crazy > 0) {
+      p.vx += (Math.random()-0.5)*crazy*1.5;
+      p.vy += (Math.random()-0.5)*crazy*1.5;
+    }
+
+    p.vy += 0.06 + crazyN*0.1;
+    p.vx *= crazy > 0 ? 0.992 : 0.972;
+    p.vy *= crazy > 0 ? 0.992 : 0.972;
+
+    const maxSpd = 18 + crazy*9;
+    const spd = Math.sqrt(p.vx**2+p.vy**2);
+    if (spd > maxSpd) { p.vx=p.vx/spd*maxSpd; p.vy=p.vy/spd*maxSpd; }
+
+    p.x += p.vx; p.y += p.vy;
+    p.rot += p.rotV*(1+crazy*1.5);
+
+    if (p.x-p.r<0)  { p.x=p.r;   p.vx*=-0.6; spawnSparks(p.x,p.y,p.col,2); }
+    if (p.x+p.r>W)  { p.x=W-p.r; p.vx*=-0.6; spawnSparks(p.x,p.y,p.col,2); }
+    if (p.y+p.r>H)  { p.y=H-p.r; p.vy*=-0.6; p.vx*=0.97; spawnSparks(p.x,p.y,p.col,2); }
+    if (p.y-p.r<0)  { p.y=p.r;   p.vy*=-0.6; }
+
+    const wobble = crazy * 0.5;
+    drawPolyOn(offCtx, p.x, p.y, p.r, p.sides, p.rot, p.col, p.alpha, wobble);
+  }
+
+  // collisions
+  for (let i = 0; i < parts.length; i++) {
+    for (let j = i+1; j < parts.length; j++) {
+      const a=parts[i],b=parts[j];
+      const dx=b.x-a.x,dy=b.y-a.y;
+      const d=Math.sqrt(dx*dx+dy*dy)||0.01;
+      const minD=a.r+b.r;
+      if (d<minD) {
+        const nx=dx/d,ny=dy/d,ov=(minD-d)*0.5;
+        a.x-=nx*ov; a.y-=ny*ov; b.x+=nx*ov; b.y+=ny*ov;
+        const dv=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
+        if (dv>0) {
+          a.vx-=dv*nx; a.vy-=dv*ny; b.vx+=dv*nx; b.vy+=dv*ny;
+          if (Math.abs(dv)>5) spawnSparks((a.x+b.x)/2,(a.y+b.y)/2,crazy>0?crazyColors[frame%9]:a.col,crazy>0?5:2);
+        }
+      }
+    }
+  }
+
+  // sparks to offscreen
+  for (let s of sparks) {
+    s.x+=s.vx; s.y+=s.vy; s.vy+=0.15; s.vx*=0.95; s.life-=s.decay;
+    if (s.life<=0) continue;
+    offCtx.save();
+    offCtx.globalAlpha=Math.max(0,s.life*0.8);
+    offCtx.strokeStyle=s.col; offCtx.lineWidth=1;
+    offCtx.beginPath(); offCtx.moveTo(s.x,s.y); offCtx.lineTo(s.x-s.vx*s.len,s.y-s.vy*s.len); offCtx.stroke();
+    offCtx.restore();
+  }
+  sparks = sparks.filter(s=>s.life>0);
+
+  // ── blit offscreen to main canvas with distortion ──
+  ctx.clearRect(0, 0, W, H);
+  if (crazy > 0.1) {
+    applyDistortion(crazy);
+  } else {
+    ctx.drawImage(off, 0, 0);
+  }
+
+  // cursor (drawn directly to main canvas, no distortion)
+  const curCol = crazy>0 ? `hsl(${frame*12%360},100%,65%)` : 'rgba(255,255,255,0.75)';
+  ctx.save();
+  ctx.translate(mouse.x, mouse.y);
+  ctx.strokeStyle = curCol; ctx.lineWidth=1; ctx.globalAlpha=0.9;
+  const sz=mouse.down?10:7;
+  ctx.beginPath(); ctx.moveTo(-sz,0); ctx.lineTo(sz,0); ctx.moveTo(0,-sz); ctx.lineTo(0,sz); ctx.stroke();
+  const sq=14+(mouse.down?4:0);
+  ctx.strokeRect(-sq/2,-sq/2,sq,sq);
+  ctx.restore();
+
+  // HUD
+  ncountEl.textContent = parts.length+' particles';
+  ncountEl.style.color = crazy>0 ? `hsla(${frame*8%360},80%,70%,0.8)` : 'rgba(255,255,255,0.4)';
+
+  // spawn
+  if (frame%300===0 && parts.length<48) parts.push(makePart(Math.random()*W,0));
+  const spawnRate = Math.max(4, Math.floor(28-crazyN*24));
+  if (crazy>0 && frame%spawnRate===0 && parts.length<110) {
+    parts.push(makePart(mouse.x+(Math.random()-0.5)*100, mouse.y+(Math.random()-0.5)*100));
+  }
+  if (crazy<0.1 && parts.length>50) parts.splice(50);
+
+  requestAnimationFrame(loop);
+}
+
+// ─── INPUT ────────────────────────────────────────────────────────────────────
+function getPos(e) {
+  if (e.touches && e.touches[0]) return { x:e.touches[0].clientX, y:e.touches[0].clientY };
+  return { x:e.clientX, y:e.clientY };
+}
+window.addEventListener('mousemove', e=>{ const p=getPos(e); mouse.x=p.x; mouse.y=p.y; });
+window.addEventListener('touchmove', e=>{ e.preventDefault(); const p=getPos(e); mouse.x=p.x; mouse.y=p.y; },{passive:false});
+window.addEventListener('mousedown', ()=>{ mouse.down=true; mouse.downSince=Date.now(); ensureAudio(); });
+window.addEventListener('mouseup', ()=>{ mouse.down=false; holdTime=0; });
+window.addEventListener('touchstart', e=>{ const p=getPos(e); mouse.x=p.x; mouse.y=p.y; mouse.down=true; mouse.downSince=Date.now(); ensureAudio(); },{passive:false});
+window.addEventListener('touchend', ()=>{ mouse.down=false; holdTime=0; });
+window.addEventListener('click', e=>{ if(e.target!==canvas) return; parts.push(makePart(e.clientX,e.clientY)); spawnSparks(e.clientX,e.clientY,'#e8e8e8',5); });
+modeBtn.addEventListener('click', ()=>{ mode=mode==='attract'?'repel':'attract'; modeBtn.textContent=mode==='attract'?'REPEL':'ATTRACT'; });
+
+loop();
+</script>
+</body>
+</html>
