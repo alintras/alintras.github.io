@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Castaway</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #111;
+      color: #eee;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+
+    h1 {
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+      opacity: 0.5;
+      text-transform: uppercase;
+    }
+
+    #game-wrap {
+      width: 100%;
+      max-width: 800px;
+      aspect-ratio: 4 / 3;
+      background: #000;
+    }
+
+    ruffle-player {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #mobile-controls {
+      display: none;
+      width: 100%;
+      max-width: 800px;
+      margin-top: 14px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8px;
+    }
+
+    #dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 56px);
+      grid-template-rows: repeat(3, 56px);
+      gap: 4px;
+    }
+
+    .dpad-btn {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .dpad-btn.pressed { background: rgba(255,255,255,0.28); }
+    .dpad-blank { background: none; border: none; pointer-events: none; }
+
+    #action-btns {
+      display: grid;
+      grid-template-columns: repeat(2, 56px);
+      grid-template-rows: repeat(2, 56px);
+      gap: 4px;
+    }
+
+    .action-btn {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 8px;
+      color: #fff;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      line-height: 1.2;
+    }
+
+    .action-btn .key { font-size: 0.85rem; }
+    .action-btn .label { opacity: 0.4; font-size: 0.55rem; }
+    .action-btn.pressed { background: rgba(255,255,255,0.28); }
+
+    #hint {
+      margin-top: 10px;
+      font-size: 0.6rem;
+      opacity: 0.3;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      #mobile-controls { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Castaway</h1>
+
+  <div id="game-wrap">
+    <ruffle-player src="Castaway.swf"></ruffle-player>
+  </div>
+
+  <div id="mobile-controls">
+    <div class="controls-row">
+
+      <div id="dpad">
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowUp" data-code="ArrowUp">▲</div>
+        <div class="dpad-blank"></div>
+
+        <div class="dpad-btn" data-key="ArrowLeft" data-code="ArrowLeft">◀</div>
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowRight" data-code="ArrowRight">▶</div>
+
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowDown" data-code="ArrowDown">▼</div>
+        <div class="dpad-blank"></div>
+      </div>
+
+      <div id="action-btns">
+        <div class="action-btn" data-key="z" data-code="KeyZ">
+          <span class="key">Z</span><span class="label">action</span>
+        </div>
+        <div class="action-btn" data-key="x" data-code="KeyX">
+          <span class="key">X</span><span class="label">cancel</span>
+        </div>
+        <div class="action-btn" data-key="Enter" data-code="Enter">
+          <span class="key">↵</span><span class="label">enter</span>
+        </div>
+        <div class="action-btn" data-key="Escape" data-code="Escape">
+          <span class="key">ESC</span><span class="label">menu</span>
+        </div>
+      </div>
+
+    </div>
+    <div id="hint">arrows · Z · X · Enter · ESC — tap game area first to focus</div>
+  </div>
+
+  <script src="../ruffle/ruffle.js"></script>
+
+  <script>
+    const buttons = document.querySelectorAll('.dpad-btn, .action-btn');
+    const player  = document.querySelector('ruffle-player');
+
+    function fire(type, key, code) {
+      [player, document].forEach(t => {
+        t.dispatchEvent(new KeyboardEvent(type, {
+          key, code, bubbles: true, cancelable: true
+        }));
+      });
+    }
+
+    buttons.forEach(btn => {
+      const key  = btn.dataset.key;
+      const code = btn.dataset.code;
+
+      btn.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        btn.classList.add('pressed');
+        fire('keydown', key, code);
+      });
+
+      const up = () => {
+        btn.classList.remove('pressed');
+        fire('keyup', key, code);
+      };
+
+      btn.addEventListener('pointerup',     up);
+      btn.addEventListener('pointerleave',  up);
+      btn.addEventListener('pointercancel', up);
+    });
+  </script>
+
+</body>
+</html>
