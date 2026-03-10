@@ -147,14 +147,14 @@
       align-items: center;
       justify-content: center;
       /* fixed width, never grows or shrinks */
-      width: 160px;
-      min-width: 160px;
-      max-width: 160px;
-      flex: 0 0 160px;
+      width: 220px;
+      min-width: 220px;
+      max-width: 220px;
+      flex: 0 0 220px;
     }
 
     .psp-side:first-child {
-      padding-left: env(safe-area-inset-left, 50px);
+      padding-left: env(safe-area-inset-left, 60px);
     }
 
     .psp-side:last-child {
@@ -187,14 +187,10 @@
     #landscape-controls .action-btn .key   { font-size: 0.7rem; }
     #landscape-controls .action-btn .label { opacity: 0.4; font-size: 0.48rem; }
 
-    /* Game slot in landscape — height driven, width follows aspect ratio */
     #psp-game-wrap {
-      /* take remaining width between the two sides */
       flex: 1 1 0;
       min-width: 0;
-      /* height = full viewport height */
       height: 100svh;
-      /* but never wider than 4:3 of the height */
       max-width: calc(100svh * 4 / 3);
       background: #000;
       position: relative;
