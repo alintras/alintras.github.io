@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Castaway</title>
   <style>
-    a { color: inherit; text-decoration: none; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -125,6 +124,24 @@
       padding: 0 8px;
     }
 
+    /* ── Fullscreen mode ── */
+    #game-wrap:-webkit-full-screen,
+    #game-wrap:-moz-full-screen,
+    #game-wrap:fullscreen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      aspect-ratio: unset !important;
+      background: #000;
+    }
+
+    #game-wrap:-webkit-full-screen ruffle-player,
+    #game-wrap:-moz-full-screen ruffle-player,
+    #game-wrap:fullscreen ruffle-player {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
     /* Landscape overlay */
     #landscape-controls {
       display: none;
@@ -137,7 +154,6 @@
 
     #landscape-controls.hidden {
       opacity: 0;
-      pointer-events: none !important;
     }
 
     #landscape-controls.hidden #ldpad,
@@ -179,14 +195,20 @@
     #landscape-controls .action-btn .key  { font-size: 0.75rem; }
     #landscape-controls .action-btn .label { opacity: 0.4; font-size: 0.5rem; }
 
-    /* Toggle button — only visible in landscape on touch */
-    #toggle-controls {
+    /* Top-right overlay bar: toggle + fullscreen */
+    #overlay-bar {
       display: none;
       position: absolute;
       top: 8px;
       right: 8px;
       z-index: 11;
-      background: rgba(255,255,255,0.1);
+      pointer-events: all;
+      display: flex;
+      gap: 6px;
+    }
+
+    .overlay-btn {
+      background: rgba(0,0,0,0.45);
       border: 1px solid rgba(255,255,255,0.2);
       border-radius: 6px;
       color: #fff;
@@ -194,9 +216,9 @@
       font-size: 0.6rem;
       padding: 4px 8px;
       cursor: pointer;
-      pointer-events: all;
       -webkit-tap-highlight-color: transparent;
       touch-action: none;
+      white-space: nowrap;
     }
 
     @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
@@ -206,17 +228,22 @@
 
     @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
       #landscape-controls { display: block; }
-      #toggle-controls { display: block; }
+      #overlay-bar { display: flex; }
       #info { display: none; }
       body { padding: 4px; }
       h1 { display: none; }
+      /* Make game fill the available height */
+      #game-wrap {
+        width: auto;
+        max-width: 100%;
+        height: 100dvh;
+        aspect-ratio: unset;
+      }
     }
   </style>
 </head>
 <body>
-  <div style="position:fixed; top:10px; left:10px;">
-    <a href="/../index.html">🏠 Home</a>
-  </div>
+
   <h1>Castaway</h1>
 
   <div id="game-wrap">
@@ -249,8 +276,10 @@
       </div>
     </div>
 
-    <!-- Toggle sits inside game-wrap so it's always on top -->
-    <button id="toggle-controls">hide controls</button>
+    <div id="overlay-bar">
+      <button class="overlay-btn" id="toggle-controls">hide controls</button>
+      <button class="overlay-btn" id="fullscreen-btn">⛶ fullscreen</button>
+    </div>
 
   </div>
 
@@ -318,7 +347,7 @@
       player.style.left = "0";
       player.ruffle().load("Castaway.swf");
 
-      // Toggle landscape controls
+      // Toggle controls
       var landscapeControls = document.getElementById("landscape-controls");
       var toggleBtn = document.getElementById("toggle-controls");
       var controlsVisible = true;
@@ -327,12 +356,41 @@
         e.preventDefault();
         e.stopPropagation();
         controlsVisible = !controlsVisible;
-        if (controlsVisible) {
-          landscapeControls.classList.remove('hidden');
-          toggleBtn.textContent = 'hide controls';
+        landscapeControls.classList.toggle('hidden', !controlsVisible);
+        toggleBtn.textContent = controlsVisible ? 'hide controls' : 'show controls';
+      });
+
+      // Fullscreen
+      var fsBtn = document.getElementById("fullscreen-btn");
+      fsBtn.addEventListener('pointerdown', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var el = document.getElementById("game-wrap");
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          if (el.requestFullscreen) {
+            el.requestFullscreen();
+          } else if (el.webkitRequestFullscreen) {
+            el.webkitRequestFullscreen();
+          }
+          fsBtn.textContent = '✕ exit fullscreen';
         } else {
-          landscapeControls.classList.add('hidden');
-          toggleBtn.textContent = 'show controls';
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+          fsBtn.textContent = '⛶ fullscreen';
+        }
+      });
+
+      document.addEventListener('fullscreenchange', function () {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          fsBtn.textContent = '⛶ fullscreen';
+        }
+      });
+      document.addEventListener('webkitfullscreenchange', function () {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+          fsBtn.textContent = '⛶ fullscreen';
         }
       });
 
