@@ -54,6 +54,7 @@
       margin-bottom: 4px;
     }
 
+    /* Shared button styles */
     .dpad-btn, .action-btn {
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.18);
@@ -71,7 +72,7 @@
     .action-btn.pressed { background: rgba(255,255,255,0.32); }
     .dpad-blank { background: none !important; border: none !important; pointer-events: none; }
 
-    /* Mobile controls — shown on any touch device */
+    /* ── Portrait: controls below ── */
     #mobile-controls {
       display: none;
       width: 100%;
@@ -122,10 +123,90 @@
       padding: 0 8px;
     }
 
-    /* Show controls on any touch device, hide desktop info */
-    @media (hover: none) and (pointer: coarse) {
+    /* ── Landscape: transparent overlay ── */
+    #landscape-controls {
+      display: none;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      transition: opacity 0.2s;
+    }
+
+    #landscape-controls.hidden { opacity: 0; }
+    #landscape-controls.hidden #ldpad,
+    #landscape-controls.hidden #laction-btns { pointer-events: none; }
+
+    #landscape-controls #ldpad {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, 48px);
+      grid-template-rows: repeat(3, 48px);
+      gap: 3px;
+      pointer-events: all;
+    }
+
+    #landscape-controls .dpad-btn { font-size: 1.1rem; }
+
+    #landscape-controls #laction-btns {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      display: grid;
+      grid-template-columns: repeat(2, 48px);
+      grid-template-rows: repeat(2, 48px);
+      gap: 3px;
+      pointer-events: all;
+    }
+
+    #landscape-controls .action-btn {
+      flex-direction: column;
+      gap: 2px;
+      font-family: monospace;
+      line-height: 1.2;
+    }
+
+    #landscape-controls .action-btn .key   { font-size: 0.75rem; }
+    #landscape-controls .action-btn .label { opacity: 0.4; font-size: 0.5rem; }
+
+    #overlay-bar {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 11;
+      display: none;
+      gap: 6px;
+      pointer-events: all;
+    }
+
+    .overlay-btn {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.6rem;
+      padding: 4px 8px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      white-space: nowrap;
+    }
+
+    /* Portrait touch */
+    @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
       #mobile-controls { display: block; }
       #info { display: none; }
+    }
+
+    /* Landscape touch — only show overlay, no body/html changes */
+    @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+      #landscape-controls { display: block; }
+      #overlay-bar { display: flex; }
+      #info { display: none; }
+      #mobile-controls { display: none; }
     }
   </style>
 </head>
@@ -133,7 +214,41 @@
 
   <h1>Castaway</h1>
 
-  <div id="game-wrap"></div>
+  <div id="game-wrap">
+
+    <div id="landscape-controls">
+      <div id="ldpad">
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowUp" data-code="ArrowUp">▲</div>
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowLeft" data-code="ArrowLeft">◀</div>
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowRight" data-code="ArrowRight">▶</div>
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowDown" data-code="ArrowDown">▼</div>
+        <div class="dpad-blank"></div>
+      </div>
+      <div id="laction-btns">
+        <div class="action-btn" data-key="z" data-code="KeyZ">
+          <span class="key">Z</span><span class="label">action</span>
+        </div>
+        <div class="action-btn" data-key="x" data-code="KeyX">
+          <span class="key">X</span><span class="label">cancel</span>
+        </div>
+        <div class="action-btn" data-key="Enter" data-code="Enter">
+          <span class="key">↵</span><span class="label">enter</span>
+        </div>
+        <div class="action-btn" data-key="Escape" data-code="Escape">
+          <span class="key">ESC</span><span class="label">menu</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="overlay-bar">
+      <button class="overlay-btn" id="toggle-controls">hide controls</button>
+    </div>
+
+  </div>
 
   <div id="info">
     <div class="col">
@@ -192,10 +307,12 @@
       var ruffle = window.RufflePlayer.newest();
       var player = ruffle.createPlayer();
       var container = document.getElementById("game-wrap");
-      container.appendChild(player);
+      container.insertBefore(player, container.firstChild);
       player.style.width = "100%";
       player.style.height = "100%";
-      player.style.display = "block";
+      player.style.position = "absolute";
+      player.style.top = "0";
+      player.style.left = "0";
       player.ruffle().load("Castaway.swf");
 
       new ResizeObserver(function () {
@@ -203,6 +320,20 @@
         player.style.height = container.offsetHeight + "px";
       }).observe(container);
 
+      // Toggle landscape controls
+      var landscapeControls = document.getElementById("landscape-controls");
+      var toggleBtn = document.getElementById("toggle-controls");
+      var controlsVisible = true;
+
+      toggleBtn.addEventListener('pointerdown', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        controlsVisible = !controlsVisible;
+        landscapeControls.classList.toggle('hidden', !controlsVisible);
+        toggleBtn.textContent = controlsVisible ? 'hide controls' : 'show controls';
+      });
+
+      // Wire up all buttons
       var buttons = document.querySelectorAll('.dpad-btn, .action-btn');
 
       function fire(type, key, code) {
