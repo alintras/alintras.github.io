@@ -33,7 +33,6 @@
       background: #000;
     }
 
-    /* Info block — desktop only */
     #info {
       width: 100%;
       max-width: 800px;
@@ -54,7 +53,6 @@
       margin-bottom: 4px;
     }
 
-    /* Mobile controls */
     #mobile-controls {
       display: none;
       width: 100%;
@@ -142,7 +140,6 @@
 
   <div id="game-wrap"></div>
 
-  <!-- Desktop info -->
   <div id="info">
     <div class="col">
       <div class="label">Description</div>
@@ -154,24 +151,19 @@
     </div>
   </div>
 
-  <!-- Mobile controls -->
   <div id="mobile-controls">
     <div class="controls-row">
-
       <div id="dpad">
         <div class="dpad-blank"></div>
         <div class="dpad-btn" data-key="ArrowUp" data-code="ArrowUp">▲</div>
         <div class="dpad-blank"></div>
-
         <div class="dpad-btn" data-key="ArrowLeft" data-code="ArrowLeft">◀</div>
         <div class="dpad-blank"></div>
         <div class="dpad-btn" data-key="ArrowRight" data-code="ArrowRight">▶</div>
-
         <div class="dpad-blank"></div>
         <div class="dpad-btn" data-key="ArrowDown" data-code="ArrowDown">▼</div>
         <div class="dpad-blank"></div>
       </div>
-
       <div id="action-btns">
         <div class="action-btn" data-key="z" data-code="KeyZ">
           <span class="key">Z</span><span class="label">action</span>
@@ -186,54 +178,64 @@
           <span class="key">ESC</span><span class="label">menu</span>
         </div>
       </div>
-
     </div>
     <div id="hint">arrows · Z · X · Enter · ESC — tap game area first to focus</div>
   </div>
 
-  <script type="module">
-    import { load } from "../ruffle/ruffle.js";
+  <!-- Step 1: config MUST come before ruffle.js -->
+  <script>
+    window.RufflePlayer = window.RufflePlayer || {};
+    window.RufflePlayer.config = {
+      publicPath: "../ruffle/",
+      autoplay: "on",
+      unmuteOverlay: "hidden"
+    };
+  </script>
 
-    const ruffle = await load({
-      publicPath: "../ruffle/"
-    });
+  <!-- Step 2: load ruffle -->
+  <script src="../ruffle/ruffle.js"></script>
 
-    const player = ruffle.createPlayer();
-    const container = document.getElementById("game-wrap");
-    container.appendChild(player);
-    player.style.width = "100%";
-    player.style.height = "100%";
-    await player.load("Castaway.swf");
+  <!-- Step 3: init after DOMContentLoaded, exactly as Ruffle docs show -->
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      var ruffle = window.RufflePlayer.newest();
+      var player = ruffle.createPlayer();
+      var container = document.getElementById("game-wrap");
+      container.appendChild(player);
+      player.style.width = "100%";
+      player.style.height = "100%";
+      player.ruffle().load("Castaway.swf");
 
-    // Mobile controls
-    const buttons = document.querySelectorAll('.dpad-btn, .action-btn');
+      // Mobile controls
+      var buttons = document.querySelectorAll('.dpad-btn, .action-btn');
 
-    function fire(type, key, code) {
-      [player, document].forEach(t => {
-        t.dispatchEvent(new KeyboardEvent(type, {
-          key, code, bubbles: true, cancelable: true
-        }));
+      function fire(type, key, code) {
+        [player, document].forEach(function (t) {
+          t.dispatchEvent(new KeyboardEvent(type, {
+            key: key, code: code, bubbles: true, cancelable: true
+          }));
+        });
+      }
+
+      buttons.forEach(function (btn) {
+        var key  = btn.dataset.key;
+        var code = btn.dataset.code;
+
+        btn.addEventListener('pointerdown', function (e) {
+          e.preventDefault();
+          btn.classList.add('pressed');
+          fire('keydown', key, code);
+        });
+
+        function up() {
+          btn.classList.remove('pressed');
+          fire('keyup', key, code);
+        }
+
+        btn.addEventListener('pointerup',     up);
+        btn.addEventListener('pointerleave',  up);
+        btn.addEventListener('pointercancel', up);
       });
-    }
-
-    buttons.forEach(btn => {
-      const key  = btn.dataset.key;
-      const code = btn.dataset.code;
-
-      btn.addEventListener('pointerdown', e => {
-        e.preventDefault();
-        btn.classList.add('pressed');
-        fire('keydown', key, code);
-      });
-
-      const up = () => {
-        btn.classList.remove('pressed');
-        fire('keyup', key, code);
-      };
-
-      btn.addEventListener('pointerup',     up);
-      btn.addEventListener('pointerleave',  up);
-      btn.addEventListener('pointercancel', up);
     });
   </script>
 
