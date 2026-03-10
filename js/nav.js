@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <summary>🎮 Fun</summary>
       ${item("🎲", "pages/fun/simple-physics.html", "Simple Physics")}
       ${item("🏝️", "pages/fun/castaway/castaway.html", "Castaway")}
+      ${item("❗", "pages/fun/mroops.html", "Mr.Oops!!")}
       ${item("💘", "/pages/fun/love-calculator.html", "Love Compatibility Calculator")}
       ${item("👩‍❤️‍💋‍👨", "/pages/fun/vivi.html", "Valentines 2026")}
       ${item("⭕", "/pages/fun/perfect-circle.html", "Perfect Circle Game")}
