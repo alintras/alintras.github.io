@@ -308,7 +308,6 @@
       player.style.width = "100%";
       player.style.height = "100%";
       player.style.display = "block";
-      player.ruffle().load("Castaway.swf");
 
       var portraitSlot  = document.getElementById("game-wrap");
       var landscapeSlot = document.getElementById("psp-game-wrap");
@@ -321,13 +320,14 @@
         var slot = landscapeMQ.matches ? landscapeSlot : portraitSlot;
         if (player.parentNode !== slot) {
           slot.appendChild(player);
-          // Re-sync dimensions after move
           player.style.width  = slot.offsetWidth  + "px";
           player.style.height = slot.offsetHeight + "px";
         }
       }
 
+      // Place in DOM first, then load
       placePlayer();
+      player.ruffle().load("Castaway.swf");
       landscapeMQ.addEventListener("change", placePlayer);
 
       new ResizeObserver(function () {
