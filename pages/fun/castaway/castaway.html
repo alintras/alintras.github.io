@@ -33,12 +33,28 @@
       background: #000;
     }
 
-    ruffle-player {
+    /* Info block — desktop only */
+    #info {
       width: 100%;
-      height: 100%;
-      display: block;
+      max-width: 800px;
+      margin-top: 16px;
+      display: flex;
+      gap: 32px;
+      font-size: 0.75rem;
+      line-height: 1.6;
+      opacity: 0.6;
     }
 
+    #info .col { flex: 1; }
+    #info .label {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-bottom: 4px;
+    }
+
+    /* Mobile controls */
     #mobile-controls {
       display: none;
       width: 100%;
@@ -116,6 +132,7 @@
 
     @media (hover: none) and (pointer: coarse) {
       #mobile-controls { display: block; }
+      #info { display: none; }
     }
   </style>
 </head>
@@ -123,10 +140,21 @@
 
   <h1>Castaway</h1>
 
-  <div id="game-wrap">
-    <ruffle-player src="Castaway.swf"></ruffle-player>
+  <div id="game-wrap"></div>
+
+  <!-- Desktop info -->
+  <div id="info">
+    <div class="col">
+      <div class="label">Description</div>
+      Stranded on a mysterious island, restore peace to its villagers. Grow your powers through 50+ quests, raise loyal pets to fight by your side, and customize your warrior with armor and weapons ranging from wooden sticks to elemental swords.
+    </div>
+    <div class="col">
+      <div class="label">Controls</div>
+      Arrow keys or WASD to move · Mouse to select, attack enemies, and interact with objects
+    </div>
   </div>
 
+  <!-- Mobile controls -->
   <div id="mobile-controls">
     <div class="controls-row">
 
@@ -163,11 +191,22 @@
     <div id="hint">arrows · Z · X · Enter · ESC — tap game area first to focus</div>
   </div>
 
-  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+  <script type="module">
+    import { load } from "../ruffle/ruffle.js";
 
-  <script>
+    const ruffle = await load({
+      publicPath: "../ruffle/"
+    });
+
+    const player = ruffle.createPlayer();
+    const container = document.getElementById("game-wrap");
+    container.appendChild(player);
+    player.style.width = "100%";
+    player.style.height = "100%";
+    await player.load("Castaway.swf");
+
+    // Mobile controls
     const buttons = document.querySelectorAll('.dpad-btn, .action-btn');
-    const player  = document.querySelector('ruffle-player');
 
     function fire(type, key, code) {
       [player, document].forEach(t => {
