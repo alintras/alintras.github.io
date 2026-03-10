@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coin Generator</title>
+<script src="lang.js"></script>
+<style>
+  a { color: inherit; text-decoration: none;}
+  body{font-family:monospace;max-width:900px;margin:40px auto;padding:0 20px;background:#fff;color:#000}
+  h1{font-size:13px;font-weight:normal;border-bottom:1px solid #000;padding-bottom:6px;margin-bottom:24px;letter-spacing:2px;text-transform:uppercase}
+  .wrap{display:grid;grid-template-columns:260px 1fr;gap:48px}
+  label{display:block;font-size:10px;margin-top:12px;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
+  input[type=text],select{width:100%;border:none;border-bottom:1px solid #000;padding:3px 0;font-family:monospace;font-size:13px;background:none;outline:none;box-sizing:border-box}
+  .photo-drop{border:1px solid #000;height:90px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+  .photo-drop img,.photo-drop input{position:absolute;inset:0}
+  .photo-drop img{width:100%;height:100%;object-fit:cover}
+  .photo-drop input{opacity:0;cursor:pointer;width:100%}
+  button{margin-top:12px;padding:5px 14px;font-family:monospace;font-size:11px;background:#000;color:#fff;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+  button.sec{background:#fff;color:#000;border:1px solid #000}
+  .btn-row{display:flex;gap:6px;margin-top:12px}
+  a.dl{display:inline-block;margin-top:10px;font-size:11px;color:#000;cursor:pointer}
+  .coin-stage{display:flex;flex-direction:column;align-items:center;gap:12px}
+  .coin-wrap{perspective:700px}
+  .coin{width:200px;height:200px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transform-style:preserve-3d}
+  .coin.spinning{animation:cspin 2.4s linear infinite}
+  @keyframes cspin{from{transform:rotateY(0)}to{transform:rotateY(360deg)}}
+  .coin-face,.coin-back{position:absolute;inset:0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;overflow:hidden}
+  .coin-back{transform:rotateY(180deg)}
+  .coin-ring{position:absolute;inset:14px;border-radius:50%;pointer-events:none}
+  .coin-arc{position:absolute;inset:0}
+  .coin-arc svg{width:100%;height:100%}
+  .coin-img{width:70px;height:70px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:36px}
+  .coin-img img{width:100%;height:100%;object-fit:cover}
+  .coin-year{font-family:monospace;font-size:11px;margin-top:6px}
+  .coin-val{font-family:monospace;font-size:34px;font-weight:bold}
+  .coin-cur{font-family:monospace;font-size:11px;margin-top:2px}
+  .coin-backtext{font-family:monospace;font-size:9px;text-align:center;padding:0 24px;margin-top:8px;letter-spacing:1px}
+  .m-gold .coin-face,.m-gold .coin-back{background:radial-gradient(circle at 35% 30%,#fff8d0,#d4a820 45%,#8a6010 80%,#5a3a00);box-shadow:0 0 0 4px #e8c040,0 8px 40px rgba(180,120,0,0.6),inset 0 2px 8px rgba(255,255,180,0.5)}
+  .m-gold .coin-ring{border:1.5px solid rgba(255,230,100,0.5)}
+  .m-gold .coin-val,.m-gold .coin-cur,.m-gold .coin-year,.m-gold .coin-backtext{color:rgba(60,30,0,0.7)}
+  .m-silver .coin-face,.m-silver .coin-back{background:radial-gradient(circle at 35% 30%,#ffffff,#c8c8c8 45%,#888 80%,#444);box-shadow:0 0 0 4px #ddd,0 8px 40px rgba(100,100,100,0.5),inset 0 2px 8px rgba(255,255,255,0.6)}
+  .m-silver .coin-ring{border:1.5px solid rgba(200,200,200,0.5)}
+  .m-silver .coin-val,.m-silver .coin-cur,.m-silver .coin-year,.m-silver .coin-backtext{color:rgba(20,20,20,0.7)}
+  .m-bronze .coin-face,.m-bronze .coin-back{background:radial-gradient(circle at 35% 30%,#f0c080,#c07830 45%,#7a4010 80%,#3a1800);box-shadow:0 0 0 4px #c88040,0 8px 40px rgba(150,80,0,0.6),inset 0 2px 8px rgba(255,200,100,0.4)}
+  .m-bronze .coin-ring{border:1.5px solid rgba(220,150,60,0.5)}
+  .m-bronze .coin-val,.m-bronze .coin-cur,.m-bronze .coin-year,.m-bronze .coin-backtext{color:rgba(40,15,0,0.7)}
+  .m-copper .coin-face,.m-copper .coin-back{background:radial-gradient(circle at 35% 30%,#f0a880,#c06030 45%,#803020 80%,#401000);box-shadow:0 0 0 4px #c07030,0 8px 40px rgba(150,60,0,0.6),inset 0 2px 8px rgba(255,160,80,0.4)}
+  .m-copper .coin-ring{border:1.5px solid rgba(200,100,40,0.5)}
+  .m-copper .coin-val,.m-copper .coin-cur,.m-copper .coin-year,.m-copper .coin-backtext{color:rgba(30,10,0,0.7)}
+</style>
+</head>
+<body>
+<div style="position:fixed; top:10px; left:10px;">
+  <a href="/../index.html">🏠 Home</a>
+</div> 
+<h1 data-t="m_title">Coin Generator</h1>
+<div class="wrap">
+  <div>
+    <label data-t="m_metal">Metal</label>
+    <select id="metal" onchange="setMetal()">
+      <option value="m-gold" data-t="m_gold">Gold</option>
+      <option value="m-silver" selected data-t="m_silver">Silver</option>
+      <option value="m-bronze" data-t="m_bronze">Bronze</option>
+      <option value="m-copper" data-t="m_copper">Copper</option>
+    </select>
+    <label data-t="m_arc">Inscription (front)</label><input type="text" id="arc" value="UNITED STATES OF AMERICA" oninput="u()">
+    <label data-t="m_value">Value</label><input type="text" id="val" value="1" oninput="u()">
+    <label data-t="m_currency">Currency</label><input type="text" id="cur" value="DOLLAR" oninput="u()">
+    <label data-t="m_year">Year</label><input type="text" id="year" value="2024" oninput="u()">
+    <label data-t="m_back">Back text</label><input type="text" id="back" value="IN GOD WE TRUST · E PLURIBUS UNUM" oninput="u()">
+    <label data-t="m_motif">Motif photo</label>
+    <div class="photo-drop" id="pd"><span data-t="upload_photo">Upload photo</span><input type="file" accept="image/*" onchange="lp(this)"></div>
+    <div class="btn-row">
+      <button onclick="u()" data-t="create">Create</button>
+      <button class="sec" onclick="toggleSpin()" data-t="m_spin">⟳ Spin</button>
+    </div>
+  </div>
+  <div>
+    <div class="coin-stage">
+      <div class="coin-wrap">
+        <div class="coin m-silver" id="coin" onclick="toggleSpin()">
+          <div class="coin-face">
+            <div class="coin-ring"></div>
+            <div class="coin-arc">
+              <svg viewBox="0 0 200 200">
+                <defs><path id="arc1" d="M 22,100 A 78,78 0 0,1 178,100"/></defs>
+                <text font-family="monospace" font-size="10" fill="rgba(0,0,0,0.45)" letter-spacing="1.5">
+                  <textPath href="#arc1" startOffset="50%" text-anchor="middle" id="arc-text">UNITED STATES OF AMERICA</textPath>
+                </text>
+              </svg>
+            </div>
+            <div class="coin-img" id="coin-img">🦅</div>
+            <div class="coin-year" id="coin-year">2024</div>
+          </div>
+          <div class="coin-back">
+            <div class="coin-ring"></div>
+            <div class="coin-val" id="coin-val">1</div>
+            <div class="coin-cur" id="coin-cur">DOLLAR</div>
+            <div class="coin-backtext" id="coin-back">IN GOD WE TRUST · E PLURIBUS UNUM</div>
+          </div>
+        </div>
+      </div>
+      <small style="font-size:10px;color:#888" data-t="m_click">Click = spin</small>
+    </div>
+    <a class="dl" onclick="alert(t('save_hint'))" data-t="save">↓ Save</a>
+  </div>
+</div>
+<script>
+let spinning=false;
+function setMetal(){const m=document.getElementById('metal').value;document.getElementById('coin').className='coin '+m+(spinning?' spinning':'');}
+function toggleSpin(){spinning=!spinning;document.getElementById('coin').classList.toggle('spinning',spinning);}
+function lp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const s=e.target.result;document.getElementById('pd').innerHTML=`<img src="${s}"><input type="file" accept="image/*" onchange="lp(this)">`;document.getElementById('coin-img').innerHTML=`<img src="${s}">`;};r.readAsDataURL(f);}
+function u(){
+  document.getElementById('arc-text').textContent=document.getElementById('arc').value;
+  document.getElementById('coin-val').textContent=document.getElementById('val').value;
+  document.getElementById('coin-cur').textContent=document.getElementById('cur').value;
+  document.getElementById('coin-year').textContent=document.getElementById('year').value;
+  document.getElementById('coin-back').textContent=document.getElementById('back').value;
+  setMetal();
+}
+document.addEventListener('langready',u);
+</script>
+</body>
+</html>

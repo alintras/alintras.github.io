@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News Card Generator</title>
+<script src="lang.js"></script>
+<style>
+  a { color: inherit; text-decoration: none;}
+  body{font-family:monospace;max-width:900px;margin:40px auto;padding:0 20px;background:#fff;color:#000}
+  h1{font-size:13px;font-weight:normal;border-bottom:1px solid #000;padding-bottom:6px;margin-bottom:24px;letter-spacing:2px;text-transform:uppercase}
+  .wrap{display:grid;grid-template-columns:260px 1fr;gap:48px}
+  label{display:block;font-size:10px;margin-top:12px;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
+  input[type=text],textarea,select{width:100%;border:none;border-bottom:1px solid #000;padding:3px 0;font-family:monospace;font-size:13px;background:none;outline:none;box-sizing:border-box;resize:none}
+  .photo-drop{border:1px solid #000;height:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+  .photo-drop img,.photo-drop input{position:absolute;inset:0}
+  .photo-drop img{width:100%;height:100%;object-fit:cover}
+  .photo-drop input{opacity:0;cursor:pointer;width:100%}
+  button{margin-top:16px;padding:5px 14px;font-family:monospace;font-size:11px;background:#000;color:#fff;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+  .style-row{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+  .sb{border:1px solid #000;padding:2px 8px;cursor:pointer;font-family:monospace;font-size:11px;background:#fff}
+  .sb.on{background:#000;color:#fff}
+  a.dl{display:inline-block;margin-top:10px;font-size:11px;color:#000;cursor:pointer}
+  .nc{font-family:monospace;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.2)}
+  .nc-head{padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
+  .nc-channel{font-size:18px;font-weight:bold;letter-spacing:2px}
+  .nc-live{font-size:9px;padding:2px 8px;letter-spacing:1px;border:1px solid}
+  .nc-ticker{font-size:9px;padding:4px 14px;white-space:nowrap;overflow:hidden}
+  .nc-ticker-inner{display:inline-block;animation:tick 16s linear infinite}
+  @keyframes tick{from{transform:translateX(100%)}to{transform:translateX(-200%)}}
+  .nc-photo{width:100%;height:170px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:11px}
+  .nc-photo img{width:100%;height:100%;object-fit:cover}
+  .nc-lower{border-left:4px solid;padding:10px 14px;margin:12px 14px 0}
+  .nc-cat{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+  .nc-headline{font-size:17px;font-weight:bold;line-height:1.3}
+  .nc-sub{font-size:11px;margin-top:4px;line-height:1.5;opacity:0.75}
+  .nc-body{padding:8px 14px 12px;font-size:11px;line-height:1.6;opacity:0.8}
+  .nc-foot{display:flex;justify-content:space-between;border-top:1px solid;padding:6px 14px;font-size:9px;opacity:0.5}
+  .s-dark{background:#111;color:#fff}.s-dark .nc-head{background:#111}.s-dark .nc-ticker{background:#cc0000;color:#fff}.s-dark .nc-photo{background:#222;color:#555}.s-dark .nc-lower{border-color:#cc0000}.s-dark .nc-cat{color:#cc0000}.s-dark .nc-foot{border-color:rgba(255,255,255,0.1)}
+  .s-blue{background:#001a4a;color:#e8eeff}.s-blue .nc-head{background:#001a4a}.s-blue .nc-ticker{background:#1a3a8a;color:#c0d0ff}.s-blue .nc-photo{background:#0a1a3a;color:#2a4a8a}.s-blue .nc-lower{border-color:#4a7acc}.s-blue .nc-cat{color:#4a7acc}.s-blue .nc-foot{border-color:rgba(255,255,255,0.1)}
+  .s-light{background:#fff;color:#111;border:1px solid #ddd}.s-light .nc-head{background:#1a1a1a;color:#fff}.s-light .nc-ticker{background:#cc0000;color:#fff}.s-light .nc-photo{background:#f0f0f0;color:#aaa}.s-light .nc-lower{border-color:#1a1a1a}.s-light .nc-cat{color:#cc0000}.s-light .nc-foot{border-color:#e0e0e0}
+  .s-breaking{background:#1a0800;color:#fff8f0}.s-breaking .nc-head{background:#cc4400}.s-breaking .nc-ticker{background:#111;color:#ffaa44}.s-breaking .nc-photo{background:#2a1000;color:#6a3010}.s-breaking .nc-lower{border-color:#ff6600}.s-breaking .nc-cat{color:#ff8800}.s-breaking .nc-foot{border-color:rgba(255,255,255,0.1)}
+</style>
+</head>
+<body>
+<div style="position:fixed; top:10px; left:10px;">
+  <a href="/../index.html">🏠 Home</a>
+</div> 
+<h1 data-t="n_title">News Card Generator</h1>
+<div class="wrap">
+  <div>
+    <label data-t="style">Style</label>
+    <div class="style-row">
+      <button class="sb on" onclick="ss(this,'s-dark')" data-t="n_dark">Dark</button>
+      <button class="sb" onclick="ss(this,'s-blue')" data-t="n_blue">Blue</button>
+      <button class="sb" onclick="ss(this,'s-light')" data-t="n_light">Light</button>
+      <button class="sb" onclick="ss(this,'s-breaking')" data-t="n_breaking">Breaking</button>
+    </div>
+    <label data-t="n_channel">Channel</label><input type="text" id="ch" value="WORLD NEWS" oninput="u()">
+    <label data-t="n_category">Category</label>
+    <select id="cat" onchange="u()">
+      <option>BREAKING NEWS</option><option>POLITICS</option><option>ECONOMY</option>
+      <option>SPORTS</option><option>CULTURE</option><option>LOCAL</option>
+    </select>
+    <label data-t="n_headline">Headline</label><input type="text" id="hl" value="Incredible news shakes the world" oninput="u()">
+    <label data-t="n_sub">Subheadline</label><input type="text" id="sub" value="Experts disagree on the full impact of the development" oninput="u()">
+    <label data-t="n_text">Text</label><textarea id="body" rows="4" oninput="u()">According to witnesses, the incident occurred this morning. Authorities have launched an investigation into the matter.</textarea>
+    <label data-t="n_reporter">Reporter</label><input type="text" id="rep" value="Lisa Berg, Correspondent" oninput="u()">
+    <label data-t="n_time">Time</label><input type="text" id="time" value="8:15 PM" oninput="u()">
+    <label data-t="n_ticker">Ticker text</label><input type="text" id="ticker" value="BREAKING: More details to follow +++ Special report tonight at 9 PM +++ Updates on our website" oninput="u()">
+    <label data-t="photo">Photo</label>
+    <div class="photo-drop" id="pd"><span data-t="upload_photo">Upload photo</span><input type="file" accept="image/*" onchange="lp(this)"></div>
+    <button onclick="u()" data-t="create">Create</button>
+  </div>
+  <div>
+    <div class="nc s-dark" id="nc">
+      <div class="nc-head">
+        <span class="nc-channel" id="nc-ch">WORLD NEWS</span>
+        <span class="nc-live" data-t="n_live">● LIVE</span>
+      </div>
+      <div class="nc-ticker"><span class="nc-ticker-inner" id="nc-ticker">BREAKING: More details to follow +++ Special report tonight at 9 PM</span></div>
+      <div class="nc-photo" id="nc-photo">No photo</div>
+      <div class="nc-lower">
+        <div class="nc-cat" id="nc-cat">BREAKING NEWS</div>
+        <div class="nc-headline" id="nc-hl">Incredible news shakes the world</div>
+        <div class="nc-sub" id="nc-sub">Experts disagree on the full impact</div>
+      </div>
+      <div class="nc-body" id="nc-body">According to witnesses, the incident occurred this morning. Authorities have launched an investigation.</div>
+      <div class="nc-foot"><span id="nc-rep">Lisa Berg, Correspondent</span><span id="nc-time">8:15 PM</span></div>
+    </div>
+    <a class="dl" onclick="alert(t('save_hint'))" data-t="save">↓ Save</a>
+  </div>
+</div>
+<script>
+function lp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const s=e.target.result;document.getElementById('pd').innerHTML=`<img src="${s}"><input type="file" accept="image/*" onchange="lp(this)">`;document.getElementById('nc-photo').innerHTML=`<img src="${s}" style="width:100%;height:100%;object-fit:cover">`;};r.readAsDataURL(f);}
+function ss(el,cls){document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');document.getElementById('nc').className='nc '+cls;}
+function u(){
+  document.getElementById('nc-ch').textContent=document.getElementById('ch').value;
+  document.getElementById('nc-cat').textContent=document.getElementById('cat').value;
+  document.getElementById('nc-hl').textContent=document.getElementById('hl').value;
+  document.getElementById('nc-sub').textContent=document.getElementById('sub').value;
+  document.getElementById('nc-body').textContent=document.getElementById('body').value;
+  document.getElementById('nc-rep').textContent=document.getElementById('rep').value;
+  document.getElementById('nc-time').textContent=document.getElementById('time').value;
+  document.getElementById('nc-ticker').textContent=document.getElementById('ticker').value;
+  document.querySelector('.nc-live').textContent=t('n_live');
+}
+document.addEventListener('langready',u);
+</script>
+</body>
+</html>

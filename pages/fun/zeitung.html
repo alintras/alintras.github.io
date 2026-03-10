@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newspaper Generator</title>
+<script src="lang.js"></script>
+<style>
+  a { color: inherit; text-decoration: none;}
+  body{font-family:monospace;max-width:1100px;margin:40px auto;padding:0 20px;background:#fff;color:#000}
+  h1{font-size:13px;font-weight:normal;border-bottom:1px solid #000;padding-bottom:6px;margin-bottom:24px;letter-spacing:2px;text-transform:uppercase}
+  .wrap{display:grid;grid-template-columns:270px 1fr;gap:48px}
+  label{display:block;font-size:10px;margin-top:12px;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
+  input[type=text],input[type=date],textarea,select{width:100%;border:none;border-bottom:1px solid #000;padding:3px 0;font-family:monospace;font-size:13px;background:none;outline:none;box-sizing:border-box;resize:vertical}
+  .photo-drop{border:1px solid #000;height:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+  .photo-drop img,.photo-drop input{position:absolute;inset:0}
+  .photo-drop img{width:100%;height:100%;object-fit:cover}
+  .photo-drop input{opacity:0;cursor:pointer;width:100%}
+  button{margin-top:16px;padding:5px 14px;font-family:monospace;font-size:11px;background:#000;color:#fff;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+  .style-row{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+  .sb{border:1px solid #000;padding:2px 8px;cursor:pointer;font-family:monospace;font-size:11px;background:#fff}
+  .sb.on{background:#000;color:#fff}
+  a.dl{display:inline-block;margin-top:10px;font-size:11px;color:#000;cursor:pointer}
+  .np{font-family:'Times New Roman',Georgia,serif;background:#fffef5;border:1px solid #ccc;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+  .np-flag{height:6px;background:linear-gradient(90deg,#CC0000,#002395)}
+  .np-head{border-bottom:3px double #000;padding:10px 16px 8px;text-align:center}
+  .np-name{font-size:38px;font-weight:900;letter-spacing:-1px;line-height:1;font-family:'Times New Roman',serif;color:#1a1a1a}
+  .np-tagline{font-size:10px;font-style:italic;color:#666;margin-top:2px}
+  .np-meta{display:flex;justify-content:space-between;font-family:monospace;font-size:9px;color:#666;border-top:1px solid #ccc;margin-top:6px;padding-top:4px}
+  .np-body{padding:14px 16px}
+  .np-headline{font-size:28px;font-weight:900;line-height:1.2;margin-bottom:6px;color:#111}
+  .np-sub{font-size:14px;font-style:italic;color:#444;margin-bottom:12px;border-bottom:1px solid #ccc;padding-bottom:10px}
+  .np-cols{display:grid;grid-template-columns:1fr 1px 1fr}
+  .np-col{padding:0 16px}
+  .np-col:first-child{padding-left:0}
+  .np-col:last-child{padding-right:0}
+  .np-divider{background:#ccc}
+  .np-photo{width:100%;height:150px;border:1px solid #ccc;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:6px;background:#f5f5f0;font-size:10px;font-family:monospace;color:#aaa}
+  .np-photo img{width:100%;height:100%;object-fit:cover}
+  .np-caption{font-family:monospace;font-size:9px;color:#999;margin-bottom:10px;font-style:italic}
+  .np-byline{font-family:monospace;font-size:9px;color:#888;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+  .np-text{font-size:13px;line-height:1.7;color:#222;text-align:justify}
+  .np-ad{border:1px solid #ccc;padding:8px;text-align:center;margin-top:14px;font-family:monospace;font-size:9px;color:#aaa;background:#f9f8f2;letter-spacing:1px}
+  .tabloid .np-flag{background:#CC0000;height:8px}
+  .tabloid .np-head{background:#CC0000;border-bottom:4px solid #000}
+  .tabloid .np-name{color:#fff;font-size:48px}
+  .tabloid .np-tagline{color:rgba(255,255,255,0.7)}
+  .tabloid .np-meta{background:#CC0000;color:rgba(255,255,255,0.8);border-color:rgba(255,255,255,0.3)}
+  .tabloid .np-headline{font-size:34px}
+  .intl .np-flag{background:linear-gradient(90deg,#002395 25%,#fff 25%,#fff 75%,#CC0000 75%)}
+  .intl .np-name{font-family:serif;letter-spacing:4px}
+</style>
+</head>
+<body>
+<div style="position:fixed; top:10px; left:10px;">
+  <a href="/../index.html">🏠 Home</a>
+</div> 
+<h1 data-t="zt_title">Newspaper Generator</h1>
+<div class="wrap">
+  <div>
+    <label data-t="style">Style</label>
+    <div class="style-row">
+      <button class="sb on" onclick="ss(this,'')" data-t="zt_classic">Classic</button>
+      <button class="sb" onclick="ss(this,'tabloid')" data-t="zt_tabloid">Tabloid</button>
+      <button class="sb" onclick="ss(this,'intl')" data-t="zt_intl">International</button>
+    </div>
+    <label data-t="zt_papername">Newspaper name</label><input type="text" id="pname" value="The Daily Post" oninput="u()">
+    <label data-t="zt_tagline">Tagline</label><input type="text" id="tagline" value="Independent since 1892" oninput="u()">
+    <label data-t="zt_date">Date</label><input type="date" id="pdate" value="2024-06-15" oninput="u()">
+    <label data-t="zt_edition">Edition</label><input type="text" id="edition" value="No. 142 · $2.50" oninput="u()">
+    <label data-t="zt_headline">Headline</label><input type="text" id="headline" value="Sensation: Local Resident Wins Million-Dollar Prize!" oninput="u()">
+    <label data-t="zt_subheadline">Subheadline</label><input type="text" id="sub" value="The entire city celebrates the incredible lottery win of Max Mustermann" oninput="u()">
+    <label data-t="zt_author">Author</label><input type="text" id="author" value="By Lisa Weber, Reporter" oninput="u()">
+    <label data-t="zt_body">Article text</label><textarea id="body" rows="5" oninput="u()">It was an ordinary Tuesday evening when Max Mustermann watched the lottery numbers on television. What happened next was beyond his wildest dreams: all six numbers matched. A jackpot of 12 million dollars was his.</textarea>
+    <label data-t="zt_caption">Photo caption</label><input type="text" id="caption" value="Max Mustermann (center) with his family." oninput="u()">
+    <label data-t="photo">Photo</label>
+    <div class="photo-drop" id="pd"><span data-t="upload_photo">Upload photo</span><input type="file" accept="image/*" onchange="lp(this)"></div>
+    <button onclick="u()" data-t="create">Create</button>
+  </div>
+  <div>
+    <div class="np" id="np">
+      <div class="np-flag" id="np-flag"></div>
+      <div class="np-head" id="np-head">
+        <div class="np-name" id="np-name">The Daily Post</div>
+        <div class="np-tagline" id="np-tagline">Independent since 1892</div>
+        <div class="np-meta">
+          <span id="np-edition">No. 142 · $2.50</span>
+          <span id="np-day">SATURDAY</span>
+          <span id="np-date">June 15, 2024</span>
+        </div>
+      </div>
+      <div class="np-body">
+        <div class="np-headline" id="np-headline">Sensation: Local Resident Wins Million-Dollar Prize!</div>
+        <div class="np-sub" id="np-sub">The entire city celebrates the incredible lottery win</div>
+        <div class="np-cols">
+          <div class="np-col">
+            <div class="np-photo" id="np-photo">No photo</div>
+            <div class="np-caption" id="np-caption">Max Mustermann (center) with his family.</div>
+            <div class="np-byline" id="np-author">By Lisa Weber, Reporter</div>
+            <div class="np-text" id="np-text">It was an ordinary Tuesday evening when Max Mustermann watched the lottery numbers on television. What happened next was beyond his wildest dreams: all six numbers matched.</div>
+          </div>
+          <div class="np-divider"></div>
+          <div class="np-col">
+            <div class="np-text">"I thought I had misread the numbers," Mustermann told our paper. "I checked them three times." The news has since spread throughout the entire neighborhood. What the lucky winner plans to do with the money, he did not want to reveal yet. Only this much: "I'll stay the same person." Congratulations!</div>
+            <div class="np-ad">— ADVERTISEMENT —<br><strong>Miller's Bakery</strong><br>Fresh baked goods daily!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="dl" onclick="alert(t('save_hint'))" data-t="save">↓ Save</a>
+  </div>
+</div>
+<script>
+const months={en:['January','February','March','April','May','June','July','August','September','October','November','December'],de:['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],fr:['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],es:['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],pt:['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],ru:['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'],zh:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],ar:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],ja:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],hi:['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर']};
+const days={en:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],de:['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],fr:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],es:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],pt:['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],ru:['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'],zh:['周日','周一','周二','周三','周四','周五','周六'],ar:['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],ja:['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'],hi:['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार']};
+function fd(v){if(!v)return'';const d=new Date(v);const lang=window._lang||'en';const ml=months[lang]||months.en;const dl=days[lang]||days.en;return{date:`${d.getDate()} ${ml[d.getMonth()]} ${d.getFullYear()}`,day:dl[d.getDay()].toUpperCase()};}
+function lp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const s=e.target.result;document.getElementById('pd').innerHTML=`<img src="${s}"><input type="file" accept="image/*" onchange="lp(this)">`;document.getElementById('np-photo').innerHTML=`<img src="${s}" style="width:100%;height:100%;object-fit:cover">`;};r.readAsDataURL(f);}
+function ss(el,cls){document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');document.getElementById('np').className='np '+(cls||'');}
+function u(){
+  document.getElementById('np-name').textContent=document.getElementById('pname').value;
+  document.getElementById('np-tagline').textContent=document.getElementById('tagline').value;
+  document.getElementById('np-edition').textContent=document.getElementById('edition').value;
+  const fd2=fd(document.getElementById('pdate').value);
+  document.getElementById('np-date').textContent=fd2.date;
+  document.getElementById('np-day').textContent=fd2.day;
+  document.getElementById('np-headline').textContent=document.getElementById('headline').value;
+  document.getElementById('np-sub').textContent=document.getElementById('sub').value;
+  document.getElementById('np-author').textContent=document.getElementById('author').value;
+  document.getElementById('np-text').textContent=document.getElementById('body').value;
+  document.getElementById('np-caption').textContent=document.getElementById('caption').value;
+}
+document.addEventListener('langready',u);
+</script>
+</body>
+</html>

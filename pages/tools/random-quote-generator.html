@@ -3,168 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Quote Generator - Inspirational Quotes</title>
-    <a href="/../index.html">🏠Home</a>
-    <a href="/../pages/tools/tools.html">🛠️Tools</a>
+    <title>Random Quote Generator</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        a { color: inherit; text-decoration: none; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            color: #fff;
+            color: #111;
         }
-        .container { max-width: 900px; width: 100%; }
+        .container { max-width: 700px; width: 100%; }
         header { text-align: center; margin-bottom: 20px; }
-        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .subtitle { font-size: 1.1em; opacity: 0.9; }
-        .ad-placeholder {
-            background: #f0f0f0;
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            color: #999;
-            margin: 15px 0;
-            min-height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .main-area {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .quote-container {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .quote-icon {
-            font-size: 3em;
-            color: #f5576c;
-            opacity: 0.3;
-            margin-bottom: 20px;
-        }
-        .quote-text {
-            font-size: 1.8em;
-            line-height: 1.6;
-            color: #333;
-            font-style: italic;
-            margin-bottom: 20px;
-            min-height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .quote-author {
-            font-size: 1.2em;
-            color: #666;
-            font-weight: bold;
-        }
-        .quote-author::before {
-            content: "— ";
-        }
-        .category-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin-top: 15px;
-        }
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 15px 30px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #666;
-        }
-        .btn-secondary:hover {
-            background: #e0e0e0;
-        }
+        h1 { font-size: 2em; margin-bottom: 8px; }
+        .subtitle { font-size: 1em; color: #555; }
         .category-filter {
             display: flex;
-            justify-content: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             margin-bottom: 20px;
         }
         .category-btn {
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 20px;
+            padding: 6px 14px;
+            background: #fff;
+            color: #111;
+            border: 1px solid #111;
             cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+        .category-btn:hover { background: #f0f0f0; }
+        .category-btn.active { background: #111; color: #fff; }
+        .main-area {
+            border: 1px solid #ddd;
+            padding: 40px 30px;
+            margin-bottom: 20px;
+            min-height: 260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .quote-container { text-align: center; margin-bottom: 25px; }
+        .quote-text {
+            font-size: 1.4em;
+            line-height: 1.6;
+            color: #111;
+            font-style: italic;
+            margin-bottom: 15px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quote-author { font-size: 1em; color: #555; font-weight: bold; }
+        .quote-author::before { content: "— "; }
+        .category-badge {
+            display: inline-block;
+            border: 1px solid #aaa;
+            color: #555;
+            padding: 4px 12px;
+            font-size: 0.85em;
+            margin-top: 12px;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 24px;
+            font-size: 1em;
+            border: 1px solid #111;
+            background: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover { background: #f0f0f0; }
+        button.copied { background: #111; color: #fff; }
+        .tips {
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+            margin-top: 10px;
+            color: #555;
             font-size: 0.95em;
         }
-        .category-btn:hover {
-            background: rgba(255,255,255,0.3);
-            border-color: rgba(255,255,255,0.5);
-        }
-        .category-btn.active {
-            background: white;
-            color: #f5576c;
-            border-color: white;
-        }
-        .tips {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        .tips h3 { margin-bottom: 10px; }
-        .tips ul { list-style-position: inside; opacity: 0.9; }
-        .tips li { margin: 8px 0; }
         @media (max-width: 600px) {
-            h1 { font-size: 1.8em; }
-            .quote-text { font-size: 1.3em; min-height: 100px; }
-            .quote-author { font-size: 1em; }
-            .main-area { padding: 25px; }
-            button { padding: 12px 20px; font-size: 1em; }
+            h1 { font-size: 1.5em; }
+            .quote-text { font-size: 1.1em; }
+            .main-area { padding: 25px 15px; }
         }
     </style>
 </head>
 <body>
+    <div style="position:fixed; top:10px; left:10px;">
+        <a href="/../index.html">🏠 Home</a>
+    </div>
     <div class="container">
         <header>
-            <h1>💭 Random Quote Generator</h1>
-            <p class="subtitle">Get inspired with wisdom from great minds</p>
+            <h1>Random Quote Generator</h1>
+            <p class="subtitle">Wisdom from great minds, real and fictional</p>
         </header>
         <div class="category-filter" id="categoryFilter">
             <button class="category-btn active" data-category="all">All</button>
@@ -173,72 +116,136 @@
             <button class="category-btn" data-category="life">Life</button>
             <button class="category-btn" data-category="success">Success</button>
             <button class="category-btn" data-category="wisdom">Wisdom</button>
-        </div>
-        <div class="ad-placeholder">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <button class="category-btn" data-category="anime">Anime</button>
         </div>
         <div class="main-area">
             <div class="quote-container">
-                <div class="quote-icon">"</div>
                 <div class="quote-text" id="quoteText">Click the button below to get a random quote!</div>
                 <div class="quote-author" id="quoteAuthor"></div>
                 <div class="category-badge" id="categoryBadge" style="display:none;"></div>
             </div>
             <div class="controls">
-                <button class="btn-primary" id="newQuoteBtn">New Quote</button>
-                <button class="btn-secondary" id="copyBtn">Copy Quote</button>
-                <button class="btn-secondary" id="tweetBtn">Tweet Quote</button>
+                <button id="newQuoteBtn">New Quote</button>
+                <button id="copyBtn">Copy</button>
+                <button id="tweetBtn">Tweet</button>
             </div>
-        </div>
-        <div class="ad-placeholder">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-        <div class="tips">
-            <h3>✨ About These Quotes:</h3>
-            <ul>
-                <li>Curated collection of inspiring quotes from famous thinkers and leaders</li>
-                <li>Filter by category to find quotes that match your mood</li>
-                <li>Share quotes on Twitter or copy to clipboard</li>
-                <li>New quote every time you click the button</li>
-            </ul>
         </div>
     </div>
     <script>
         const quotes = [
-            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", category: "success" },
-            { text: "Life is what happens when you're busy making other plans.", author: "John Lennon", category: "life" },
+            // Inspirational
             { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt", category: "inspirational" },
-            { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle", category: "wisdom" },
-            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt", category: "motivational" },
-            { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins", category: "motivational" },
-            { text: "In the end, we only regret the chances we didn't take.", author: "Lewis Carroll", category: "life" },
-            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill", category: "success" },
             { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela", category: "inspirational" },
-            { text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs", category: "life" },
-            { text: "If you want to lift yourself up, lift up someone else.", author: "Booker T. Washington", category: "wisdom" },
-            { text: "I have not failed. I've just found 10,000 ways that won't work.", author: "Thomas Edison", category: "success" },
-            { text: "The mind is everything. What you think you become.", author: "Buddha", category: "wisdom" },
-            { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb", category: "motivational" },
-            { text: "An unexamined life is not worth living.", author: "Socrates", category: "wisdom" },
             { text: "Turn your wounds into wisdom.", author: "Oprah Winfrey", category: "inspirational" },
-            { text: "Whether you think you can or you think you can't, you're right.", author: "Henry Ford", category: "motivational" },
-            { text: "Life is 10% what happens to you and 90% how you react to it.", author: "Charles R. Swindoll", category: "life" },
-            { text: "The purpose of our lives is to be happy.", author: "Dalai Lama", category: "life" },
-            { text: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", author: "Buddha", category: "wisdom" },
-            { text: "Happiness is not something ready made. It comes from your own actions.", author: "Dalai Lama", category: "inspirational" },
-            { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius", category: "motivational" },
             { text: "Everything you've ever wanted is on the other side of fear.", author: "George Addair", category: "inspirational" },
-            { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau", category: "success" },
-            { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson", category: "motivational" },
-            { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney", category: "success" },
-            { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky", category: "motivational" },
             { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson", category: "inspirational" },
             { text: "Go confidently in the direction of your dreams! Live the life you've imagined.", author: "Henry David Thoreau", category: "inspirational" },
-            { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson", category: "wisdom" }
+            { text: "Happiness is not something ready made. It comes from your own actions.", author: "Dalai Lama", category: "inspirational" },
+            { text: "You have power over your mind, not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius", category: "inspirational" },
+            { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt", category: "inspirational" },
+            { text: "Do one thing every day that scares you.", author: "Eleanor Roosevelt", category: "inspirational" },
+
+            // Motivational
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt", category: "motivational" },
+            { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins", category: "motivational" },
+            { text: "Whether you think you can or you think you can't, you're right.", author: "Henry Ford", category: "motivational" },
+            { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius", category: "motivational" },
+            { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson", category: "motivational" },
+            { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky", category: "motivational" },
+            { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb", category: "motivational" },
+            { text: "Hard work beats talent when talent doesn't work hard.", author: "Tim Notke", category: "motivational" },
+            { text: "Dream big and dare to fail.", author: "Norman Vaughan", category: "motivational" },
+            { text: "Energy and persistence conquer all things.", author: "Benjamin Franklin", category: "motivational" },
+
+            // Life
+            { text: "Life is what happens when you're busy making other plans.", author: "John Lennon", category: "life" },
+            { text: "In the end, we only regret the chances we didn't take.", author: "Lewis Carroll", category: "life" },
+            { text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs", category: "life" },
+            { text: "Life is 10% what happens to you and 90% how you react to it.", author: "Charles R. Swindoll", category: "life" },
+            { text: "The purpose of our lives is to be happy.", author: "Dalai Lama", category: "life" },
+            { text: "To live is the rarest thing in the world. Most people just exist.", author: "Oscar Wilde", category: "life" },
+            { text: "Not all those who wander are lost.", author: "J.R.R. Tolkien", category: "life" },
+            { text: "We accept the love we think we deserve.", author: "Stephen Chbosky", category: "life" },
+            { text: "It is not the length of life, but the depth.", author: "Ralph Waldo Emerson", category: "life" },
+            { text: "Almost everything will work again if you unplug it for a few minutes, including you.", author: "Anne Lamott", category: "life" },
+
+            // Success
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", category: "success" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill", category: "success" },
+            { text: "I have not failed. I've just found 10,000 ways that won't work.", author: "Thomas Edison", category: "success" },
+            { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau", category: "success" },
+            { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney", category: "success" },
+            { text: "Opportunities don't happen. You create them.", author: "Chris Grosser", category: "success" },
+            { text: "I find that the harder I work, the more luck I seem to have.", author: "Thomas Jefferson", category: "success" },
+            { text: "There are no secrets to success. It is preparation, hard work, and learning from failure.", author: "Colin Powell", category: "success" },
+            { text: "It always seems impossible until it's done.", author: "Nelson Mandela", category: "success" },
+            { text: "The secret of getting ahead is getting started.", author: "Mark Twain", category: "success" },
+
+            // Wisdom
+            { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle", category: "wisdom" },
+            { text: "The mind is everything. What you think you become.", author: "Buddha", category: "wisdom" },
+            { text: "An unexamined life is not worth living.", author: "Socrates", category: "wisdom" },
+            { text: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", author: "Buddha", category: "wisdom" },
+            { text: "Knowing yourself is the beginning of all wisdom.", author: "Aristotle", category: "wisdom" },
+            { text: "The measure of intelligence is the ability to change.", author: "Albert Einstein", category: "wisdom" },
+            { text: "Waste no more time arguing about what a good man should be. Be one.", author: "Marcus Aurelius", category: "wisdom" },
+            { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates", category: "wisdom" },
+            { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle", category: "wisdom" },
+            { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson", category: "wisdom" },
+            { text: "The unexamined life is not worth living.", author: "Socrates", category: "wisdom" },
+            { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci", category: "wisdom" },
+            { text: "To know what you know and what you do not know, that is true knowledge.", author: "Confucius", category: "wisdom" },
+
+            // One Piece
+            { text: "Inherited will, the destiny of the age, and the dreams of the people. These are things that will not be stopped.", author: "Gol D. Roger (One Piece)", category: "anime" },
+            { text: "I don't want to conquer anything. I just think the guy with the most freedom in this whole ocean is the Pirate King!", author: "Monkey D. Luffy (One Piece)", category: "anime" },
+            { text: "When do you think people die? When they are hit by a fatal disease? No. It's when they are forgotten.", author: "Dr. Hiriluk (One Piece)", category: "anime" },
+            { text: "Nothing happened.", author: "Roronoa Zoro (One Piece)", category: "anime" },
+            { text: "I don't care what the world thinks. I'm fighting for my crew.", author: "Monkey D. Luffy (One Piece)", category: "anime" },
+            { text: "There are things you can't see unless you change your standing.", author: "Silvers Rayleigh (One Piece)", category: "anime" },
+            { text: "Bring on the hardship. It's preferred in a path of carnage.", author: "Roronoa Zoro (One Piece)", category: "anime" },
+            { text: "Pirates are evil? The Marines are righteous? These terms have always changed throughout the course of history... Whoever wins this war becomes justice!", author: "Donquixote Doflamingo (One Piece)", category: "anime"},
+
+            // Vagabond
+            { text: "There is no path. Beyond the horizon there is just more horizon.", author: "Miyamoto Musashi (Vagabond)", category: "anime" },
+            { text: "Strength is not what you have when facing your enemy. It is what you have when facing yourself.", author: "Miyamoto Musashi (Vagabond)", category: "anime" },
+            { text: "To truly know the sword is to know yourself.", author: "Yagyu Sekishusai (Vagabond)", category: "anime" },
+            { text: "Under the great sky, we are all equals. Yet each of us has a different path.", author: "Yagyu Sekishusai (Vagabond)", category: "anime" },
+            { text: "A real warrior doesn't run away. He faces whatever is coming and overcomes it.", author: "Sasaki Kojiro (Vagabond)", category: "anime" },
+            { text: "What does it mean to be the strongest? I used to think it meant defeating everyone. But the real answer is living without shame.", author: "Miyamoto Musashi (Vagabond)", category: "anime" },
+
+            // Berserk
+            { text: "A dream — how can I put it — a man's dream never ends, does it?", author: "Griffith (Berserk)", category: "anime" },
+            { text: "If you lose, you die. If you win, you can live. If you don't fight, you can't win.", author: "Guts (Berserk)", category: "anime" },
+            { text: "In this world, is the destiny of mankind controlled by some transcendental entity or law? At least it is true that man has no control, even over his own will.", author: "Narrator (Berserk)", category: "anime" },
+            { text: "Even if we painstakingly piece together something lost, it doesn't mean things will ever go back to how they were.", author: "Guts (Berserk)", category: "anime" },
+
+            // Naruto
+            { text: "Hard work is worthless for those that don't believe in themselves.", author: "Naruto Uzumaki (Naruto)", category: "anime" },
+            { text: "Those who break the rules are trash, but those who abandon their comrades are worse than trash.", author: "Kakashi Hatake (Naruto)", category: "anime" },
+            { text: "Love breeds sacrifice, which in turn breeds hatred. Then you can know pain.", author: "Pain (Naruto)", category: "anime" },
+            { text: "When people get hurt, they learn to hate. When people hurt others, they become hated. But knowing that pain allows people to be kind.", author: "Nagato (Naruto)", category: "anime" },
+
+            // Attack on Titan
+            { text: "If you win, you live. If you lose, you die. If you don't fight, you can't win.", author: "Eren Yeager (Attack on Titan)", category: "anime" },
+            { text: "The only thing we're allowed to do is to believe that we won't regret the choice we made.", author: "Levi Ackerman (Attack on Titan)", category: "anime" },
+            { text: "This world is merciless, and it's also very beautiful.", author: "Mikasa Ackerman (Attack on Titan)", category: "anime" },
+            { text: "No matter how messed up things get, you can always figure out the best solution.", author: "Levi Ackerman (Attack on Titan)", category: "anime" },
+
+            // Hunter x Hunter
+            { text: "If you want to get to know someone, find out what makes them angry.", author: "Gon Freecss (Hunter x Hunter)", category: "anime" },
+            { text: "You should enjoy the little detours in life. That's where you'll find the things more important than what you want.", author: "Ging Freecss (Hunter x Hunter)", category: "anime" },
+            { text: "A beast that has tasted human blood will stop at nothing to get more.", author: "Netero (Hunter x Hunter)", category: "anime" },
+
+            // Fullmetal Alchemist
+            { text: "A lesson without pain is meaningless. For you cannot gain anything without sacrificing something else in return.", author: "Edward Elric (Fullmetal Alchemist)", category: "anime" },
+            { text: "There's no such thing as a painless lesson — they just don't exist. Sacrifices are necessary.", author: "Edward Elric (Fullmetal Alchemist)", category: "anime" },
+            { text: "Alchemy: the science of understanding the flow and rebuilding. However, it is not an all-powerful art. It is impossible to create something out of nothing.", author: "Narrator (Fullmetal Alchemist)", category: "anime" },
+
+            // Death Note
+            { text: "The human whose name is written in this note shall die.", author: "Death Note", category: "anime" },
+            { text: "I'll take a potato chip... and eat it!", author: "Light Yagami (Death Note)", category: "anime" },
+            { text: "This world is rotten, and those who are making it rot deserve to die.", author: "Light Yagami (Death Note)", category: "anime" },
         ];
 
         const quoteText = document.getElementById('quoteText');
@@ -253,20 +260,10 @@
         let currentQuote = null;
 
         function getRandomQuote() {
-            let filteredQuotes = quotes;
-            
-            if (currentCategory !== 'all') {
-                filteredQuotes = quotes.filter(q => q.category === currentCategory);
-            }
-
-            if (filteredQuotes.length === 0) {
-                filteredQuotes = quotes;
-            }
-
-            const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
-            currentQuote = filteredQuotes[randomIndex];
-            
-            quoteText.textContent = `"${currentQuote.text}"`;
+            let filtered = currentCategory === 'all' ? quotes : quotes.filter(q => q.category === currentCategory);
+            if (filtered.length === 0) filtered = quotes;
+            currentQuote = filtered[Math.floor(Math.random() * filtered.length)];
+            quoteText.textContent = '"' + currentQuote.text + '"';
             quoteAuthor.textContent = currentQuote.author;
             categoryBadge.textContent = currentQuote.category.charAt(0).toUpperCase() + currentQuote.category.slice(1);
             categoryBadge.style.display = 'inline-block';
@@ -274,30 +271,18 @@
 
         function copyQuote() {
             if (!currentQuote) return;
-            
-            const text = `"${currentQuote.text}" — ${currentQuote.author}`;
-            
+            const text = '"' + currentQuote.text + '" — ' + currentQuote.author;
             navigator.clipboard.writeText(text).then(() => {
-                const originalText = copyBtn.textContent;
                 copyBtn.textContent = 'Copied!';
-                copyBtn.style.background = '#28a745';
-                copyBtn.style.color = 'white';
-                setTimeout(() => {
-                    copyBtn.textContent = originalText;
-                    copyBtn.style.background = '';
-                    copyBtn.style.color = '';
-                }, 2000);
-            }).catch(() => {
-                alert('Failed to copy. Please try again.');
-            });
+                copyBtn.classList.add('copied');
+                setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 2000);
+            }).catch(() => alert('Failed to copy.'));
         }
 
         function tweetQuote() {
             if (!currentQuote) return;
-            
-            const tweetText = `"${currentQuote.text}" — ${currentQuote.author}`;
-            const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
-            window.open(tweetUrl, '_blank');
+            const text = '"' + currentQuote.text + '" — ' + currentQuote.author;
+            window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
         }
 
         categoryButtons.forEach(btn => {
@@ -312,8 +297,6 @@
         newQuoteBtn.addEventListener('click', getRandomQuote);
         copyBtn.addEventListener('click', copyQuote);
         tweetBtn.addEventListener('click', tweetQuote);
-
-        // Load initial quote
         getRandomQuote();
     </script>
 </body>

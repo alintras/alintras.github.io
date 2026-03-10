@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Card Generator</title>
+<script src="lang.js"></script>
+<style>
+  body{font-family:monospace;max-width:900px;margin:40px auto;padding:0 20px;background:#fff;color:#000}
+  h1{font-size:13px;font-weight:normal;border-bottom:1px solid #000;padding-bottom:6px;margin-bottom:24px;letter-spacing:2px;text-transform:uppercase}
+  .wrap{display:grid;grid-template-columns:260px 1fr;gap:48px}
+  label{display:block;font-size:10px;margin-top:12px;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
+  input[type=text],input[type=number],select{width:100%;border:none;border-bottom:1px solid #000;padding:3px 0;font-family:monospace;font-size:13px;background:none;outline:none;box-sizing:border-box}
+  .photo-drop{border:1px solid #000;height:90px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+  .photo-drop img,.photo-drop input{position:absolute;inset:0}
+  .photo-drop img{width:100%;height:100%;object-fit:cover}
+  .photo-drop input{opacity:0;cursor:pointer;width:100%}
+  button{margin-top:16px;padding:5px 14px;font-family:monospace;font-size:11px;background:#000;color:#fff;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+  .stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .stars span{cursor:pointer;font-size:18px}
+  .style-row{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+  .sb{border:1px solid #000;padding:2px 8px;cursor:pointer;font-family:monospace;font-size:11px;background:#fff}
+  .sb.on{background:#000;color:#fff}
+  a.dl{display:inline-block;margin-top:10px;font-size:11px;color:#000;cursor:pointer}
+  .card-wrap{display:flex;justify-content:center}
+  .tc{width:230px;font-family:monospace;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.25)}
+  .tc-top{padding:8px 12px;display:flex;justify-content:space-between;align-items:center}
+  .tc-name{font-size:13px;font-weight:bold;letter-spacing:1px;text-transform:uppercase}
+  .tc-rarity{font-size:8px;letter-spacing:1px;padding:2px 6px;border:1px solid}
+  .tc-photo{width:100%;height:160px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:10px}
+  .tc-photo img{width:100%;height:100%;object-fit:cover}
+  .tc-body{padding:10px 12px}
+  .tc-team{font-size:10px;margin-bottom:8px;padding-bottom:6px}
+  .tc-stats{display:flex;justify-content:space-between;margin-bottom:8px;padding-bottom:8px}
+  .tc-stat{text-align:center}
+  .tc-val{font-size:24px;font-weight:bold;line-height:1}
+  .tc-key{font-size:8px;text-transform:uppercase;letter-spacing:1px;opacity:0.6}
+  .tc-desc{font-size:10px;padding-top:6px;line-height:1.5}
+  .tc-stars{font-size:13px;margin-top:6px}
+  .tc-footer{display:flex;justify-content:space-between;font-size:8px;opacity:0.5;margin-top:8px;padding-top:6px}
+  .t-sport{background:linear-gradient(160deg,#0d2a60,#1a4090)}.t-sport .tc-top,.t-sport .tc-body{color:#fff}.t-sport .tc-photo{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3)}
+  .t-nature{background:linear-gradient(160deg,#0d3a1a,#1a6030)}.t-nature .tc-top,.t-nature .tc-body{color:#e0ffe8}.t-nature .tc-photo{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3)}
+  .t-fire{background:linear-gradient(160deg,#4a0a00,#8a1a00,#c04000)}.t-fire .tc-top,.t-fire .tc-body{color:#fff8e8}.t-fire .tc-photo{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3)}
+  .t-gold{background:linear-gradient(160deg,#3a2800,#6a4800,#8a6010)}.t-gold .tc-top,.t-gold .tc-body{color:#ffe88a}.t-gold .tc-photo{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3)}
+  .t-light{background:#f5f5f0;border:1px solid #ccc}.t-light .tc-top{background:#1a1a1a;color:#fff}.t-light .tc-body{color:#1a1a1a}.t-light .tc-photo{background:#e8e8e8;color:#aaa}
+</style>
+</head>
+<body>
+<h1 data-t="sk_title">Trading Card Generator</h1>
+<div class="wrap">
+  <div>
+    <label data-t="sk_theme">Theme</label>
+    <div class="style-row">
+      <button class="sb on" onclick="st(this,'t-sport')" data-t="sk_sport">Sport</button>
+      <button class="sb" onclick="st(this,'t-nature')" data-t="sk_nature">Nature</button>
+      <button class="sb" onclick="st(this,'t-fire')" data-t="sk_fire">Fire</button>
+      <button class="sb" onclick="st(this,'t-gold')" data-t="m_gold">Gold</button>
+      <button class="sb" onclick="st(this,'t-light')" data-t="sk_light">Light</button>
+    </div>
+    <label data-t="sk_name">Name</label><input type="text" id="cname" value="Max Mustermann" oninput="u()">
+    <label data-t="sk_team">Team / Category</label><input type="text" id="team" value="FC Berlin" oninput="u()">
+    <label data-t="sk_number">Card number</label><input type="text" id="num" value="#042 / 100" oninput="u()">
+    <label data-t="sk_rarity">Rarity</label>
+    <select id="rarity" onchange="u()"><option>COMMON</option><option selected>RARE</option><option>EPIC</option><option>LEGENDARY</option></select>
+    <label data-t="sk_desc">Description</label><input type="text" id="desc" value="Fastest striker in the league, feared by all defenders." oninput="u()">
+    <label data-t="sk_stars">Stars</label>
+    <div class="stars" id="stars">
+      <span onclick="setStar(1)">★</span><span onclick="setStar(2)">★</span><span onclick="setStar(3)">★</span><span onclick="setStar(4)">★</span><span onclick="setStar(5)">☆</span>
+    </div>
+    <label style="margin-top:12px" data-t="sk_stats">Stats</label>
+    <div class="stats-row">
+      <div><label style="margin-top:0">Key 1</label><input type="text" id="s1k" value="SPD" oninput="u()"></div>
+      <div><label style="margin-top:0">Key 2</label><input type="text" id="s2k" value="STR" oninput="u()"></div>
+      <div><label style="margin-top:0">Key 3</label><input type="text" id="s3k" value="DEF" oninput="u()"></div>
+      <div><input type="number" id="s1v" value="92" min="0" max="99" oninput="u()"></div>
+      <div><input type="number" id="s2v" value="87" min="0" max="99" oninput="u()"></div>
+      <div><input type="number" id="s3v" value="74" min="0" max="99" oninput="u()"></div>
+    </div>
+    <label data-t="photo">Photo</label>
+    <div class="photo-drop" id="pd"><span data-t="upload_photo">Upload photo</span><input type="file" accept="image/*" onchange="lp(this)"></div>
+    <button onclick="u()" data-t="create">Create</button>
+  </div>
+  <div>
+    <div class="card-wrap">
+      <div class="tc t-sport" id="tc">
+        <div class="tc-top"><span class="tc-name" id="tc-name">MAX MUSTERMANN</span><span class="tc-rarity" id="tc-rarity">RARE</span></div>
+        <div class="tc-photo" id="tc-photo">Photo</div>
+        <div class="tc-body">
+          <div class="tc-team" id="tc-team" style="border-bottom:1px solid rgba(255,255,255,0.15)">FC Berlin</div>
+          <div class="tc-stats" style="border-bottom:1px solid rgba(255,255,255,0.15)">
+            <div class="tc-stat"><div class="tc-val" id="tc-s1v">92</div><div class="tc-key" id="tc-s1k">SPD</div></div>
+            <div class="tc-stat"><div class="tc-val" id="tc-s2v">87</div><div class="tc-key" id="tc-s2k">STR</div></div>
+            <div class="tc-stat"><div class="tc-val" id="tc-s3v">74</div><div class="tc-key" id="tc-s3k">DEF</div></div>
+          </div>
+          <div class="tc-desc" id="tc-desc" style="border-top:1px solid rgba(255,255,255,0.1)">Fastest striker in the league.</div>
+          <div class="tc-stars" id="tc-stars">★★★★☆</div>
+          <div class="tc-footer" style="border-top:1px solid rgba(255,255,255,0.1)"><span>TRADING CARDS 2024</span><span id="tc-num">#042 / 100</span></div>
+        </div>
+      </div>
+    </div>
+    <a class="dl" onclick="alert(t('save_hint'))" data-t="save">↓ Save</a>
+  </div>
+</div>
+<script>
+let stars=4,currentTheme='t-sport';
+function setStar(n){stars=n;const s=document.getElementById('stars').children;for(let i=0;i<5;i++)s[i].textContent=i<n?'★':'☆';u();}
+function lp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const s=e.target.result;document.getElementById('pd').innerHTML=`<img src="${s}"><input type="file" accept="image/*" onchange="lp(this)">`;document.getElementById('tc-photo').innerHTML=`<img src="${s}" style="width:100%;height:100%;object-fit:cover">`;};r.readAsDataURL(f);}
+function st(el,t2){document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');currentTheme=t2;document.getElementById('tc').className='tc '+t2;u();}
+function u(){
+  document.getElementById('tc-name').textContent=document.getElementById('cname').value.toUpperCase();
+  document.getElementById('tc-team').textContent=document.getElementById('team').value;
+  document.getElementById('tc-rarity').textContent=document.getElementById('rarity').value;
+  document.getElementById('tc-num').textContent=document.getElementById('num').value;
+  document.getElementById('tc-desc').textContent=document.getElementById('desc').value;
+  ['s1k','s2k','s3k','s1v','s2v','s3v'].forEach(id=>document.getElementById('tc-'+id).textContent=document.getElementById(id).value);
+  document.getElementById('tc-stars').textContent='★'.repeat(stars)+'☆'.repeat(5-stars);
+}
+document.addEventListener('langready',u);
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Card Generator</title>
+<script src="lang.js"></script>
+<style>
+  a { color: inherit; text-decoration: none;}
+  body{font-family:monospace;max-width:1000px;margin:40px auto;padding:0 20px;background:#fff;color:#000}
+  h1{font-size:13px;font-weight:normal;border-bottom:1px solid #000;padding-bottom:6px;margin-bottom:24px;letter-spacing:2px;text-transform:uppercase}
+  .wrap{display:grid;grid-template-columns:270px 1fr;gap:48px}
+  label{display:block;font-size:10px;margin-top:12px;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
+  input[type=text],select,textarea{width:100%;border:none;border-bottom:1px solid #000;padding:3px 0;font-family:monospace;font-size:13px;background:none;outline:none;box-sizing:border-box;resize:none}
+  button{margin-top:4px;padding:3px 10px;font-family:monospace;font-size:10px;background:#000;color:#fff;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+  button.sec{background:#fff;color:#000;border:1px solid #000;margin-top:16px}
+  .subject-row{display:flex;gap:8px;align-items:center;margin-top:6px}
+  .subject-row input{flex:1;margin-top:0}
+  .subject-row select{width:55px;flex-shrink:0;margin-top:0}
+  .add-link{font-size:11px;color:#000;cursor:pointer;margin-top:8px;display:inline-block}
+  .style-row{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+  .sb{border:1px solid #000;padding:2px 8px;cursor:pointer;font-family:monospace;font-size:11px;background:#fff}
+  .sb.on{background:#000;color:#fff}
+  a.dl{display:inline-block;margin-top:10px;font-size:11px;color:#000;cursor:pointer}
+  .zeugnis{background:#fffef5;border:1px solid #c8a050;padding:32px 36px;position:relative;font-family:Georgia,'Times New Roman',serif;box-shadow:0 2px 16px rgba(0,0,0,0.1)}
+  .z-inner{position:absolute;inset:8px;border:1px solid #e8d080;pointer-events:none}
+  .z-corner{position:absolute;font-size:16px;color:#c8a050;pointer-events:none}
+  .z-corner.tl{top:14px;left:16px}.z-corner.tr{top:14px;right:16px}.z-corner.bl{bottom:14px;left:16px}.z-corner.br{bottom:14px;right:16px}
+  .z-school{text-align:center;font-size:11px;color:#888;font-style:italic}
+  .z-title{text-align:center;font-size:28px;letter-spacing:6px;margin:6px 0 2px;color:#2a2a2a}
+  .z-sub{text-align:center;font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:16px}
+  .z-hr{border:none;border-top:1px solid #c8a050;margin:12px 0}
+  .z-info{font-size:13px;margin-bottom:3px;color:#333}
+  table{width:100%;border-collapse:collapse;font-family:monospace;font-size:12px;margin-top:8px}
+  th{text-align:left;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid #c8a050;padding:4px 6px;color:#888}
+  td{padding:5px 6px;border-bottom:1px solid #f0e8c8;color:#333}
+  td:last-child{text-align:center;font-weight:bold;font-size:16px}
+  .g1{color:#1a7a1a}.g2{color:#3a7a1a}.g3{color:#8a7010}.g4{color:#8a4010}.g5{color:#8a1010}.g6{color:#5a0808}
+  .z-note{font-size:12px;font-style:italic;margin-top:12px;color:#555;line-height:1.6}
+  .z-sigs{display:flex;justify-content:space-between;margin-top:40px;align-items:flex-end}
+  .z-sig{border-top:1px solid #888;min-width:130px;padding-top:4px;font-size:10px;font-family:monospace;color:#888;text-align:center}
+  .z-stamp{width:60px;height:60px;border:1px solid #c8a050;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;font-family:monospace;text-align:center;line-height:1.4;color:#c8a050}
+  .z-dark{background:#1a2030;border-color:#3a5a9a;color:#e0e8ff}
+  .z-dark .z-inner{border-color:#2a4080}.z-dark .z-corner,.z-dark .z-stamp{color:#4a7acc;border-color:#4a6aaa}
+  .z-dark .z-school{color:#8a9acc}.z-dark .z-title{color:#c0d0ff}.z-dark .z-sub{color:#6a7aaa}
+  .z-dark .z-hr{border-color:#3a5a9a}.z-dark .z-info{color:#c0d0f0}
+  .z-dark th{color:#6a8acc;border-color:#3a5a9a}.z-dark td{border-color:#2a3a60;color:#c0d0f0}
+  .z-dark .z-note{color:#8a9acc}.z-dark .z-sig{border-color:#3a5a9a;color:#6a7aaa}
+</style>
+</head>
+<body>
+<div style="position:fixed; top:10px; left:10px;">
+  <a href="/../index.html">🏠 Home</a>
+</div> 
+<h1 data-t="z_title">Report Card Generator</h1>
+<div class="wrap">
+  <div>
+    <label data-t="style">Style</label>
+    <div class="style-row">
+      <button class="sb on" onclick="setStyle(this,'')" data-t="z_classic">Classic</button>
+      <button class="sb" onclick="setStyle(this,'z-dark')" data-t="z_dark">Dark</button>
+    </div>
+    <label data-t="z_student">Student name</label><input type="text" id="name" value="Max Mustermann" oninput="u()">
+    <label data-t="z_class">Class</label><input type="text" id="grade" value="8b" oninput="u()">
+    <label data-t="z_year">School year</label><input type="text" id="year" value="2023/2024" oninput="u()">
+    <label data-t="z_school">School name</label><input type="text" id="school" value="International School Berlin" oninput="u()">
+    <label data-t="z_type">Type</label>
+    <select id="sem" onchange="u()">
+      <option value="J" data-t="z_annual">Annual report</option>
+      <option value="H" data-t="z_semester">1st semester</option>
+    </select>
+    <label data-t="z_promoted">Promoted to</label><input type="text" id="next" value="9b" oninput="u()">
+    <label data-t="z_notes">Notes</label><textarea id="note" rows="2" oninput="u()">Max has shown great effort and made excellent progress this year.</textarea>
+    <label data-t="z_teacher">Class teacher</label><input type="text" id="sig1" value="Dr. H. Miller" oninput="u()">
+    <label data-t="z_principal">Principal</label><input type="text" id="sig2" value="A. Johnson" oninput="u()">
+    <hr style="border:none;border-top:1px solid #000;margin:16px 0">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px" data-t="z_subjects">Subjects</div>
+    <div id="slist"></div>
+    <a class="add-link" onclick="addS()" data-t="z_add_subject">+ Add subject</a>
+    <br><button class="sec" onclick="u()" data-t="z_update">Update</button>
+  </div>
+  <div>
+    <div class="zeugnis" id="z">
+      <div class="z-inner"></div>
+      <div class="z-corner tl">✦</div><div class="z-corner tr">✦</div>
+      <div class="z-corner bl">✦</div><div class="z-corner br">✦</div>
+      <div class="z-school" id="z-school">International School Berlin</div>
+      <div class="z-title" id="z-title-word">REPORT CARD</div>
+      <div class="z-sub" id="z-sub">Annual Report · 2023/2024</div>
+      <div class="z-info"><span data-t="z_verliehen_an">Student</span>: <strong id="z-name">Max Mustermann</strong> &nbsp;|&nbsp; <span data-t="z_klasse">Class</span>: <strong id="z-grade">8b</strong></div>
+      <hr class="z-hr">
+      <table><thead><tr><th data-t="z_fach">Subject</th><th style="text-align:center" data-t="z_note_col">Grade</th></tr></thead><tbody id="z-tbody"></tbody></table>
+      <hr class="z-hr">
+      <div class="z-info"><span data-t="z_versetzt">Promoted to class</span>: <strong id="z-next">9b</strong></div>
+      <div class="z-note" id="z-note">Max has shown great effort and made excellent progress this year.</div>
+      <div class="z-sigs">
+        <div class="z-sig" id="z-sig1">Dr. H. Miller</div>
+        <div class="z-stamp" id="z-stamp">ISB</div>
+        <div class="z-sig" id="z-sig2">A. Johnson</div>
+      </div>
+    </div>
+    <a class="dl" onclick="alert(t('save_hint'))" data-t="save">↓ Save</a>
+  </div>
+</div>
+<script>
+const def=[['English','A'],['Mathematics','B'],['Science','A'],['History','A+'],['Biology','B+'],['Physics','B'],['PE','A'],['Art','A'],['Music','A+']];
+let subs=def.map(([n,g])=>({n,g}));
+let currentStyle='';
+function renderList(){
+  document.getElementById('slist').innerHTML=subs.map((s,i)=>`
+    <div class="subject-row">
+      <input type="text" value="${s.n}" oninput="subs[${i}].n=this.value;u()">
+      <select onchange="subs[${i}].g=this.value;u()">
+        ${['A+','A','B+','B','C+','C','D','F'].map(g=>`<option${g===s.g?' selected':''}>${g}</option>`).join('')}
+      </select>
+    </div>`).join('');
+}
+function addS(){subs.push({n:'New Subject',g:'B'});renderList();u();}
+function setStyle(el,cls){document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');document.getElementById('z').className='zeugnis'+(cls?' '+cls:'');}
+function gClass(g){const m={'A+':'g1','A':'g2','B+':'g2','B':'g3','C+':'g3','C':'g4','D':'g5','F':'g6'};return m[g]||''}
+function u(){
+  document.getElementById('z-school').textContent=document.getElementById('school').value;
+  document.getElementById('z-name').textContent=document.getElementById('name').value;
+  document.getElementById('z-grade').textContent=document.getElementById('grade').value;
+  document.getElementById('z-next').textContent=document.getElementById('next').value;
+  document.getElementById('z-note').textContent=document.getElementById('note').value;
+  document.getElementById('z-sig1').textContent=document.getElementById('sig1').value;
+  document.getElementById('z-sig2').textContent=document.getElementById('sig2').value;
+  const isAnnual=document.getElementById('sem').value==='J';
+  const semLabel=isAnnual?t('z_annual'):t('z_semester');
+  document.getElementById('z-sub').textContent=`${semLabel} · ${document.getElementById('year').value}`;
+  document.getElementById('z-tbody').innerHTML=subs.map(s=>`<tr><td>${s.n}</td><td class="${gClass(s.g)}">${s.g}</td></tr>`).join('');
+  const sch=document.getElementById('school').value.toUpperCase().split(' ');
+  document.getElementById('z-stamp').innerHTML=sch.slice(0,3).map(w=>w[0]).join('');
+}
+document.addEventListener('langready',()=>{renderList();u();});
+</script>
+</body>
+</html>

@@ -13,18 +13,25 @@
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146"
     crossorigin="anonymous"></script>
-    <nav>
-    <a href="index.html">🏠Home</a>
-    <a href="../pages/tools/tools.html">🛠️Tools</a>
-    <a href="../pages/fun/fun.html">🤣Fun</a>
-    <a href="../pages/stuff/stuff.html">📚Stuff</a>
-    </nav>
+    <script src="js/nav.js"></script>
+    <style>
+        a { color: inherit; }
+    </style>
 </head>
 <body>
-    <header>
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+        <tr valign="top">
+
+        <td width="160" style="border-right:1px solid #131313; padding:8px;">
+        <div id="sidebar"></div>
+        </td>
+
+        <td style="padding:8px;">
+        <header>
         <h2>My Homepage</h2>
-    </header>
-    <div id="main-content">
+        </header>
+        <div id="main-content">
         <main>
             <section id="profile-section">
                 <div class="text">
@@ -37,10 +44,15 @@
                     Since then I've developed skills in Java, R, C, Haskell, HTML and am improving in Maths.</p>
                 </div>
             </section>
-            <div id="ascii"></div>
-            <section id="ascii">
-                <script>
-                const frames = [
+        </td>
+        </tr>
+        </table>
+        </main>
+    </div>
+    <footer>
+        <pre id="ascii" style="font-family:'Courier New',monospace; white-space:pre; margin:0; padding:0;"></pre>
+<script>
+const frames = [
 ` 
  ,…,    ,_     ,…,    ,_     ,…,    ,_     ,…,    ,_ 
 [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]   
@@ -51,31 +63,13 @@
 [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  [•.•]  
  """    """    """    """    """    """    """    """ 
 `
-                ];
-
-                let i = 0;
-                setInterval(() => {
-                document.getElementById("ascii").textContent = frames[i];
-                i = (i + 1) % frames.length;
-                }, 300);
-                </script>
-                
-                <style>
-                #ascii {
-                  font-family: "Courier New", monospace;
-                  white-space: pre;
-                }
-                </style>
-                
-                <!-- <pre class="ascii"><code>
- ,…,     ,_        ,…,     ,_        ,…,     ,_        ,…,     ,_        
-[•.•]   [•.•]     [•.•]   [•.•]     [•.•]   [•.•]     [•.•]   [•.•]
- “““     “““       “““     “““       “““     “““       “““     “““
-                </code></pre> -->
-            </section>
-        </main>
-    </div>
-    <footer>
+];
+let i = 0;
+setInterval(() => {
+  document.getElementById("ascii").textContent = frames[i];
+  i = (i + 1) % frames.length;
+}, 300);
+</script>
         <p>&copy; 2024 Ali Aktas | <a href="mailto:alintras@proton.me">alintras@proton.me</a></p>
     </footer>
     <script src="js/script.js" defer></script>

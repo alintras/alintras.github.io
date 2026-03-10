@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        a { color: inherit; text-decoration: none; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #111;
+        }
+        header { text-align: center; margin-bottom: 15px; }
+        h1 { font-size: 2em; margin-bottom: 6px; }
+        .subtitle { font-size: 0.95em; color: #555; }
+        canvas {
+            max-width: 100%;
+            border: 1px solid #111;
+            display: block;
+            background: #fff;
+        }
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            width: 600px;
+            max-width: 100%;
+            margin-bottom: 8px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 24px;
+            font-size: 1em;
+            border: 1px solid #111;
+            background: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover { background: #f0f0f0; }
+        .info {
+            margin-top: 15px;
+            font-size: 0.85em;
+            color: #555;
+            text-align: center;
+        }
+        .mode-select { margin-bottom: 12px; display: flex; gap: 10px; }
+        .mode-select button.active { background: #111; color: #fff; }
+    </style>
+</head>
+<body>
+    <div style="position:fixed; top:10px; left:10px;">
+        <a href="/../index.html">🏠 Home</a>
+    </div>
+    <header>
+        <h1>Pong</h1>
+        <p class="subtitle">First to 7 wins</p>
+    </header>
+    <div class="mode-select">
+        <button id="btn1p" class="active" onclick="setMode(1)">1 Player</button>
+        <button id="btn2p" onclick="setMode(2)">2 Players</button>
+    </div>
+    <div class="scoreboard">
+        <span id="scoreL">0</span>
+        <span style="color:#aaa; font-size:0.7em; align-self:center;">VS</span>
+        <span id="scoreR">0</span>
+    </div>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <div class="controls">
+        <button id="startBtn" onclick="startGame()">Start</button>
+        <button onclick="resetGame()">Reset</button>
+    </div>
+    <div class="info" id="info">
+        <span id="p1controls">Left paddle: W / S</span> &nbsp;|&nbsp;
+        <span id="p2controls">Right paddle: ↑ / ↓ (or CPU)</span>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        const PW = 10, PH = 80, BALL = 10, WIN = 7;
+
+        let mode = 1;
+        let running = false;
+        let animId = null;
+
+        let scoreL, scoreR, lY, rY, bx, by, vx, vy, keys;
+
+        function setMode(m) {
+            mode = m;
+            document.getElementById('btn1p').classList.toggle('active', m === 1);
+            document.getElementById('btn2p').classList.toggle('active', m === 2);
+            document.getElementById('p2controls').textContent = m === 2 ? 'Right paddle: ↑ / ↓' : 'Right paddle: CPU';
+            resetGame();
+        }
+
+        function init() {
+            scoreL = 0; scoreR = 0;
+            lY = H / 2 - PH / 2;
+            rY = H / 2 - PH / 2;
+            keys = {};
+            resetBall();
+        }
+
+        function resetBall() {
+            bx = W / 2; by = H / 2;
+            const angle = (Math.random() * 0.6 - 0.3);
+            const dir = Math.random() < 0.5 ? 1 : -1;
+            const speed = 4;
+            vx = dir * speed * Math.cos(angle);
+            vy = speed * Math.sin(angle);
+        }
+
+        function startGame() {
+            if (running) return;
+            running = true;
+            document.getElementById('startBtn').textContent = 'Playing...';
+            loop();
+        }
+
+        function resetGame() {
+            running = false;
+            cancelAnimationFrame(animId);
+            init();
+            document.getElementById('startBtn').textContent = 'Start';
+            draw();
+        }
+
+        function loop() {
+            if (!running) return;
+            update();
+            draw();
+            animId = requestAnimationFrame(loop);
+        }
+
+        function update() {
+            // Move left paddle
+            const spd = 5;
+            if (keys['w'] || keys['W']) lY -= spd;
+            if (keys['s'] || keys['S']) lY += spd;
+            lY = Math.max(0, Math.min(H - PH, lY));
+
+            // Move right paddle
+            if (mode === 2) {
+                if (keys['ArrowUp']) rY -= spd;
+                if (keys['ArrowDown']) rY += spd;
+                rY = Math.max(0, Math.min(H - PH, rY));
+            } else {
+                // CPU — tracks ball with slight delay
+                const center = rY + PH / 2;
+                const diff = by - center;
+                const aiSpeed = 3.8;
+                if (Math.abs(diff) > 4) rY += diff > 0 ? aiSpeed : -aiSpeed;
+                rY = Math.max(0, Math.min(H - PH, rY));
+            }
+
+            // Move ball
+            bx += vx; by += vy;
+
+            // Top/bottom bounce
+            if (by - BALL / 2 <= 0) { by = BALL / 2; vy = Math.abs(vy); }
+            if (by + BALL / 2 >= H) { by = H - BALL / 2; vy = -Math.abs(vy); }
+
+            // Left paddle collision
+            if (bx - BALL / 2 <= PW + 20 && bx - BALL/2 >= 18 && by >= lY && by <= lY + PH) {
+                bx = PW + 20 + BALL / 2;
+                const hit = (by - (lY + PH / 2)) / (PH / 2);
+                const angle = hit * 1.1;
+                const speed = Math.min(Math.sqrt(vx*vx+vy*vy) + 0.2, 10);
+                vx = Math.abs(Math.cos(angle) * speed);
+                vy = Math.sin(angle) * speed;
+            }
+
+            // Right paddle collision
+            if (bx + BALL / 2 >= W - PW - 20 && bx + BALL/2 <= W - 18 && by >= rY && by <= rY + PH) {
+                bx = W - PW - 20 - BALL / 2;
+                const hit = (by - (rY + PH / 2)) / (PH / 2);
+                const angle = hit * 1.1;
+                const speed = Math.min(Math.sqrt(vx*vx+vy*vy) + 0.2, 10);
+                vx = -Math.abs(Math.cos(angle) * speed);
+                vy = Math.sin(angle) * speed;
+            }
+
+            // Scoring
+            if (bx < 0) {
+                scoreR++;
+                document.getElementById('scoreR').textContent = scoreR;
+                if (scoreR >= WIN) { endGame('Right'); return; }
+                resetBall();
+            }
+            if (bx > W) {
+                scoreL++;
+                document.getElementById('scoreL').textContent = scoreL;
+                if (scoreL >= WIN) { endGame('Left'); return; }
+                resetBall();
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+
+            // Dashed center line
+            ctx.setLineDash([6, 6]);
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(W / 2, 0);
+            ctx.lineTo(W / 2, H);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Paddles
+            ctx.fillStyle = '#111';
+            ctx.fillRect(20, lY, PW, PH);
+            ctx.fillRect(W - PW - 20, rY, PW, PH);
+
+            // Ball
+            ctx.fillStyle = '#111';
+            ctx.fillRect(bx - BALL/2, by - BALL/2, BALL, BALL);
+        }
+
+        function endGame(winner) {
+            running = false;
+            ctx.clearRect(0, 0, W, H);
+            draw();
+            ctx.fillStyle = '#111';
+            ctx.font = 'bold 28px Segoe UI';
+            ctx.textAlign = 'center';
+            ctx.fillText(winner + ' wins!', W / 2, H / 2 - 10);
+            ctx.font = '16px Segoe UI';
+            ctx.fillStyle = '#555';
+            ctx.fillText('Press Reset to play again', W / 2, H / 2 + 20);
+            ctx.textAlign = 'left';
+            document.getElementById('startBtn').textContent = 'Start';
+        }
+        
+        canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleY = canvas.height / rect.height;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+        lY = mouseY - PH / 2;
+        lY = Math.max(0, Math.min(H - PH, lY));
+        });
+
+        canvas.addEventListener('touchmove', e => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const scaleY = canvas.height / rect.height;
+        const touchY = (e.touches[0].clientY - rect.top) * scaleY;
+        lY = touchY - PH / 2;
+        lY = Math.max(0, Math.min(H - PH, lY));
+        }, { passive: false });
+
+        document.addEventListener('keydown', e => {
+            keys[e.key] = true;
+            if (['ArrowUp','ArrowDown',' '].includes(e.key)) e.preventDefault();
+        });
+        document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+        init();
+        draw();
+    </script>
+</body>
+</html>

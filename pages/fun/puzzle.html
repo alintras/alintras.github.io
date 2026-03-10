@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puzzle Generator</title>
+<script src="lang.js"></script>
+<style>
+  a { color: inherit; text-decoration: none;}
+  body{font-family:monospace;max-width:900px;margin:40px auto;padding:0 20px;background:#fff;color:#000}
+  h1{font-size:13px;font-weight:normal;border-bottom:1px solid #000;padding-bottom:6px;margin-bottom:24px;letter-spacing:2px;text-transform:uppercase}
+  .wrap{display:grid;grid-template-columns:260px 1fr;gap:48px}
+  label{display:block;font-size:10px;margin-top:12px;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
+  input[type=text],select{width:100%;border:none;border-bottom:1px solid #000;padding:3px 0;font-family:monospace;font-size:13px;background:none;outline:none;box-sizing:border-box}
+  .photo-drop{border:1px solid #000;height:100px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+  .photo-drop img,.photo-drop input{position:absolute;inset:0}
+  .photo-drop img{width:100%;height:100%;object-fit:cover}
+  .photo-drop input{opacity:0;cursor:pointer;width:100%}
+  button{margin-top:12px;padding:5px 14px;font-family:monospace;font-size:11px;background:#000;color:#fff;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
+  button.sec{background:#fff;color:#000;border:1px solid #000}
+  .btn-row{display:flex;gap:6px;margin-top:12px}
+  a.dl{display:inline-block;margin-top:10px;font-size:11px;color:#000;cursor:pointer}
+  .pbox{border:2px solid #1a3a8a;padding:16px;background:linear-gradient(160deg,#e8f0ff,#d0dcff)}
+  .pbox-title{font-size:15px;font-weight:bold;color:#1a3a8a;letter-spacing:1px}
+  .pbox-meta{font-size:10px;color:#4a6aaa;margin-top:2px}
+  .pbox-img{width:100%;height:150px;border:1px solid #a0b8e0;margin-top:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:10px;background:#c8d8f0;color:#8aaad0}
+  .pbox-img img{width:100%;height:100%;object-fit:cover}
+  canvas{border:1px solid #000;width:100%;cursor:grab;display:none;background:#f8f8f8}
+  canvas:active{cursor:grabbing}
+  #info{font-size:10px;color:#888;margin-top:4px;display:none}
+</style>
+</head>
+<body>
+<div style="position:fixed; top:10px; left:10px;">
+  <a href="/../index.html">🏠 Home</a>
+</div> 
+<h1 data-t="p_title">Puzzle Generator</h1>
+<div class="wrap">
+  <div>
+    <label data-t="p_puzz_title">Puzzle title</label><input type="text" id="ptitle" value="My Photo Puzzle" oninput="ub()">
+    <label data-t="p_pieces">Pieces</label>
+    <select id="pieces" onchange="ub()">
+      <option value="9">9 pieces (3×3)</option>
+      <option value="16" selected>16 pieces (4×4)</option>
+      <option value="25">25 pieces (5×5)</option>
+      <option value="36">36 pieces (6×6)</option>
+    </select>
+    <label data-t="photo">Photo</label>
+    <div class="photo-drop" id="pd"><span data-t="upload_photo">Upload photo</span><input type="file" accept="image/*" onchange="lp(this)"></div>
+    <p style="font-size:10px;color:#888;margin-top:8px" data-t="p_no_photo_note">Without photo, pieces are numbered.</p>
+    <button onclick="startPuzzle()" data-t="p_play">▶ Play</button>
+    <div class="btn-row" id="game-btns" style="display:none">
+      <button class="sec" onclick="shuffle()" data-t="p_shuffle">Shuffle</button>
+      <button class="sec" onclick="solve()" data-t="p_solve">Solution</button>
+      <button class="sec" onclick="resetView()" data-t="p_box">Box</button>
+    </div>
+  </div>
+  <div>
+    <div id="boxview">
+      <div class="pbox">
+        <div class="pbox-title" id="pb-title">My Photo Puzzle</div>
+        <div class="pbox-meta" id="pb-meta">16 pieces · Photo Puzzle</div>
+        <div class="pbox-img" id="pb-img" data-t="p_no_photo">No photo — upload an image</div>
+      </div>
+    </div>
+    <canvas id="cv"></canvas>
+    <div id="info" data-t="p_hint">Drag pieces · snaps when close enough</div>
+    <a class="dl" onclick="alert(t('save_hint'))" data-t="save">↓ Save</a>
+  </div>
+</div>
+<script>
+let photoSrc=null,pieces=[],dragging=null,ox,oy,cols,rows,pw,ph,img;
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const palette=['#e8f0ff','#d0e8ff','#e8f8e8','#f8f0d8','#f8e8e8','#f0e8f8','#e8f8f8','#f8f8e8'];
+function lp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{photoSrc=e.target.result;document.getElementById('pd').innerHTML=`<img src="${photoSrc}"><input type="file" accept="image/*" onchange="lp(this)">`;document.getElementById('pb-img').innerHTML=`<img src="${photoSrc}" style="width:100%;height:100%;object-fit:cover">`;};r.readAsDataURL(f);}
+function ub(){
+  document.getElementById('pb-title').textContent=document.getElementById('ptitle').value;
+  const n=document.getElementById('pieces').value;
+  document.getElementById('pb-meta').textContent=`${n} ${t('p_pieces')} · ${t('p_puzz_title')}`;
+}
+function resetView(){document.getElementById('boxview').style.display='';cv.style.display='none';document.getElementById('info').style.display='none';document.getElementById('game-btns').style.display='none';}
+function startPuzzle(){
+  const n=parseInt(document.getElementById('pieces').value);
+  cols=rows=Math.sqrt(n);
+  const W=cv.parentElement.clientWidth-2;
+  cv.width=W;cv.height=Math.round(W*0.66);
+  pw=cv.width/cols;ph=cv.height/rows;
+  document.getElementById('boxview').style.display='none';
+  cv.style.display='block';document.getElementById('info').style.display='block';document.getElementById('game-btns').style.display='flex';
+  if(photoSrc){img=new Image();img.onload=()=>init();img.src=photoSrc;}else{img=null;init();}
+}
+function init(){pieces=[];for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)pieces.push({c,r,x:20+Math.random()*(cv.width-pw-40),y:20+Math.random()*(cv.height-ph-40),done:false});draw();}
+function shuffle(){init();}
+function solve(){pieces.forEach(p=>{p.x=p.c*pw;p.y=p.r*ph;p.done=true;});draw();}
+function draw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle='#f0f0ec';ctx.fillRect(0,0,cv.width,cv.height);
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){ctx.strokeStyle='#ddd';ctx.lineWidth=1;ctx.strokeRect(c*pw,r*ph,pw,ph);}
+  pieces.forEach((p)=>{
+    ctx.save();ctx.translate(p.x,p.y);
+    if(img){ctx.drawImage(img,p.c*(img.width/cols),p.r*(img.height/rows),img.width/cols,img.height/rows,0,0,pw,ph);}
+    else{ctx.fillStyle=palette[(p.r*cols+p.c)%palette.length];ctx.fillRect(0,0,pw,ph);ctx.fillStyle='#555';ctx.font=`bold ${Math.min(pw,ph)*0.32}px monospace`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.r*cols+p.c+1,pw/2,ph/2);}
+    ctx.strokeStyle=p.done?'#22aa44':'rgba(0,0,0,0.2)';ctx.lineWidth=p.done?2:1;ctx.strokeRect(0,0,pw,ph);
+    ctx.restore();
+  });
+}
+function getAt(mx,my){for(let i=pieces.length-1;i>=0;i--){const p=pieces[i];if(mx>=p.x&&mx<=p.x+pw&&my>=p.y&&my<=p.y+ph)return i;}return -1;}
+function snap(p){if(Math.abs(p.x-p.c*pw)<20&&Math.abs(p.y-p.r*ph)<20){p.x=p.c*pw;p.y=p.r*ph;p.done=true;}}
+cv.addEventListener('mousedown',e=>{const r=cv.getBoundingClientRect(),mx=(e.clientX-r.left)*(cv.width/r.width),my=(e.clientY-r.top)*(cv.height/r.height);const i=getAt(mx,my);if(i!==-1){dragging=pieces.splice(i,1)[0];pieces.push(dragging);ox=mx-dragging.x;oy=my-dragging.y;}});
+document.addEventListener('mousemove',e=>{if(!dragging)return;const r=cv.getBoundingClientRect(),mx=(e.clientX-r.left)*(cv.width/r.width),my=(e.clientY-r.top)*(cv.height/r.height);dragging.x=mx-ox;dragging.y=my-oy;draw();});
+document.addEventListener('mouseup',()=>{if(dragging){snap(dragging);draw();dragging=null;}});
+cv.addEventListener('touchstart',e=>{e.preventDefault();const t2=e.touches[0],r=cv.getBoundingClientRect(),mx=(t2.clientX-r.left)*(cv.width/r.width),my=(t2.clientY-r.top)*(cv.height/r.height);const i=getAt(mx,my);if(i!==-1){dragging=pieces.splice(i,1)[0];pieces.push(dragging);ox=mx-dragging.x;oy=my-dragging.y;}},{passive:false});
+document.addEventListener('touchmove',e=>{if(!dragging)return;e.preventDefault();const t2=e.touches[0],r=cv.getBoundingClientRect(),mx=(t2.clientX-r.left)*(cv.width/r.width),my=(t2.clientY-r.top)*(cv.height/r.height);dragging.x=mx-ox;dragging.y=my-oy;draw();},{passive:false});
+document.addEventListener('touchend',()=>{if(dragging){snap(dragging);draw();dragging=null;}});
+document.addEventListener('langready',ub);
+</script>
+</body>
+</html>

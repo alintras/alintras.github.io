@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID Card Generator</title>
+<script src="lang.js"></script>
+<style>
+  a { color: inherit; text-decoration: none;}
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+  body { font-family: monospace; max-width: 960px; margin: 40px auto; padding: 0 20px; background: #fff; color: #000; }
+  h1 { font-size: 13px; font-weight: normal; border-bottom: 1px solid #000; padding-bottom: 6px; margin-bottom: 24px; letter-spacing: 2px; text-transform: uppercase; }
+  .wrap { display: grid; grid-template-columns: 280px 1fr; gap: 48px; }
+  label { display: block; font-size: 10px; margin-top: 12px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
+  input[type=text], input[type=date], select { width: 100%; border: none; border-bottom: 1px solid #000; padding: 3px 0; font-family: monospace; font-size: 13px; background: none; outline: none; box-sizing: border-box; }
+  .photo-drop { border: 1px solid #000; height: 90px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+  .photo-drop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .photo-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+  button { margin-top: 16px; padding: 5px 14px; font-family: monospace; font-size: 11px; background: #000; color: #fff; border: none; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; }
+  .presets { margin-top: 8px; font-size: 11px; }
+  .presets a { color: #000; cursor: pointer; margin-right: 8px; text-decoration: underline; }
+  a.dl { display: inline-block; margin-top: 10px; font-size: 11px; color: #000; cursor: pointer; }
+  .card { width: 100%; aspect-ratio: 85.6/54; position: relative; overflow: hidden; font-family: 'Space Mono', monospace; box-shadow: 0 4px 24px rgba(0,0,0,0.18); box-sizing: border-box; }
+  .card * { box-sizing: border-box; }
+  .card-bg { position: absolute; inset: 0; }
+  .card-stripe { position: absolute; top: 0; left: 0; right: 0; height: 7px; }
+  .card-inner { position: absolute; inset: 0; padding: 10px 12px; display: flex; flex-direction: column; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+  .card-country-label { font-size: 6.5px; letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.4; }
+  .card-type-label { font-size: 7.5px; font-weight: 700; letter-spacing: 1px; }
+  .card-body-row { display: flex; gap: 8px; flex: 1; min-height: 0; }
+  .card-photo { flex-shrink: 0; width: 50px; border: 1px solid rgba(255,255,255,0.4); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 8px; }
+  .card-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .card-fields { flex: 1; }
+  .cf { margin-bottom: 4px; }
+  .cf .l { font-size: 5.5px; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.6; }
+  .cf .v { font-size: 7.5px; font-weight: 700; }
+  .card-chip { position: absolute; right: 12px; top: 18px; width: 22px; height: 17px; background: linear-gradient(135deg,#e0c060,#c8a030); border-radius: 2px; border: 1px solid #b08020; }
+  .card-chip::after { content:''; position:absolute; top:5px; left:3px; right:3px; height:1px; background:rgba(0,0,0,0.2); box-shadow: 0 3px 0 rgba(0,0,0,0.15), 0 6px 0 rgba(0,0,0,0.1); }
+  .card-mrz { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 3px; font-size: 5.5px; letter-spacing: 1px; line-height: 1.8; opacity: 0.7; }
+  .card-num { position: absolute; bottom: 22px; right: 12px; font-size: 6.5px; opacity: 0.7; }
+  .card-flag-icon { font-size: 13px; line-height: 1; }
+</style>
+</head>
+<body>
+<div style="position:fixed; top:10px; left:10px;">
+  <a href="/../index.html">🏠 Home</a>
+</div> 
+<h1 data-t="aus_title">ID Card Generator</h1>
+<div class="wrap">
+  <div>
+    <label data-t="country">Country</label>
+    <select id="country" onchange="u()">
+      <optgroup data-t="og_europe" label="Europe">
+        <option value="DE">Germany</option><option value="AT">Austria</option><option value="CH">Switzerland</option>
+        <option value="FR">France</option><option value="IT">Italy</option><option value="ES">Spain</option>
+        <option value="NL">Netherlands</option><option value="PL">Poland</option><option value="SE">Sweden</option>
+        <option value="GB">United Kingdom</option><option value="NO">Norway</option><option value="DK">Denmark</option>
+        <option value="FI">Finland</option><option value="PT">Portugal</option><option value="GR">Greece</option>
+        <option value="RU">Russia</option>
+      </optgroup>
+      <optgroup data-t="og_americas" label="Americas">
+        <option value="US">USA</option><option value="CA">Canada</option><option value="MX">Mexico</option>
+        <option value="BR">Brazil</option><option value="AR">Argentina</option>
+      </optgroup>
+      <optgroup data-t="og_asia" label="Asia">
+        <option value="CN">China</option><option value="IN">India</option><option value="JP">Japan</option>
+        <option value="KR">South Korea</option><option value="TR">Turkey</option><option value="SA">Saudi Arabia</option>
+        <option value="AE">UAE</option><option value="IL">Israel</option><option value="TH">Thailand</option>
+        <option value="SG">Singapore</option>
+      </optgroup>
+      <optgroup data-t="og_africa" label="Africa / Oceania">
+        <option value="ZA">South Africa</option><option value="NG">Nigeria</option><option value="EG">Egypt</option>
+        <option value="AU">Australia</option><option value="NZ">New Zealand</option>
+      </optgroup>
+    </select>
+    <label data-t="first_name">First name</label><input type="text" id="fn" value="Max" oninput="u()">
+    <label data-t="last_name">Last name</label><input type="text" id="ln" value="Mustermann" oninput="u()">
+    <label data-t="date_of_birth">Date of birth</label><input type="date" id="dob" value="1990-01-15" oninput="u()">
+    <label data-t="place_of_birth">Place of birth</label><input type="text" id="pob" value="Berlin" oninput="u()">
+    <label data-t="valid_until">Valid until</label><input type="date" id="exp" value="2030-01-15" oninput="u()">
+    <label data-t="id_number">ID number</label><input type="text" id="num" value="L01X00T47" oninput="u()">
+    <label data-t="photo">Photo</label>
+    <div class="photo-drop" id="pd"><span data-t="upload_photo">Upload photo</span><input type="file" accept="image/*" onchange="lp(this)"></div>
+    <div class="presets"><span data-t="examples">Examples:</span>
+      <a onclick="sp('Max','Mustermann','1990-01-15','Berlin')">Max M.</a>
+      <a onclick="sp('Anna','Schmidt','1985-06-20','Munich')">Anna S.</a>
+      <a onclick="sp('John','Doe','1988-07-04','New York')">John D.</a>
+    </div>
+    <button onclick="u()" data-t="create">Create</button>
+  </div>
+  <div>
+    <div class="card" id="card">
+      <div class="card-bg" id="card-bg"></div>
+      <div class="card-stripe" id="card-stripe"></div>
+      <div class="card-chip"></div>
+      <div class="card-inner">
+        <div class="card-header">
+          <div>
+            <div class="card-country-label" id="c-country-label" style="color:#fff">BUNDESREPUBLIK DEUTSCHLAND</div>
+            <div class="card-type-label" id="c-type-label" style="color:#fff">PERSONALAUSWEIS</div>
+          </div>
+          <div class="card-flag-icon" id="c-flag">🇩🇪</div>
+        </div>
+        <div class="card-body-row">
+          <div class="card-photo" id="c-photo" style="background:rgba(255,255,255,0.1)"><span style="color:rgba(255,255,255,0.4)">PHOTO</span></div>
+          <div class="card-fields" id="c-fields" style="color:#fff">
+            <div class="cf"><div class="l">Name / Surname</div><div class="v" id="c-name">MUSTERMANN, MAX</div></div>
+            <div class="cf"><div class="l">Date of birth</div><div class="v" id="c-dob">15.01.1990</div></div>
+            <div class="cf"><div class="l">Place of birth</div><div class="v" id="c-pob">BERLIN</div></div>
+            <div class="cf"><div class="l">Expiry</div><div class="v" id="c-exp">15.01.2030</div></div>
+          </div>
+        </div>
+        <div class="card-num" id="c-num" style="color:rgba(255,255,255,0.6)">L01X00T47</div>
+        <div class="card-mrz" id="c-mrz" style="color:rgba(255,255,255,0.6)">
+          IDD&lt;&lt;MUSTERMANN&lt;&lt;MAX&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>
+          L01X00T479900115&lt;5&lt;3001152D&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+        </div>
+      </div>
+    </div>
+    <a class="dl" onclick="alert(t('save_hint'))" data-t="save">↓ Save</a>
+  </div>
+</div>
+<script>
+const countries = {
+  DE:{name:'BUNDESREPUBLIK DEUTSCHLAND',type:'PERSONALAUSWEIS',flag:'🇩🇪',bg:'linear-gradient(160deg,#1a3a6b 0%,#0d2347 60%,#1a1a4a 100%)',stripe:'linear-gradient(90deg,#000 33%,#dd0000 33%,#dd0000 66%,#ffce00 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'IDD'},
+  AT:{name:'REPUBLIK ÖSTERREICH',type:'PERSONALAUSWEIS',flag:'🇦🇹',bg:'linear-gradient(160deg,#c0392b 0%,#922b21 100%)',stripe:'linear-gradient(90deg,#cc0000 33%,#fff 33%,#fff 66%,#cc0000 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'AUT'},
+  CH:{name:'SCHWEIZERISCHE EIDGENOSSENSCHAFT',type:'IDENTITÄTSKARTE',flag:'🇨🇭',bg:'linear-gradient(160deg,#c0392b 0%,#7b241c 100%)',stripe:'#cc0000',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'CHE'},
+  FR:{name:'RÉPUBLIQUE FRANÇAISE',type:"CARTE D'IDENTITÉ",flag:'🇫🇷',bg:'linear-gradient(160deg,#1a3a7a 0%,#0d2050 40%,#8B0000 100%)',stripe:'linear-gradient(90deg,#002395 33%,#fff 33%,#fff 66%,#ED2939 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'FRA'},
+  IT:{name:'REPUBBLICA ITALIANA',type:'CARTA DI IDENTITÀ',flag:'🇮🇹',bg:'linear-gradient(160deg,#1e6b3a 0%,#0d3a20 40%,#8B0000 100%)',stripe:'linear-gradient(90deg,#009246 33%,#fff 33%,#fff 66%,#CE2B37 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ITA'},
+  ES:{name:'REINO DE ESPAÑA',type:'DOCUMENTO NACIONAL DE IDENTIDAD',flag:'🇪🇸',bg:'linear-gradient(160deg,#c0392b 0%,#7b241c 60%,#8B6914 100%)',stripe:'linear-gradient(90deg,#AA151B 25%,#F1BF00 25%,#F1BF00 75%,#AA151B 75%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ESP'},
+  NL:{name:'KONINKRIJK DER NEDERLANDEN',type:'IDENTITEITSKAART',flag:'🇳🇱',bg:'linear-gradient(160deg,#1a3a7a 0%,#0d2050 100%)',stripe:'linear-gradient(90deg,#AE1C28 33%,#fff 33%,#fff 66%,#21468B 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'NLD'},
+  PL:{name:'RZECZPOSPOLITA POLSKA',type:'DOWÓD OSOBISTY',flag:'🇵🇱',bg:'linear-gradient(160deg,#c0392b 0%,#7b241c 100%)',stripe:'linear-gradient(90deg,#fff 50%,#dc143c 50%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'POL'},
+  SE:{name:'KONUNGARIKET SVERIGE',type:'IDENTITETSKORT',flag:'🇸🇪',bg:'linear-gradient(160deg,#006AA7 0%,#004f7c 100%)',stripe:'linear-gradient(90deg,#006AA7 40%,#FECC02 40%,#FECC02 60%,#006AA7 60%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'SWE'},
+  GB:{name:'UNITED KINGDOM OF GREAT BRITAIN',type:'IDENTITY DOCUMENT',flag:'🇬🇧',bg:'linear-gradient(160deg,#012169 0%,#001040 100%)',stripe:'linear-gradient(90deg,#012169 30%,#C8102E 30%,#C8102E 70%,#012169 70%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'GBR'},
+  NO:{name:'KONGERIKET NORGE',type:'IDENTITETSKORT',flag:'🇳🇴',bg:'linear-gradient(160deg,#EF2B2D 0%,#a01a1c 100%)',stripe:'linear-gradient(90deg,#EF2B2D 35%,#fff 35%,#fff 45%,#002868 45%,#002868 55%,#fff 55%,#fff 65%,#EF2B2D 65%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'NOR'},
+  DK:{name:'KONGERIGET DANMARK',type:'IDENTITETSKORT',flag:'🇩🇰',bg:'linear-gradient(160deg,#C60C30 0%,#8B0820 100%)',stripe:'linear-gradient(90deg,#C60C30 40%,#fff 40%,#fff 60%,#C60C30 60%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'DNK'},
+  FI:{name:'SUOMI FINLAND',type:'HENKILÖKORTTI',flag:'🇫🇮',bg:'linear-gradient(160deg,#003580 0%,#002560 100%)',stripe:'linear-gradient(90deg,#fff 30%,#003580 30%,#003580 70%,#fff 70%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'FIN'},
+  PT:{name:'REPÚBLICA PORTUGUESA',type:'CARTÃO DE CIDADÃO',flag:'🇵🇹',bg:'linear-gradient(160deg,#006600 0%,#003d00 40%,#CC0000 100%)',stripe:'linear-gradient(90deg,#006600 40%,#CC0000 40%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'PRT'},
+  GR:{name:'ΕΛΛΗΝΙΚΉ ΔΗΜΟΚΡΑΤΊΑ',type:'ΔΕΛΤΊΟ ΤΑΥΤΌΤΗΤΑΣ',flag:'🇬🇷',bg:'linear-gradient(160deg,#0D5EAF 0%,#083d73 100%)',stripe:'linear-gradient(90deg,#0D5EAF 0%,#fff 11%,#0D5EAF 22%,#fff 33%,#0D5EAF 44%,#fff 55%,#0D5EAF 66%,#fff 77%,#0D5EAF 88%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'GRC'},
+  RU:{name:'РОССИЙСКАЯ ФЕДЕРАЦИЯ',type:'ПАСПОРТ ГРАЖДАНИНА',flag:'🇷🇺',bg:'linear-gradient(160deg,#1c3d6e 0%,#0d2244 100%)',stripe:'linear-gradient(90deg,#fff 33%,#0039A6 33%,#0039A6 66%,#D52B1E 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'RUS'},
+  US:{name:'UNITED STATES OF AMERICA',type:'PASSPORT CARD',flag:'🇺🇸',bg:'linear-gradient(160deg,#002868 0%,#001540 60%,#BF0A30 100%)',stripe:'linear-gradient(90deg,#BF0A30 0%,#002868 50%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'USA'},
+  CA:{name:'CANADA',type:'IDENTITY CARD',flag:'🇨🇦',bg:'linear-gradient(160deg,#FF0000 0%,#CC0000 40%,#8B0000 100%)',stripe:'linear-gradient(90deg,#FF0000 20%,#fff 20%,#fff 80%,#FF0000 80%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'CAN'},
+  MX:{name:'ESTADOS UNIDOS MEXICANOS',type:'CÉDULA DE IDENTIDAD',flag:'🇲🇽',bg:'linear-gradient(160deg,#006847 0%,#004530 40%,#8B0000 100%)',stripe:'linear-gradient(90deg,#006847 33%,#fff 33%,#fff 66%,#CE1126 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'MEX'},
+  BR:{name:'REPÚBLICA FEDERATIVA DO BRASIL',type:'CARTEIRA DE IDENTIDADE',flag:'🇧🇷',bg:'linear-gradient(160deg,#009c3b 0%,#006b28 60%,#002776 100%)',stripe:'#FEDD00',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'BRA'},
+  AR:{name:'REPÚBLICA ARGENTINA',type:'DOCUMENTO NACIONAL DE IDENTIDAD',flag:'🇦🇷',bg:'linear-gradient(160deg,#74ACDF 0%,#4a7aaa 50%,#fff 100%)',stripe:'linear-gradient(90deg,#74ACDF 33%,#fff 33%,#fff 66%,#74ACDF 66%)',textColor:'#003087',labelColor:'rgba(0,48,135,0.6)',code:'ARG'},
+  CN:{name:'中华人民共和国',type:'居民身份证',flag:'🇨🇳',bg:'linear-gradient(160deg,#DE2910 0%,#9c1a0a 60%,#6b1208 100%)',stripe:'#DE2910',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'CHN'},
+  IN:{name:'INDIA / भारत',type:'AADHAAR IDENTITY CARD',flag:'🇮🇳',bg:'linear-gradient(160deg,#FF9933 0%,#d4761a 40%,#138808 100%)',stripe:'linear-gradient(90deg,#FF9933 33%,#fff 33%,#fff 66%,#138808 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.7)',code:'IND'},
+  JP:{name:'日本国',type:'個人番号カード',flag:'🇯🇵',bg:'linear-gradient(160deg,#2c5f8a 0%,#1a3d5c 60%,#0d2035 100%)',stripe:'linear-gradient(90deg,#BC002D 0%,#2c5f8a 30%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'JPN'},
+  KR:{name:'대한민국',type:'주민등록증',flag:'🇰🇷',bg:'linear-gradient(160deg,#003478 0%,#001f4d 100%)',stripe:'linear-gradient(90deg,#003478 40%,#CD2E3A 40%,#CD2E3A 60%,#003478 60%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'KOR'},
+  TR:{name:'TÜRKİYE CUMHURİYETİ',type:'KİMLİK KARTI',flag:'🇹🇷',bg:'linear-gradient(160deg,#E30A17 0%,#9c0710 100%)',stripe:'#E30A17',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'TUR'},
+  SA:{name:'المملكة العربية السعودية',type:'بطاقة الهوية الوطنية',flag:'🇸🇦',bg:'linear-gradient(160deg,#006C35 0%,#004522 100%)',stripe:'#006C35',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'SAU'},
+  AE:{name:'الإمارات العربية المتحدة',type:'IDENTITY CARD',flag:'🇦🇪',bg:'linear-gradient(160deg,#00732F 0%,#004d20 40%,#FF0000 100%)',stripe:'linear-gradient(90deg,#00732F 25%,#fff 25%,#fff 50%,#000 50%,#000 75%,#FF0000 75%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ARE'},
+  IL:{name:'מדינת ישראל',type:'תעודת זהות',flag:'🇮🇱',bg:'linear-gradient(160deg,#003399 0%,#001f66 100%)',stripe:'linear-gradient(90deg,#003399 25%,#fff 25%,#fff 75%,#003399 75%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ISR'},
+  TH:{name:'ราชอาณาจักรไทย',type:'บัตรประจำตัวประชาชน',flag:'🇹🇭',bg:'linear-gradient(160deg,#A51931 0%,#6d0f1e 30%,#2D2A4A 100%)',stripe:'linear-gradient(90deg,#A51931 20%,#fff 20%,#fff 40%,#2D2A4A 40%,#2D2A4A 60%,#fff 60%,#fff 80%,#A51931 80%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'THA'},
+  SG:{name:'REPUBLIC OF SINGAPORE',type:'IDENTITY CARD',flag:'🇸🇬',bg:'linear-gradient(160deg,#EF3340 0%,#b51f2a 40%,#fff 100%)',stripe:'linear-gradient(90deg,#EF3340 50%,#fff 50%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'SGP'},
+  ZA:{name:'REPUBLIC OF SOUTH AFRICA',type:'SMART ID CARD',flag:'🇿🇦',bg:'linear-gradient(160deg,#007A4D 0%,#005233 40%,#001489 100%)',stripe:'linear-gradient(90deg,#007A4D 0%,#FFB612 30%,#007A4D 30%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ZAF'},
+  NG:{name:'FEDERAL REPUBLIC OF NIGERIA',type:'NATIONAL ID CARD',flag:'🇳🇬',bg:'linear-gradient(160deg,#008751 0%,#005233 40%,#ffffff 100%)',stripe:'linear-gradient(90deg,#008751 33%,#fff 33%,#fff 66%,#008751 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'NGA'},
+  EG:{name:'جمهورية مصر العربية',type:'بطاقة تحقيق الشخصية',flag:'🇪🇬',bg:'linear-gradient(160deg,#CE1126 0%,#8B0b17 33%,#fff 33%,#fff 66%,#000 66%)',stripe:'linear-gradient(90deg,#CE1126 33%,#fff 33%,#fff 66%,#000 66%)',textColor:'#CE1126',labelColor:'rgba(0,0,0,0.5)',code:'EGY'},
+  AU:{name:'COMMONWEALTH OF AUSTRALIA',type:'IDENTITY CARD',flag:'🇦🇺',bg:'linear-gradient(160deg,#00008B 0%,#000055 100%)',stripe:'linear-gradient(90deg,#00008B 40%,#CC0000 40%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'AUS'},
+  NZ:{name:'NEW ZEALAND / AOTEAROA',type:'IDENTITY CARD',flag:'🇳🇿',bg:'linear-gradient(160deg,#003087 0%,#001f5c 100%)',stripe:'linear-gradient(90deg,#003087 40%,#CC0000 40%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'NZL'},
+};
+function fd(v){if(!v)return'';const[y,m,d]=v.split('-');return`${d}.${m}.${y}`;}
+function lp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const s=e.target.result;document.getElementById('pd').innerHTML=`<img src="${s}"><input type="file" accept="image/*" onchange="lp(this)">`;document.getElementById('c-photo').innerHTML=`<img src="${s}" style="width:100%;height:100%;object-fit:cover">`;};r.readAsDataURL(f);}
+function sp(f,l,d,p){document.getElementById('fn').value=f;document.getElementById('ln').value=l;document.getElementById('dob').value=d;document.getElementById('pob').value=p;u();}
+function u(){
+  const code=document.getElementById('country').value;
+  const c=countries[code];
+  const fn=document.getElementById('fn').value.toUpperCase();
+  const ln=document.getElementById('ln').value.toUpperCase();
+  const dob=document.getElementById('dob').value;
+  const pob=document.getElementById('pob').value.toUpperCase();
+  const exp=document.getElementById('exp').value;
+  const num=document.getElementById('num').value;
+  document.getElementById('card-bg').style.background=c.bg;
+  document.getElementById('card-stripe').style.background=c.stripe;
+  ['c-country-label','c-type-label'].forEach(id=>document.getElementById(id).style.color=c.textColor);
+  document.getElementById('c-fields').style.color=c.textColor;
+  document.getElementById('c-num').style.color=c.labelColor;
+  document.getElementById('c-mrz').style.color=c.labelColor;
+  document.querySelectorAll('#c-fields .l').forEach(el=>el.style.color=c.labelColor);
+  document.getElementById('c-country-label').textContent=c.name;
+  document.getElementById('c-type-label').textContent=c.type;
+  document.getElementById('c-flag').textContent=c.flag;
+  document.getElementById('c-name').textContent=`${ln}, ${fn}`;
+  document.getElementById('c-dob').textContent=fd(dob);
+  document.getElementById('c-pob').textContent=pob;
+  document.getElementById('c-exp').textContent=fd(exp);
+  document.getElementById('c-num').textContent=num;
+  document.getElementById('c-mrz').innerHTML=`${c.code}&lt;&lt;${ln}&lt;&lt;${fn}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>${num}${(dob||'').replace(/-/g,'').slice(2)}&lt;5&lt;3001152${c.code.slice(0,1)}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;`;
+}
+document.addEventListener('langready', u);
+</script>
+</body>
+</html>
