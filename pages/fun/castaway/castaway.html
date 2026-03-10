@@ -27,13 +27,13 @@
       text-transform: uppercase;
     }
 
+    /* Portrait game wrap */
     #game-wrap {
       width: 100%;
       max-width: 800px;
       aspect-ratio: 4 / 3;
       background: #000;
       position: relative;
-      overflow: hidden;
     }
 
     #info {
@@ -134,18 +134,23 @@
 
     #landscape-controls .psp-row {
       display: flex;
+      flex-direction: row;
       align-items: center;
       justify-content: center;
       height: 100svh;
       width: 100%;
+      gap: 0;
     }
 
     .psp-side {
       display: flex;
       align-items: center;
       justify-content: center;
+      /* fixed width, never grows or shrinks */
       width: 160px;
-      flex-shrink: 0;
+      min-width: 160px;
+      max-width: 160px;
+      flex: 0 0 160px;
     }
 
     .psp-side:first-child {
@@ -158,18 +163,18 @@
 
     #landscape-controls #ldpad {
       display: grid;
-      grid-template-columns: repeat(3, 48px);
-      grid-template-rows: repeat(3, 48px);
-      gap: 4px;
+      grid-template-columns: repeat(3, 44px);
+      grid-template-rows: repeat(3, 44px);
+      gap: 3px;
     }
 
-    #landscape-controls .dpad-btn { font-size: 1.1rem; }
+    #landscape-controls .dpad-btn { font-size: 1rem; }
 
     #landscape-controls #laction-btns {
       display: grid;
-      grid-template-columns: repeat(2, 48px);
-      grid-template-rows: repeat(2, 48px);
-      gap: 4px;
+      grid-template-columns: repeat(2, 44px);
+      grid-template-rows: repeat(2, 44px);
+      gap: 3px;
     }
 
     #landscape-controls .action-btn {
@@ -179,23 +184,20 @@
       line-height: 1.2;
     }
 
-    #landscape-controls .action-btn .key   { font-size: 0.75rem; }
-    #landscape-controls .action-btn .label { opacity: 0.4; font-size: 0.5rem; }
+    #landscape-controls .action-btn .key   { font-size: 0.7rem; }
+    #landscape-controls .action-btn .label { opacity: 0.4; font-size: 0.48rem; }
 
-    .game-slot {
-      flex: 1;
+    /* Game slot in landscape — height driven, width follows aspect ratio */
+    #psp-game-wrap {
+      /* take remaining width between the two sides */
+      flex: 1 1 0;
       min-width: 0;
-      aspect-ratio: 4 / 3;
-      max-height: 100svh;
+      /* height = full viewport height */
+      height: 100svh;
+      /* but never wider than 4:3 of the height */
+      max-width: calc(100svh * 4 / 3);
       background: #000;
       position: relative;
-      overflow: hidden;
-    }
-
-    .game-slot > * {
-      width: 100% !important;
-      height: 100% !important;
-      display: block;
     }
 
     @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
@@ -206,9 +208,9 @@
     @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
       body {
         padding: 0;
-        min-height: 100svh;
         overflow: hidden;
         justify-content: center;
+        background: #000;
       }
       h1, #info, #mobile-controls, #game-wrap { display: none !important; }
       #landscape-controls { display: block; }
@@ -216,13 +218,13 @@
   </style>
 </head>
 <body>
-  <div style="position:fixed; top:10px; left:10px;">
+  <div style="position:fixed; top:10px; left:10px; z-index:99;">
     <a href="/../index.html">🏠 Home</a>
   </div>
 
   <h1>Castaway</h1>
 
-  <div id="game-wrap" class="game-slot"></div>
+  <div id="game-wrap"></div>
 
   <div id="info">
     <div class="col">
@@ -282,7 +284,7 @@
         </div>
       </div>
 
-      <div class="game-slot" id="psp-game-wrap"></div>
+      <div id="psp-game-wrap"></div>
 
       <div class="psp-side">
         <div id="laction-btns">
@@ -317,8 +319,6 @@
     window.addEventListener("DOMContentLoaded", function () {
       var ruffle = window.RufflePlayer.newest();
       var player = ruffle.createPlayer();
-      player.style.width = "100%";
-      player.style.height = "100%";
       player.style.display = "block";
 
       var portraitSlot  = document.getElementById("game-wrap");
@@ -328,13 +328,16 @@
         "(hover: none) and (pointer: coarse) and (orientation: landscape)"
       );
 
+      function syncSize(slot) {
+        player.style.width  = slot.offsetWidth  + "px";
+        player.style.height = slot.offsetHeight + "px";
+      }
+
       function placePlayer() {
         var slot = landscapeMQ.matches ? landscapeSlot : portraitSlot;
-        if (player.parentNode !== slot) {
-          slot.appendChild(player);
-          player.style.width  = slot.offsetWidth  + "px";
-          player.style.height = slot.offsetHeight + "px";
-        }
+        slot.appendChild(player);
+        // Wait a frame for layout to settle before reading dimensions
+        requestAnimationFrame(function () { syncSize(slot); });
       }
 
       placePlayer();
@@ -343,11 +346,8 @@
 
       new ResizeObserver(function () {
         var slot = player.parentNode;
-        if (slot) {
-          player.style.width  = slot.offsetWidth  + "px";
-          player.style.height = slot.offsetHeight + "px";
-        }
-      }).observe(document.body);
+        if (slot) syncSize(slot);
+      }).observe(document.documentElement);
 
       var buttons = document.querySelectorAll('.dpad-btn, .action-btn');
 
