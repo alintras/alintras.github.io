@@ -31,6 +31,7 @@
       max-width: 800px;
       aspect-ratio: 4 / 3;
       background: #000;
+      position: relative;
     }
 
     #info {
@@ -53,6 +54,25 @@
       margin-bottom: 4px;
     }
 
+    /* Shared button styles */
+    .dpad-btn, .action-btn {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 8px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+    }
+
+    .dpad-btn.pressed,
+    .action-btn.pressed { background: rgba(255,255,255,0.32); }
+    .dpad-blank { background: none !important; border: none !important; pointer-events: none; }
+
+    /* Portrait controls */
     #mobile-controls {
       display: none;
       width: 100%;
@@ -63,62 +83,38 @@
       touch-action: none;
     }
 
-    .controls-row {
+    #mobile-controls .controls-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0 8px;
     }
 
-    #dpad {
+    #mobile-controls #dpad {
       display: grid;
       grid-template-columns: repeat(3, 56px);
       grid-template-rows: repeat(3, 56px);
       gap: 4px;
     }
 
-    .dpad-btn {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.13);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 1.3rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-    }
+    #mobile-controls .dpad-btn { font-size: 1.3rem; }
 
-    .dpad-btn.pressed { background: rgba(255,255,255,0.28); }
-    .dpad-blank { background: none; border: none; pointer-events: none; }
-
-    #action-btns {
+    #mobile-controls #action-btns {
       display: grid;
       grid-template-columns: repeat(2, 56px);
       grid-template-rows: repeat(2, 56px);
       gap: 4px;
     }
 
-    .action-btn {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.13);
-      border-radius: 8px;
-      color: #fff;
-      font-family: monospace;
-      display: flex;
+    #mobile-controls .action-btn {
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       gap: 2px;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
+      font-family: monospace;
       line-height: 1.2;
     }
 
-    .action-btn .key { font-size: 0.85rem; }
-    .action-btn .label { opacity: 0.4; font-size: 0.55rem; }
-    .action-btn.pressed { background: rgba(255,255,255,0.28); }
+    #mobile-controls .action-btn .key  { font-size: 0.85rem; }
+    #mobile-controls .action-btn .label { opacity: 0.4; font-size: 0.55rem; }
 
     #hint {
       margin-top: 10px;
@@ -128,9 +124,91 @@
       padding: 0 8px;
     }
 
-    @media (hover: none) and (pointer: coarse) {
+    /* Landscape overlay */
+    #landscape-controls {
+      display: none;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      transition: opacity 0.2s;
+    }
+
+    #landscape-controls.hidden {
+      opacity: 0;
+      pointer-events: none !important;
+    }
+
+    #landscape-controls.hidden #ldpad,
+    #landscape-controls.hidden #laction-btns {
+      pointer-events: none;
+    }
+
+    #landscape-controls #ldpad {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, 48px);
+      grid-template-rows: repeat(3, 48px);
+      gap: 3px;
+      pointer-events: all;
+    }
+
+    #landscape-controls .dpad-btn { font-size: 1.1rem; }
+
+    #landscape-controls #laction-btns {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      display: grid;
+      grid-template-columns: repeat(2, 48px);
+      grid-template-rows: repeat(2, 48px);
+      gap: 3px;
+      pointer-events: all;
+    }
+
+    #landscape-controls .action-btn {
+      flex-direction: column;
+      gap: 2px;
+      font-family: monospace;
+      line-height: 1.2;
+    }
+
+    #landscape-controls .action-btn .key  { font-size: 0.75rem; }
+    #landscape-controls .action-btn .label { opacity: 0.4; font-size: 0.5rem; }
+
+    /* Toggle button — only visible in landscape on touch */
+    #toggle-controls {
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 11;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.6rem;
+      padding: 4px 8px;
+      cursor: pointer;
+      pointer-events: all;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+    }
+
+    @media (hover: none) and (pointer: coarse) and (orientation: portrait) {
       #mobile-controls { display: block; }
       #info { display: none; }
+    }
+
+    @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+      #landscape-controls { display: block; }
+      #toggle-controls { display: block; }
+      #info { display: none; }
+      body { padding: 4px; }
+      h1 { display: none; }
     }
   </style>
 </head>
@@ -138,7 +216,40 @@
 
   <h1>Castaway</h1>
 
-  <div id="game-wrap"></div>
+  <div id="game-wrap">
+
+    <div id="landscape-controls">
+      <div id="ldpad">
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowUp" data-code="ArrowUp">▲</div>
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowLeft" data-code="ArrowLeft">◀</div>
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowRight" data-code="ArrowRight">▶</div>
+        <div class="dpad-blank"></div>
+        <div class="dpad-btn" data-key="ArrowDown" data-code="ArrowDown">▼</div>
+        <div class="dpad-blank"></div>
+      </div>
+      <div id="laction-btns">
+        <div class="action-btn" data-key="z" data-code="KeyZ">
+          <span class="key">Z</span><span class="label">action</span>
+        </div>
+        <div class="action-btn" data-key="x" data-code="KeyX">
+          <span class="key">X</span><span class="label">cancel</span>
+        </div>
+        <div class="action-btn" data-key="Enter" data-code="Enter">
+          <span class="key">↵</span><span class="label">enter</span>
+        </div>
+        <div class="action-btn" data-key="Escape" data-code="Escape">
+          <span class="key">ESC</span><span class="label">menu</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toggle sits inside game-wrap so it's always on top -->
+    <button id="toggle-controls">hide controls</button>
+
+  </div>
 
   <div id="info">
     <div class="col">
@@ -182,7 +293,6 @@
     <div id="hint">arrows · Z · X · Enter · ESC — tap game area first to focus</div>
   </div>
 
-  <!-- Step 1: config MUST come before ruffle.js -->
   <script>
     window.RufflePlayer = window.RufflePlayer || {};
     window.RufflePlayer.config = {
@@ -191,22 +301,39 @@
       unmuteOverlay: "hidden"
     };
   </script>
-
-  <!-- Step 2: load ruffle -->
   <script src="../ruffle/ruffle.js"></script>
-
-  <!-- Step 3: init after DOMContentLoaded, exactly as Ruffle docs show -->
   <script>
     window.addEventListener("DOMContentLoaded", function () {
       var ruffle = window.RufflePlayer.newest();
       var player = ruffle.createPlayer();
       var container = document.getElementById("game-wrap");
-      container.appendChild(player);
+      container.insertBefore(player, container.firstChild);
       player.style.width = "100%";
       player.style.height = "100%";
+      player.style.position = "absolute";
+      player.style.top = "0";
+      player.style.left = "0";
       player.ruffle().load("Castaway.swf");
 
-      // Mobile controls
+      // Toggle landscape controls
+      var landscapeControls = document.getElementById("landscape-controls");
+      var toggleBtn = document.getElementById("toggle-controls");
+      var controlsVisible = true;
+
+      toggleBtn.addEventListener('pointerdown', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        controlsVisible = !controlsVisible;
+        if (controlsVisible) {
+          landscapeControls.classList.remove('hidden');
+          toggleBtn.textContent = 'hide controls';
+        } else {
+          landscapeControls.classList.add('hidden');
+          toggleBtn.textContent = 'show controls';
+        }
+      });
+
+      // Wire up all buttons
       var buttons = document.querySelectorAll('.dpad-btn, .action-btn');
 
       function fire(type, key, code) {
