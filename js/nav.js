@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   sidebar.innerHTML = `
     <b>Navigation</b><br><br>
 
-    🏠 <a href="/index.html">Home</a><br><br>
+    🏠&#xFE0E; <a href="/index.html">Home</a><br><br>
 
     <details>
       <summary>🛠️ Tools</summary>
@@ -26,24 +26,29 @@ document.addEventListener("DOMContentLoaded", function () {
     <br>
 
     <details>
-      <summary>🎮 Fun</summary>
+      <summary>😁 Fun</summary>
       ${item("🎲", "/pages/fun/simple-physics.html", "Simple Physics")}
-      ${item("🏝️", "/pages/fun/castaway/castaway.html", "Castaway")}
-      ${item("❗", "/pages/fun/mroops.html", "Mr.Oops!!")}
       ${item("💘", "/pages/fun/love-calculator.html", "Love Compatibility Calculator")}
       ${item("👩‍❤️‍💋‍👨", "/pages/fun/vivi.html", "Valentines 2026")}
-      ${item("⭕", "/pages/fun/perfect-circle.html", "Perfect Circle Game")}
-      ${item("❌", "/pages/fun/infinite-ttt.html", "Infinite TicTacToe")}
-      ${item("🏓", "/pages/fun/pong.html", "Pong")}
       ${item("🪪", "/pages/fun/ausweis.html", "ID Generator")}
       ${item("🚗", "/pages/fun/fuehrerschein.html", "License Generator")}
       ${item("🪙", "/pages/fun/muenze.html", "Coin Generator")}
-      ${item("🗞️", "/pages/fun/nachrichten.html", "News Generator")}
+      ${item("📰", "/pages/fun/nachrichten.html", "News Generator")}
       ${item("🎴", "/pages/fun/sammelkarte.html", "Trading Card Generator")}
       ${item("📜", "/pages/fun/urkunde.html", "Certificate Generator")}
-      ${item("📰", "/pages/fun/zeitung.html", "Newspaper Generator")}
+      ${item("🗞️", "/pages/fun/zeitung.html", "Newspaper Generator")}
       ${item("📇", "/pages/fun/zeugnis.html", "Report Card Generator")}
       ${item("🧩", "/pages/fun/puzzle.html", "Custom Puzzle Generator")}
+    </details>
+    <br>
+
+    <details>
+      <summary>🎮 Games</summary>
+      ${item("🏝️", "/pages/games/castaway/castaway.html", "Castaway")}
+      ${item("❗", "/pages/games/mroops.html", "Mr.Oops!!")}
+      ${item("❌", "/pages/games/infinite-ttt.html", "Infinite TicTacToe")}
+      ${item("🏓", "/pages/games/pong.html", "Pong")}
+      ${item("⭕", "/pages/games/perfect-circle.html", "Perfect Circle Game")}
     </details>
     <br>
 
