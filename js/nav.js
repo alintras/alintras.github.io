@@ -10,12 +10,13 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   sidebar.innerHTML = `
-    <b>Navigation</b><br><br>
+    <b id="nav-toggle">Navigation</b>
+    <div id="sidebar-body"><br><br>
 
     🏠&#xFE0E; <a href="/index.html">Home</a><br><br>
 
     <details>
-      <summary>🛠️ Tools</summary>
+      <summary>🛠️Tools</summary>
       ${item("✉️", "/pages/tools/wondermail/wondermail.html", "PMD RT Wondermail Generator")}
       ${item("💣", "/pages/tools/voltorb-solver.html", "HGSS Voltorb Solver")}
       ${item("🔢", "/pages/tools/cps-counter.html", "CPS Counter")}
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <br>
 
     <details>
-      <summary>😁 Fun</summary>
+      <summary>😁Fun</summary>
       ${item("🎲", "/pages/fun/simple-physics.html", "Simple Physics")}
       ${item("💘", "/pages/fun/love-calculator.html", "Love Compatibility Calculator")}
       ${item("👩‍❤️‍💋‍👨", "/pages/fun/vivi.html", "Valentines 2026")}
@@ -43,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <br>
 
     <details>
-      <summary>🎮 Games</summary>
+      <summary>🎮Games</summary>
       ${item("🏝️", "/pages/games/castaway/castaway.html", "Castaway")}
       ${item("❗", "/pages/games/mroops.html", "Mr.Oops!!")}
       ${item("❌", "/pages/games/infinite-ttt.html", "Infinite TicTacToe")}
@@ -53,12 +54,26 @@ document.addEventListener("DOMContentLoaded", function () {
     <br>
 
     <details>
-      <summary>📚 Stuff</summary>
+      <summary>📚Stuff</summary>
       ${item("💡", "/pages/stuff/git.html", "Git")}
       ${item("👩‍💻", "/pages/stuff/html.html", "HTML")}
       ${item("👨‍💻", "/pages/stuff/c.html", "C")}
       ${item("🧮", "/pages/stuff/math-history.html", "Math History")}
       ${item("🧮", "/pages/stuff/math-prereq.html", "Math Prerequisites")}
     </details>
+    </div>
   `;
+
+  var toggle = document.getElementById("nav-toggle");
+  var layoutSidebar = document.getElementById("layout-sidebar");
+
+  if (localStorage.getItem("sidebarCollapsed") === "1") {
+    layoutSidebar.classList.add("collapsed");
+  }
+
+  toggle.addEventListener("click", function () {
+    layoutSidebar.classList.toggle("collapsed");
+    localStorage.setItem("sidebarCollapsed",
+      layoutSidebar.classList.contains("collapsed") ? "1" : "0");
+  });
 });
