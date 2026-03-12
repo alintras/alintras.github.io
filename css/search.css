@@ -57,3 +57,14 @@
     opacity: 0.6;
     border-bottom: 1px solid #eee;
 }
+#site-results .sr-clear {
+    opacity: 0.45;
+    font-size: 0.8em;
+    border-top: 1px solid #eee;
+    border-bottom: none;
+}
+#site-results .sr-clear:hover {
+    opacity: 1;
+    background: #131313;
+    color: #fff;
+}

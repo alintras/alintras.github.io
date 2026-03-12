@@ -13,7 +13,10 @@
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
-    <script src="js/nav.js"></script>
+    <script src="js/nav.js" defer></script>
+    <script src="js/search.js" defer></script>
+    <script src="js/script.js" defer></script>
+
     <style>
         a { color: inherit; text-decoration: none; }
     </style>
@@ -44,13 +47,15 @@
                     <main>
                         <section id="profile-section">
                             <div class="text">
-                                <h3>Hey there!</h3>
-                                <p>Welcome to my page. <br> Take a look around and see what I've been up to!<br><br>
-                                My name is <b>Ali Aktas</b>, also most known as <b>alintras</b> online.<br><br>
-                                My very first experiences with anything programming-related were during my elementary school years using Windows Batch Scripting.<br><br>
-                                Later, I started building my first applications in Visual Studio Basic and dwelved into building small homepages before properly learning programming languages during school and university.<br><br>
-                                Currently, I'm a Computer Science major and Statistics minor at Ludwig-Maximilians University in Munich, Germany.<br><br>
-                                Since then I've developed skills in Java, R, C, Haskell, HTML and am improving in Maths.</p>
+                                <div class="title-row" style="display:flex; align-items:center; gap:10px;">
+                                    <h3 style="margin:0;">Hey there!</h3>
+                                    <div id="clock" style="font-size:0.9em; opacity:0.7; margin-right:auto;"></div>
+                                </div>
+                                <p>
+                                Welcome to my page. <br> Take a look around!<br><br>
+                                My name is <b>Ali Aktas</b> (alintras).<br><br>
+                                Currently, I'm a Computer Science major and Statistics minor at LMU Munich.
+                                </p>
                             </div>
                         </section>
                     </main>
@@ -82,8 +87,17 @@
         </script>
         <p>&copy; 2024 Ali Aktas | <a href="mailto:alintras@proton.me">alintras@proton.me</a></p>
     </footer>
+    <script>
+        setInterval(()=>{
+        const now=new Date();
+        document.getElementById("clock").textContent=now.toLocaleTimeString();
+        },1000);
+    </script>
 
-    <script src="js/search.js"></script>
-    <script src="js/script.js" defer></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/service-worker.js");
+        }
+    </script>
 </body>
 </html>

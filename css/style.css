@@ -1,192 +1,204 @@
-/* --- Terminal Container --- */
-.terminal {
-    background-color: #0d0d0d;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-    max-width: 800px;
-    margin: 1rem 0;
-    text-align: left;
-    overflow: hidden;
-    font-family: "Fira Code", "Consolas", monospace;
-  }
-  
-  /* --- Titelleiste oben --- */
-  .terminal-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #2b2b2b;
-    padding: 6px 12px;
-  }
-  
-  /* --- Die drei „Fensterknöpfe“ --- */
-  .terminal-header .dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-  }
-  
-  /* Farben automatisch über Position setzen */
-  .terminal-header .dot:nth-child(1) { background: #ff5f56; }
-  .terminal-header .dot:nth-child(2) { background: #ffbd2e; }
-  .terminal-header .dot:nth-child(3) { background: #27c93f; }
-  
-  /* --- Terminal-Inhalt (Code) --- */
-  .terminal pre {
-    color: #ffffff;
-    background: none;
-    margin: 0;
-    padding: 1rem;
-    font-size: 0.95rem;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-  
-  /* --- Blinkender Cursor --- */
-  .terminal pre::after {
-    content: "█";
-    animation: blink 1s steps(2, start) infinite;
-  }
-  
-  @keyframes blink {
-    to { visibility: hidden; }
-  }
+/* =====================================================
+   TERMINAL BASE
+===================================================== */
 
-  /* --- Terminal Header Titles --- */
-.terminal-header::after {
-    content: "Input";
-    margin-left: auto;
-    color: #ccc;
-    font-size: 0.85rem;
-    font-family: "Fira Code", monospace;
-  }
-
-/* --- Terminal2 Container --- */
+.terminal,
 .terminal2 {
-    background-color: #0d0d0d;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
-    max-width: 800px;
-    margin: 1rem 0;
-    text-align: left;
-    overflow: hidden;
-    font-family: "Fira Code", "Consolas", monospace;
-  }
-  
-  /* Hide only content, not header */
-  .terminal2 .terminal2-content {
-    display: none;
-  }
-  
-  .terminal2.show .terminal2-content {
-    display: block;
-  }
-  
-  /* --- Header --- */
-  .terminal2-header {
-    display: flex;
-    align-items: center;
-    background: #2b2b2b;
-    padding: 6px 12px;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-  }
-  
-  .terminal2-header:hover {
-    background: #363636;
-  }
-  
-  /* --- Dots --- */
-  .terminal2-header .dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 8px;
-  }
-  
-  .terminal2-header .dot:nth-child(1) { background: #ff5f56; }
-  .terminal2-header .dot:nth-child(2) { background: #ffbd2e; }
-  .terminal2-header .dot:nth-child(3) { background: #27c93f; }
-  
-  /* --- Toggle Text --- */
-  .toggle-text {
-    color: #ccc;
-    font-size: 0.85rem;
-    font-family: "Fira Code", monospace;
-  }
-  
-  /* --- Output label --- */
-  .output-label {
-    margin-left: auto;
-    color: #888;
-    font-size: 0.85rem;
-    font-family: "Fira Code", monospace;
-  }
-  
-  /* --- Terminal Content --- */
-  .terminal2 pre {
-    color: #ffffff;
-    background: none;
-    margin: 0;
-    padding: 1rem;
-    font-size: 0.95rem;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-  
-/* --- Fix wrapping only for terminal (input) --- */
-.terminal {
-  overflow: hidden; /* prevent container scrollbars */
+  background-color: #0d0d0d;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,255,136,0.2);
+  max-width: 800px;
+  margin: 1rem 0;
+  text-align: left;
+  overflow: hidden;
+  font-family: "Fira Code","Consolas",monospace;
 }
+
+/* =====================================================
+   TERMINAL HEADER
+===================================================== */
+
+.terminal-header,
+.terminal2-header {
+  display: flex;
+  align-items: center;
+  background: #2b2b2b;
+  padding: 6px 12px;
+}
+
+/* clickable header only for terminal2 */
+
+.terminal2-header {
+  cursor: pointer;
+  user-select: none;
+}
+
+.terminal2-header:hover {
+  background:#363636;
+}
+
+/* =====================================================
+   WINDOW DOTS
+===================================================== */
+
+.dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+}
+
+.terminal-header .dot,
+.terminal2-header .dot{
+  margin-right:8px;
+}
+
+.dot:nth-child(1){background:#ff5f56;}
+.dot:nth-child(2){background:#ffbd2e;}
+.dot:nth-child(3){background:#27c93f;}
+
+/* =====================================================
+   HEADER LABELS
+===================================================== */
+
+.terminal-header::after{
+  content:"Input";
+  margin-left:auto;
+  color:#ccc;
+  font-size:0.85rem;
+}
+
+.toggle-text,
+.output-label{
+  font-size:0.85rem;
+}
+
+.toggle-text{
+  color:#ccc;
+}
+
+.output-label{
+  margin-left:auto;
+  color:#888;
+}
+
+/* =====================================================
+   TERMINAL CONTENT
+===================================================== */
 
 .terminal pre,
-.terminal-block {
-  white-space: pre;
-  word-break: keep-all;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+.terminal2 pre{
+  color:#ffffff;
+  background:none;
+  margin:0;
+  padding:1rem;
+  font-size:0.95rem;
+  white-space:pre-wrap;
+  word-break:break-word;
 }
 
-/* Slight font scaling for small screens (only input terminal) */
-@media (max-width: 600px) {
+/* blinking cursor */
+
+.terminal pre::after{
+  content:"█";
+  animation:blink 1s steps(2,start) infinite;
+}
+
+@keyframes blink{
+  to{visibility:hidden;}
+}
+
+/* =====================================================
+   TERMINAL2 COLLAPSIBLE
+===================================================== */
+
+.terminal2 .terminal2-content{
+  display:none;
+}
+
+.terminal2.show .terminal2-content{
+  display:block;
+}
+
+/* =====================================================
+   INPUT TERMINAL WRAPPING FIX
+===================================================== */
+
+.terminal pre,
+.terminal-block{
+  white-space:pre;
+  word-break:keep-all;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* =====================================================
+   MOBILE FONT SCALING
+===================================================== */
+
+@media (max-width:600px){
+
   .terminal pre,
-  .terminal-block {
-    font-size: 0.9rem;
+  .terminal-block{
+    font-size:0.9rem;
   }
+
 }
 
-@media (max-width: 400px) {
+@media (max-width:400px){
+
   .terminal pre,
-  .terminal-block {
-    font-size: 0.8rem;
+  .terminal-block{
+    font-size:0.8rem;
   }
+
 }
-  
-  /* --- Global font override --- 
-  * {
-    font-family: "Courier New", Courier, monospace;
-  }*/
 
-  .ascii {
-    font-family: "Courier New", Courier, monospace;
-    font-size: 1rem;
-    line-height: 1; /* tighter line spacing for ASCII */
-    white-space: pre; /* preserve exact formatting */
-    letter-spacing: 0;
-    background: #0d0d0d;
-    color: #00ff88;
-    padding: 1rem;
-    border-radius: 8px;
-    display: inline-block;
-  }
+/* =====================================================
+   ASCII BLOCK
+===================================================== */
 
-  /* === Inline Code Highlighting === */
-.h {
-    background-color: #2b2b2b;
-    color: #ffffff;
-    padding: 0.1rem 0.3rem;
-    border-radius: 4px;
-    font-size: 0.95em;
-    font-family: "Fira Code", monospace;
-  }
+.ascii{
+  font-family:"Courier New",Courier,monospace;
+  font-size:1rem;
+  line-height:1;
+  white-space:pre;
+  letter-spacing:0;
+  background:#0d0d0d;
+  color:#00ff88;
+  padding:1rem;
+  border-radius:8px;
+  display:inline-block;
+}
+
+/* =====================================================
+   INLINE CODE HIGHLIGHT
+===================================================== */
+
+.h{
+  background:#2b2b2b;
+  color:#ffffff;
+  padding:0.1rem 0.3rem;
+  border-radius:4px;
+  font-size:0.95em;
+  font-family:"Fira Code",monospace;
+}
+
+/* =====================================================
+   TITLE ROW (HEY THERE + CLOCK)
+===================================================== */
+
+.title-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.title-row h3{
+  margin:0;
+}
+
+#clock{
+  font-size:0.9em;
+  opacity:0.7;
+  margin-left: auto;
+}

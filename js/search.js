@@ -1,3 +1,7 @@
+/* =============================================================
+   SITE PAGES
+============================================================= */
+
 const sitePages = [
     { title: "Home",                          url: "/index.html",                                 tags: ["home", "about", "ali", "alintras"] },
     // Tools
@@ -33,11 +37,112 @@ const sitePages = [
     { title: "Math Prerequisites",            url: "/pages/stuff/math-prereq.html",               tags: ["stuff", "math", "prerequisites", "mathematics"] },
 ];
 
+/* =============================================================
+   ENGINES
+============================================================= */
+
 const engines = {
     google: q => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
     ddg:    q => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
     brave:  q => `https://search.brave.com/search?q=${encodeURIComponent(q)}`,
 };
+
+/* =============================================================
+   SHORTCUT COMMANDS
+   Usage: "<keyword> <query>"  e.g. "yt lo-fi music"
+============================================================= */
+
+const shortcuts = {
+    yt:        q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,
+    gh:        q => `https://github.com/search?q=${encodeURIComponent(q)}`,
+    r:         q => `https://www.reddit.com/search/?q=${encodeURIComponent(q)}`,
+    w:         q => `https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(q)}`,
+    mdn:       q => `https://developer.mozilla.org/en-US/search?q=${encodeURIComponent(q)}`,
+    so:        q => `https://stackoverflow.com/search?q=${encodeURIComponent(q)}`,
+    npm:       q => `https://www.npmjs.com/search?q=${encodeURIComponent(q)}`,
+    maps:      q => `https://www.google.com/maps/search/${encodeURIComponent(q)}`,
+    img:       q => `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`,
+    tw:        q => `https://x.com/search?q=${encodeURIComponent(q)}`,
+    bp:     q => `https://bulbapedia.bulbagarden.net/wiki/Special:Search?search=${encodeURIComponent(q)}`,
+    pw:  q => `https://www.pokewiki.de/Spezial:Suche?search=${encodeURIComponent(q)}`,
+    ig:        q => `https://www.instagram.com/${encodeURIComponent(q)}/`,
+};
+
+/* =============================================================
+   HELPERS
+============================================================= */
+
+function isURL(str) {
+    if (/\s/.test(str)) return false; // spaces = not a URL
+    return /^https?:\/\/.+/.test(str)
+        || /^www\..+\..+/.test(str)
+        || /^[^\s.]+\.[a-zA-Z]{2,}(\/.*)?$/.test(str);
+}
+
+function normalizeURL(str) {
+    return /^https?:\/\//.test(str) ? str : `https://${str}`;
+}
+
+function isMath(str) {
+    // Must have at least one digit, at least one operator, and only safe chars
+    return /\d/.test(str)
+        && /[+\-*/^%]/.test(str)
+        && /^[\d\s().+\-*/^%]+$/.test(str.trim());
+}
+
+function evalMath(expr) {
+    try {
+        const val = Function(`"use strict"; return (${expr})`)();
+        if (typeof val === "number" && isFinite(val)) return val;
+    } catch { /* ignore */ }
+    return null;
+}
+
+/* =============================================================
+   RESULTS BOX HELPERS
+============================================================= */
+
+function getBox() {
+    return document.getElementById("site-results");
+}
+
+function isShowingCalc() {
+    const label = getBox().querySelector(".sr-label");
+    return label && label.textContent.trim() === "calculator";
+}
+
+function isShowingShortcut() {
+    const label = getBox().querySelector(".sr-label");
+    return label && label.textContent.trim().startsWith("shortcut");
+}
+
+function showCalc(val) {
+    const box = getBox();
+    box.style.display = "block";
+    box.innerHTML = `<div class="sr-label">calculator</div><a>= ${val}</a>`;
+}
+
+function showShortcutHint(keyword, query) {
+    const box = getBox();
+    box.style.display = "block";
+    if (!query) {
+        box.innerHTML = `<div class="sr-label">shortcut</div><a>Type a query after <b>${keyword}</b> and press Enter</a>`;
+    } else {
+        box.innerHTML = `<div class="sr-label">shortcut → ${keyword}</div><a>Press Enter to search <b>${query}</b></a>`;
+    }
+}
+
+function clearSpecialResults() {
+    if (isShowingCalc() || isShowingShortcut()) {
+        const box = getBox();
+        box.style.display = "none";
+        box.innerHTML = "";
+    }
+}
+
+/* =============================================================
+   ENGINE / RECENT SEARCH PERSISTENCE
+============================================================= */
 
 function saveEngine() {
     localStorage.setItem("preferredEngine", document.getElementById("engine-select").value);
@@ -58,14 +163,30 @@ function getRecentSearches() {
     return JSON.parse(localStorage.getItem("recentSearches") || "[]");
 }
 
+/* =============================================================
+   SITE SEARCH / SUGGESTIONS
+============================================================= */
+
+function clearRecentSearches() {
+    localStorage.removeItem("recentSearches");
+    const box = getBox();
+    box.style.display = "none";
+    box.innerHTML = "";
+}
+
+function recentBlock(matches) {
+    return '<div class="sr-label">Recent searches</div>' +
+        matches.map(r =>
+            `<a class="sr-recent" href="#" onclick="fillSearch(event,'${r.replace(/'/g, "\\'")}')">🕐&#xFE0E; ${r}</a>`
+        ).join("") +
+        `<a href="#" class="sr-clear" onclick="event.preventDefault();clearRecentSearches()">🗑&#xFE0E; Clear recent searches</a>`;
+}
+
 function renderResults(siteMatches, recentMatches) {
-    const box = document.getElementById("site-results");
+    const box = getBox();
     let html = "";
 
-    if (recentMatches.length) {
-        html += '<div class="sr-label">Recent searches</div>' +
-            recentMatches.map(r => `<a class="sr-recent" href="#" onclick="fillSearch(event,'${r.replace(/'/g,"\\'")}')">🕐 ${r}</a>`).join("");
-    }
+    if (recentMatches.length) html += recentBlock(recentMatches);
     if (siteMatches.length) {
         html += '<div class="sr-label">On this site</div>' +
             siteMatches.map(p => `<a href="${p.url}">${p.title}</a>`).join("");
@@ -83,47 +204,115 @@ function fillSearch(e, q) {
 }
 
 function filterSite() {
-    const q = document.getElementById("search-input").value.trim().toLowerCase();
-    const box = document.getElementById("site-results");
+    const raw = document.getElementById("search-input").value;
+    const q   = raw.trim().toLowerCase();
+    const box = getBox();
+
+    // Don't clobber calc or shortcut hints
+    if (isShowingCalc() || isShowingShortcut()) return;
 
     if (!q) {
         const recent = getRecentSearches();
         if (!recent.length) { box.style.display = "none"; box.innerHTML = ""; return; }
-        box.innerHTML = '<div class="sr-label">Recent searches</div>' +
-            recent.map(r => `<a class="sr-recent" href="#" onclick="fillSearch(event,'${r.replace(/'/g,"\\'")}')"> 🕐&#xFE0E; ${r}</a>`).join("");
+        box.innerHTML = recentBlock(recent);
         box.style.display = "block";
         return;
     }
 
-    const siteMatches = sitePages.filter(p =>
-        p.title.toLowerCase().includes(q) ||
-        p.tags.some(t => t.includes(q))
+    const siteMatches   = sitePages.filter(p =>
+        p.title.toLowerCase().includes(q) || p.tags.some(t => t.includes(q))
     );
-
     const recentMatches = getRecentSearches().filter(r => r.toLowerCase().includes(q));
-
     renderResults(siteMatches, recentMatches);
 }
 
+/* =============================================================
+   DOSEARCH — single entry point, called by Enter / button
+============================================================= */
+
 function doSearch() {
-    const q = document.getElementById("search-input").value.trim();
-    if (!q) return;
-    saveSearch(q);
+    const text = document.getElementById("search-input").value.trim();
+    if (!text) return;
+
+    const spaceAt  = text.indexOf(" ");
+    const hasSpace = spaceAt !== -1;
+    const keyword  = (hasSpace ? text.slice(0, spaceAt) : text).toLowerCase();
+    const query    = hasSpace ? text.slice(spaceAt + 1).trim() : "";
+
+    // 1. Shortcut command — must have a query after the keyword
+    if (shortcuts[keyword] && query) {
+        window.location.href = shortcuts[keyword](query);
+        return;
+    }
+
+    // 2. Bare URL — no spaces, looks like a domain
+    if (!hasSpace && isURL(text)) {
+        window.location.href = normalizeURL(text);
+        return;
+    }
+
+    // 3. Math expression
+    if (isMath(text)) {
+        const val = evalMath(text);
+        if (val !== null) { showCalc(val); return; }
+    }
+
+    // 4. Engine search fallback
+    saveSearch(text);
     const engine = document.getElementById("engine-select").value;
-    window.location.href = engines[engine](q);
+    window.location.href = engines[engine](text);
 }
+
+/* =============================================================
+   LIVE INPUT HANDLER — previews while typing
+============================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
     loadEngine();
 
-    document.getElementById("search-input").addEventListener("focus", () => {
+    const input = document.getElementById("search-input");
+
+    input.addEventListener("focus", () => filterSite());
+
+    input.addEventListener("input", () => {
+        const text     = input.value.trim();
+        const spaceAt  = text.indexOf(" ");
+        const hasSpace = spaceAt !== -1;
+        const keyword  = (hasSpace ? text.slice(0, spaceAt) : text).toLowerCase();
+        const query    = hasSpace ? text.slice(spaceAt + 1).trim() : "";
+
+        // Show shortcut hint
+        if (shortcuts[keyword]) {
+            showShortcutHint(keyword, query);
+            return;
+        }
+
+        // Show calc preview
+        if (isMath(text)) {
+            const val = evalMath(text);
+            if (val !== null) { showCalc(val); return; }
+        }
+
+        // Clear special results, let filterSite() handle the rest
+        clearSpecialResults();
         filterSite();
     });
 
     document.addEventListener("click", e => {
         if (!e.target.closest("#search-bar") && !e.target.closest("#site-results")) {
-            const box = document.getElementById("site-results");
+            const box = getBox();
             box.style.display = "none";
+        }
+    });
+
+    // Global keyboard shortcuts
+    document.addEventListener("keydown", e => {
+        if (e.key === "/" && document.activeElement !== input) {
+            e.preventDefault();
+            input.focus();
+        }
+        if (e.key === "Escape") {
+            input.blur();
         }
     });
 });
