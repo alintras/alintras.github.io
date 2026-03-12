@@ -66,6 +66,7 @@ const shortcuts = {
     bp:     q => `https://bulbapedia.bulbagarden.net/wiki/Special:Search?search=${encodeURIComponent(q)}`,
     pw:  q => `https://www.pokewiki.de/Spezial:Suche?search=${encodeURIComponent(q)}`,
     ig:        q => `https://www.instagram.com/${encodeURIComponent(q)}/`,
+    emoji:     q => `https://emojipedia.org/search/?q=${encodeURIComponent(q)}`,
 };
 
 /* =============================================================

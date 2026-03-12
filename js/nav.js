@@ -61,6 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item("🧮", "/pages/stuff/math-history.html", "Math History")}
       ${item("🧮", "/pages/stuff/math-prereq.html", "Math Prerequisites")}
     </details>
+    <br>
+
+      ${item("🫂", "/pages/about.html", "About")}
     </div>
   `;
 
