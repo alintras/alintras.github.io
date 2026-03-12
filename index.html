@@ -33,7 +33,8 @@
                     <h2>My Homepage</h2>
                     <div id="search-bar">
                         <input type="text" id="search-input" placeholder="Search..." autocomplete="off"
-                               oninput="filterSite()" onkeydown="if(event.key==='Enter')doSearch()">
+                            autofocus                            
+                            oninput="filterSite()" onkeydown="if(event.key==='Enter')doSearch()">
                         <select id="engine-select" title="Search engine" onchange="saveEngine()">
                             <option value="google">Google</option>
                             <option value="ddg">DuckDuckGo</option>
