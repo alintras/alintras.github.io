@@ -42,12 +42,12 @@
 }
 
 #nav-toggle::after {
-    content: '  ◀';
+    content: url("/assets/smileys/larrow.png");
     font-size: 9px;
     opacity: 1;
 }
 
 #layout-sidebar.collapsed #nav-toggle::after {
-    content: '▶';
+    content: url("/assets/smileys/rarrow.png");
     font-size: 15px;
 }
