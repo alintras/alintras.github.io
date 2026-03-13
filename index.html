@@ -45,20 +45,24 @@
         </div>
         <div id="layout-content">
             <header>
-                <h1 aria-label="Ali's Homepage">
+                <h1 aria-label="Ali's Homepage" 
+                style="border-bottom:1px solid #131313;
+                padding: 0 30px;
+                margin-bottom: 20px;">
                     <pre style=
-                    "font-family: monospace; 
-                    font-size: clamp(6px, 1vw, 14px); 
-                    color: #000000; 
-                    padding: 0px; 
-                    overflow: hidden; 
-                    white-space: pre;">
+                    "font-family: monospace;
+                    font-size: clamp(3px, 1.4vw, 14px);
+                    color: #000000;
+                    padding: 0px;
+                    overflow: visible;
+                    white-space: pre;
+                    max-width: 100%;">
     _    _ _ ´´       _   _                                             
    / \  | (_)´´___   | | | | ___  _ __ ___   ___ _ __   __ _  __ _  ___ 
   / _ \ | | | / __|  | |_| |/ _ \| '_ ` _ \ / _ \ '_ \ / _` |/ _` |/ _ \
  / ___ \| | | \__ \  |  _  | (_) | | | | | |  __/ |_) | (_| | (_| |  __/
 /_/   \_\_|_| |___/  |_| |_|\___/|_| |_| |_|\___| .__/ \__,_|\__, |\___|
-                                                 |_|         |___/      
+                                                |_|          |___/ 
                     </pre>
                 </h1>
             </header>
@@ -68,17 +72,20 @@
                         <article class="text">
                             <div class="title-row" style="display:flex; align-items:center; gap:10px;">
                                 <h2 style="margin:0;">Hey there!</h2>
-                                <div id="clock" style="font-size:flex; opacity:0.9; margin-right:auto;"></div>
+                                <div id="clock" style="opacity:0.9; margin-right:auto; border:1px solid #000000; padding: 2px"></div>
                             </div>
                             <p>
-                                Welcome to my page. <br> Take a look around!<br><br>
+                                Welcome to my page. Take a look around!<br>
                             </p>
                         </article>
                     </section>
                     <div id="search-bar">
-                        <input type="text" id="search-input" placeholder="Search..." autocomplete="off"
-                            autofocus                            
-                            oninput="filterSite()" onkeydown="if(event.key==='Enter')doSearch()">
+                        <div id="search-input-wrapper">
+                            <input type="text" id="search-input" placeholder="Search..." autocomplete="off"
+                                autofocus
+                                oninput="filterSite()" onkeydown="if(event.key==='Enter')doSearch()">
+                            <button id="search-clear" onclick="clearSearchInput()" tabindex="-1">✕</button>
+                        </div>
                         <select id="engine-select" title="Search engine" onchange="saveEngine()">
                             <option value="google">Google</option>
                             <option value="ddg">DuckDuckGo</option>
@@ -89,6 +96,39 @@
                         <button onclick="doSearch()">Search</button>
                     </div>
                     <div id="site-results"></div>
+                    <details style="margin-top: 16px;">
+                        <summary style="cursor: pointer; user-select: none;">Try out search keywords! </summary>
+                        <table style="margin-top: 8px; border-collapse: collapse; font-size: 0.9em;">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left; padding: 2px 12px 2px 0; border-bottom: 1px solid #131313;">Keyword</th>
+                                    <th style="text-align:left; padding: 2px 0; border-bottom: 1px solid #131313;">Searches</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>yt</code></td><td>YouTube</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>(gh</code></td><td>GitHub)</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>r</code></td><td>Reddit</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>w</code></td><td>Wikipedia</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>mdn</code></td><td>MDN Web Docs</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>so</code></td><td>Stack Overflow</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>npm</code></td><td>npm</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>maps</code></td><td>Google Maps</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>img</code></td><td>Google Images</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>tw</code></td><td>Twitter</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>bp</code></td><td>Bulbapedia</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>pw</code></td><td>PokéWiki</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>ig</code></td><td>Instagram profile</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>emoji</code></td><td>Emojipedia</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>+ - * / % ^</code></td><td>Calculator</td></tr>
+                            </tbody>
+                        </table>
+                        <p style="font-size: 0.85em; opacity: 0.6; margin: 10px 0 0 0;">
+                            Usage:<br>
+                            <code>yt lo-fi music</code> → searches YouTube for "lo-fi music"<br>
+                            Calculator: <code>12 * (3 + 4)</code> → shows result
+                        </p>
+                    </details>
                 </main>
             </div>
         </div>
@@ -115,7 +155,7 @@
                 i = (i + 1) % frames.length;
             }, 300);
         </script>
-        <p>&copy; 2024 Ali Aktas | <a href="mailto:alintras@proton.me">alintras@proton.me</a></p>
+        <p>&copy; 2026 alintras | <a href="mailto:alintras@proton.me">alintras@proton.me</a></p>
     </footer>
 
     <script>

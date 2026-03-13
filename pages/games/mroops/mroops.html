@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>Mr.Oops!!</title>
+    <link rel="stylesheet" href="mroops.css">
+</head>
+<body>
+    <div style="position:fixed; top:10px; left:10px; z-index:99;">
+        <a href="../index.html">🏠&#xFE0E Home</a>
+    </div>
+    <div id="wrap">
+        <div id="hud">
+            <div id="hud-stage">
+                <div class="hud-label">STAGE</div>
+                <div class="hud-val" id="stage-val">—</div>
+            </div>
+            <div id="hud-logo"><div id="logo-txt">Mr.<span>Oops</span>!!</div></div>
+            <div id="hud-score">
+                <div class="hud-label">SCORE</div>
+                <div id="score-num">0</div>
+            </div>
+        </div>
+        <canvas id="c"></canvas>
+        <div id="wavebar">
+            <div id="wave-lbl">WAVE</div>
+            <div id="pips"></div>
+        </div>
+        <div id="dpad">
+            <div class="db blank"></div><div class="db" data-d="up"><span class="arr arr-up"></span></div><div class="db blank"></div>
+            <div class="db" data-d="left"><span class="arr arr-left"></span></div><div class="db blank"></div><div class="db" data-d="right"><span class="arr arr-right"></span></div>
+            <div class="db blank"></div><div class="db" data-d="down"><span class="arr arr-down"></span></div><div class="db blank"></div>
+        </div>
+    </div>
+    <script src="mroops.js"></script>
+</body>
+</html>

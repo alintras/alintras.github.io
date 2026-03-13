@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package-info xmlns="BBPh Smileys" xmlns:smf="http://www.simplemachines.org/">
+  <id>EvolMate:BBPh</id>
+  <name>BBPh Smilies</name>
+  <version>1.0</version>
+  <type>modification</type>
+  <install>
+    <readme type="file">Copyrights.txt</readme>
+    <require-dir name="BBPh" destination="$smileysdir" />
+  </install>
+  <uninstall>
+    <remove-dir name="$smileysdir/BBPh" />
+  </uninstall>
+</package-info>

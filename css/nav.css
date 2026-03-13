@@ -1,23 +1,22 @@
-/* Container to replace the table */
 #layout {
     display: flex;
     width: 100%;
-    min-height: flex;
+    max-width: 100%;
 }
 
 #layout-sidebar {
-    width: flex;
     border-right: 1px solid #131313;
     padding: 20px;
     transition: width 0.2s, padding 0.2s;
     white-space: nowrap;
     overflow: hidden;
-    flex-shrink: 0; /* Prevents sidebar from squishing */
+    flex-shrink: 0;
 }
 
 #layout-sidebar.collapsed {
     width: 18px;
     padding: 8px 4px;
+    cursor: pointer;
 }
 
 #layout-sidebar.collapsed #sidebar-body {
@@ -29,11 +28,12 @@
 }
 
 #layout-content {
-    flex-grow: 1; /* Takes up remaining space */
+    flex: 1;
+    min-width: 0;
+    min-height: 80vh;
     display: flex;
     flex-direction: column;
     padding: 8px;
-    overflow-x: hidden;
 }
 
 #nav-toggle {
@@ -42,12 +42,12 @@
 }
 
 #nav-toggle::after {
-    content: ' ◀';
+    content: '  ◀';
     font-size: 9px;
-    opacity: 0.5;
+    opacity: 1;
 }
 
 #layout-sidebar.collapsed #nav-toggle::after {
     content: '▶';
-    font-size: 9px;
+    font-size: 15px;
 }
