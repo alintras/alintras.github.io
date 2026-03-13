@@ -65,10 +65,11 @@ const shortcuts = {
     maps:      q => `https://www.google.com/maps/search/${encodeURIComponent(q)}`,
     img:       q => `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`,
     tw:        q => `https://x.com/search?q=${encodeURIComponent(q)}`,
-    bp:     q => `https://bulbapedia.bulbagarden.net/wiki/Special:Search?search=${encodeURIComponent(q)}`,
-    pw:  q => `https://www.pokewiki.de/Spezial:Suche?search=${encodeURIComponent(q)}`,
+    bp:        q => `https://bulbapedia.bulbagarden.net/wiki/Special:Search?search=${encodeURIComponent(q)}`,
+    pw:        q => `https://www.pokewiki.de/Spezial:Suche?search=${encodeURIComponent(q)}`,
     ig:        q => `https://www.instagram.com/${encodeURIComponent(q)}/`,
     emoji:     q => `https://emojipedia.org/search/?q=${encodeURIComponent(q)}`,
+    op:        q => `https://onepiece.tube/anime/folge/${encodeURIComponent(q)}`,
 };
 
 /* =============================================================
