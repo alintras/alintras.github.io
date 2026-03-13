@@ -147,6 +147,13 @@ function clearSpecialResults() {
    ENGINE / RECENT SEARCH PERSISTENCE
 ============================================================= */
 
+function clearSearchInput() {
+    const input = document.getElementById("search-input");
+    input.value = "";
+    input.focus();
+    filterSite();
+}
+
 function saveEngine() {
     localStorage.setItem("preferredEngine", document.getElementById("engine-select").value);
 }
@@ -275,7 +282,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const input = document.getElementById("search-input");
 
-    input.addEventListener("focus", () => filterSite());
+    input.addEventListener("focus", () => {
+        filterSite();
+    });
 
     input.addEventListener("input", () => {
         const text     = input.value.trim();

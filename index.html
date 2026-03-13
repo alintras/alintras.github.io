@@ -77,9 +77,12 @@
                         </article>
                     </section>
                     <div id="search-bar">
-                        <input type="text" id="search-input" placeholder="Search..." autocomplete="off"
-                            autofocus                            
-                            oninput="filterSite()" onkeydown="if(event.key==='Enter')doSearch()">
+                        <div id="search-input-wrapper">
+                            <input type="text" id="search-input" placeholder="Search..." autocomplete="off"
+                                autofocus
+                                oninput="filterSite()" onkeydown="if(event.key==='Enter')doSearch()">
+                            <button id="search-clear" onclick="clearSearchInput()" tabindex="-1">✕</button>
+                        </div>
                         <select id="engine-select" title="Search engine" onchange="saveEngine()">
                             <option value="google">Google</option>
                             <option value="ddg">DuckDuckGo</option>
