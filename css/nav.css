@@ -16,6 +16,7 @@
 #layout-sidebar.collapsed {
     width: 18px;
     padding: 8px 4px;
+    cursor: pointer;
 }
 
 #layout-sidebar.collapsed #sidebar-body {
@@ -41,12 +42,12 @@
 }
 
 #nav-toggle::after {
-    content: ' ◀';
+    content: '  ◀';
     font-size: 9px;
-    opacity: 0.5;
+    opacity: 1;
 }
 
 #layout-sidebar.collapsed #nav-toggle::after {
     content: '▶';
-    font-size: 9px;
+    font-size: 15px;
 }

@@ -12,9 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   sidebar.innerHTML = `
     <b id="nav-toggle">Navigation</b>
     <div id="sidebar-body"><br><br>
-
     🏠&#xFE0E; <a href="/index.html">Home</a><br><br>
-
     <details>
       <summary>🛠️ Tools</summary>
       ${item("✉️", "/pages/tools/wondermail/wondermail.html", "PMD RT Wondermail Generator")}
@@ -23,9 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item("🔒", "/pages/tools/password-generator.html", "Password Generator")}
       ${item("📐", "/pages/tools/unit-converter.html", "Unit Converter")}
       ${item("💬", "/pages/tools/random-quote-generator.html", "Quote Generator")}
-    </details>
-    <br>
-
+    </details><br>
     <details>
       <summary>😁 Fun</summary>
       ${item("🎲", "/pages/fun/simple-physics.html", "Simple Physics")}
@@ -40,9 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item("🗞️", "/pages/fun/zeitung.html", "Newspaper Generator")}
       ${item("📇", "/pages/fun/zeugnis.html", "Report Card Generator")}
       ${item("🧩", "/pages/fun/puzzle.html", "Custom Puzzle Generator")}
-    </details>
-    <br>
-
+    </details><br>
     <details>
       <summary>🎮 Games</summary>
       ${item("🏝️", "/pages/games/castaway/castaway.html", "Castaway")}
@@ -50,9 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item("❌", "/pages/games/infinite-ttt.html", "Infinite TicTacToe")}
       ${item("🏓", "/pages/games/pong.html", "Pong")}
       ${item("⭕", "/pages/games/perfect-circle.html", "Perfect Circle Game")}
-    </details>
-    <br>
-
+    </details><br>
     <details>
       <summary>📚 Stuff</summary>
       ${item("💡", "/pages/stuff/git.html", "Git")}
@@ -60,10 +52,8 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item("👨‍💻", "/pages/stuff/c.html", "C")}
       ${item("🧮", "/pages/stuff/math-history.html", "Math History")}
       ${item("🧮", "/pages/stuff/math-prereq.html", "Math Prerequisites")}
-    </details>
-    <br>
-
-      ${item("🫂", "/pages/about.html", "About")}
+    </details><br>
+    ${item("🫂", "/pages/about.html", "About")}
     </div>
   `;
 
@@ -74,10 +64,17 @@ document.addEventListener("DOMContentLoaded", function () {
     layoutSidebar.classList.add("collapsed");
   }
 
-  toggle.addEventListener("click", function () {
+  toggle.addEventListener("click", function (e) {
+    e.stopPropagation();
     layoutSidebar.classList.toggle("collapsed");
     localStorage.setItem("sidebarCollapsed",
       layoutSidebar.classList.contains("collapsed") ? "1" : "0");
   });
-});
 
+  layoutSidebar.addEventListener("click", function () {
+    if (layoutSidebar.classList.contains("collapsed")) {
+      layoutSidebar.classList.remove("collapsed");
+      localStorage.setItem("sidebarCollapsed", "0");
+    }
+  });
+});
