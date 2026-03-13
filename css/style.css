@@ -66,11 +66,11 @@ body {
   overflow-x: hidden;
 }
 
-header pre {
+h1 pre {
   font-family: monospace;
   font-size: clamp(6px, 1vw, 14px);
   color: #000000;
-  padding: 0px;
+  padding: 0;
   overflow: hidden;
   white-space: pre;
   max-width: 100%;
