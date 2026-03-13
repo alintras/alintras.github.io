@@ -24,6 +24,22 @@
    LAYOUT PUSH & ALIGNMENT
 ===================================================== */
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#layout {
+  flex: 1;
+}
+
 #main-content {
   flex: 1;
 }
@@ -56,17 +72,10 @@ a:hover {
 footer {
   padding-top: 20px;
   border-top: 1px solid #131313;
-}
-
-/* =====================================================
-   OVERFLOW FIX
-===================================================== */
-
-html, body {
-    max-width: 100%;
+  margin-top: auto;
 }
 
 main {
-    max-width: 100%;
-    box-sizing: border-box;
+  max-width: 100%;
+  box-sizing: border-box;
 }

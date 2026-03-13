@@ -68,3 +68,16 @@
     background: #131313;
     color: #fff;
 }
+
+@media (max-width: 600px) {
+    #search-bar {
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+    #engine-select {
+        flex: 1;
+    }
+    #search-bar button {
+        flex: 1;
+    }
+}
