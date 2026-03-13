@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item("💬", "/pages/tools/random-quote-generator.html", "Quote Generator")}
     </details><br>
     <details>
-      <summary>😁 Fun</summary>
+      <summary><img src="/assets/smileys/laugh.gif" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Fun</summary>
       ${item("🎲", "/pages/fun/simple-physics.html", "Simple Physics")}
       ${item("💘", "/pages/fun/love-calculator.html", "Love Compatibility Calculator")}
       ${item("👩‍❤️‍💋‍👨", "/pages/fun/vivi.html", "Valentines 2026")}
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item("🧩", "/pages/fun/puzzle.html", "Custom Puzzle Generator")}
     </details><br>
     <details>
-      <summary>🎮 Games</summary>
+      <summary><img src="/assets/smileys/mario.gif" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Games</summary>
       ${item("🏝️", "/pages/games/castaway/castaway.html", "Castaway")}
       ${item("❗", "/pages/games/mroops.html", "Mr.Oops!!")}
       ${item("❌", "/pages/games/infinite-ttt.html", "Infinite TicTacToe")}
