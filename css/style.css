@@ -65,3 +65,9 @@ footer {
 body {
   overflow-x: hidden;
 }
+
+@media (max-width: 600px) {
+    h1 pre {
+        display: none;
+    }
+}
