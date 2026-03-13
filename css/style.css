@@ -67,6 +67,11 @@ body {
 }
 
 header pre {
-  max-width: 100%;
+  font-family: monospace;
+  font-size: clamp(6px, 1vw, 14px);
+  color: #000000;
+  padding: 0px;
   overflow: hidden;
+  white-space: pre;
+  max-width: 100%;
 }
