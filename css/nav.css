@@ -1,16 +1,18 @@
+/* Container to replace the table */
 #layout {
+    display: flex;
     width: 100%;
-    border-collapse: collapse;
+    min-height: flex;
 }
 
 #layout-sidebar {
-    width: 160px;
+    width: flex;
     border-right: 1px solid #131313;
-    padding: 8px;
-    vertical-align: top;
+    padding: 20px;
     transition: width 0.2s, padding 0.2s;
     white-space: nowrap;
     overflow: hidden;
+    flex-shrink: 0; /* Prevents sidebar from squishing */
 }
 
 #layout-sidebar.collapsed {
@@ -27,8 +29,11 @@
 }
 
 #layout-content {
+    flex-grow: 1; /* Takes up remaining space */
+    display: flex;
+    flex-direction: column;
     padding: 8px;
-    vertical-align: top;
+    overflow-x: hidden;
 }
 
 #nav-toggle {

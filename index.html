@@ -3,7 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aktas Homepage</title>
+    
+    <title>Alintras Homepage</title>
+    <meta name="title" content="Ali Aktas | Computer Science & Statistics at LMU Munich">
+    <meta name="description" content="Personal homepage of Ali Aktas (alintras), a Computer Science and Statistics student at LMU Munich. Explore my projects and profile.">
+    <meta name="keywords" content="Ali Aktas, alintras, LMU Munich, Computer Science, Statistics, Personal Homepage">
+    <meta name="author" content="Ali Aktas">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://alintras.github.io/"> <meta property="og:title" content="Ali Aktas | Useful tools and fun games">
+    <meta property="og:description" content="Welcome to the personal page of Ali Aktas. Studying CS and Stats at LMU Munich.">
+    <meta property="og:image" content="images/og-image.jpg"> <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://twitter.com/alintrass">
+    <meta property="twitter:title" content="Ali Aktas">
+    <meta property="twitter:description" content="Welcome to the personal page of Ali Aktas">
+    <meta property="twitter:image" content="images/og-image.jpg">
+
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/search.css">
     <link rel="stylesheet" href="css/nav.css">
@@ -23,14 +39,42 @@
 </head>
 <body>
 
-    <table id="layout" cellpadding="0" cellspacing="0">
-        <tr>
-            <td id="layout-sidebar">
-                <div id="sidebar"></div>
-            </td>
-            <td id="layout-content">
-                <header>
-                    <h2>My Homepage</h2>
+    <div id="layout">
+        <div id="layout-sidebar">
+            <div id="sidebar"></div>
+        </div>
+        <div id="layout-content">
+            <header>
+                <h1 aria-label="Ali's Homepage">
+                    <pre style=
+                    "font-family: monospace; 
+                    font-size: clamp(6px, 1vw, 14px); 
+                    color: #000000; 
+                    padding: 0px; 
+                    overflow: hidden; 
+                    white-space: pre;">
+    _    _ _ ´´       _   _                                             
+   / \  | (_)´´___   | | | | ___  _ __ ___   ___ _ __   __ _  __ _  ___ 
+  / _ \ | | | / __|  | |_| |/ _ \| '_ ` _ \ / _ \ '_ \ / _` |/ _` |/ _ \
+ / ___ \| | | \__ \  |  _  | (_) | | | | | |  __/ |_) | (_| | (_| |  __/
+/_/   \_\_|_| |___/  |_| |_|\___/|_| |_| |_|\___| .__/ \__,_|\__, |\___|
+                                                 |_|         |___/      
+                    </pre>
+                </h1>
+            </header>
+            <div id="main-content">
+                <main>
+                    <section id="profile-section">
+                        <article class="text">
+                            <div class="title-row" style="display:flex; align-items:center; gap:10px;">
+                                <h2 style="margin:0;">Hey there!</h2>
+                                <div id="clock" style="font-size:flex; opacity:0.9; margin-right:auto;"></div>
+                            </div>
+                            <p>
+                                Welcome to my page. <br> Take a look around!<br><br>
+                            </p>
+                        </article>
+                    </section>
                     <div id="search-bar">
                         <input type="text" id="search-input" placeholder="Search..." autocomplete="off"
                             autofocus                            
@@ -39,31 +83,16 @@
                             <option value="google">Google</option>
                             <option value="ddg">DuckDuckGo</option>
                             <option value="brave">Brave</option>
+                            <option value="ecosia">Ecosia</option>
+                            <option value="yandex">Yandex</option>
                         </select>
                         <button onclick="doSearch()">Search</button>
                     </div>
                     <div id="site-results"></div>
-                </header>
-                <div id="main-content">
-                    <main>
-                        <section id="profile-section">
-                            <div class="text">
-                                <div class="title-row" style="display:flex; align-items:center; gap:10px;">
-                                    <h3 style="margin:0;">Hey there!</h3>
-                                    <div id="clock" style="font-size:0.9em; opacity:0.7; margin-right:auto;"></div>
-                                </div>
-                                <p>
-                                Welcome to my page. <br> Take a look around!<br><br>
-                                My name is <b>Ali Aktas</b> (alintras).<br><br>
-                                Currently, I'm a Computer Science major and Statistics minor at LMU Munich.
-                                </p>
-                            </div>
-                        </section>
-                    </main>
-                </div>
-            </td>
-        </tr>
-    </table>
+                </main>
+            </div>
+        </div>
+    </div>
 
     <footer>
         <pre id="ascii" style="font-family:'Courier New',monospace; white-space:pre; margin:0; padding:0;"></pre>
@@ -88,16 +117,15 @@
         </script>
         <p>&copy; 2024 Ali Aktas | <a href="mailto:alintras@proton.me">alintras@proton.me</a></p>
     </footer>
+
     <script>
         setInterval(()=>{
         const now=new Date();
         document.getElementById("clock").textContent=now.toLocaleTimeString();
         },1000);
-    </script>
 
-    <script>
         if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/service-worker.js");
+            navigator.serviceWorker.register("/service-worker.js");
         }
     </script>
 </body>

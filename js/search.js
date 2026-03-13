@@ -45,6 +45,8 @@ const engines = {
     google: q => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
     ddg:    q => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
     brave:  q => `https://search.brave.com/search?q=${encodeURIComponent(q)}`,
+    ecosia: q => `https://www.ecosia.org/search?q=${encodeURIComponent(q)}`,
+    yandex: q => `https://yandex.com/search/?text=${encodeURIComponent(q)}`,
 };
 
 /* =============================================================
