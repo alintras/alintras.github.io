@@ -62,12 +62,12 @@ footer {
    OVERFLOW FIX
 ===================================================== */
 
-body {
-  overflow-x: hidden;
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
-@media (max-width: 600px) {
-    h1 pre {
-        display: none;
-    }
+main {
+    max-width: 100%;
+    box-sizing: border-box;
 }
