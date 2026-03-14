@@ -62,11 +62,12 @@ touch-action: none;
 </head>
 <body>
 <a href="/../index.html"><img src="/assets/smileys/home.jpg" style="width:24px;height:24px;vertical-align:-7px;image-rendering:pixelated;"> Home</a>
-<h1>Pixel Art Editor</h1>
+<h1 style="opacity: 0;">Pixel Art Editor</h1>
 <div id="controls">
   <div class="control-group">
     <label>Size:</label>
     <div id="size-btns">
+      <button class="size-btn" data-size="8">8x8</button>
       <button class="size-btn active" data-size="16">16×16</button>
       <button class="size-btn" data-size="32">32×32</button>
       <button class="size-btn" data-size="64">64×64</button>
@@ -83,7 +84,7 @@ touch-action: none;
   </div>
   <div class="control-group">
     <label>Trace:</label>
-    <button id="trace-load-btn">📂 Load image</button>
+    <button id="trace-load-btn">Load image</button>
     <input type="file" id="trace-input" accept="image/*" style="display:none">
     <input type="range" id="trace-opacity" min="10" max="90" value="40" style="width:80px" title="Trace opacity">
     <button id="trace-clear-btn" style="display:none">✕ Remove</button>
