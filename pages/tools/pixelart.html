@@ -23,6 +23,7 @@ min-height: 32px;
 }
 button:hover, button:active { background: #eee; }
 button.active { background: #000; color: #fff; }
+button:disabled { opacity: 0.35; cursor: default; background: #fff; color: #000; }
 
 #size-btns, #tool-btns { display: flex; flex-wrap: wrap; gap: 4px; }
 
@@ -32,16 +33,17 @@ width: 26px; height: 26px;
 border: 1px solid #000; cursor: pointer;
 touch-action: manipulation;
 }
+/* white swatch gets a diagonal line so it’s visible */
+.palette-swatch[data-color=”#ffffff”] {
+background: #fff;
+background-image: linear-gradient(to bottom right, transparent calc(50% - 0.5px), #ccc calc(50% - 0.5px), #ccc calc(50% + 0.5px), transparent calc(50% + 0.5px));
+}
 .palette-swatch.active { outline: 2px solid #000; outline-offset: 1px; }
 
-#custom-color {
-width: 32px; height: 26px;
-border: 1px solid #000; padding: 0; cursor: pointer; background: none;
-}
-#active-color-display {
-width: 26px; height: 26px;
-border: 1px solid #000; display: inline-block; vertical-align: middle;
-}
+#custom-color { width: 32px; height: 26px; border: 1px solid #000; padding: 0; cursor: pointer; background: none; }
+#active-color-display { width: 26px; height: 26px; border: 1px solid #000; display: inline-block; vertical-align: middle; }
+
+#bg-color { width: 32px; height: 26px; border: 1px solid #000; padding: 0; cursor: pointer; background: none; }
 
 #canvas-wrapper {
 overflow: auto;
@@ -85,6 +87,8 @@ touch-action: none;
     <input type="file" id="trace-input" accept="image/*" style="display:none">
     <input type="range" id="trace-opacity" min="10" max="90" value="40" style="width:80px" title="Trace opacity">
     <button id="trace-clear-btn" style="display:none">✕ Remove</button>
+    <span style="font-size:0.85em;margin-left:4px;">bg:</span>
+    <input type="color" id="bg-color" value="#ffffff" title="Background color">
   </div>
   <div class="control-group">
     <label>Color:</label>
@@ -99,9 +103,11 @@ touch-action: none;
 </div>
 
 <div id="bottom-controls">
+  <button id="undo-btn" disabled>↩ Undo</button>
+  <button id="redo-btn" disabled>↪ Redo</button>
   <button id="clear-btn">Clear</button>
   <button id="save-btn">Save PNG</button>
-  <label><input type="checkbox" id="transparent-white" checked> White = transparent</label>
+  <label><input type="checkbox" id="transparent-empty" checked> Empty = transparent</label>
 </div>
 
 <script>
@@ -122,10 +128,14 @@ touch-action: none;
   const activeColorDisplay = document.getElementById("active-color-display");
   const clearBtn = document.getElementById("clear-btn");
   const saveBtn = document.getElementById("save-btn");
-  const transparentWhiteCheck = document.getElementById("transparent-white");
+  const transparentEmptyCheck = document.getElementById("transparent-empty");
+  const undoBtn = document.getElementById("undo-btn");
+  const redoBtn = document.getElementById("redo-btn");
+  const bgColorInput = document.getElementById("bg-color");
 
   let gridSize = 16;
   let cellSize = 16;
+  // null = empty (transparent/bg), string = painted color (including #ffffff)
   let pixels = [];
   let activeColor = "#000000";
   let activeTool = "draw";
@@ -133,6 +143,26 @@ touch-action: none;
   let lastCell = null;
   let traceImage = null;
   let traceOpacity = 0.4;
+  let bgColor = "#ffffff";
+
+  // Undo/redo: depth 1
+  let undoState = null;
+  let redoState = null;
+
+  function clonePixels(p) {
+    return p.map(row => row.slice());
+  }
+
+  function saveUndo() {
+    undoState = clonePixels(pixels);
+    redoState = null;
+    updateUndoRedoBtns();
+  }
+
+  function updateUndoRedoBtns() {
+    undoBtn.disabled = !undoState;
+    redoBtn.disabled = !redoState;
+  }
 
   function calcCellSize(size) {
     const available = Math.min(window.innerWidth - 26, 600);
@@ -141,32 +171,33 @@ touch-action: none;
 
   function initGrid() {
     cellSize = calcCellSize(gridSize);
-    pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill("#ffffff"));
+    pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
+    undoState = null;
+    redoState = null;
+    updateUndoRedoBtns();
     canvas.width = gridSize * cellSize;
     canvas.height = gridSize * cellSize;
     redraw();
   }
 
   function redraw() {
-    // white base
-    ctx.fillStyle = "#ffffff";
+    // background color
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // trace image under pixels
+    // trace image
     if (traceImage) {
       ctx.globalAlpha = traceOpacity;
       ctx.drawImage(traceImage, 0, 0, canvas.width, canvas.height);
       ctx.globalAlpha = 1;
     }
-    // draw non-white pixels opaque (white = empty = show trace/bg)
+    // painted pixels (null = empty, skip)
     for (let r = 0; r < gridSize; r++)
       for (let c = 0; c < gridSize; c++)
-        if (pixels[r][c] !== "#ffffff") drawCell(r, c);
+        if (pixels[r][c] !== null) {
+          ctx.fillStyle = pixels[r][c];
+          ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+        }
     drawGrid();
-  }
-
-  function drawCell(r, c) {
-    ctx.fillStyle = pixels[r][c];
-    ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
   }
 
   function drawGrid() {
@@ -184,21 +215,14 @@ touch-action: none;
     }
   }
 
-  function getCellFromXY(x, y) {
-    const c = Math.floor(x / cellSize);
-    const r = Math.floor(y / cellSize);
-    if (r < 0 || r >= gridSize || c < 0 || c >= gridSize) return null;
-    return { r, c };
-  }
-
   function getCellFromEvent(e) {
     const rect = canvas.getBoundingClientRect();
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-    return getCellFromXY(
-      (e.clientX - rect.left) * scaleX,
-      (e.clientY - rect.top) * scaleY
-    );
+    const c = Math.floor((e.clientX - rect.left) * scaleX / cellSize);
+    const r = Math.floor((e.clientY - rect.top) * scaleY / cellSize);
+    if (r < 0 || r >= gridSize || c < 0 || c >= gridSize) return null;
+    return { r, c };
   }
 
   function applyTool(cell) {
@@ -208,10 +232,11 @@ touch-action: none;
       pixels[r][c] = activeColor;
       redraw();
     } else if (activeTool === "erase") {
-      pixels[r][c] = "#ffffff";
+      pixels[r][c] = null;
       redraw();
     } else if (activeTool === "eyedrop") {
-      setActiveColor(pixels[r][c]);
+      // pick painted color, or if empty pick bg color
+      setActiveColor(pixels[r][c] !== null ? pixels[r][c] : bgColor);
       setTool("draw");
     } else if (activeTool === "fill") {
       floodFill(r, c, pixels[r][c], activeColor);
@@ -253,9 +278,9 @@ touch-action: none;
   PALETTE.forEach(color => {
     const swatch = document.createElement("div");
     swatch.className = "palette-swatch";
-    swatch.style.background = color;
+    if (color !== "#ffffff") swatch.style.background = color;
     swatch.dataset.color = color;
-    swatch.title = color;
+    swatch.title = color === "#ffffff" ? "white" : color;
     swatch.addEventListener("click", () => setActiveColor(color));
     paletteEl.appendChild(swatch);
   });
@@ -276,12 +301,15 @@ touch-action: none;
   );
 
   customColorInput.addEventListener("input", () => setActiveColor(customColorInput.value));
+  bgColorInput.addEventListener("input", () => { bgColor = bgColorInput.value; redraw(); });
 
-  // Pointer events (mouse + touch unified)
+  // Pointer events
   canvas.addEventListener("pointerdown", e => {
     e.preventDefault();
     canvas.setPointerCapture(e.pointerId);
     isPointerDown = true;
+    // save undo before stroke starts
+    if (activeTool === "draw" || activeTool === "erase") saveUndo();
     const cell = getCellFromEvent(e);
     lastCell = cell;
     applyTool(cell);
@@ -299,6 +327,31 @@ touch-action: none;
   canvas.addEventListener("pointerup", () => { isPointerDown = false; lastCell = null; });
   canvas.addEventListener("pointercancel", () => { isPointerDown = false; lastCell = null; });
 
+  // Undo / Redo
+  undoBtn.addEventListener("click", () => {
+    if (!undoState) return;
+    redoState = clonePixels(pixels);
+    pixels = undoState;
+    undoState = null;
+    updateUndoRedoBtns();
+    redraw();
+  });
+
+  redoBtn.addEventListener("click", () => {
+    if (!redoState) return;
+    undoState = clonePixels(pixels);
+    pixels = redoState;
+    redoState = null;
+    updateUndoRedoBtns();
+    redraw();
+  });
+
+  // Keyboard shortcuts
+  document.addEventListener("keydown", e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) { e.preventDefault(); undoBtn.click(); }
+    if ((e.ctrlKey || e.metaKey) && (e.key === "y" || (e.key === "z" && e.shiftKey))) { e.preventDefault(); redoBtn.click(); }
+  });
+
   // Resize
   window.addEventListener("resize", () => {
     const newCellSize = calcCellSize(gridSize);
@@ -310,23 +363,28 @@ touch-action: none;
     }
   });
 
+  // Clear
   clearBtn.addEventListener("click", () => {
-    pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill("#ffffff"));
+    saveUndo();
+    pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
     redraw();
   });
 
+  // Save PNG
   saveBtn.addEventListener("click", () => {
-    const whiteTransparent = transparentWhiteCheck.checked;
+    const emptyTransparent = transparentEmptyCheck.checked;
     const exp = document.createElement("canvas");
     exp.width = gridSize;
     exp.height = gridSize;
     const ectx = exp.getContext("2d");
-    if (!whiteTransparent) { ectx.fillStyle = "#fff"; ectx.fillRect(0, 0, gridSize, gridSize); }
+    if (!emptyTransparent) {
+      ectx.fillStyle = bgColor;
+      ectx.fillRect(0, 0, gridSize, gridSize);
+    }
     for (let r = 0; r < gridSize; r++)
       for (let c = 0; c < gridSize; c++) {
-        const color = pixels[r][c];
-        if (whiteTransparent && color.toLowerCase() === "#ffffff") continue;
-        ectx.fillStyle = color;
+        if (pixels[r][c] === null) continue;
+        ectx.fillStyle = pixels[r][c];
         ectx.fillRect(c, r, 1, 1);
       }
     const link = document.createElement("a");
@@ -342,7 +400,6 @@ touch-action: none;
   const traceClearBtn = document.getElementById("trace-clear-btn");
 
   traceLoadBtn.addEventListener("click", () => traceInput.click());
-
   traceInput.addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -357,12 +414,10 @@ touch-action: none;
     img.src = url;
     traceInput.value = "";
   });
-
   traceOpacitySlider.addEventListener("input", () => {
     traceOpacity = parseInt(traceOpacitySlider.value) / 100;
     if (traceImage) redraw();
   });
-
   traceClearBtn.addEventListener("click", () => {
     traceImage = null;
     traceClearBtn.style.display = "none";
