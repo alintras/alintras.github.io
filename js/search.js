@@ -70,6 +70,7 @@ const shortcuts = {
     ig:        q => `https://www.instagram.com/${encodeURIComponent(q)}/`,
     emoji:     q => `https://emojipedia.org/search/?q=${encodeURIComponent(q)}`,
     op:        q => `https://onepiece.tube/anime/folge/${encodeURIComponent(q)}`,
+    ud:        q => `https://www.urbandictionary.com/define.php?term=${encodeURIComponent(q)}`,
 };
 
 /* =============================================================
