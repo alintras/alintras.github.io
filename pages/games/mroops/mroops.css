@@ -1,7 +1,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 a { color: white; text-decoration: none; }
 body {
-    background: #111;
+    background: var(--bg, #111);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -12,7 +12,6 @@ body {
     font-family: 'Arial Black', Arial, sans-serif;
 }
 #wrap { display: flex; flex-direction: column; align-items: center; }
-
 /* HUD */
 #hud { width: 400px; display: flex; align-items: stretch; background: #1c1c1c; border-bottom: 2px solid #000; }
 #hud-stage { flex: 1; padding: 5px 10px; border-right: 1px solid #2a2a2a; }
@@ -23,17 +22,14 @@ body {
 #logo-txt { font-size: 19px; font-weight: 900; color: #fff; line-height: 1; white-space: nowrap; text-shadow: 0 0 12px rgba(255,180,0,0.3); }
 #logo-txt span { color: #ffc800; }
 #score-num { font-size: 22px; color: #fff; font-weight: 900; line-height: 1; }
-
 canvas { display: block; width: 400px; height: 400px; background: #000; }
-
-/* Wave bar - purple glowing pill style */
+/* Wave bar */
 #wavebar { width: 400px; background: #1c1c1c; border-top: 2px solid #000; padding: 5px 10px 6px; display: flex; align-items: center; gap: 8px; }
 #wave-lbl { font-size: 8px; color: #555; letter-spacing: 2px; font-weight: bold; white-space: nowrap; }
 #pips { display: flex; gap: 3px; flex: 1; flex-wrap: wrap; align-items: center; }
 .pip { width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #333, #1a1a1a); border: 1px solid #2a2a2a; flex-shrink: 0; }
 .pip.done { background: radial-gradient(circle at 40% 35%, #6a3a9a, #3a0a6a); border-color: #7a4aaa; box-shadow: 0 0 3px rgba(140,60,200,0.5); }
 .pip.curr { background: radial-gradient(circle at 40% 35%, #cc44ff, #8800cc); border-color: #dd66ff; box-shadow: 0 0 5px rgba(200,80,255,0.8); }
-
 /* D-pad */
 #dpad { width: 400px; background: #1c1c1c; border-top: 2px solid #000; display: grid; grid-template-columns: repeat(3, 54px); grid-template-rows: repeat(3, 54px); gap: 2px; justify-content: center; padding: 6px 0 8px; }
 .db { background: #161616; border: 1px solid #252525; border-radius: 5px; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #3a3a3a; -webkit-tap-highlight-color: transparent; }

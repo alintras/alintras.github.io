@@ -4,28 +4,36 @@
 <title>Voltorb Flip Solver</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <style type="text/css">
+body { background: var(--bg); color: var(--fg); }
 td.cell {
   width: 70px; height: 70px;
   text-align: center; vertical-align: middle;
-  cursor: pointer; border: 2px solid #999; padding: 0;
+  cursor: pointer; border: 2px solid var(--border-muted); padding: 0;
 }
-td.cell.highlight { border: 3px solid black; background: #ffffcc; }
+td.cell.highlight { border: 3px solid var(--fg); background: #ffffcc; }
 td.cell div.val { font-size: 1.4em; font-weight: bold; }
 td.cell div.sub { font-size: 0.7em; }
 td.hint { padding: 3px 6px; white-space: nowrap; vertical-align: middle; font-size: 0.9em; }
 td.hint input[type=number] { width: 36px; }
 th.ch { text-align: center; font-size: 0.85em; font-weight: normal; padding: 2px; }
+input[type=number] { background: var(--bg); color: var(--fg); border: 1px solid var(--border); }
+input[type=button] { background: var(--bg); color: var(--fg); border: 1px solid var(--border); cursor: pointer; }
+input[type=button]:hover { background: var(--fg); color: var(--bg); }
+#con { border: 1px solid var(--border); padding: 6px; margin-bottom: 8px; min-height: 2em; }
+#dropzone { border: 1px dashed var(--border); padding: 10px; margin: 4px 0; }
+table { border-color: var(--border); }
 a { color: inherit; text-decoration: none;}
 </style>
+<script src="/js/style.js"></script>
 </head>
 <body>
 <div style="position:fixed; top:10px; left:10px;">
-  <a href="/../index.html"><img src="/assets/smileys/home.jpg" style="width:24px; height:24px; vertical-align:-7px; image-rendering:pixelated;"> Home</a>
+  <a href="/../index.html"><img src="/assets/smileys/vhome.PNG" style="width:24px; height:24px; vertical-align:-7px; image-rendering:pixelated;"> Home</a>
 </div>  
 <h1><br>Voltorb Flip Solver</h1>
 <p>Enter the row/column hints, then click <b>Solve</b>. The solver will guide you card by card.</p>
 
-<div id="con" style="border:1px solid black;padding:6px;margin-bottom:8px;min-height:2em">Enter hints and click Solve.</div>
+<div id="con">Enter hints and click Solve.</div>
 
 <p>
   <input type="button" value="Solve" onclick="doSolve()"/>
@@ -39,7 +47,7 @@ a { color: inherit; text-decoration: none;}
 
 <h2>Photo Scan</h2>
 <p>Upload a screenshot or photo. AI reads the hint numbers automatically.</p>
-<div id="dropzone" style="border:1px dashed black;padding:10px;margin:4px 0">Drop image here or paste (Ctrl+V)</div>
+<div id="dropzone">Drop image here or paste (Ctrl+V)</div>
 <input type="file" accept="image/*" onchange="processImage(this.files[0])"/>
 <input type="button" value="Use Camera" onclick="startCamera()"/>
 <input type="button" id="capturebtn" value="Capture" style="display:none" onclick="captureFrame()"/>
@@ -93,7 +101,6 @@ function initUserBoard() {
 // ═══════════════════════════════════════════════════════
 
 function newPSol(rTotals, cTotals, initTiles) {
-  // tiles[y][x], invertedTiles[x][y]
   var tiles = [], inv = [];
   for(var y=0;y<5;y++) { tiles[y]=[]; for(var x=0;x<5;x++) tiles[y][x]=cloneTile(initTiles[y][x]); }
   for(var x=0;x<5;x++) { inv[x]=[]; for(var y=0;y<5;y++) inv[x][y]=cloneTile(tiles[y][x]); }
@@ -190,69 +197,15 @@ function updateAt(ps, x, y, tile) {
   return applyHeuristics(ps);
 }
 
-// ═══════════════════════════════════════════════════════
-// HEURISTICS  (port of psol_heuristics.go)
-// ═══════════════════════════════════════════════════════
-
-function h0(d,line){ // RV+RP==NUT → remove 2,3
-  if(d.rv+d.rp!==d.nut) return false;
-  var u=false;
-  for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)&&(t[2]||t[3])){t[2]=false;t[3]=false;u=true;}}
-  return u;
-}
-function h1(d,line){ // NUT-RV==RP-1 → remove 3
-  if(d.nut-d.rv!==d.rp-1) return false;
-  var u=false;
-  for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)&&t[3]){t[3]=false;u=true;}}
-  return u;
-}
-function h2(d,line){ // RV==0 → remove voltorb
-  if(d.rv!==0) return false;
-  var u=false;
-  for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)&&t[0]){t[0]=false;u=true;}}
-  return u;
-}
-function h3(d,line){ // NUT-1==RV → each unsolved is V or RemainingPoints
-  if(d.nut-1!==d.rv) return false;
-  var u=false;
-  for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){
-    for(var j=1;j<4;j++){if(d.rp!==j&&t[j]){t[j]=false;u=true;}}
-  }}
-  return u;
-}
-function h4(d,line){ // (NUT-RV) <= (RP+1)/3 → remove 1
-  if((d.nut-d.rv)>Math.floor((d.rp+1)/3)) return false; // integer division like Go
-  // wait - Go does integer division: (RP+1)/3
-  var u=false;
-  for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)&&t[1]){t[1]=false;u=true;}}
-  return u;
-}
-function h5(d,line){ // RV==0 && RP==NUT → all are 1
-  if(!(d.rv===0&&d.rp===d.nut)) return false;
-  var u=false;
-  for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){t[0]=false;t[1]=true;t[2]=false;t[3]=false;u=true;}}
-  return u;
-}
-function h6(d,line){ // RV==NUT → all voltorbs
-  if(d.rv!==d.nut) return false;
-  var u=false;
-  for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){t[0]=true;t[1]=false;t[2]=false;t[3]=false;u=true;}}
-  return u;
-}
-function h7(d,line){ // NUT==1 → fill single unsolved
-  if(d.nut!==1) return false;
-  for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){
-    t[0]=d.rp===0;t[1]=d.rp===1;t[2]=d.rp===2;t[3]=d.rp===3;
-    return true;
-  }}
-  return false;
-}
-function h8(d,line){ // RP==NUT*3 → all 3s
-  if(d.rp!==d.nut*3) return false;
-  var u=false;
-  for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){t[0]=false;t[1]=false;t[2]=false;t[3]=true;u=true;}}
-  return u;
-}
+function h0(d,line){ if(d.rv+d.rp!==d.nut) return false; var u=false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)&&(t[2]||t[3])){t[2]=false;t[3]=false;u=true;}} return u; }
+function h1(d,line){ if(d.nut-d.rv!==d.rp-1) return false; var u=false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)&&t[3]){t[3]=false;u=true;}} return u; }
+function h2(d,line){ if(d.rv!==0) return false; var u=false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)&&t[0]){t[0]=false;u=true;}} return u; }
+function h3(d,line){ if(d.nut-1!==d.rv) return false; var u=false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){for(var j=1;j<4;j++){if(d.rp!==j&&t[j]){t[j]=false;u=true;}}}} return u; }
+function h4(d,line){ if((d.nut-d.rv)>Math.floor((d.rp+1)/3)) return false; var u=false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)&&t[1]){t[1]=false;u=true;}} return u; }
+function h5(d,line){ if(!(d.rv===0&&d.rp===d.nut)) return false; var u=false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){t[0]=false;t[1]=true;t[2]=false;t[3]=false;u=true;}} return u; }
+function h6(d,line){ if(d.rv!==d.nut) return false; var u=false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){t[0]=true;t[1]=false;t[2]=false;t[3]=false;u=true;}} return u; }
+function h7(d,line){ if(d.nut!==1) return false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){t[0]=d.rp===0;t[1]=d.rp===1;t[2]=d.rp===2;t[3]=d.rp===3; return true;}} return false; }
+function h8(d,line){ if(d.rp!==d.nut*3) return false; var u=false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)){t[0]=false;t[1]=false;t[2]=false;t[3]=true;u=true;}} return u; }
 
 var heuristics = [h0,h1,h2,h3,h4,h5,h6,h7,h8];
 
@@ -294,14 +247,9 @@ function applyHeuristics(ps) {
   }
 }
 
-// ═══════════════════════════════════════════════════════
-// SEARCH  (port of psol_search.go)
-// ═══════════════════════════════════════════════════════
-
 function allPossibleSolvedBoards(ps) {
   var stack=[clonePSol(ps)];
   var boardCounts={}, total=0;
-
   while(stack.length>0){
     var cur=stack.pop();
     var found=false;
@@ -357,17 +305,13 @@ function safetyOfEachGuess(ps) {
 
 function safestUnsolvedPosition(ps) {
   if(isWon(ps)) return {possible:true,won:true};
-
-  // Check if any tile is definitively non-voltorb (not solved yet)
   for(var y=0;y<5;y++) for(var x=0;x<5;x++){
     var t=ps.tiles[y][x];
     if(!tileIsSolved(t)&&!t[0])
       return {possible:true,won:false,x:x,y:y,safety:1.0};
   }
-
   var res=safetyOfEachGuess(ps);
   var safety=res.safety, total=res.total;
-
   var bestX=-1,bestY=-1,bestN=-1;
   for(var y=0;y<5;y++){
     for(var x=0;x<5;x++){
@@ -375,7 +319,6 @@ function safestUnsolvedPosition(ps) {
       if(!(key in safety)) continue;
       var n=safety[key];
       if(n===total){
-        // Guaranteed safe: mark it and recurse
         var t=cloneTile(ps.tiles[y][x]);
         t[0]=false;
         if(!tileIsPossible(t)) return {possible:false};
@@ -387,37 +330,24 @@ function safestUnsolvedPosition(ps) {
       }
     }
   }
-
-  if(bestX===-1) return {possible:true,won:true}; // nothing left to win
+  if(bestX===-1) return {possible:true,won:true};
   return {possible:true,won:false,x:bestX,y:bestY,safety:bestN/total};
 }
 
-// ═══════════════════════════════════════════════════════
-// MAIN SOLVE ENTRY POINT
-// ═══════════════════════════════════════════════════════
-
 function solve(rTotals, cTotals, knownBoard) {
-  // Build initTiles from knownBoard
   var initTiles=[];
   for(var y=0;y<5;y++){initTiles[y]=[];for(var x=0;x<5;x++){
     initTiles[y][x]= knownBoard[y][x]!==null ? newSolvedTile(knownBoard[y][x]) : newUnsolvedTile();
   }}
-
   var ps=newPSol(rTotals,cTotals,initTiles);
   if(!ps) return {possible:false};
   if(isWon(ps)) return {possible:true,won:true,tiles:ps.tiles};
-
   var result=safestUnsolvedPosition(ps);
   result.tiles=ps.tiles;
   return result;
 }
 
-// ═══════════════════════════════════════════════════════
-// UI
-// ═══════════════════════════════════════════════════════
-
 function readHint(id){ var v=parseInt(document.getElementById(id).value); return isNaN(v)?0:v; }
-
 function setConsole(html){ document.getElementById('con').innerHTML=html; }
 
 function highlightCell(x,y){
@@ -449,10 +379,6 @@ function renderBoard(tiles){
           val= p===0?'&#9889;':''+p;
         } else {
           val='?';
-          // Show voltorb % from possibilities
-          var poss=0; for(var i=0;i<4;i++) if(t[i]) poss++;
-          // We can't show exact % without running full search per cell here,
-          // so just show possible values
           var opts=[];
           if(t[1]) opts.push('1'); if(t[2]) opts.push('2×'); if(t[3]) opts.push('3×');
           if(t[0]&&opts.length>0) sub='V?';
@@ -470,17 +396,13 @@ function doSolve(){
   if(gameOver) return;
   var h=buildHintsFromInputs();
   var result=solve(h.rt,h.ct,userBoard);
-
   if(!result.possible){
     setConsole('Board is impossible — check your hint values.');
     highlightCell(null,null); renderBoard(null); return;
   }
-
   renderBoard(result.tiles);
-
   if(result.won){
     highlightCell(null,null);
-    // List remaining safe cards
     var safe=[];
     for(var y=0;y<5;y++) for(var x=0;x<5;x++){
       var t=result.tiles[y][x];
@@ -493,20 +415,16 @@ function doSolve(){
       setConsole('<b>Board solved!</b> All &#xD7;2 and &#xD7;3 cards found.');
     return;
   }
-
   var bx=result.x, by=result.y;
   highlightCell(bx,by);
-
   var safelist=[];
   for(var y=0;y<5;y++) for(var x=0;x<5;x++){
     var t=result.tiles[y][x];
     if(tileIsSolved(t)&&!tileIsVoltorb(t)&&userBoard[y][x]===null)
       safelist.push(colLetter(x)+(y+1)+'='+tilePoints(t));
   }
-
   var msg='';
   if(safelist.length>0) msg+='Safe to flip: <b>'+safelist.join(', ')+'</b><br/>';
-
   var sp=Math.round((1-result.safety)*100);
   msg+='&#9658; Flip highlighted card <b>'+colLetter(bx)+(by+1)+'</b>';
   if(result.safety<1){
@@ -528,19 +446,12 @@ function doSolve(){
 }
 
 function colLetter(x){ return 'ABCDE'[x]; }
-
 var skipped={};
 
-function markCell(x,y,val){
-  skipped={};
-  userBoard[y][x]=val;
-  doSolve();
-}
+function markCell(x,y,val){ skipped={}; userBoard[y][x]=val; doSolve(); }
 
 function markVoltorb(x,y){
-  userBoard[y][x]=0;
-  gameOver=true;
-  highlightCell(null,null);
+  userBoard[y][x]=0; gameOver=true; highlightCell(null,null);
   var h=buildHintsFromInputs();
   var result=solve(h.rt,h.ct,userBoard);
   renderBoard(result&&result.tiles?result.tiles:null);
@@ -550,7 +461,6 @@ function markVoltorb(x,y){
 
 function skipCell(x,y){
   skipped[y+'_'+x]=true;
-  // Re-run solve but skip this suggestion
   var h=buildHintsFromInputs();
   var initTiles=[];
   for(var ry=0;ry<5;ry++){initTiles[ry]=[];for(var rx=0;rx<5;rx++){
@@ -559,8 +469,6 @@ function skipCell(x,y){
   var ps=newPSol(h.rt,h.ct,initTiles);
   if(!ps){setConsole('Board impossible.');return;}
   renderBoard(ps.tiles);
-
-  // Find next best non-skipped candidate
   var res=safetyOfEachGuess(ps);
   var bestX=-1,bestY=-1,bestN=-1;
   for(var ry=0;ry<5;ry++){
@@ -622,10 +530,7 @@ function clickCell(x,y){
   setConsole(msg);
 }
 
-function clearCell(x,y){
-  userBoard[y][x]=null; skipped={};
-  doSolve();
-}
+function clearCell(x,y){ userBoard[y][x]=null; skipped={}; doSolve(); }
 
 function doReset(){
   initUserBoard(); skipped={};
@@ -641,10 +546,6 @@ function loadExample(){
   for(var i=0;i<5;i++){document.getElementById('cs'+i).value=cs[i];document.getElementById('cv'+i).value=cv[i];}
   initUserBoard(); skipped={}; doSolve();
 }
-
-// ═══════════════════════════════════════════════════════
-// PHOTO SCAN
-// ═══════════════════════════════════════════════════════
 
 function setupDrop(){
   var dz=document.getElementById('dropzone');
@@ -735,10 +636,6 @@ function stopCamera(){
   document.getElementById('capturebtn').style.display='none';
   document.getElementById('stopcambtn').style.display='none';
 }
-
-// ═══════════════════════════════════════════════════════
-// BUILD TABLE
-// ═══════════════════════════════════════════════════════
 
 (function(){
   initUserBoard();

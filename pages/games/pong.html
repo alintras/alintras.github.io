@@ -4,27 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pong</title>
+    <script src="/js/style.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         a { color: inherit; text-decoration: none; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #fff;
+            background: var(--bg);
+            color: var(--fg);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            color: #111;
         }
-        header { text-align: center; margin-bottom: 15px; }
+        header { text-align: center; margin-bottom: 15px; margin-top: 30px; }
         h1 { font-size: 2em; margin-bottom: 6px; }
-        .subtitle { font-size: 0.95em; color: #555; }
+        .subtitle { font-size: 0.95em; opacity: 0.6; }
         canvas {
             max-width: 100%;
-            border: 1px solid #111;
+            border: 1px solid var(--border);
             display: block;
-            background: #fff;
+            background: var(--bg);
         }
         .scoreboard {
             display: flex;
@@ -35,36 +36,25 @@
             font-size: 1.5em;
             font-weight: bold;
         }
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        .controls { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
         button {
             padding: 10px 24px;
             font-size: 1em;
-            border: 1px solid #111;
-            background: #fff;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--fg);
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.2s;
         }
-        button:hover { background: #f0f0f0; }
-        .info {
-            margin-top: 15px;
-            font-size: 0.85em;
-            color: #555;
-            text-align: center;
-        }
+        button:hover { background: var(--fg); color: var(--bg); }
+        .info { margin-top: 15px; font-size: 0.85em; opacity: 0.6; text-align: center; }
         .mode-select { margin-bottom: 12px; display: flex; gap: 10px; }
-        .mode-select button.active { background: #111; color: #fff; }
+        .mode-select button.active { background: var(--fg); color: var(--bg); }
     </style>
 </head>
 <body>
-    <div style="position:fixed; top:10px; left:10px;">
-        <a href="/../index.html">🏠&#xFE0E Home</a>
+    <div style="position:fixed;top:10px;left:10px;z-index:100;">
+        <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
     </div>
     <header>
         <h1>Pong</h1>
@@ -76,7 +66,7 @@
     </div>
     <div class="scoreboard">
         <span id="scoreL">0</span>
-        <span style="color:#aaa; font-size:0.7em; align-self:center;">VS</span>
+        <span style="opacity:0.4; font-size:0.7em; align-self:center;">VS</span>
         <span id="scoreR">0</span>
     </div>
     <canvas id="canvas" width="600" height="400"></canvas>
@@ -85,7 +75,7 @@
         <button onclick="resetGame()">Reset</button>
     </div>
     <div class="info" id="info">
-        <span id="p1controls">Left paddle: W / S</span> &nbsp;|&nbsp;
+        <span id="p1controls">Left paddle: W / S or mouse/touch</span> &nbsp;|&nbsp;
         <span id="p2controls">Right paddle: ↑ / ↓ (or CPU)</span>
     </div>
 
@@ -100,6 +90,13 @@
         let animId = null;
 
         let scoreL, scoreR, lY, rY, bx, by, vx, vy, keys;
+
+        function getColor() {
+            return document.documentElement.getAttribute('data-theme') === 'dark' ? '#e0e0e0' : '#111';
+        }
+        function getBgColor() {
+            return document.documentElement.getAttribute('data-theme') === 'dark' ? '#111' : '#fff';
+        }
 
         function setMode(m) {
             mode = m;
@@ -149,19 +146,16 @@
         }
 
         function update() {
-            // Move left paddle
             const spd = 5;
             if (keys['w'] || keys['W']) lY -= spd;
             if (keys['s'] || keys['S']) lY += spd;
             lY = Math.max(0, Math.min(H - PH, lY));
 
-            // Move right paddle
             if (mode === 2) {
                 if (keys['ArrowUp']) rY -= spd;
                 if (keys['ArrowDown']) rY += spd;
                 rY = Math.max(0, Math.min(H - PH, rY));
             } else {
-                // CPU — tracks ball with slight delay
                 const center = rY + PH / 2;
                 const diff = by - center;
                 const aiSpeed = 3.8;
@@ -169,14 +163,11 @@
                 rY = Math.max(0, Math.min(H - PH, rY));
             }
 
-            // Move ball
             bx += vx; by += vy;
 
-            // Top/bottom bounce
             if (by - BALL / 2 <= 0) { by = BALL / 2; vy = Math.abs(vy); }
             if (by + BALL / 2 >= H) { by = H - BALL / 2; vy = -Math.abs(vy); }
 
-            // Left paddle collision
             if (bx - BALL / 2 <= PW + 20 && bx - BALL/2 >= 18 && by >= lY && by <= lY + PH) {
                 bx = PW + 20 + BALL / 2;
                 const hit = (by - (lY + PH / 2)) / (PH / 2);
@@ -186,7 +177,6 @@
                 vy = Math.sin(angle) * speed;
             }
 
-            // Right paddle collision
             if (bx + BALL / 2 >= W - PW - 20 && bx + BALL/2 <= W - 18 && by >= rY && by <= rY + PH) {
                 bx = W - PW - 20 - BALL / 2;
                 const hit = (by - (rY + PH / 2)) / (PH / 2);
@@ -196,7 +186,6 @@
                 vy = Math.sin(angle) * speed;
             }
 
-            // Scoring
             if (bx < 0) {
                 scoreR++;
                 document.getElementById('scoreR').textContent = scoreR;
@@ -212,11 +201,15 @@
         }
 
         function draw() {
+            const fg = getColor();
+            const bg = getBgColor();
             ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, W, H);
 
-            // Dashed center line
+            // Center dashed line
             ctx.setLineDash([6, 6]);
-            ctx.strokeStyle = '#ccc';
+            ctx.strokeStyle = document.documentElement.getAttribute('data-theme') === 'dark' ? '#333' : '#ccc';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(W / 2, 0);
@@ -224,46 +217,43 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Paddles
-            ctx.fillStyle = '#111';
+            ctx.fillStyle = fg;
             ctx.fillRect(20, lY, PW, PH);
             ctx.fillRect(W - PW - 20, rY, PW, PH);
-
-            // Ball
-            ctx.fillStyle = '#111';
             ctx.fillRect(bx - BALL/2, by - BALL/2, BALL, BALL);
         }
 
         function endGame(winner) {
             running = false;
-            ctx.clearRect(0, 0, W, H);
             draw();
-            ctx.fillStyle = '#111';
+            const fg = getColor();
+            ctx.fillStyle = fg;
             ctx.font = 'bold 28px Segoe UI';
             ctx.textAlign = 'center';
             ctx.fillText(winner + ' wins!', W / 2, H / 2 - 10);
             ctx.font = '16px Segoe UI';
-            ctx.fillStyle = '#555';
+            ctx.globalAlpha = 0.6;
             ctx.fillText('Press Reset to play again', W / 2, H / 2 + 20);
+            ctx.globalAlpha = 1;
             ctx.textAlign = 'left';
             document.getElementById('startBtn').textContent = 'Start';
         }
-        
+
         canvas.addEventListener('mousemove', e => {
-        const rect = canvas.getBoundingClientRect();
-        const scaleY = canvas.height / rect.height;
-        const mouseY = (e.clientY - rect.top) * scaleY;
-        lY = mouseY - PH / 2;
-        lY = Math.max(0, Math.min(H - PH, lY));
+            const rect = canvas.getBoundingClientRect();
+            const scaleY = canvas.height / rect.height;
+            const mouseY = (e.clientY - rect.top) * scaleY;
+            lY = mouseY - PH / 2;
+            lY = Math.max(0, Math.min(H - PH, lY));
         });
 
         canvas.addEventListener('touchmove', e => {
-        e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const scaleY = canvas.height / rect.height;
-        const touchY = (e.touches[0].clientY - rect.top) * scaleY;
-        lY = touchY - PH / 2;
-        lY = Math.max(0, Math.min(H - PH, lY));
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const scaleY = canvas.height / rect.height;
+            const touchY = (e.touches[0].clientY - rect.top) * scaleY;
+            lY = touchY - PH / 2;
+            lY = Math.max(0, Math.min(H - PH, lY));
         }, { passive: false });
 
         document.addEventListener('keydown', e => {

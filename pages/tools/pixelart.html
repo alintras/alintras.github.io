@@ -1,114 +1,187 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pixel Art Editor</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: monospace; background: #fff; color: #000; padding: 12px; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: monospace; background: var(--bg); color: var(--fg); display: flex; flex-direction: column; }
 a { color: inherit; text-decoration: none; }
-h1 { font-size: 1.2em; margin: 12px 0; font-weight: bold; }
 
-#controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
-.control-group { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
-.control-group > label:first-child { min-width: 60px; font-size: 0.85em; }
+#topbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 8px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+#title { font-size: 0.95em; font-weight: bold; flex: 1; }
+
+#toolbar {
+  display: flex; align-items: center; gap: 4px;
+  padding: 5px 8px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0; flex-wrap: wrap; row-gap: 5px;
+}
+.tool-group { display: flex; gap: 3px; align-items: center; }
+.sep { width: 1px; background: var(--border); align-self: stretch; margin: 0 2px; flex-shrink: 0; }
 
 button {
-font-family: monospace; font-size: 0.85em;
-background: #fff; color: #000; border: 1px solid #000;
-padding: 5px 10px; cursor: pointer; touch-action: manipulation;
-min-height: 32px;
+  font-family: monospace; font-size: 0.8em;
+  background: var(--bg); color: var(--fg); border: 1px solid var(--border);
+  padding: 4px 8px; cursor: pointer; touch-action: manipulation;
+  min-height: 30px; min-width: 30px;
+  user-select: none; -webkit-user-select: none;
 }
-button:hover, button:active { background: #eee; }
-button.active { background: #000; color: #fff; }
-button:disabled { opacity: 0.35; cursor: default; background: #fff; color: #000; }
+button:active { background: var(--fg); color: var(--bg); }
+button.active { background: var(--fg); color: var(--bg); }
+button:disabled { opacity: 0.3; cursor: default; }
+button:disabled:active { background: var(--bg); color: var(--fg); }
 
-#size-btns, #tool-btns { display: flex; flex-wrap: wrap; gap: 4px; }
-
-#palette { display: flex; flex-wrap: wrap; gap: 3px; }
-.palette-swatch {
-width: 26px; height: 26px;
-border: 1px solid #000; cursor: pointer;
-touch-action: manipulation;
+#palette-row {
+  display: flex; align-items: center; gap: 4px;
+  padding: 5px 8px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-/* white swatch gets a diagonal line so it’s visible */
-.palette-swatch[data-color=”#ffffff”] {
-background: #fff;
-background-image: linear-gradient(to bottom right, transparent calc(50% - 0.5px), #ccc calc(50% - 0.5px), #ccc calc(50% + 0.5px), transparent calc(50% + 0.5px));
+#palette-row::-webkit-scrollbar { display: none; }
+#palette { display: flex; gap: 3px; flex-wrap: nowrap; }
+
+.swatch {
+  width: 24px; height: 24px; flex-shrink: 0;
+  border: 1px solid var(--border); cursor: pointer; touch-action: manipulation;
 }
-.palette-swatch.active { outline: 2px solid #000; outline-offset: 1px; }
-
-#custom-color { width: 32px; height: 26px; border: 1px solid #000; padding: 0; cursor: pointer; background: none; }
-#active-color-display { width: 26px; height: 26px; border: 1px solid #000; display: inline-block; vertical-align: middle; }
-
-#bg-color { width: 32px; height: 26px; border: 1px solid #000; padding: 0; cursor: pointer; background: none; }
-
-#canvas-wrapper {
-overflow: auto;
-border: 1px solid #000;
-display: inline-block;
-cursor: crosshair;
-line-height: 0;
-touch-action: none;
+.swatch.active { outline: 2px solid var(--fg); outline-offset: 1px; }
+.swatch[data-color="#ffffff"] {
+  background-image: linear-gradient(to bottom right,
+    transparent calc(50% - 0.5px), #aaa calc(50% - 0.5px),
+    #aaa calc(50% + 0.5px), transparent calc(50% + 0.5px));
 }
-#canvas { display: block; image-rendering: pixelated; }
+#custom-color { width: 28px; height: 24px; flex-shrink: 0; border: 1px solid var(--border); padding: 0; cursor: pointer; background: none; }
+#active-swatch { width: 24px; height: 24px; flex-shrink: 0; border: 2px solid var(--fg); }
 
-#bottom-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
-#bottom-controls label { font-size: 0.85em; display: flex; align-items: center; gap: 4px; }
+/* Canvas area: clips the zoomed/panned viewport */
+#canvas-area {
+  flex: 1; overflow: hidden; position: relative; touch-action: none;
+  background: var(--bg);
+}
+
+/* Viewport is what gets transformed (zoom/pan) */
+#viewport {
+  position: absolute; top: 0; left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+#canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: crosshair;
+}
+
+/* When in pan/zoom mode show grab cursor */
+#canvas-area.panning #canvas { cursor: grab; }
+#canvas-area.panning #canvas:active { cursor: grabbing; }
+
+#bottombar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 8px; border-top: 1px solid var(--border);
+  flex-shrink: 0; font-size: 0.75em; opacity: 0.7;
+}
+
+/* Zoom indicator */
+#zoom-indicator {
+  position: absolute; bottom: 6px; right: 8px;
+  font-family: monospace; font-size: 0.75em;
+  background: var(--bg); border: 1px solid var(--border);
+  padding: 2px 5px; pointer-events: none; opacity: 0.8;
+}
+
+/* Zoom controls overlay (mobile) */
+#zoom-controls {
+  position: absolute; bottom: 6px; left: 8px;
+  display: flex; gap: 4px;
+}
+#zoom-controls button { min-height: 28px; min-width: 28px; padding: 2px 6px; font-size: 1em; }
+
+@media (pointer: coarse) {
+  button { min-height: 38px; min-width: 38px; padding: 6px 10px; font-size: 0.9em; }
+  .swatch { width: 30px; height: 30px; }
+  #active-swatch { width: 30px; height: 30px; }
+  #custom-color { width: 34px; height: 30px; }
+  #zoom-controls button { min-height: 36px; min-width: 36px; }
+}
 </style>
-
+<script src="/js/style.js"></script>
 </head>
 <body>
-<a href="/../index.html"><img src="/assets/smileys/home.jpg" style="width:24px;height:24px;vertical-align:-7px;image-rendering:pixelated;"> Home</a>
-<h1 style="opacity: 0;">Pixel Art Editor</h1>
-<div id="controls">
-  <div class="control-group">
-    <label>Size:</label>
-    <div id="size-btns">
-      <button class="size-btn" data-size="8">8x8</button>
-      <button class="size-btn active" data-size="16">16×16</button>
-      <button class="size-btn" data-size="32">32×32</button>
-      <button class="size-btn" data-size="64">64×64</button>
-    </div>
+
+<div id="topbar">
+  <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
+  <span id="title">Pixel Art Editor</span>
+  <div class="tool-group">
+    <button class="size-btn active" data-size="16">16</button>
+    <button class="size-btn" data-size="32">32</button>
+    <button class="size-btn" data-size="64">64</button>
+    <button class="size-btn" data-size="8">8</button>
   </div>
-  <div class="control-group">
-    <label>Tool:</label>
-    <div id="tool-btns">
-      <button class="tool-btn active" data-tool="draw">✏ Draw</button>
-      <button class="tool-btn" data-tool="fill">⬛ Fill</button>
-      <button class="tool-btn" data-tool="erase">✕ Erase</button>
-      <button class="tool-btn" data-tool="eyedrop">⊙ Pick</button>
-    </div>
+</div>
+
+<div id="toolbar">
+  <div class="tool-group">
+    <button class="tool-btn active" data-tool="draw" title="Draw">✏</button>
+    <button class="tool-btn" data-tool="fill" title="Fill">⬛</button>
+    <button class="tool-btn" data-tool="erase" title="Erase">✕</button>
+    <button class="tool-btn" data-tool="eyedrop" title="Pick color">⊙</button>
   </div>
-  <div class="control-group">
-    <label>Trace:</label>
-    <button id="trace-load-btn">Load image</button>
+  <div class="sep"></div>
+  <div class="tool-group">
+    <button id="undo-btn" disabled title="Undo (Ctrl+Z)">↩</button>
+    <button id="redo-btn" disabled title="Redo (Ctrl+Y)">↪</button>
+  </div>
+  <div class="sep"></div>
+  <div class="tool-group">
+    <button id="clear-btn">Clear</button>
+    <button id="save-btn">Save PNG</button>
+  </div>
+  <div class="sep"></div>
+  <div class="tool-group" style="font-size:0.8em;display:flex;align-items:center;gap:6px;">
+    <label style="display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none;">
+      <input type="checkbox" id="transparent-empty" checked> Transp.
+    </label>
+    <label style="display:flex;align-items:center;gap:4px;">
+      bg: <input type="color" id="bg-color" value="#ffffff" style="width:26px;height:22px;border:1px solid var(--border);padding:0;cursor:pointer;background:none;">
+    </label>
+  </div>
+  <div class="sep"></div>
+  <div class="tool-group" style="font-size:0.8em;display:flex;align-items:center;gap:4px;">
+    <button id="trace-load-btn" style="font-size:0.8em;">Trace</button>
     <input type="file" id="trace-input" accept="image/*" style="display:none">
-    <input type="range" id="trace-opacity" min="10" max="90" value="40" style="width:80px" title="Trace opacity">
-    <button id="trace-clear-btn" style="display:none">✕ Remove</button>
-    <span style="font-size:0.85em;margin-left:4px;">bg:</span>
-    <input type="color" id="bg-color" value="#ffffff" title="Background color">
-  </div>
-  <div class="control-group">
-    <label>Color:</label>
-    <div id="palette"></div>
-    <input type="color" id="custom-color" value="#000000" title="Custom color">
-    <span id="active-color-display"></span>
+    <input type="range" id="trace-opacity" min="10" max="90" value="40" style="width:54px" title="Trace opacity">
+    <button id="trace-clear-btn" style="display:none;font-size:0.8em;">✕</button>
   </div>
 </div>
 
-<div id="canvas-wrapper">
-  <canvas id="canvas"></canvas>
+<div id="palette-row">
+  <div id="palette"></div>
+  <input type="color" id="custom-color" value="#000000" title="Custom color">
+  <div id="active-swatch"></div>
 </div>
 
-<div id="bottom-controls">
-  <button id="undo-btn" disabled>↩ Undo</button>
-  <button id="redo-btn" disabled>↪ Redo</button>
-  <button id="clear-btn">Clear</button>
-  <button id="save-btn">Save PNG</button>
-  <label><input type="checkbox" id="transparent-empty" checked> Empty = transparent</label>
+<div id="canvas-area">
+  <div id="viewport">
+    <canvas id="canvas"></canvas>
+  </div>
+  <div id="zoom-controls">
+    <button id="zoom-in-btn" title="Zoom in">+</button>
+    <button id="zoom-out-btn" title="Zoom out">−</button>
+    <button id="zoom-reset-btn" title="Reset zoom">⊡</button>
+  </div>
+  <div id="zoom-indicator">100%</div>
+</div>
+
+<div id="bottombar">
+  <span id="undo-count"></span>
+  <span id="pos-info" style="margin-left:auto;"></span>
 </div>
 
 <script>
@@ -122,148 +195,402 @@ touch-action: none;
     "#eeeeee","#222222","#664400","#003366","#006644",
   ];
 
-  const canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
-  const paletteEl = document.getElementById("palette");
+  // DOM refs
+  const canvasArea  = document.getElementById("canvas-area");
+  const viewport    = document.getElementById("viewport");
+  const canvas      = document.getElementById("canvas");
+  const ctx         = canvas.getContext("2d");
+  const paletteEl   = document.getElementById("palette");
   const customColorInput = document.getElementById("custom-color");
-  const activeColorDisplay = document.getElementById("active-color-display");
-  const clearBtn = document.getElementById("clear-btn");
-  const saveBtn = document.getElementById("save-btn");
+  const activeSwatch= document.getElementById("active-swatch");
+  const clearBtn    = document.getElementById("clear-btn");
+  const saveBtn     = document.getElementById("save-btn");
   const transparentEmptyCheck = document.getElementById("transparent-empty");
-  const undoBtn = document.getElementById("undo-btn");
-  const redoBtn = document.getElementById("redo-btn");
-  const bgColorInput = document.getElementById("bg-color");
+  const undoBtn     = document.getElementById("undo-btn");
+  const redoBtn     = document.getElementById("redo-btn");
+  const bgColorInput= document.getElementById("bg-color");
+  const undoCountEl = document.getElementById("undo-count");
+  const posInfoEl   = document.getElementById("pos-info");
+  const zoomIndicator = document.getElementById("zoom-indicator");
+  const zoomInBtn   = document.getElementById("zoom-in-btn");
+  const zoomOutBtn  = document.getElementById("zoom-out-btn");
+  const zoomResetBtn= document.getElementById("zoom-reset-btn");
 
-  let gridSize = 16;
-  let cellSize = 16;
-  // null = empty (transparent/bg), string = painted color (including #ffffff)
-  let pixels = [];
+  // State
+  let gridSize  = 16;
+  let cellSize  = 16;
+  let pixels    = [];
   let activeColor = "#000000";
-  let activeTool = "draw";
-  let isPointerDown = false;
-  let lastCell = null;
+  let activeTool  = "draw";
+  let bgColor   = "#ffffff";
   let traceImage = null;
   let traceOpacity = 0.4;
-  let bgColor = "#ffffff";
 
-  // Undo/redo: depth 1
-  let undoState = null;
-  let redoState = null;
+  // Viewport transform
+  let vpScale = 1;
+  let vpX = 0;
+  let vpY = 0;
 
-  function clonePixels(p) {
-    return p.map(row => row.slice());
+  // Pointer tracking
+  let activePointers = new Map(); // pointerId -> {x,y}
+  let drawingPointerId = null;    // the single pointer used for drawing
+  let isDrawing = false;
+  let lastCell  = null;
+  let undoPushedForStroke = false;
+
+  // Pinch state
+  let pinchStartDist  = 0;
+  let pinchStartScale = 1;
+  let pinchStartMidX  = 0;
+  let pinchStartMidY  = 0;
+  let pinchStartVpX   = 0;
+  let pinchStartVpY   = 0;
+
+  // Undo
+  const MAX_UNDO = 200;
+  let undoStack = [];
+  let redoStack = [];
+
+  function clonePixels(p) { return p.map(r => r.slice()); }
+
+  function pushUndo() {
+    undoStack.push(clonePixels(pixels));
+    if (undoStack.length > MAX_UNDO) undoStack.shift();
+    redoStack = [];
+    updateUndoUI();
   }
 
-  function saveUndo() {
-    undoState = clonePixels(pixels);
-    redoState = null;
-    updateUndoRedoBtns();
+  function undo() {
+    if (!undoStack.length) return;
+    redoStack.push(clonePixels(pixels));
+    pixels = undoStack.pop();
+    updateUndoUI(); redraw();
   }
 
-  function updateUndoRedoBtns() {
-    undoBtn.disabled = !undoState;
-    redoBtn.disabled = !redoState;
+  function redo() {
+    if (!redoStack.length) return;
+    undoStack.push(clonePixels(pixels));
+    pixels = redoStack.pop();
+    updateUndoUI(); redraw();
   }
 
-  function calcCellSize(size) {
-    const available = Math.min(window.innerWidth - 26, 600);
-    return Math.max(4, Math.floor(available / size));
+  function updateUndoUI() {
+    undoBtn.disabled = undoStack.length === 0;
+    redoBtn.disabled = redoStack.length === 0;
+    undoCountEl.textContent = undoStack.length ? `${undoStack.length} undo${undoStack.length !== 1 ? 's' : ''}` : '';
   }
 
-  function initGrid() {
-    cellSize = calcCellSize(gridSize);
-    pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
-    undoState = null;
-    redoState = null;
-    updateUndoRedoBtns();
-    canvas.width = gridSize * cellSize;
-    canvas.height = gridSize * cellSize;
-    redraw();
+  // ── Viewport / zoom ────────────────────────────────────────────────
+
+  function applyViewport() {
+    viewport.style.transform = `translate(${vpX}px, ${vpY}px) scale(${vpScale})`;
+    zoomIndicator.textContent = Math.round(vpScale * 100) + '%';
   }
 
-  function redraw() {
-    // background color
-    ctx.fillStyle = bgColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    // trace image
-    if (traceImage) {
-      ctx.globalAlpha = traceOpacity;
-      ctx.drawImage(traceImage, 0, 0, canvas.width, canvas.height);
-      ctx.globalAlpha = 1;
-    }
-    // painted pixels (null = empty, skip)
-    for (let r = 0; r < gridSize; r++)
-      for (let c = 0; c < gridSize; c++)
-        if (pixels[r][c] !== null) {
-          ctx.fillStyle = pixels[r][c];
-          ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
-        }
-    drawGrid();
+  function clampViewport() {
+    // Keep at least some of the canvas visible
+    const areaW = canvasArea.clientWidth;
+    const areaH = canvasArea.clientHeight;
+    const cw = canvas.width * vpScale;
+    const ch = canvas.height * vpScale;
+    const margin = 40;
+    vpX = Math.min(areaW - margin, Math.max(margin - cw, vpX));
+    vpY = Math.min(areaH - margin, Math.max(margin - ch, vpY));
   }
 
-  function drawGrid() {
-    ctx.strokeStyle = "#aaaaaa";
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= gridSize; i++) {
-      ctx.beginPath();
-      ctx.moveTo(i * cellSize, 0);
-      ctx.lineTo(i * cellSize, gridSize * cellSize);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, i * cellSize);
-      ctx.lineTo(gridSize * cellSize, i * cellSize);
-      ctx.stroke();
-    }
+  function zoomAround(newScale, cx, cy) {
+    // cx, cy: point in canvas-area coordinates to keep fixed
+    newScale = Math.max(0.5, Math.min(32, newScale));
+    const ratio = newScale / vpScale;
+    vpX = cx - ratio * (cx - vpX);
+    vpY = cy - ratio * (cy - vpY);
+    vpScale = newScale;
+    clampViewport();
+    applyViewport();
   }
 
-  function getCellFromEvent(e) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const c = Math.floor((e.clientX - rect.left) * scaleX / cellSize);
-    const r = Math.floor((e.clientY - rect.top) * scaleY / cellSize);
+  function resetZoom() {
+    const areaW = canvasArea.clientWidth;
+    const areaH = canvasArea.clientHeight;
+    const scaleX = areaW / canvas.width;
+    const scaleY = areaH / canvas.height;
+    vpScale = Math.min(scaleX, scaleY, 4);
+    vpX = (areaW - canvas.width * vpScale) / 2;
+    vpY = (areaH - canvas.height * vpScale) / 2;
+    applyViewport();
+  }
+
+  zoomInBtn.addEventListener("click",    () => zoomAround(vpScale * 1.5, canvasArea.clientWidth/2, canvasArea.clientHeight/2));
+  zoomOutBtn.addEventListener("click",   () => zoomAround(vpScale / 1.5, canvasArea.clientWidth/2, canvasArea.clientHeight/2));
+  zoomResetBtn.addEventListener("click", resetZoom);
+
+  // Mouse wheel zoom
+  canvasArea.addEventListener("wheel", e => {
+    e.preventDefault();
+    const rect = canvasArea.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    const factor = e.deltaY < 0 ? 1.15 : 1/1.15;
+    zoomAround(vpScale * factor, cx, cy);
+  }, { passive: false });
+
+  // ── Canvas pixel coords ────────────────────────────────────────────
+
+  function pointerToCell(e) {
+    const rect = canvasArea.getBoundingClientRect();
+    // position in canvas-area
+    const ax = e.clientX - rect.left;
+    const ay = e.clientY - rect.top;
+    // undo viewport transform
+    const cx = (ax - vpX) / vpScale;
+    const cy = (ay - vpY) / vpScale;
+    const c = Math.floor(cx / cellSize);
+    const r = Math.floor(cy / cellSize);
     if (r < 0 || r >= gridSize || c < 0 || c >= gridSize) return null;
     return { r, c };
   }
 
-  function applyTool(cell) {
+  // ── Drawing ────────────────────────────────────────────────────────
+
+  function cellsEqual(a, b) { return a && b && a.r === b.r && a.c === b.c; }
+
+  function applyTool(cell, isStart) {
     if (!cell) return;
     const { r, c } = cell;
     if (activeTool === "draw") {
-      pixels[r][c] = activeColor;
-      redraw();
+      if (pixels[r][c] === activeColor) return;
+      pixels[r][c] = activeColor; redraw();
     } else if (activeTool === "erase") {
-      pixels[r][c] = null;
-      redraw();
+      if (pixels[r][c] === null) return;
+      pixels[r][c] = null; redraw();
     } else if (activeTool === "eyedrop") {
-      // pick painted color, or if empty pick bg color
       setActiveColor(pixels[r][c] !== null ? pixels[r][c] : bgColor);
       setTool("draw");
-    } else if (activeTool === "fill") {
-      floodFill(r, c, pixels[r][c], activeColor);
-      redraw();
+    } else if (activeTool === "fill" && isStart) {
+      const target = pixels[r][c];
+      if (target === activeColor) return;
+      floodFill(r, c, target, activeColor); redraw();
     }
   }
 
   function floodFill(r, c, targetColor, fillColor) {
-    if (targetColor === fillColor) return;
     const stack = [[r, c]];
     const visited = Array.from({ length: gridSize }, () => Array(gridSize).fill(false));
     while (stack.length) {
       const [cr, cc] = stack.pop();
       if (cr < 0 || cr >= gridSize || cc < 0 || cc >= gridSize) continue;
       if (visited[cr][cc] || pixels[cr][cc] !== targetColor) continue;
-      visited[cr][cc] = true;
-      pixels[cr][cc] = fillColor;
+      visited[cr][cc] = true; pixels[cr][cc] = fillColor;
       stack.push([cr-1,cc],[cr+1,cc],[cr,cc-1],[cr,cc+1]);
     }
   }
 
+  // ── Pointer events (unified draw + pinch) ─────────────────────────
+
+  canvasArea.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    canvasArea.setPointerCapture(e.pointerId);
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (activePointers.size === 1) {
+      // Start potential draw — wait to see if a second finger arrives
+      drawingPointerId = e.pointerId;
+      isDrawing = false;
+      undoPushedForStroke = false;
+      lastCell = null;
+    } else if (activePointers.size === 2) {
+      // Second finger arrived — cancel any draw in progress
+      isDrawing = false;
+      drawingPointerId = null;
+
+      // Compute initial pinch
+      const pts = [...activePointers.values()];
+      const rect = canvasArea.getBoundingClientRect();
+      pinchStartDist  = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+      pinchStartScale = vpScale;
+      pinchStartMidX  = (pts[0].x + pts[1].x) / 2 - rect.left;
+      pinchStartMidY  = (pts[0].y + pts[1].y) / 2 - rect.top;
+      pinchStartVpX   = vpX;
+      pinchStartVpY   = vpY;
+      canvasArea.classList.add("panning");
+    }
+  }, { passive: false });
+
+  canvasArea.addEventListener("pointermove", e => {
+    e.preventDefault();
+    if (!activePointers.has(e.pointerId)) return;
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (activePointers.size === 2) {
+      // Pinch-zoom + pan
+      const pts = [...activePointers.values()];
+      const rect = canvasArea.getBoundingClientRect();
+      const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+      const newScale = Math.max(0.5, Math.min(32, pinchStartScale * dist / pinchStartDist));
+
+      const midX = (pts[0].x + pts[1].x) / 2 - rect.left;
+      const midY = (pts[0].y + pts[1].y) / 2 - rect.top;
+
+      const ratio = newScale / pinchStartScale;
+      vpScale = newScale;
+      vpX = midX - ratio * (pinchStartMidX - pinchStartVpX);
+      vpY = midY - ratio * (pinchStartMidY - pinchStartVpY);
+      clampViewport();
+      applyViewport();
+      return;
+    }
+
+    if (activePointers.size === 1 && e.pointerId === drawingPointerId) {
+      const cell = pointerToCell(e);
+      if (cell) posInfoEl.textContent = `${cell.c+1}, ${cell.r+1}`;
+
+      if (!isDrawing) {
+        // Confirm start of draw — push undo once
+        if (!undoPushedForStroke && (activeTool === "draw" || activeTool === "erase" || activeTool === "fill")) {
+          pushUndo();
+          undoPushedForStroke = true;
+        }
+        isDrawing = true;
+        applyTool(cell, true);
+        lastCell = cell;
+      } else {
+        if (!cellsEqual(cell, lastCell)) {
+          lastCell = cell;
+          applyTool(cell, false);
+        }
+      }
+    }
+  }, { passive: false });
+
+  canvasArea.addEventListener("pointerup", e => {
+    e.preventDefault();
+    const wasDrawing = isDrawing && e.pointerId === drawingPointerId;
+
+    // If this was a tap (pointerdown → pointerup with no move): treat as single draw action
+    if (!isDrawing && e.pointerId === drawingPointerId && activePointers.size === 1) {
+      const cell = pointerToCell(e);
+      if (cell && (activeTool === "draw" || activeTool === "erase" || activeTool === "fill")) {
+        pushUndo();
+        applyTool(cell, true);
+      } else if (cell) {
+        applyTool(cell, true); // eyedrop etc
+      }
+    }
+
+    activePointers.delete(e.pointerId);
+
+    if (activePointers.size < 2) {
+      canvasArea.classList.remove("panning");
+    }
+    if (activePointers.size === 0) {
+      isDrawing = false;
+      drawingPointerId = null;
+      undoPushedForStroke = false;
+      lastCell = null;
+      posInfoEl.textContent = '';
+    } else if (activePointers.size === 1) {
+      // One finger remains after pinch — don't draw, reset drawing state
+      drawingPointerId = null;
+      isDrawing = false;
+    }
+  }, { passive: false });
+
+  canvasArea.addEventListener("pointercancel", e => {
+    activePointers.delete(e.pointerId);
+    if (activePointers.size === 0) {
+      isDrawing = false; drawingPointerId = null;
+      undoPushedForStroke = false; lastCell = null;
+      canvasArea.classList.remove("panning");
+    }
+  }, { passive: false });
+
+  // ── Redraw ────────────────────────────────────────────────────────
+
+  function getGridColor() {
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? '#333333' : '#cccccc';
+  }
+
+  function redraw() {
+    // Clear
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Background
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Trace
+    if (traceImage) {
+      ctx.globalAlpha = traceOpacity;
+      ctx.drawImage(traceImage, 0, 0, canvas.width, canvas.height);
+      ctx.globalAlpha = 1;
+    }
+
+    // Pixels
+    for (let r = 0; r < gridSize; r++)
+      for (let c = 0; c < gridSize; c++)
+        if (pixels[r][c] !== null) {
+          ctx.fillStyle = pixels[r][c];
+          ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+        }
+
+    // Grid — only draw when cell is large enough to be visible
+    if (cellSize >= 3) {
+      ctx.save();
+      ctx.strokeStyle = getGridColor();
+      ctx.lineWidth = 1;
+      // Use globalAlpha so thin grids fade rather than disappear
+      ctx.globalAlpha = cellSize >= 6 ? 1 : (cellSize - 2) / 4;
+      for (let i = 0; i <= gridSize; i++) {
+        const x = i * cellSize;
+        const y = i * cellSize;
+        ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, canvas.height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(canvas.width, y + 0.5); ctx.stroke();
+      }
+      ctx.restore();
+    }
+  }
+
+  // ── Init / resize ─────────────────────────────────────────────────
+
+  function calcCellSize() {
+    const area = canvasArea;
+    const w = area.clientWidth;
+    const h = area.clientHeight;
+    return Math.max(4, Math.floor(Math.min(w, h) / gridSize));
+  }
+
+  function initGrid(keepPixels) {
+    cellSize = calcCellSize();
+    if (!keepPixels) {
+      pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
+      undoStack = []; redoStack = [];
+      updateUndoUI();
+    }
+    canvas.width  = gridSize * cellSize;
+    canvas.height = gridSize * cellSize;
+    redraw();
+    resetZoom();
+  }
+
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      cellSize = calcCellSize();
+      canvas.width  = gridSize * cellSize;
+      canvas.height = gridSize * cellSize;
+      redraw();
+      resetZoom();
+    }, 80);
+  });
+
+  // ── UI builders ────────────────────────────────────────────────────
+
   function setActiveColor(hex) {
     activeColor = hex;
-    activeColorDisplay.style.background = hex;
+    activeSwatch.style.background = hex;
     customColorInput.value = hex;
-    document.querySelectorAll(".palette-swatch").forEach(s =>
+    document.querySelectorAll(".swatch").forEach(s =>
       s.classList.toggle("active", s.dataset.color === hex)
     );
   }
@@ -275,118 +602,59 @@ touch-action: none;
     );
   }
 
-  // Palette
   PALETTE.forEach(color => {
-    const swatch = document.createElement("div");
-    swatch.className = "palette-swatch";
-    if (color !== "#ffffff") swatch.style.background = color;
-    swatch.dataset.color = color;
-    swatch.title = color === "#ffffff" ? "white" : color;
-    swatch.addEventListener("click", () => setActiveColor(color));
-    paletteEl.appendChild(swatch);
+    const s = document.createElement("div");
+    s.className = "swatch";
+    if (color !== "#ffffff") s.style.background = color;
+    s.dataset.color = color;
+    s.title = color;
+    s.addEventListener("pointerdown", e => { e.preventDefault(); setActiveColor(color); });
+    paletteEl.appendChild(s);
   });
 
-  // Size buttons
   document.querySelectorAll(".size-btn").forEach(btn => {
     btn.addEventListener("click", () => {
+      const hasDrawing = pixels.some(r => r.some(c => c !== null));
+      if (hasDrawing && !confirm("Change canvas size? Current drawing will be cleared.")) return;
       document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       gridSize = parseInt(btn.dataset.size);
-      initGrid();
+      initGrid(false);
     });
   });
 
-  // Tool buttons
   document.querySelectorAll(".tool-btn").forEach(btn =>
     btn.addEventListener("click", () => setTool(btn.dataset.tool))
   );
 
   customColorInput.addEventListener("input", () => setActiveColor(customColorInput.value));
-  bgColorInput.addEventListener("input", () => { bgColor = bgColorInput.value; redraw(); });
+  bgColorInput.addEventListener("input",     () => { bgColor = bgColorInput.value; redraw(); });
 
-  // Pointer events
-  canvas.addEventListener("pointerdown", e => {
-    e.preventDefault();
-    canvas.setPointerCapture(e.pointerId);
-    isPointerDown = true;
-    // save undo before stroke starts
-    if (activeTool === "draw" || activeTool === "erase") saveUndo();
-    const cell = getCellFromEvent(e);
-    lastCell = cell;
-    applyTool(cell);
-  });
+  undoBtn.addEventListener("click", undo);
+  redoBtn.addEventListener("click", redo);
 
-  canvas.addEventListener("pointermove", e => {
-    if (!isPointerDown) return;
-    const cell = getCellFromEvent(e);
-    if (!cell || (lastCell && cell.r === lastCell.r && cell.c === lastCell.c)) return;
-    lastCell = cell;
-    if (activeTool === "fill" || activeTool === "eyedrop") return;
-    applyTool(cell);
-  });
-
-  canvas.addEventListener("pointerup", () => { isPointerDown = false; lastCell = null; });
-  canvas.addEventListener("pointercancel", () => { isPointerDown = false; lastCell = null; });
-
-  // Undo / Redo
-  undoBtn.addEventListener("click", () => {
-    if (!undoState) return;
-    redoState = clonePixels(pixels);
-    pixels = undoState;
-    undoState = null;
-    updateUndoRedoBtns();
-    redraw();
-  });
-
-  redoBtn.addEventListener("click", () => {
-    if (!redoState) return;
-    undoState = clonePixels(pixels);
-    pixels = redoState;
-    redoState = null;
-    updateUndoRedoBtns();
-    redraw();
-  });
-
-  // Keyboard shortcuts
   document.addEventListener("keydown", e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) { e.preventDefault(); undoBtn.click(); }
-    if ((e.ctrlKey || e.metaKey) && (e.key === "y" || (e.key === "z" && e.shiftKey))) { e.preventDefault(); redoBtn.click(); }
+    if (e.target.tagName === 'INPUT') return;
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === "z") { e.preventDefault(); undo(); }
+    if ((e.ctrlKey || e.metaKey) && (e.key === "y" || (e.shiftKey && e.key === "z"))) { e.preventDefault(); redo(); }
   });
 
-  // Resize
-  window.addEventListener("resize", () => {
-    const newCellSize = calcCellSize(gridSize);
-    if (newCellSize !== cellSize) {
-      cellSize = newCellSize;
-      canvas.width = gridSize * cellSize;
-      canvas.height = gridSize * cellSize;
-      redraw();
-    }
-  });
-
-  // Clear
   clearBtn.addEventListener("click", () => {
-    saveUndo();
+    if (!pixels.some(r => r.some(c => c !== null))) return;
+    pushUndo();
     pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill(null));
     redraw();
   });
 
-  // Save PNG
   saveBtn.addEventListener("click", () => {
-    const emptyTransparent = transparentEmptyCheck.checked;
     const exp = document.createElement("canvas");
-    exp.width = gridSize;
-    exp.height = gridSize;
+    exp.width = gridSize; exp.height = gridSize;
     const ectx = exp.getContext("2d");
-    if (!emptyTransparent) {
-      ectx.fillStyle = bgColor;
-      ectx.fillRect(0, 0, gridSize, gridSize);
-    }
+    if (!transparentEmptyCheck.checked) { ectx.fillStyle = bgColor; ectx.fillRect(0, 0, gridSize, gridSize); }
     for (let r = 0; r < gridSize; r++)
       for (let c = 0; c < gridSize; c++) {
         if (pixels[r][c] === null) continue;
-        ectx.fillStyle = pixels[r][c];
-        ectx.fillRect(c, r, 1, 1);
+        ectx.fillStyle = pixels[r][c]; ectx.fillRect(c, r, 1, 1);
       }
     const link = document.createElement("a");
     link.download = `pixelart_${gridSize}x${gridSize}.png`;
@@ -394,41 +662,28 @@ touch-action: none;
     link.click();
   });
 
-  // Trace image
-  const traceLoadBtn = document.getElementById("trace-load-btn");
-  const traceInput = document.getElementById("trace-input");
+  const traceLoadBtn       = document.getElementById("trace-load-btn");
+  const traceInput         = document.getElementById("trace-input");
   const traceOpacitySlider = document.getElementById("trace-opacity");
-  const traceClearBtn = document.getElementById("trace-clear-btn");
+  const traceClearBtn      = document.getElementById("trace-clear-btn");
 
   traceLoadBtn.addEventListener("click", () => traceInput.click());
   traceInput.addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]; if (!file) return;
     const url = URL.createObjectURL(file);
     const img = new Image();
-    img.onload = () => {
-      traceImage = img;
-      traceClearBtn.style.display = "";
-      redraw();
-      URL.revokeObjectURL(url);
-    };
-    img.src = url;
-    traceInput.value = "";
+    img.onload = () => { traceImage = img; traceClearBtn.style.display = ""; redraw(); URL.revokeObjectURL(url); };
+    img.src = url; traceInput.value = "";
   });
   traceOpacitySlider.addEventListener("input", () => {
     traceOpacity = parseInt(traceOpacitySlider.value) / 100;
     if (traceImage) redraw();
   });
-  traceClearBtn.addEventListener("click", () => {
-    traceImage = null;
-    traceClearBtn.style.display = "none";
-    redraw();
-  });
+  traceClearBtn.addEventListener("click", () => { traceImage = null; traceClearBtn.style.display = "none"; redraw(); });
 
   setActiveColor("#000000");
-  initGrid();
+  initGrid(false);
 })();
 </script>
-
 </body>
 </html>

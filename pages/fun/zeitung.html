@@ -5,27 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Newspaper Generator</title>
 <script src="lang.js"></script>
+<script src="/js/style.js"></script>
 <style>
-  a { color: inherit; text-decoration: none;}
-  body{font-family:monospace;max-width:1100px;margin:40px auto;padding:0 20px;background:#fff;color:#000}
-  h1{font-size:13px;font-weight:normal;border-bottom:1px solid #000;padding-bottom:6px;margin-bottom:24px;letter-spacing:2px;text-transform:uppercase}
-  .wrap{display:grid;grid-template-columns:270px 1fr;gap:48px}
-  @media(max-width:640px){
-  .wrap{grid-template-columns:1fr;gap:24px}
-  .card{max-width:360px}
-  h1{margin-top:30px}
-  }
-  label{display:block;font-size:10px;margin-top:12px;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
-  input[type=text],input[type=date],textarea,select{width:100%;border:none;border-bottom:1px solid #000;padding:3px 0;font-family:monospace;font-size:13px;background:none;outline:none;box-sizing:border-box;resize:vertical}
-  .photo-drop{border:1px solid #000;height:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
-  .photo-drop img,.photo-drop input{position:absolute;inset:0}
-  .photo-drop img{width:100%;height:100%;object-fit:cover}
-  .photo-drop input{opacity:0;cursor:pointer;width:100%}
-  button{margin-top:16px;padding:5px 14px;font-family:monospace;font-size:11px;background:#000;color:#fff;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
-  .style-row{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
-  .sb{border:1px solid #000;padding:2px 8px;cursor:pointer;font-family:monospace;font-size:11px;background:#fff}
-  .sb.on{background:#000;color:#fff}
-  a.dl{display:inline-block;margin-top:10px;font-size:11px;color:#000;cursor:pointer}
+  a { color: inherit; text-decoration: none; }
+  body { font-family: monospace; max-width: 1100px; margin: 40px auto; padding: 0 20px; background: var(--bg); color: var(--fg); }
+  h1 { font-size: 13px; font-weight: normal; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 24px; letter-spacing: 2px; text-transform: uppercase; margin-top: 40px; }
+  .wrap { display: grid; grid-template-columns: 270px 1fr; gap: 48px; }
+  @media(max-width:640px){ .wrap{grid-template-columns:1fr;gap:24px} h1{margin-top:30px} }
+  label { display: block; font-size: 10px; margin-top: 12px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
+  input[type=text], input[type=date], textarea, select { width: 100%; border: none; border-bottom: 1px solid var(--border); padding: 3px 0; font-family: monospace; font-size: 13px; background: none; color: var(--fg); outline: none; box-sizing: border-box; resize: vertical; min-height: 36px; }
+  select { background: var(--bg); }
+  .photo-drop { border: 1px solid var(--border); height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+  .photo-drop img, .photo-drop input { position: absolute; inset: 0; }
+  .photo-drop img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-drop input { opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  button { margin-top: 16px; padding: 10px 14px; font-family: monospace; font-size: 11px; background: var(--fg); color: var(--bg); border: none; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; min-height: 40px; }
+  .style-row { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+  .sb { border: 1px solid var(--border); padding: 6px 8px; cursor: pointer; font-family: monospace; font-size: 11px; background: var(--bg); color: var(--fg); min-height: 36px; }
+  .sb.on { background: var(--fg); color: var(--bg); }
+  a.dl { display: inline-block; margin-top: 10px; font-size: 11px; color: var(--fg); cursor: pointer; }
+  /* Newspaper preview — fixed colors intentional */
   .np{font-family:'Times New Roman',Georgia,serif;background:#fffef5;border:1px solid #ccc;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
   .np-flag{height:6px;background:linear-gradient(90deg,#CC0000,#002395)}
   .np-head{border-bottom:3px double #000;padding:10px 16px 8px;text-align:center}
@@ -57,9 +56,9 @@
 </style>
 </head>
 <body>
-<div style="position:fixed; top:10px; left:10px;">
-  <a href="/../index.html">🏠 Home</a>
-</div> 
+<div style="position:fixed;top:10px;left:10px;z-index:100;">
+  <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
+</div>
 <h1 data-t="zt_title">Newspaper Generator</h1>
 <div class="wrap">
   <div>
@@ -118,7 +117,7 @@
 <script>
 const months={en:['January','February','March','April','May','June','July','August','September','October','November','December'],de:['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],fr:['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],es:['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],pt:['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'],ru:['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'],zh:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],ar:['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'],ja:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],hi:['जनवरी','फरवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर']};
 const days={en:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],de:['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],fr:['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],es:['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],pt:['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],ru:['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'],zh:['周日','周一','周二','周三','周四','周五','周六'],ar:['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],ja:['日曜日','月曜日','火曜日','水曜日','木曜日','金曜日','土曜日'],hi:['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार']};
-function fd(v){if(!v)return'';const d=new Date(v);const lang=window._lang||'en';const ml=months[lang]||months.en;const dl=days[lang]||days.en;return{date:`${d.getDate()} ${ml[d.getMonth()]} ${d.getFullYear()}`,day:dl[d.getDay()].toUpperCase()};}
+function fd(v){if(!v)return{date:'',day:''};const d=new Date(v);const lang=window._lang||'en';const ml=months[lang]||months.en;const dl=days[lang]||days.en;return{date:`${d.getDate()} ${ml[d.getMonth()]} ${d.getFullYear()}`,day:dl[d.getDay()].toUpperCase()};}
 function lp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const s=e.target.result;document.getElementById('pd').innerHTML=`<img src="${s}"><input type="file" accept="image/*" onchange="lp(this)">`;document.getElementById('np-photo').innerHTML=`<img src="${s}" style="width:100%;height:100%;object-fit:cover">`;};r.readAsDataURL(f);}
 function ss(el,cls){document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');document.getElementById('np').className='np '+(cls||'');}
 function u(){

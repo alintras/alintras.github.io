@@ -27,7 +27,6 @@
       text-transform: uppercase;
     }
 
-    /* Portrait game wrap */
     #game-wrap {
       width: 100%;
       max-width: 800px;
@@ -73,7 +72,6 @@
     .action-btn.pressed { background: rgba(255,255,255,0.32); }
     .dpad-blank { background: none !important; border: none !important; pointer-events: none; }
 
-    /* Portrait controls */
     #mobile-controls {
       display: none;
       width: 100%;
@@ -124,7 +122,6 @@
       padding: 0 8px;
     }
 
-    /* Landscape PSP layout */
     #landscape-controls {
       display: none;
       width: 100%;
@@ -146,20 +143,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      /* fixed width, never grows or shrinks */
       width: 220px;
       min-width: 220px;
       max-width: 220px;
       flex: 0 0 220px;
     }
 
-    .psp-side:first-child {
-      padding-left: env(safe-area-inset-left, 60px);
-    }
-
-    .psp-side:last-child {
-      padding-right: env(safe-area-inset-right, 0px);
-    }
+    .psp-side:first-child { padding-left: env(safe-area-inset-left, 60px); }
+    .psp-side:last-child  { padding-right: env(safe-area-inset-right, 0px); }
 
     #landscape-controls #ldpad {
       display: grid;
@@ -202,20 +193,15 @@
     }
 
     @media (hover: none) and (pointer: coarse) and (orientation: landscape) {
-      body {
-        padding: 0;
-        overflow: hidden;
-        justify-content: center;
-        background: #000;
-      }
+      body { padding: 0; overflow: hidden; justify-content: center; background: #000; }
       h1, #info, #mobile-controls, #game-wrap { display: none !important; }
       #landscape-controls { display: block; }
     }
   </style>
 </head>
 <body>
-  <div style="position:fixed; top:10px; left:10px; z-index:99;">
-    <a href="/../index.html">🏠&#xFE0E; Home</a>
+  <div style="position:fixed;top:10px;left:10px;z-index:99;">
+    <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;filter:invert(1) opacity(0.6);"> Home</a>
   </div>
 
   <h1>Castaway</h1>
@@ -247,18 +233,10 @@
         <div class="dpad-blank"></div>
       </div>
       <div id="action-btns">
-        <div class="action-btn" data-key="z" data-code="KeyZ">
-          <span class="key">Z</span><span class="label">action</span>
-        </div>
-        <div class="action-btn" data-key="x" data-code="KeyX">
-          <span class="key">X</span><span class="label">cancel</span>
-        </div>
-        <div class="action-btn" data-key="Enter" data-code="Enter">
-          <span class="key">↵</span><span class="label">enter</span>
-        </div>
-        <div class="action-btn" data-key="Escape" data-code="Escape">
-          <span class="key">ESC</span><span class="label">menu</span>
-        </div>
+        <div class="action-btn" data-key="z" data-code="KeyZ"><span class="key">Z</span><span class="label">action</span></div>
+        <div class="action-btn" data-key="x" data-code="KeyX"><span class="key">X</span><span class="label">cancel</span></div>
+        <div class="action-btn" data-key="Enter" data-code="Enter"><span class="key">↵</span><span class="label">enter</span></div>
+        <div class="action-btn" data-key="Escape" data-code="Escape"><span class="key">ESC</span><span class="label">menu</span></div>
       </div>
     </div>
     <div id="hint">pinch to zoom · arrows · Z · X · Enter · ESC</div>
@@ -279,23 +257,13 @@
           <div class="dpad-blank"></div>
         </div>
       </div>
-
       <div id="psp-game-wrap"></div>
-
       <div class="psp-side">
         <div id="laction-btns">
-          <div class="action-btn" data-key="z" data-code="KeyZ">
-            <span class="key">Z</span><span class="label">action</span>
-          </div>
-          <div class="action-btn" data-key="x" data-code="KeyX">
-            <span class="key">X</span><span class="label">cancel</span>
-          </div>
-          <div class="action-btn" data-key="Enter" data-code="Enter">
-            <span class="key">↵</span><span class="label">enter</span>
-          </div>
-          <div class="action-btn" data-key="Escape" data-code="Escape">
-            <span class="key">ESC</span><span class="label">menu</span>
-          </div>
+          <div class="action-btn" data-key="z" data-code="KeyZ"><span class="key">Z</span><span class="label">action</span></div>
+          <div class="action-btn" data-key="x" data-code="KeyX"><span class="key">X</span><span class="label">cancel</span></div>
+          <div class="action-btn" data-key="Enter" data-code="Enter"><span class="key">↵</span><span class="label">enter</span></div>
+          <div class="action-btn" data-key="Escape" data-code="Escape"><span class="key">ESC</span><span class="label">menu</span></div>
         </div>
       </div>
     </div>
@@ -319,10 +287,7 @@
 
       var portraitSlot  = document.getElementById("game-wrap");
       var landscapeSlot = document.getElementById("psp-game-wrap");
-
-      var landscapeMQ = window.matchMedia(
-        "(hover: none) and (pointer: coarse) and (orientation: landscape)"
-      );
+      var landscapeMQ   = window.matchMedia("(hover: none) and (pointer: coarse) and (orientation: landscape)");
 
       function syncSize(slot) {
         player.style.width  = slot.offsetWidth  + "px";
@@ -332,7 +297,6 @@
       function placePlayer() {
         var slot = landscapeMQ.matches ? landscapeSlot : portraitSlot;
         slot.appendChild(player);
-        // Wait a frame for layout to settle before reading dimensions
         requestAnimationFrame(function () { syncSize(slot); });
       }
 
@@ -349,33 +313,20 @@
 
       function fire(type, key, code) {
         [player, document].forEach(function (t) {
-          t.dispatchEvent(new KeyboardEvent(type, {
-            key: key, code: code, bubbles: true, cancelable: true
-          }));
+          t.dispatchEvent(new KeyboardEvent(type, { key: key, code: code, bubbles: true, cancelable: true }));
         });
       }
 
       buttons.forEach(function (btn) {
         var key  = btn.dataset.key;
         var code = btn.dataset.code;
-
-        btn.addEventListener('pointerdown', function (e) {
-          e.preventDefault();
-          btn.classList.add('pressed');
-          fire('keydown', key, code);
-        });
-
-        function up() {
-          btn.classList.remove('pressed');
-          fire('keyup', key, code);
-        }
-
-        btn.addEventListener('pointerup',     up);
-        btn.addEventListener('pointerleave',  up);
+        btn.addEventListener('pointerdown', function (e) { e.preventDefault(); btn.classList.add('pressed'); fire('keydown', key, code); });
+        function up() { btn.classList.remove('pressed'); fire('keyup', key, code); }
+        btn.addEventListener('pointerup', up);
+        btn.addEventListener('pointerleave', up);
         btn.addEventListener('pointercancel', up);
       });
     });
   </script>
-
 </body>
 </html>

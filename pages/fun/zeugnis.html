@@ -5,28 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Report Card Generator</title>
 <script src="lang.js"></script>
+<script src="/js/style.js"></script>
 <style>
-  a { color: inherit; text-decoration: none;}
-  body{font-family:monospace;max-width:1000px;margin:40px auto;padding:0 20px;background:#fff;color:#000}
-  h1{font-size:13px;font-weight:normal;border-bottom:1px solid #000;padding-bottom:6px;margin-bottom:24px;letter-spacing:2px;text-transform:uppercase}
-  .wrap{display:grid;grid-template-columns:270px 1fr;gap:48px}
-  @media(max-width:640px){
-  .wrap{grid-template-columns:1fr;gap:24px}
-  .card{max-width:360px}
-  h1{margin-top:30px}
-  }
-  label{display:block;font-size:10px;margin-top:12px;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
-  input[type=text],select,textarea{width:100%;border:none;border-bottom:1px solid #000;padding:3px 0;font-family:monospace;font-size:13px;background:none;outline:none;box-sizing:border-box;resize:none}
-  button{margin-top:4px;padding:3px 10px;font-family:monospace;font-size:10px;background:#000;color:#fff;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
-  button.sec{background:#fff;color:#000;border:1px solid #000;margin-top:16px}
-  .subject-row{display:flex;gap:8px;align-items:center;margin-top:6px}
-  .subject-row input{flex:1;margin-top:0}
-  .subject-row select{width:55px;flex-shrink:0;margin-top:0}
-  .add-link{font-size:11px;color:#000;cursor:pointer;margin-top:8px;display:inline-block}
-  .style-row{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
-  .sb{border:1px solid #000;padding:2px 8px;cursor:pointer;font-family:monospace;font-size:11px;background:#fff}
-  .sb.on{background:#000;color:#fff}
-  a.dl{display:inline-block;margin-top:10px;font-size:11px;color:#000;cursor:pointer}
+  a { color: inherit; text-decoration: none; }
+  body { font-family: monospace; max-width: 1000px; margin: 40px auto; padding: 0 20px; background: var(--bg); color: var(--fg); }
+  h1 { font-size: 13px; font-weight: normal; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 24px; letter-spacing: 2px; text-transform: uppercase; margin-top: 40px; }
+  .wrap { display: grid; grid-template-columns: 270px 1fr; gap: 48px; }
+  @media(max-width:640px){ .wrap{grid-template-columns:1fr;gap:24px} h1{margin-top:30px} }
+  label { display: block; font-size: 10px; margin-top: 12px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
+  input[type=text], select, textarea { width: 100%; border: none; border-bottom: 1px solid var(--border); padding: 3px 0; font-family: monospace; font-size: 13px; background: none; color: var(--fg); outline: none; box-sizing: border-box; resize: none; min-height: 36px; }
+  select { background: var(--bg); }
+  button { margin-top: 4px; padding: 8px 10px; font-family: monospace; font-size: 10px; background: var(--fg); color: var(--bg); border: none; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; min-height: 36px; }
+  button.sec { background: var(--bg); color: var(--fg); border: 1px solid var(--border); margin-top: 16px; }
+  .subject-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+  .subject-row input { flex: 1; margin-top: 0; min-height: 0; }
+  .subject-row select { width: 70px; flex-shrink: 0; margin-top: 0; min-height: 0; }
+  .add-link { font-size: 11px; color: var(--fg); cursor: pointer; margin-top: 8px; display: inline-block; text-decoration: underline; }
+  .style-row { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+  .sb { border: 1px solid var(--border); padding: 6px 8px; cursor: pointer; font-family: monospace; font-size: 11px; background: var(--bg); color: var(--fg); min-height: 36px; }
+  .sb.on { background: var(--fg); color: var(--bg); }
+  a.dl { display: inline-block; margin-top: 10px; font-size: 11px; color: var(--fg); cursor: pointer; }
+  /* Certificate preview — fixed colors intentional */
   .zeugnis{background:#fffef5;border:1px solid #c8a050;padding:32px 36px;position:relative;font-family:Georgia,'Times New Roman',serif;box-shadow:0 2px 16px rgba(0,0,0,0.1)}
   .z-inner{position:absolute;inset:8px;border:1px solid #e8d080;pointer-events:none}
   .z-corner{position:absolute;font-size:16px;color:#c8a050;pointer-events:none}
@@ -54,9 +53,9 @@
 </style>
 </head>
 <body>
-<div style="position:fixed; top:10px; left:10px;">
-  <a href="/../index.html">🏠 Home</a>
-</div> 
+<div style="position:fixed;top:10px;left:10px;z-index:100;">
+  <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
+</div>
 <h1 data-t="z_title">Report Card Generator</h1>
 <div class="wrap">
   <div>
@@ -78,7 +77,7 @@
     <label data-t="z_notes">Notes</label><textarea id="note" rows="2" oninput="u()">Max has shown great effort and made excellent progress this year.</textarea>
     <label data-t="z_teacher">Class teacher</label><input type="text" id="sig1" value="Dr. H. Miller" oninput="u()">
     <label data-t="z_principal">Principal</label><input type="text" id="sig2" value="A. Johnson" oninput="u()">
-    <hr style="border:none;border-top:1px solid #000;margin:16px 0">
+    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
     <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px" data-t="z_subjects">Subjects</div>
     <div id="slist"></div>
     <a class="add-link" onclick="addS()" data-t="z_add_subject">+ Add subject</a>
@@ -110,7 +109,6 @@
 <script>
 const def=[['English','A'],['Mathematics','B'],['Science','A'],['History','A+'],['Biology','B+'],['Physics','B'],['PE','A'],['Art','A'],['Music','A+']];
 let subs=def.map(([n,g])=>({n,g}));
-let currentStyle='';
 function renderList(){
   document.getElementById('slist').innerHTML=subs.map((s,i)=>`
     <div class="subject-row">
@@ -122,7 +120,7 @@ function renderList(){
 }
 function addS(){subs.push({n:'New Subject',g:'B'});renderList();u();}
 function setStyle(el,cls){document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));el.classList.add('on');document.getElementById('z').className='zeugnis'+(cls?' '+cls:'');}
-function gClass(g){const m={'A+':'g1','A':'g2','B+':'g2','B':'g3','C+':'g3','C':'g4','D':'g5','F':'g6'};return m[g]||''}
+function gClass(g){const m={'A+':'g1','A':'g2','B+':'g2','B':'g3','C+':'g3','C':'g4','D':'g5','F':'g6'};return m[g]||'';}
 function u(){
   document.getElementById('z-school').textContent=document.getElementById('school').value;
   document.getElementById('z-name').textContent=document.getElementById('name').value;

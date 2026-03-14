@@ -5,7 +5,7 @@
 }
 
 #layout-sidebar {
-    border-right: 1px solid #131313;
+    border-right: 1px solid var(--border);
     padding: 20px;
     transition: width 0.2s, padding 0.2s;
     white-space: nowrap;

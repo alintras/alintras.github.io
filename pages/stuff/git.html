@@ -1,83 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git</title>
-    <nav>
-        <a href="../../index.html"><img src="/assets/smileys/home.jpg" style="width:24px; height:24px; vertical-align:-7px; image-rendering:pixelated;"> Home</a>
-    </nav>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git</title>
+  <script src="/js/style.js"></script>
+  <style>
+    a { color: inherit; text-decoration: none; }
+    body { font-family: monospace; max-width: 800px; margin: 40px auto; padding: 0 20px; background: var(--bg); color: var(--fg); }
+    header { margin-top: 30px; margin-bottom: 20px; }
+    h1 { font-size: 1.4em; margin-bottom: 6px; }
+    p { margin-bottom: 16px; line-height: 1.6; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; font-size: 0.9em; }
+    th { font-weight: bold; }
+    td:first-child { font-family: monospace; white-space: nowrap; }
+    footer { margin-top: 40px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.8em; opacity: 0.6; }
+    @media(max-width:600px){ td:first-child { white-space: normal; } }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Git</h1>
-        <p>My personal documentation for git fundamentals</p>
-    </header>
-    <p>
-        Git is a tool used to keep track of changes to files, especially the code of the projects.<br>
-        It is termed a distributed version control system because of its behaviour to allow multiple people to work on the same project, 
-        even if they are not connected to a common server.
-    </p>
-    <table>
-        <tr>
-            <th>Command</th>
-            <th>Description</th>
-        </tr>
-        <tr>
-            <td>git clone URL</td>
-            <td>copies a repository from GitHub to your computer</td>
-        </tr>
-        <tr>
-            <td>git pull origin main</td>
-            <td>updates your local repository with latest changes from GitHub</td>
-        </tr>
-        <tr>
-            <td>git status</td>
-            <td>shows which files were changed</td>
-        </tr>
-        <tr>
-            <td>git add .</td>
-            <td>adds all changes to the next commit</td>
-        </tr>
-        <tr>
-           <td>git commit -m "message"</td>
-           <td>saves your changes locally with a message</td>
-        </tr>
-        <tr>
-            <td>git push origin main</td>
-            <td>uploads local commits to GitHub</td>
-        </tr>
-        <tr>
-            <td>git reset --hard</td>
-            <td>discards all local changes since the last commit</td>
-        </tr>
-        <tr>
-            <td>git clean -fd</td>
-            <td>deletes untracked files and folders</td>
-        </tr>
-        <tr>
-            <td>git fetch origin</td>
-            <td>downloads info about changes on GitHub without merging them</td> 
-        </tr>
-        <tr>
-            <td>git reset --hard origin/main</td>
-            <td>makes your local copy exactly match the version on GitHub</td>
-        </tr>
-        <tr>
-            <td>git branch</td>
-            <td>lists all branches</td>
-        </tr>
-        <tr>
-            <td>git checkout -b new-branch</td>
-            <td>creates and switches to a new branch</td>
-        </tr>
-        <tr>
-            <td>git merge branchname</td>
-            <td>merges another branch into the current one</td>
-        </tr>
-    </table>
-<footer>
-    
-</footer>
+  <div style="position:fixed;top:10px;left:10px;z-index:100;">
+    <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
+  </div>
+  <header>
+    <h1>Git</h1>
+    <p>My personal documentation for git fundamentals</p>
+  </header>
+  <p>
+    Git is a tool used to keep track of changes to files, especially the code of the projects.<br>
+    It is termed a distributed version control system because of its behaviour to allow multiple people to work on the same project,
+    even if they are not connected to a common server.
+  </p>
+  <table>
+    <tr><th>Command</th><th>Description</th></tr>
+    <tr><td>git clone URL</td><td>copies a repository from GitHub to your computer</td></tr>
+    <tr><td>git pull origin main</td><td>updates your local repository with latest changes from GitHub</td></tr>
+    <tr><td>git status</td><td>shows which files were changed</td></tr>
+    <tr><td>git add .</td><td>adds all changes to the next commit</td></tr>
+    <tr><td>git commit -m "message"</td><td>saves your changes locally with a message</td></tr>
+    <tr><td>git push origin main</td><td>uploads local commits to GitHub</td></tr>
+    <tr><td>git reset --hard</td><td>discards all local changes since the last commit</td></tr>
+    <tr><td>git clean -fd</td><td>deletes untracked files and folders</td></tr>
+    <tr><td>git fetch origin</td><td>downloads info about changes on GitHub without merging them</td></tr>
+    <tr><td>git reset --hard origin/main</td><td>makes your local copy exactly match the version on GitHub</td></tr>
+    <tr><td>git branch</td><td>lists all branches</td></tr>
+    <tr><td>git checkout -b new-branch</td><td>creates and switches to a new branch</td></tr>
+    <tr><td>git merge branchname</td><td>merges another branch into the current one</td></tr>
+  </table>
+  <footer>Documentation in progress</footer>
 </body>
 </html>

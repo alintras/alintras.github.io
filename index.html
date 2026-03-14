@@ -29,6 +29,7 @@
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
+    <script src="/js/style.js"></script>
     <script src="js/nav.js" defer></script>
     <script src="js/search.js" defer></script>
 
@@ -45,12 +46,12 @@
         <div id="layout-content">
             <header>
                 <h1 aria-label="Ali's Homepage" 
-                style="border-bottom:1px solid #131313;
+                style="border-bottom:1px solid var(--border);
                 padding: 0 30px;">
                     <pre style=
                     "font-family: monospace;
                     font-size: clamp(3px, 1.4vw, 14px);
-                    color: #000000;
+                    color: var(--fg);
                     padding: 0px;
                     overflow: visible;
                     white-space: pre;
@@ -71,6 +72,7 @@
                             <div class="title-row" style="display:flex; align-items:center; gap:10px;">
                                 <h2 style="margin:0;">Hey there!</h2>
                                 <div id="clock" style="opacity:0.9; margin-right:auto; border:1px solid #000000; padding: 2px"></div>
+                                <button id="theme-toggle" onclick="toggleTheme()">☾</button>
                             </div>
                             <p>
                                 Welcome to my page. Take a look around!<br>

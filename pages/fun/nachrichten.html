@@ -5,42 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>News Card Generator</title>
 <script src="lang.js"></script>
+<script src="/js/style.js"></script>
 <style>
-  a { color: inherit; text-decoration: none;}
-  body{font-family:monospace;max-width:900px;margin:40px auto;padding:0 20px;background:#fff;color:#000}
-  h1{font-size:13px;font-weight:normal;border-bottom:1px solid #000;padding-bottom:6px;margin-bottom:24px;letter-spacing:2px;text-transform:uppercase}
-  .wrap{display:grid;grid-template-columns:260px 1fr;gap:48px}
-  @media(max-width:640px){
-  .wrap{grid-template-columns:1fr;gap:24px}
-  .card{max-width:360px}
-  h1{margin-top:30px}
-  }
-  label{display:block;font-size:10px;margin-top:12px;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
-  input[type=text],textarea,select{width:100%;border:none;border-bottom:1px solid #000;padding:3px 0;font-family:monospace;font-size:13px;background:none;outline:none;box-sizing:border-box;resize:none}
-  .photo-drop{border:1px solid #000;height:80px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
-  .photo-drop img,.photo-drop input{position:absolute;inset:0}
-  .photo-drop img{width:100%;height:100%;object-fit:cover}
-  .photo-drop input{opacity:0;cursor:pointer;width:100%}
-  button{margin-top:16px;padding:5px 14px;font-family:monospace;font-size:11px;background:#000;color:#fff;border:none;cursor:pointer;letter-spacing:1px;text-transform:uppercase}
-  .style-row{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
-  .sb{border:1px solid #000;padding:2px 8px;cursor:pointer;font-family:monospace;font-size:11px;background:#fff}
-  .sb.on{background:#000;color:#fff}
-  a.dl{display:inline-block;margin-top:10px;font-size:11px;color:#000;cursor:pointer}
-  .nc{font-family:monospace;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.2)}
-  .nc-head{padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
-  .nc-channel{font-size:18px;font-weight:bold;letter-spacing:2px}
-  .nc-live{font-size:9px;padding:2px 8px;letter-spacing:1px;border:1px solid}
-  .nc-ticker{font-size:9px;padding:4px 14px;white-space:nowrap;overflow:hidden}
-  .nc-ticker-inner{display:inline-block;animation:tick 16s linear infinite}
-  @keyframes tick{from{transform:translateX(100%)}to{transform:translateX(-200%)}}
-  .nc-photo{width:100%;height:170px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:11px}
-  .nc-photo img{width:100%;height:100%;object-fit:cover}
-  .nc-lower{border-left:4px solid;padding:10px 14px;margin:12px 14px 0}
-  .nc-cat{font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
-  .nc-headline{font-size:17px;font-weight:bold;line-height:1.3}
-  .nc-sub{font-size:11px;margin-top:4px;line-height:1.5;opacity:0.75}
-  .nc-body{padding:8px 14px 12px;font-size:11px;line-height:1.6;opacity:0.8}
-  .nc-foot{display:flex;justify-content:space-between;border-top:1px solid;padding:6px 14px;font-size:9px;opacity:0.5}
+  a { color: inherit; text-decoration: none; }
+  body { font-family: monospace; max-width: 900px; margin: 40px auto; padding: 0 20px; background: var(--bg); color: var(--fg); }
+  h1 { font-size: 13px; font-weight: normal; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 24px; letter-spacing: 2px; text-transform: uppercase; margin-top: 40px; }
+  .wrap { display: grid; grid-template-columns: 260px 1fr; gap: 48px; }
+  @media(max-width:640px){ .wrap{grid-template-columns:1fr;gap:24px} h1{margin-top:30px} }
+  label { display: block; font-size: 10px; margin-top: 12px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
+  input[type=text], textarea, select { width: 100%; border: none; border-bottom: 1px solid var(--border); padding: 3px 0; font-family: monospace; font-size: 13px; background: none; color: var(--fg); outline: none; box-sizing: border-box; resize: none; min-height: 36px; }
+  select { background: var(--bg); }
+  .photo-drop { border: 1px solid var(--border); height: 80px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+  .photo-drop img, .photo-drop input { position: absolute; inset: 0; }
+  .photo-drop img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-drop input { opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  button { margin-top: 16px; padding: 10px 14px; font-family: monospace; font-size: 11px; background: var(--fg); color: var(--bg); border: none; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; min-height: 40px; }
+  .style-row { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+  .sb { border: 1px solid var(--border); padding: 6px 8px; cursor: pointer; font-family: monospace; font-size: 11px; background: var(--bg); color: var(--fg); min-height: 36px; }
+  .sb.on { background: var(--fg); color: var(--bg); }
+  a.dl { display: inline-block; margin-top: 10px; font-size: 11px; color: var(--fg); cursor: pointer; }
+  /* News card — fixed colors intentional */
+  .nc { font-family: monospace; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+  .nc-head { padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .nc-channel { font-size: 18px; font-weight: bold; letter-spacing: 2px; }
+  .nc-live { font-size: 9px; padding: 2px 8px; letter-spacing: 1px; border: 1px solid; }
+  .nc-ticker { font-size: 9px; padding: 4px 14px; white-space: nowrap; overflow: hidden; }
+  .nc-ticker-inner { display: inline-block; animation: tick 16s linear infinite; }
+  @keyframes tick { from{transform:translateX(100%)} to{transform:translateX(-200%)} }
+  .nc-photo { width: 100%; height: 170px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  .nc-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .nc-lower { border-left: 4px solid; padding: 10px 14px; margin: 12px 14px 0; }
+  .nc-cat { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .nc-headline { font-size: 17px; font-weight: bold; line-height: 1.3; }
+  .nc-sub { font-size: 11px; margin-top: 4px; line-height: 1.5; opacity: 0.75; }
+  .nc-body { padding: 8px 14px 12px; font-size: 11px; line-height: 1.6; opacity: 0.8; }
+  .nc-foot { display: flex; justify-content: space-between; border-top: 1px solid; padding: 6px 14px; font-size: 9px; opacity: 0.5; }
   .s-dark{background:#111;color:#fff}.s-dark .nc-head{background:#111}.s-dark .nc-ticker{background:#cc0000;color:#fff}.s-dark .nc-photo{background:#222;color:#555}.s-dark .nc-lower{border-color:#cc0000}.s-dark .nc-cat{color:#cc0000}.s-dark .nc-foot{border-color:rgba(255,255,255,0.1)}
   .s-blue{background:#001a4a;color:#e8eeff}.s-blue .nc-head{background:#001a4a}.s-blue .nc-ticker{background:#1a3a8a;color:#c0d0ff}.s-blue .nc-photo{background:#0a1a3a;color:#2a4a8a}.s-blue .nc-lower{border-color:#4a7acc}.s-blue .nc-cat{color:#4a7acc}.s-blue .nc-foot{border-color:rgba(255,255,255,0.1)}
   .s-light{background:#fff;color:#111;border:1px solid #ddd}.s-light .nc-head{background:#1a1a1a;color:#fff}.s-light .nc-ticker{background:#cc0000;color:#fff}.s-light .nc-photo{background:#f0f0f0;color:#aaa}.s-light .nc-lower{border-color:#1a1a1a}.s-light .nc-cat{color:#cc0000}.s-light .nc-foot{border-color:#e0e0e0}
@@ -48,9 +47,9 @@
 </style>
 </head>
 <body>
-<div style="position:fixed; top:10px; left:10px;">
-  <a href="/../index.html">🏠 Home</a>
-</div> 
+<div style="position:fixed;top:10px;left:10px;z-index:100;">
+  <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
+</div>
 <h1 data-t="n_title">News Card Generator</h1>
 <div class="wrap">
   <div>

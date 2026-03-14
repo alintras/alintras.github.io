@@ -4,27 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ID Card Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="lang.js"></script>
+<script src="/js/style.js"></script>
 <style>
-  a { color: inherit; text-decoration: none;}
-  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
-  body { font-family: monospace; max-width: 960px; margin: 40px auto; padding: 0 20px; background: #fff; color: #000; }
-  h1 { font-size: 13px; font-weight: normal; border-bottom: 1px solid #000; padding-bottom: 6px; margin-bottom: 24px; letter-spacing: 2px; text-transform: uppercase; }
+  a { color: inherit; text-decoration: none; }
+  body { font-family: monospace; max-width: 960px; margin: 40px auto; padding: 0 20px; background: var(--bg); color: var(--fg); }
+  h1 { font-size: 13px; font-weight: normal; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 24px; letter-spacing: 2px; text-transform: uppercase; margin-top: 40px; }
   .wrap { display: grid; grid-template-columns: 280px 1fr; gap: 48px; }
-  @media(max-width:640px){
-  .wrap{grid-template-columns:1fr;gap:24px}
-  .card{max-width:360px}
-  h1{margin-top:30px}
-  }
+  @media(max-width:640px){ .wrap{grid-template-columns:1fr;gap:24px} .card{max-width:100%} }
   label { display: block; font-size: 10px; margin-top: 12px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
-  input[type=text], input[type=date], select { width: 100%; border: none; border-bottom: 1px solid #000; padding: 3px 0; font-family: monospace; font-size: 13px; background: none; outline: none; box-sizing: border-box; }
-  .photo-drop { border: 1px solid #000; height: 90px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+  input[type=text], input[type=date], select {
+    width: 100%; border: none; border-bottom: 1px solid var(--border);
+    padding: 3px 0; font-family: monospace; font-size: 13px;
+    background: none; color: var(--fg); outline: none; box-sizing: border-box;
+    min-height: 36px;
+  }
+  select { background: var(--bg); }
+  .photo-drop { border: 1px solid var(--border); height: 90px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
   .photo-drop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .photo-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
-  button { margin-top: 16px; padding: 5px 14px; font-family: monospace; font-size: 11px; background: #000; color: #fff; border: none; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; }
+  .photo-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  button { margin-top: 16px; padding: 10px 14px; font-family: monospace; font-size: 11px; background: var(--fg); color: var(--bg); border: none; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; min-height: 40px; }
   .presets { margin-top: 8px; font-size: 11px; }
-  .presets a { color: #000; cursor: pointer; margin-right: 8px; text-decoration: underline; }
-  a.dl { display: inline-block; margin-top: 10px; font-size: 11px; color: #000; cursor: pointer; }
+  .presets a { color: var(--fg); cursor: pointer; margin-right: 8px; text-decoration: underline; }
+  a.dl { display: inline-block; margin-top: 10px; font-size: 11px; color: var(--fg); cursor: pointer; }
+  /* Card preview styles — fixed colors intentional */
   .card { width: 100%; aspect-ratio: 85.6/54; position: relative; overflow: hidden; font-family: 'Space Mono', monospace; box-shadow: 0 4px 24px rgba(0,0,0,0.18); box-sizing: border-box; }
   .card * { box-sizing: border-box; }
   .card-bg { position: absolute; inset: 0; }
@@ -48,9 +52,9 @@
 </style>
 </head>
 <body>
-<div style="position:fixed; top:10px; left:10px;">
-  <a href="/../index.html">🏠 Home</a>
-</div> 
+<div style="position:fixed;top:10px;left:10px;z-index:100;">
+  <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
+</div>
 <h1 data-t="aus_title">ID Card Generator</h1>
 <div class="wrap">
   <div>

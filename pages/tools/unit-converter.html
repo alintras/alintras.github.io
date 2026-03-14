@@ -9,18 +9,18 @@
         a { color: inherit; text-decoration: none; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #fff;
+            background: var(--bg);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            color: #111;
+            color: var(--fg);
         }
         .container { max-width: 700px; width: 100%; }
         header { text-align: center; margin-bottom: 20px; }
         h1 { font-size: 2em; margin-bottom: 8px; }
-        .subtitle { font-size: 1em; color: #555; }
+        .subtitle { font-size: 1em; color: var(--fg); opacity: 0.6; }
         .category-tabs {
             display: flex;
             gap: 8px;
@@ -29,15 +29,15 @@
         }
         .tab-btn {
             padding: 8px 16px;
-            background: #fff;
-            color: #111;
-            border: 1px solid #111;
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--border);
             cursor: pointer;
             font-weight: bold;
             transition: background 0.2s;
         }
-        .tab-btn:hover { background: #f0f0f0; }
-        .tab-btn.active { background: #111; color: #fff; }
+        .tab-btn:hover { background: var(--fg); color: var(--bg); }
+        .tab-btn.active { background: var(--fg); color: var(--bg); }
         .converter-area { display: none; }
         .converter-area.active { display: block; }
         .conversion-row {
@@ -48,27 +48,31 @@
             margin-bottom: 20px;
         }
         .input-group { display: flex; flex-direction: column; gap: 8px; }
-        .input-label { color: #555; font-weight: bold; font-size: 0.9em; }
+        .input-label { color: var(--fg); opacity: 0.7; font-weight: bold; font-size: 0.9em; }
         .input-wrapper { display: flex; gap: 8px; }
         input[type="number"] {
             flex: 1;
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--fg);
             font-size: 1em;
         }
-        input[type="number"]:focus { outline: none; border-color: #111; }
+        input[type="number"]:focus { outline: none; border-color: var(--fg); }
         select {
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border);
             font-size: 0.95em;
             cursor: pointer;
-            background: #fff;
+            background: var(--bg);
+            color: var(--fg);
             min-width: 110px;
         }
-        select:focus { outline: none; border-color: #111; }
+        select:focus { outline: none; border-color: var(--fg); }
         .swap-btn {
-            background: #fff;
-            border: 1px solid #111;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--fg);
             width: 40px;
             height: 40px;
             cursor: pointer;
@@ -78,14 +82,14 @@
             justify-content: center;
             transition: background 0.2s;
         }
-        .swap-btn:hover { background: #f0f0f0; }
+        .swap-btn:hover { background: var(--fg); color: var(--bg); }
         .tips {
-            border-top: 1px solid #ddd;
+            border-top: 1px solid var(--border);
             padding-top: 20px;
             margin-top: 20px;
         }
         .tips h3 { margin-bottom: 10px; }
-        .tips ul { list-style-position: inside; color: #444; }
+        .tips ul { list-style-position: inside; color: var(--fg); opacity: 0.8; }
         .tips li { margin: 6px 0; font-size: 0.95em; }
         @media (max-width: 600px) {
             h1 { font-size: 1.5em; }
@@ -94,10 +98,11 @@
             .input-wrapper { flex-direction: column; }
         }
     </style>
+    <script src="/js/style.js"></script>
 </head>
 <body>
     <div style="position:fixed; top:10px; left:10px;">
-        <a href="/../index.html"><img src="/assets/smileys/home.jpg" style="width:24px; height:24px; vertical-align:-7px; image-rendering:pixelated;"> Home</a>
+        <a href="/../index.html"><img src="/assets/smileys/vhome.PNG" style="width:24px; height:24px; vertical-align:-7px; image-rendering:pixelated;"> Home</a>
     </div>
     <div class="container">
         <header>
