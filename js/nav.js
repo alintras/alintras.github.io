@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   sidebar.innerHTML = `
     <b id="nav-toggle">Navigation </b>
     <div id="sidebar-body"><br><br>
-    🏠&#xFE0E; <a href="/index.html">Home</a><br><br>
+    <img src="/assets/smileys/home.jpg" style="width:24px; height:24px; vertical-align:-7px; image-rendering:pixelated;"> <a href="/index.html">Home</a><br><br>
     <details>
       <summary><img src="/assets/smileys/pickaxe.png" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Tools</summary>
       ${item(`<img src="/assets/smileys/mail.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/wondermail/wondermail.html", "PMD RT Wondermail Generator")}
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item(`<img src="/assets/smileys/ID.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/ausweis.html", "ID Generator")}
       ${item(`<img src="/assets/smileys/car.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/fuehrerschein.html", "License Generator")}
       ${item(`<img src="/assets/smileys/coin.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/muenze.html", "Coin Generator")}
-      ${item(`<img src="/assets/smileys/news.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/nachrichten.html", "News Generator")}
+      ${item(`<img src="/assets/smileys/desktop.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/nachrichten.html", "News Generator")}
       ${item(`<img src="/assets/smileys/cards.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/sammelkarte.html", "Trading Card Generator")}
       ${item(`<img src="/assets/smileys/cert.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/urkunde.html", "Certificate Generator")}
       ${item(`<img src="/assets/smileys/newsp.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/zeitung.html", "Newspaper Generator")}
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     </details><br>
     <details>
       <summary><img src="/assets/smileys/mario.gif" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Games</summary>
-      ${item(`<img src="/assets/smileys/isle.gif" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/castaway/castaway.html", "Castaway")}
+      ${item(`<img src="/assets/smileys/island.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/castaway/castaway.html", "Castaway")}
       ${item(`<img src="/assets/smileys/excl.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/mroops.html", "Mr.Oops!!")}
       ${item(`<img src="/assets/smileys/X.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/infinite-ttt.html", "Infinite TicTacToe")}
       ${item(`<img src="/assets/smileys/joystick.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/pong.html", "Pong")}

@@ -97,7 +97,9 @@
                     </div>
                     <div id="site-results"></div>
                     <details style="margin-top: 16px;">
-                        <summary style="cursor: pointer; user-select: none;">Try out search keywords! </summary>
+                        <summary style="cursor: pointer; user-select: none; list-style: none !important;" 
+                        onclick="this.textContent = this.closest('details').open ? '[+] Try out search keywords!' : '[-] Try out search keywords!'"
+                        >[+] Try out search keywords!</summary>
                         <table style="margin-top: 8px; border-collapse: collapse; font-size: 0.9em;">
                             <thead>
                                 <tr>

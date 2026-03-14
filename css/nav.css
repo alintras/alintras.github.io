@@ -14,7 +14,7 @@
 }
 
 #layout-sidebar.collapsed {
-    width: 18px;
+    width: 24px;
     padding: 8px 4px;
     cursor: pointer;
 }
@@ -42,12 +42,25 @@
 }
 
 #nav-toggle::after {
-    content: url("/assets/smileys/larrow.png");
-    font-size: 9px;
+    content: '[-]';
+    font-size: 16px;
     opacity: 1;
 }
 
 #layout-sidebar.collapsed #nav-toggle::after {
-    content: url("/assets/smileys/rarrow.png");
-    font-size: 15px;
+    content: '[+]';
+    font-size: 16px;
+}
+
+#sidebar-body details summary {
+    list-style: none;
+}
+#sidebar-body details summary::-webkit-details-marker {
+    display: none;
+}
+#sidebar-body details summary::before {
+    content: '[+] ';
+}
+#sidebar-body details[open] summary::before {
+    content: '[-] ';
 }
