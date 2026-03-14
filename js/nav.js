@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item(`<img src="/assets/smileys/cards.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/sammelkarte.html", "Trading Card Generator")}
       ${item(`<img src="/assets/smileys/cert.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/urkunde.html", "Certificate Generator")}
       ${item(`<img src="/assets/smileys/newsp.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/zeitung.html", "Newspaper Generator")}
-      ${item(`<img src="/assets/smileys/note.gif" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/zeugnis.html", "Report Card Generator")}
+      ${item(`<img src="/assets/smileys/memo.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/zeugnis.html", "Report Card Generator")}
       ${item(`<img src="/assets/smileys/puzzle.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/puzzle.html", "Custom Puzzle Generator")}
     </details><br>
     <details>
