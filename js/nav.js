@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   sidebar.innerHTML = `
-    <b id="nav-toggle">Navigation </b>
+    <b id="nav-toggle">Navigation</b>
     <div id="sidebar-body"><br><br>
     <img src="/assets/smileys/home.jpg" style="width:24px; height:24px; vertical-align:-7px; image-rendering:pixelated;"> <a href="/index.html">Home</a><br><br>
     <details>
@@ -25,9 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
     </details><br>
     <details>
       <summary><img src="/assets/smileys/laugh.gif" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Fun</summary>
-      ${item(`<img src="/assets/smileys/dice.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/simple-physics.html", "Simple Physics")}
       ${item(`<img src="/assets/smileys/love-calc.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/love-calculator.html", "Love Compatibility Calculator")}
       ${item(`<img src="/assets/smileys/valentine.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/vivi.html", "Valentines 2026")}
+      ${item(`<img src="/assets/smileys/dice.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/simple-physics.html", "Simple Physics")}
       ${item(`<img src="/assets/smileys/ID.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/ausweis.html", "ID Generator")}
       ${item(`<img src="/assets/smileys/car.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/fuehrerschein.html", "License Generator")}
       ${item(`<img src="/assets/smileys/coin.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/muenze.html", "Coin Generator")}
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
     </details><br>
     <details>
       <summary><img src="/assets/smileys/mario.gif" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Games</summary>
-      ${item(`<img src="/assets/smileys/island.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/castaway/castaway.html", "Castaway")}
+      ${item(`<img src="/assets/smileys/myisland.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/castaway/castaway.html", "Castaway")}
       ${item(`<img src="/assets/smileys/excl.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/mroops.html", "Mr.Oops!!")}
       ${item(`<img src="/assets/smileys/X.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/infinite-ttt.html", "Infinite TicTacToe")}
       ${item(`<img src="/assets/smileys/joystick.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/games/pong.html", "Pong")}
