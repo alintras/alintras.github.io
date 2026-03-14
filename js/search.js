@@ -188,9 +188,9 @@ function clearRecentSearches() {
 function recentBlock(matches) {
     return '<div class="sr-label">Recent searches</div>' +
         matches.map(r =>
-            `<a class="sr-recent" href="#" onclick="fillSearch(event,'${r.replace(/'/g, "\\'")}')">🕐&#xFE0E; ${r}</a>`
+            `<a class="sr-recent" href="#" onclick="fillSearch(event,'${r.replace(/'/g, "\\'")}')"><img src="/assets/smileys/3oclock.png" style="width:15px; height:15px; image-rendering:pixelated;"> ${r}</a>`
         ).join("") +
-        `<a href="#" class="sr-clear" onclick="event.preventDefault();clearRecentSearches()">🗑&#xFE0E; Clear recent searches</a>`;
+        `<a href="#" class="sr-clear" onclick="event.preventDefault();clearRecentSearches()"><img src="/assets/smileys/milk.png" style="width:12px; height:12px; image-rendering:pixelated;"> Clear recent searches</a>`;
 }
 
 function renderResults(siteMatches, recentMatches) {
