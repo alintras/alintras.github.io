@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <summary><img src="/assets/smileys/pickaxe.png" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Tools</summary>
       ${item(`<img src="/assets/smileys/mail.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/wondermail/wondermail.html", "PMD RT Wondermail Generator")}
       ${item(`<img src="/assets/smileys/bomb.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/voltorb-solver.html", "HGSS Voltorb Solver")}
+      ${item(`<img src="/assets/smileys/pencil.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/pixelart.html", "Pixel Art Maker")}
       ${item(`<img src="/assets/smileys/count.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/cps-counter.html", "CPS Counter")}
       ${item(`<img src="/assets/smileys/lock.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/password-generator.html", "Password Generator")}
       ${item(`<img src="/assets/smileys/unit-calc.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/unit-converter.html", "Unit Converter")}
