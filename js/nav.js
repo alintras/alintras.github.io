@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     <div id="sidebar-body"><br><br>
     <a href="/../index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px; height:18px; vertical-align:-2px; image-rendering:pixelated;"> Home</a><br><br>
     <details>
-      <summary><img src="/assets/smileys/pickaxe.png" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Tools</summary>
+      <summary><img src="/assets/smileys/vpickaxe.png" style="width:16px; height:16px; vertical-align:-2px; image-rendering:pixelated;"> Tools</summary>
       ${item(`<img src="/assets/smileys/mail.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/wondermail/wondermail.html", "PMD RT Wondermail Generator")}
       ${item(`<img src="/assets/smileys/bomb.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/voltorb-solver.html", "HGSS Voltorb Solver")}
       ${item(`<img src="/assets/smileys/pencil.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/pixelart.html", "Pixel Art Maker")}
