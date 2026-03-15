@@ -12,9 +12,11 @@
     <meta name="robots" content="index, follow">
 
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://alintras.github.io/"> <meta property="og:title" content="Ali Aktas | Useful tools and fun games">
+    <meta property="og:url" content="https://alintras.github.io/">
+    <meta property="og:title" content="Ali Aktas | Useful tools and fun games">
     <meta property="og:description" content="Welcome to the personal page of Ali Aktas. Studying CS and Stats at LMU Munich.">
-    <meta property="og:image" content="images/og-image.jpg"> <meta property="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="images/og-image.jpg">
+    <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://twitter.com/alintrass">
     <meta property="twitter:title" content="Ali Aktas">
     <meta property="twitter:description" content="Welcome to the personal page of Ali Aktas">
@@ -23,19 +25,15 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/search.css">
     <link rel="stylesheet" href="css/nav.css">
+
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
     <link rel="icon" href="images/favicon-32x32.png" type="image/png" sizes="32x32">
     <link rel="icon" href="images/favicon-16x16.png" type="image/png" sizes="16x16">
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
     <script src="/js/style.js"></script>
     <script src="js/nav.js" defer></script>
     <script src="js/search.js" defer></script>
-
-    <style>
-        a { color: inherit; text-decoration: none; }
-    </style>
 </head>
 <body>
 
@@ -46,11 +44,10 @@
         <div id="layout-content">
             <header>
                 <h1 aria-label="Ali's Homepage" 
-                style="border-bottom:1px solid var(--border);
-                padding: 0 30px;">
+                style="padding: 0 30px;">
                     <pre style=
                     "font-family: monospace;
-                    font-size: clamp(3px, 1.4vw, 14px);
+                    font-size: clamp(7px, 1.8vw, 14px);
                     color: var(--fg);
                     padding: 0px;
                     overflow: visible;
@@ -69,9 +66,9 @@
                 <main>
                     <section id="profile-section">
                         <article class="text">
-                            <div class="title-row" style="display:flex; align-items:center; gap:10px;">
+                            <div class="title-row">
                                 <h2 style="margin:0;">Hey there!</h2>
-                                <div id="clock" style="opacity:0.9; margin-right:auto; border:1px solid #000000; padding: 2px"></div>
+                                <div id="clock" style="opacity:0.9; margin-right:auto; border:1px solid var(--border); padding: 2px"></div>
                                 <button id="theme-toggle" onclick="toggleTheme()">☾</button>
                             </div>
                             <p>
@@ -103,13 +100,13 @@
                         <table style="margin-top: 8px; border-collapse: collapse; font-size: 0.9em;">
                             <thead>
                                 <tr>
-                                    <th style="text-align:left; padding: 2px 12px 2px 0; border-bottom: 1px solid #131313;">Keyword</th>
-                                    <th style="text-align:left; padding: 2px 0; border-bottom: 1px solid #131313;">Searches</th>
+                                    <th style="text-align:left; padding: 2px 12px 2px 0; border-bottom: 1px solid var(--border);">Keyword</th>
+                                    <th style="text-align:left; padding: 2px 0; border-bottom: 1px solid var(--border);">Searches</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr><td style="padding: 2px 12px 2px 0;"><code>yt</code></td><td>YouTube</td></tr>
-                                <tr><td style="padding: 2px 12px 2px 0;"><code>(gh</code></td><td>GitHub)</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>gh</code></td><td>GitHub</td></tr>
                                 <tr><td style="padding: 2px 12px 2px 0;"><code>r</code></td><td>Reddit</td></tr>
                                 <tr><td style="padding: 2px 12px 2px 0;"><code>w</code></td><td>Wikipedia</td></tr>
                                 <tr><td style="padding: 2px 12px 2px 0;"><code>mdn</code></td><td>MDN Web Docs</td></tr>
@@ -123,7 +120,7 @@
                                 <tr><td style="padding: 2px 12px 2px 0;"><code>ig</code></td><td>Instagram Profile</td></tr>
                                 <tr><td style="padding: 2px 12px 2px 0;"><code>emoji</code></td><td>Emojipedia</td></tr>
                                 <tr><td style="padding: 2px 12px 2px 0;"><code>ud</code></td><td>Urban Dictionary</td></tr>
-                                <tr><td style="padding: 2px 12px 2px 0;"><code>op</code></td><td>One Piece Episode GER</td></tr>
+                                <tr><td style="padding: 2px 12px 2px 0;"><code>op</code></td><td>One Piece Folge</td></tr>
                                 <tr><td style="padding: 2px 12px 2px 0;"><code>+ - * / % ^</code></td><td>Calculator</td></tr>
                             </tbody>
                         </table>
@@ -138,7 +135,8 @@
         </div>
     </div>
 
-    <footer style="padding: 20px">
+    <footer>
+        <p>&copy; 2026 | <a href="mailto:alintras@proton.me">alintras@proton.me</a></p>
         <pre id="ascii" style="font-family:'Courier New',monospace; white-space:pre; margin:0; padding:0;"></pre>
         <script>
             const frames = [
@@ -159,7 +157,6 @@
                 i = (i + 1) % frames.length;
             }, 300);
         </script>
-        <p>&copy; 2026 alintras | <a href="mailto:alintras@proton.me">alintras@proton.me</a></p>
     </footer>
 
     <script>

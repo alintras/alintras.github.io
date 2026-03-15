@@ -4,28 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HTML Fundamentals</title>
+    <link rel="stylesheet" href="/css/style.css">
     <script src="/js/style.js"></script>
     <style>
-      a { color: inherit; text-decoration: none; }
-      body { font-family: monospace; max-width: 800px; margin: 40px auto; padding: 0 20px; background: var(--bg); color: var(--fg); }
-      header { margin-top: 30px; margin-bottom: 20px; }
-      h1 { font-size: 1.4em; margin-bottom: 6px; }
-      p { margin-bottom: 16px; line-height: 1.6; }
-      table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-      th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; font-size: 0.9em; }
-      th { font-weight: bold; }
-      td:first-child { font-family: monospace; white-space: nowrap; }
-      footer { margin-top: 40px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.8em; opacity: 0.6; }
-      @media(max-width:600px){ td:first-child { white-space: normal; } }
+        header { margin-top: 40px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        nav ol { padding-left: 1.5em; }
+        main { padding: 0 20px 40px; max-width: 860px; }
+        h2 { margin-top: 28px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+        pre, code { font-family: monospace; font-size: 0.9em; }
+        pre { background: none; padding: 0; overflow-x: auto; }
+        input, select, textarea { border: 1px solid var(--border); background: var(--bg); color: var(--fg); padding: 2px 4px; }
+        button { border: 1px solid var(--border); background: var(--bg); color: var(--fg); cursor: pointer; padding: 4px 10px; }
+        button:hover { background: var(--fg); color: var(--bg); }
+        table { border-collapse: collapse; }
+        td, th { border: 1px solid var(--border); padding: 5px; }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div style="position:fixed;top:10px;left:10px;z-index:100;">
-      <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
+        <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
     </div>
+    <header>
         <h1>Learning HTML</h1>
         <p>My personal documentation for web development fundamentals</p>
-
     </header>
     <nav>
     <ol>
@@ -80,7 +81,7 @@
             <h3>Examples:</h3>
             <p><strong>Button: </strong><code>&lt;button&gt; Like &lt;/button&gt;</code>: <button> Like </button></p>
             <p><strong>Image: </strong><code>&lt;img src = "forest2.png" &gt;:</code> <img src = "forest2.png"> </p>
-            <p><strong>Text paragraph: </strong><code>&lt;p> Hello World! &lt;/p&gt;:</code> Hello World!</p>
+            <p><strong>Text paragraph: </strong><code>&lt;p&gt; Hello World! &lt;/p&gt;:</code> Hello World!</p>
             <p><strong>Table: </strong><code>&lt;table&gt; &lt;/table&gt;</code></p>
         </section>
 
@@ -89,13 +90,13 @@
             <p>Headings in HTML come in different levels. The most important one being h1.<br>
             They are another element requiring opening and closing container tags.</p>
             
-            <p><code>&lt;h1&gt; Heading 1 &lt;h1&gt;</code>: <h1>Heading 1</h1></p>
+            <p><code>&lt;h1&gt; Heading 1 &lt;/h1&gt;</code>: <h1>Heading 1</h1></p>
             
             <p>You can use up to 6 levels of headings in HTML. The tags for these heading elements are 
             <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code> and <code>&lt;h6&gt;</code>.
             </p>
             <p><code>&lt;h1&gt;</code> is usually styled with the largest font, and <code>&lt;h6&gt;</code> with the smallest.</p>
-            <p>&lt;h6&gt; Heading 6 &lt;h6&gt;: <h6> Heading 6</h6></p>
+            <p>&lt;h6&gt; Heading 6 &lt;/h6&gt;: <h6> Heading 6</h6></p>
         </section>
 
         <section id="comments-readability">
@@ -139,7 +140,7 @@
             </code></pre>
 
             <p>prints:</p>
-            <div style="border: 1px solid #ccc; padding: 10x;">
+            <div style="border: 1px solid var(--border); padding: 10px;">
             <h1>Test1</h1>
             <p>Test2</p>
             </div>
@@ -161,13 +162,13 @@
             &lt;body&gt;
             &lt;p&gt;Content of the page&lt;/p&gt;
             &lt;/body&gt;
-            </pre></code>
+            </code></pre>
 
             <p>You can use the head to help increase visibility and traffic for search engines.<br>
             Title, description and keywords are nested in the head tag.</p>
             <p>The head needs to be placed before the body.<br>
             The information in the head is not displayed on the web page, only the title is shown in search engines and the browser tab.</p>
-            <p>Today most wrap their HTML code in <code>&lt;html&gt;</code> container tags. Head and body are nestes inside the <code>&lt;html&gt;</code> tags. </p>
+            <p>Today most wrap their HTML code in <code>&lt;html&gt;</code> container tags. Head and body are nested inside the <code>&lt;html&gt;</code> tags. </p>
             <p>Indentation (the spaces at the beginning of lines) are considered good practice to improve readability:</p>
     
             <pre><code>
@@ -179,8 +180,8 @@
             &nbsp;&nbsp;&nbsp;&lt;body&gt;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;Content of the page&lt;/p&gt;
             &nbsp;&nbsp;&nbsp;&lt;/body&gt;
-            &lt;html&gt;
-            </pre></code>
+            &lt;/html&gt;
+            </code></pre>
         </section>
 
         <section id="text-formatting">
@@ -220,10 +221,10 @@
             They can serve as an indication of emphasis to a screen reader.</p>
         </section>
 
-        <section id="links"></section>
+        <section id="links">
             <h2>6. Links</h2>
             <p>HyperText is what lets people jump from one web page to another, through links.<br>
-            The Web woudln't be possible without it.<br>
+            The Web wouldn't be possible without it.<br>
             HyperText is text that contains a link to another page.<br>
             Web pages are called HyperText documents because they are connected by <strong>Hypertext links</strong> (or <strong>hyperlinks</strong>).<br>
             Hyperlinks allow users to move from one web page to another and share information across different machines and systems.</p>
@@ -233,8 +234,8 @@
             <p>To create a link, you need "href" (hypertext reference) to add the destination URL:<br>
             <code>&lt;a href = "https://alintras.github.io/"&gt;Link&lt;/a&gt;</code>: <a href ="https://alintras.github.io/">Link</a></p>
 
-            <p>The URL needs to be enclosed in macthing quotes (') or (") to work without errors.<br>
-            If you forget to add <strong>href</strong> or the quotes the <code>&lt;a&gt;</code> tag won't create a hyperlink.
+            <p>The URL needs to be enclosed in matching quotes (') or (") to work without errors.<br>
+            If you forget to add <strong>href</strong> or the quotes the <code>&lt;a&gt;</code> tag won't create a hyperlink.</p>
             <p>You can also use hyperlinks to connect pages of the same website.<br>
             The part of the URL that stays the same for all pages of a website is called the <strong>domain name</strong>.</p>
         </section>
@@ -260,9 +261,9 @@
                 &lt;li&gt;Milk&lt;/li&gt;
                 &lt;/ol&gt;
             </code></pre>
-            results in:<br></p>
+            <p>results in:</p>
             <ol>
-            <li>Coffe</li>
+            <li>Coffee</li>
             <li>Tea</li>
             <li>Milk</li>
             </ol>
@@ -274,10 +275,10 @@
             &lt;li&gt;Tea&lt;/li&gt;
             &lt;li&gt;Milk&lt;/li&gt;
             &lt;/ul&gt;
-            </pre></code>
-            <p>results in:<br></p>
+            </code></pre>
+            <p>results in:</p>
             <ul>
-            <li>Coffe</li>
+            <li>Coffee</li>
             <li>Tea</li>
             <li>Milk</li>
             </ul>
@@ -292,13 +293,13 @@
             <p>Attributes can be optional or required. The Image tag requires an attribute to work correctly.</p>
             <code>&lt;img src = "http://www.img.png"&gt;</code>
 
-            <p>For container tags, attributes always go in the opening tag<br>
-            the anchor tag is another example of an HTML element that requires an attribute to work correctly.</p>
+            <p>For container tags, attributes always go in the opening tag.<br>
+            The anchor tag is another example of an HTML element that requires an attribute to work correctly.</p>
             <code>&lt;a href = "https://z.com"&gt;Z&lt;/a&gt;</code>
 
             <p><strong>href</strong> and <strong>src</strong> are examples of attributes.</p>
 
-            <p>It's best practice to describe what images are showing<br>
+            <p>It's best practice to describe what images are showing.<br>
             The <strong>alt</strong> attribute (alternative text) is used to add image descriptions.</p>
             <code>&lt;img src="forest2.png" alt="a green forest"&gt;</code><br>
             <img src="/assets/images/forest2.png" alt="a green forest">
@@ -313,17 +314,17 @@
             <code>name="value"</code>
             <p>e.g.<br>
             Attribute name: src<br> 
-            Attribute value:"http://www.image.png"</p>
+            Attribute value: "http://www.image.png"</p>
 
             <p>You can control the size of images in your web page.<br>
             <strong>width</strong> is an optional attribute:<br>
-            <code>&lt;img src="forest.png" width="300"&gt;</code> </p>
+            <code>&lt;img src="forest.png" width="300"&gt;</code></p>
             <img src="/assets/images/forest.png" width="300">
             <p><strong>height</strong> is another optional attribute for the image element.<br>
             <code>&lt;img src="forest.png" height="150"&gt;</code></p>
             <img src="/assets/images/forest.png" height="150"><br>
             <p>or together:<br>
-            <code>&lt;img src="forest.png" width="200" height="130&gt;</code></p>
+            <code>&lt;img src="forest.png" width="200" height="130"&gt;</code></p>
             <img src="/assets/images/forest.png" width="200" height="130">
 
             <p>
@@ -336,7 +337,7 @@
 
         <section id="menus-navigation">
             <h2>9. Menus & Navigation</h2>
-            <p>The way visitor navigate a website depends on its design.<br>
+            <p>The way visitors navigate a website depends on its design.<br>
             Websites come in 2 shapes:<br>
             <ul>
             <li>Multi-page websites</li>
@@ -349,13 +350,13 @@
             Navigating between pages requires the web browser to load different HTML files.</p>
             <p>The <strong><code>&lt;nav&gt;</code></strong> container tag defines a set of links
             that allows the user to navigate between pages of a website:</p>
-            <code> <pre>
+            <code><pre>
                 &lt;nav&gt;
                 &lt;a href="index.html"&gt;Home&lt;/a&gt;
                 &lt;a href="Maths.html"&gt;Maths&lt;/a&gt;
                 &lt;a href="Coding.html"&gt;Coding&lt;/a&gt;
                 &lt;/nav&gt;
-            </pre> </code>
+            </pre></code>
             results in:
             <nav>
                     <a href="index.html">Home</a>
@@ -370,10 +371,10 @@
 
             <p>To jump to a specific part of a single-page website, 
                 first you need to mark the section with the <strong>id</strong> (ID) attribute.</p>
-                <code><pre>
-                    &lt;h2 id ="section-1"&gt;Section 1&lt;/h2&gt;
-                    &lt;section id="menus-navigation"&gt;
-                </pre></code>
+            <code><pre>
+                &lt;h2 id ="section-1"&gt;Section 1&lt;/h2&gt;
+                &lt;section id="menus-navigation"&gt;
+            </pre></code>
             <p>The <strong>id</strong> attribute is used to identify the element you want to target with the navigation link.<br>
             Each id value must be:</p>
             <ul>
@@ -384,15 +385,12 @@
                 Once the element you want to jump to has been marked with an id, you can target it
                 with an anchor tag <code>&lt;a&gt;</code>
             </p>
-            <code>
-                &lt;a href = "#menus-navigation"&gt;Go to Navigation&lt;/a&gt;
-            </code>
+            <code>&lt;a href = "#menus-navigation"&gt;Go to Navigation&lt;/a&gt;</code>
             <p>results in:</p>
             <a href = "#menus-navigation">Go to Navigation</a>
             <p>The hash character (<strong>#</strong>) is needed to tell the web browser
             that we are targeting a section of the same page.</p>
         </section>
-
 
         <h2 id="forms">10. Forms</h2>
         <p>
@@ -401,20 +399,20 @@
         </p>
         <ul>
             <li>get in contact with you</li>
-            <li>send order, requests and other information</li>
+            <li>send orders, requests and other information</li>
             <li>create an account or register</li>
             <li>and more</li>
         </ul>
         <p>
-            Forms are mode of input elements like text fields, checkboxes, and submit buttons.<br>
-            These input elements are nested inside the &lt;<code><strong>form</strong></code>&gt; container tag.
+            Forms are made of input elements like text fields, checkboxes, and submit buttons.<br>
+            These input elements are nested inside the <code><strong>&lt;form&gt;</strong></code> container tag.
         </p>
         <p>
             The most common form element is <code><strong>&lt;input&gt;</strong></code>. There
             are many forms of <code>&lt;input&gt;</code> element, depending on the <strong>type</strong> attribute.<br>
             Form elements will be displayed in the same line unless we use the <strong>&lt;br&gt;</strong> (line break) tag.
         </p>
-        <p>Labels can be added for the different input elements with the <code>&lt;label&gt; tag.</code></p>
+        <p>Labels can be added for the different input elements with the <code>&lt;label&gt;</code> tag.</p>
         <code><pre>
             &lt;form&gt;
             &lt;label&gt;Enter text: &lt;/label&gt;
@@ -452,7 +450,7 @@
             <code>&lt;input&gt;</code>: id
         </p>
         <p>
-            Connecting labels and inputes increases the <strong>hit area</strong> and improve accessibility.<br>
+            Connecting labels and inputs increases the <strong>hit area</strong> and improves accessibility.<br>
             (Hit area = the area of a screen where users can interact with an element)
         </p>
         <form>
@@ -473,9 +471,9 @@
             </p>
             <code><pre>
                 &lt;form&gt;
-                &lt;label for="em"&gt;email:&lt;/label&gt
-                &lt;input type = "text" id="em"&gt;&lt;br&gt;
-                &lt;input type = "submit"&gt;
+                &lt;label for="em"&gt;email:&lt;/label&gt;
+                &lt;input type="text" id="em"&gt;&lt;br&gt;
+                &lt;input type="submit"&gt;
                 &lt;/form&gt;
             </pre></code>
             <p>results in: </p>
@@ -485,824 +483,234 @@
                 <input type="submit">
             </form>
 
-            <p>
-                The <strong>name</strong> attribute is used to reference the data after submitting the form
-            </p>
+            <p>The <strong>name</strong> attribute is used to reference the data after submitting the form.</p>
             <code><pre>
                 &lt;form&gt;
-                &lt;input type = "text" name="email"&gt;
-                &lt;input type = "text" name="city"&gt;
-                &lt;input type = "submit"&gt;
+                &lt;input type="text" name="email"&gt;
+                &lt;input type="text" name="city"&gt;
+                &lt;input type="submit"&gt;
                 &lt;/form&gt;
             </pre></code>
             <p>results in:</p>
             <form>
-                <input type = "text" name="email">
-                <input type = "text" name="city">
-                <input type = "submit">
+                <input type="text" name="email">
+                <input type="text" name="city">
+                <input type="submit">
             </form>
-            <p>
-            Only form elements with a <strong>name</strong> attribute will have
-            have their values passed to the databse when submitting a form.
-            </p>
-            <p>
-            The <strong>value</strong> attribute defines the value that is submitted
-            when the input is selected.
-            </p>
-            <p>
-            Names and values are needed to correctly store information in the database.<br>
-            The HTML code needs to include <b>where</b> and <b>what</b> to put in the database.
-            </p>
-            <p>
-                For the case of text inputs, you can use the value attribute to define a
-                <b>default value</b> that will be submitted unless a different value
-                is provided by the user.
-            </p>
-            <p>e.g.</p>
+            <p>Only form elements with a <strong>name</strong> attribute will have their values passed to the database when submitting a form.</p>
+            <p>The <strong>value</strong> attribute defines the value that is submitted when the input is selected.</p>
+            <p>Names and values are needed to correctly store information in the database.<br>
+            The HTML code needs to include <b>where</b> and <b>what</b> to put in the database.</p>
+            <p>For text inputs, you can use the value attribute to define a <b>default value</b> that will be submitted unless a different value is provided by the user.</p>
             <code><pre>
             &lt;form&gt;
             &lt;label for="t1"&gt;Email&lt;/label&gt;
-            &lt;input type="text" id="t1"name="em"&gt;
+            &lt;input type="text" id="t1" name="em"&gt;
             &lt;label for="t2"&gt;Country&lt;/label&gt;
-            &lt;input type="text" id="t2"name="co"&gt;
+            &lt;input type="text" id="t2" name="co"&gt;
             &lt;input type="submit"&gt;
             &lt;/form&gt;
             </pre></code>
-            <p>results in:</p>
             <form>
                 <label for="t1">Email</label>
-                <input type="text" id="t1"name="em">
+                <input type="text" id="t1" name="em">
                 <label for="t2">Country</label>
-                <input type="text" id="t2"name="co">
+                <input type="text" id="t2" name="co">
                 <input type="submit">
-            </form>        
+            </form>
         </section>
 
         <section id="drop-down">
             <h2>12. Drop-down menus</h2>
+            <p>Drop-down menus make your forms more efficient, accessible and organized.<br>
+            You can use the <strong><code>&lt;select&gt;</code> container tag</strong> to create a drop-down list.</p>
+            <code><pre>
+                &lt;select&gt;
+                &lt;!--options--&gt;
+                &lt;/select&gt;
+            </pre></code>
+            <p>The <strong><code>&lt;option&gt;</code> container tag</strong> is used inside a <code>&lt;select&gt;</code> tag to add choices for the user.</p>
+            <code><pre>
+                &lt;select&gt;
+                &lt;option&gt;Option 1&lt;/option&gt;
+                &lt;option&gt;Option 2&lt;/option&gt;
+                &lt;option&gt;Option 3&lt;/option&gt;
+                &lt;/select&gt;
+            </pre></code>
+            <p>results in: </p>
+            <select>
+            <option>Option 1</option>
+            <option>Option 2</option>
+            <option>Option 3</option>
+            </select>
             <p>
-                Drop-down menus make your forms more efficient, accessible and organized.<br>
-                You can use the <strong><code>&lt;select&gt;</code> container tag</strong> to create a drop-down list.
+                You can use the <code><b>&lt;select&gt;</b></code> element as part of a form to collect user input.<br>
+                The <strong>name</strong> attribute is needed to submit the form data.<br>
+                You can control the data each option sends with the <strong>value</strong> attribute.
             </p>
-                <code><pre>
-                    &lt;select&gt;
-                    &lt;!--options--&gt;
-                    &lt;/select&gt;
-                </pre></code>
+            <p>The <strong>selected</strong> attribute creates a drop-down menu with a pre-selected option.</p>
+            <code>&lt;option value="b" selected&gt;Blue&lt;/option&gt;</code>
             <p>
-                The <strong><code>&lt;option&gt;</code> container tag</strong> is used inside
-                a <code>&lt;select&gt;</code> tag to add choices for the user.
+                <b>More input types:</b><br>
+                <code>&lt;input type="email"&gt;</code>: requires a valid email<br><br>
+                <code>&lt;input type="password"&gt;</code>: hides sensitive information<br><br>
+                <code>&lt;input type="tel"&gt;</code>: requires a phone number
             </p>
-                <code><pre>
-                    &lt;select&gt;
-                    &lt;option&gt;Option 1&lt;/option&gt;
-                    &lt;option&gt;Option 2&lt;/option&gt;
-                    &lt;option&gt;Option 3&lt;/option&gt;
-                    &lt;/select&gt;
-                </pre></code>
-                <p>results in: </p>
-                    <select>
-                    <option>Option 1</option>
-                    <option>Option 2</option>
-                    <option>Option 3</option>
-                    </select>
-                <p>
-                    You can use the <code><b>&lt;select&gt;</b></code> element as part of a
-                    form to collect user input.<br>
-                    Again, the <strong>name</strong> attribute is needed to submit the form data.<br>
-                    You can control the data each option sends with the <strong>value</strong> attribute.
-                </p>
-                <code><pre>
-                    &lt;form&gt;
-                    &lt;select name="color"&gt;
-                    &lt;option&gt;value="r"&gt;Red&lt;/option&gt;
-                    &lt;option&gt;value="b"&gt;Blue&lt;/option&gt;
-                    &lt;/select&gt;
-                    &lt;/form&gt;
-                </pre></code>
-                <p>The <strong>selected</strong> attribute creates a drop-down menu with a
-                pre-selected option. The pre-selected option will be displayed first.</p>
-                <code>
-                    &lt;option value="b" selected&gt;Blue&lt;/option&gt;
-                </code>
-                <p>
-                You can also add labels to drop-down menus.<br>
-                Labels and drop-down menus are connected with <b>for</b> and <b>id</b> attributes,
-                just like any other for element.
-                </p>
-                Labels and drop-down menus are connected with for and id attributes, just like any other form element.
-                
-                <code><pre>
-                &lt;form&gt;
-                &lt;label for="s1"&gt;Vehicle type:&lt;/label&gt;      
-                &lt;select name="vehicle" id="s1"&gt;        
-                &lt;option value="car"&gt;Car&lt;/option&gt;        
-                &lt;option value="bus"&gt;Bus&lt;/option&gt;      
-                &lt;/select&gt;    
-                &lt;/form&gt; 
-                </pre></code>
-                <p>
-                    <code>&lt;label&gt;</code> gets the for attribute<br>
-                    <code>&lt;select&gt;</code> gets the id attribute
-                </p>
-                <p>
-                    <b>More input types:</b><br>
-                    <code>&lt;input type="email" id="email"&gt;</code>:<br>
-                    requires the user to enter a valid email<br><br>
-                    
-                    <code>&lt;input type="password" id="pass"&gt;</code>:<br>
-                    hides sensitive information<br><br>
-
-                    <code>&lt;input type="tel" id="tel"&gt;</code>:<br>
-                    requires the user to enter a phone number
-                </p>
         </section>
 
         <section id="videos">
             <h2>13. Videos</h2>
-            <p>
-                You can use the <b><code>&lt;video&gt;</code> container tag</b> to embed video files
-                into a web page.
-            </p>
+            <p>You can use the <b><code>&lt;video&gt;</code> container tag</b> to embed video files into a web page.</p>
             <code><pre>
                 &lt;video&gt;
-                    &lt;!--video file--&gt;
-                &lt;/video&gt;
-            </pre></code>
-            <p>
-                Just like with images, the source (or location) URL of the video needs to be provided.
-            </p>
-            <p>Common video formats are: MP4, OGG and WebM</p>
-            <code><pre>
-                &lt;video&gt;
-                    &lt;source src="file.mp4" type ="video/mp4"&gt;
-                &lt;/video&gt;
-            </pre></code>
-            <p>
-                The <code>&lt;source&gt;</code> empty tag provides the location and format of the video file.<br>
-                The <code>src</code> attribute specifies the URL of the video file.<br>
-                The <code>type</code> attribute specifies the format of the video file.
-            </p>
-            <p>
-                Different media format are needed for compatibility with different browser and devices.<br>
-                The <code>&lt;source&gt;</code> tag allows you to add multiple files.
-            </p>
-            <code><pre>
-                &lt;video&gt;
-                    &lt;source src="file.mp4" type ="video/mp4"&gt;
-                    &lt;source src="file.webm" type ="video/webm"&gt;
-                &lt;/video&gt;
-            </pre></code>
-            <p>
-                When different <code>&lt;source&gt;</code> options are included, the browser
-                will choose the first one it supports.<br>
-                You can add text between the &lt;video&gt; tags. The text will only be displayed
-                in browsers that don't support the video element.
-            </p>
-            <code><pre>
-                &lt;video&gt;
-                    &lt;source src="file.mp4" type ="video/mp4"&gt;
-                    &lt;source src="file.webm" type ="video/webm"&gt;
+                    &lt;source src="file.mp4" type="video/mp4"&gt;
+                    &lt;source src="file.webm" type="video/webm"&gt;
                     Video not supported
                 &lt;/video&gt;
             </pre></code>
+            <p>Common video formats are: MP4, OGG and WebM.<br>
+            The <code>&lt;source&gt;</code> tag provides the location and format of the video file.<br>
+            When different sources are included, the browser will choose the first it supports.</p>
             <p>You can display play/pause, volume and other default video controls with the <strong>controls</strong> attribute.</p>
-            <code><pre>
-                &lt;video controls&gt;
-                    &lt;source src="file.mp4" type ="video/mp4"&gt;
-                V   ideo not supported
-                &lt;/video&gt;
-            </pre></code>
         </section>
 
         <section id="music-audio">
             <h2>14. Music & Audio</h2>
-            <p>
-                You can embed audio fies into web pages with the <code><b>&lt;audio&gt; container tag</b></code>
-            </p>
-            <code><pre>
-                &lt;audio&gt;
-                    &lt;!--audio files&gt;
-                &lt;/audio&gt;
-            </pre></code>
-            <p>
-                Just like video, the <code><b>source</b></code> tag is used to add source options for audio.
-            </p>
+            <p>You can embed audio files into web pages with the <code><b>&lt;audio&gt;</b></code> container tag.</p>
             <code><pre>
                 &lt;audio&gt;
                     &lt;source src="audiofile.mp3" type="audio/mpeg"&gt;
                     &lt;source src="audiofile.ogg" type="audio/ogg"&gt;
                 &lt;/audio&gt;
             </pre></code>
-            <p><b>mp3</b> files belong to the <b>mpeg</b> type</p>
-            <code><pre>
-                &lt;audio autoplay&gt;
-                    &lt;source src="file.mp3" type="audio/mpeg"&gt;
-                    &lt;source src="file.ogg" type="audio/ogg"&gt;
-                    Audio not supported
-                &lt;/audio&gt;
-            </pre></code>
-            <p>
-                You can also use <strong>autoplay</strong>, <strong>muted</strong> and <strong>loop</strong> 
-                to control the behaviour of multimedia elements.
-            </p>
-            <code><pre>
-                &lt;video autoplay muted&gt;
-                    &lt;source src="videofile.mp4" type="video/mp4"&gt;
-                    &lt;source src="videofile.ogg" type="video/ogg"&gt;
-                &lt;/video&gt;
-            </pre></code>
+            <p><b>mp3</b> files belong to the <b>mpeg</b> type.</p>
+            <p>You can also use <strong>autoplay</strong>, <strong>muted</strong> and <strong>loop</strong> to control the behaviour of multimedia elements.</p>
         </section>
 
         <section id="layout">
         <h2>15. Layout</h2>
-        <p>
-            The body of a web page can be divided into 3 parts.
-        </p>
+        <p>The body of a web page can be divided into 3 parts:</p>
             <ul>
                 <li>Header: <code>&lt;header&gt;</code></li>
                 <li>Main content: <code>&lt;main&gt;</code></li>
                 <li>Footer: <code>&lt;footer&gt;</code></li>
             </ul>
-        <p>
-            The <b><code>&lt;header&gt;</code></b> container tag usually contains introductory information.<br>
-            The header often contains navigation links, a menu and/or a search bar.<br>
-            Brand elements like logis are usually found in the header too.<br>
-            You can add several header elements to a web page.
-        </p>
-        <code><pre>
-            &lt;header&gt;
-            &lt;!--Introductory information--&gt;
-            &lt;/header&gt;
-        </pre></code>
-
-        <p>
-            The <b><code>&lt;main&gt;</code></b> container tag is used to include the main content of a web page.<br>
-            There must not be more than one <code>&lt;main&gt;</code> element in a document.
-        </p>
-        <code><pre>
-            &lt;main&gt;
-            &lt;!--main content--&gt;
-            &lt;/main&gt;
-        </pre></code>
-
-        <p>
-            The <b><code>&lt;footer&gt;</code></b> container tag often contains contact and legal information and links.<br>
-            You can have several <code>&lt;footer&gt;</code> elements in one document.
-        </p>
-        <code><pre>
-            &lt;footer&gt;
-            &lt;!--footer information--&gt;
-            &lt;/footer&gt;
-        </pre></code>
-
-        <p>
-            Futhermore, <code>&lt;header&gt;</code>, <code>&lt;main&gt;</code> and <code>&lt;footer&gt;</code> elements 
-            are nested inside the <code>&lt;body&gt;</code> container tag
-        </p>
-        <code><pre>
-            &lt;body&gt;
-                &lt;header&gt;
-                    &lt;!--intro information--&gt; 
-                &lt;/header&gt;
-                &lt;main&gt;
-                    &lt;!--main content--&gt;
-                &lt;/main&gt;
-                &lt;footer&gt;
-                    &lt;!--footer information--&gt;
-                &lt;/footer&gt;
-            &lt;/body&gt;
-        </pre></code>
-        <p>
-            Don't confuse <code>&lt;header&gt;</code> with <code>&lt;head&gt;</code>.<br>
-            <code>&lt;head&gt;</code> is used to  include technical information about the 
-            page like title, description, author and keywords and <b>not</b> shown to the user.
-        </p>
-
-
-            <h3>Building a website involves two areas:</h3>
-            <p>
-                Front-end: What users see and interact with.<br>
-                Back-end: Information requests, servers and databases.
-            </p>
+        <p>The <b><code>&lt;header&gt;</code></b> container tag usually contains introductory information, navigation links, a menu and/or a search bar.</p>
+        <p>The <b><code>&lt;main&gt;</code></b> container tag is used to include the main content of a web page. There must not be more than one <code>&lt;main&gt;</code> element in a document.</p>
+        <p>The <b><code>&lt;footer&gt;</code></b> container tag often contains contact and legal information and links.</p>
+        <p>Don't confuse <code>&lt;header&gt;</code> with <code>&lt;head&gt;</code>.<br>
+        <code>&lt;head&gt;</code> includes technical information about the page and is <b>not</b> shown to the user.</p>
+        <h3>Building a website involves two areas:</h3>
+        <p>Front-end: What users see and interact with.<br>
+        Back-end: Information requests, servers and databases.</p>
         </section>
     
         <section id="more-layout">
             <h2>16. More Layout</h2>
-            <p>
-                <code><strong>&lt;article&gt;</strong></code> 
-                represents an independent, self-contained piece of content,
-                that would make sense on its own.
-            </p>
-            <code><pre>            &lt;article&gt;
-                &lt;h1&gt;Top 10 Travel Destinations&lt;/h1&gt;
-                &lt;p&gt;Traveling is a way of living...&lt;/p&gt;
-                &lt;/article&gt;
-            </pre></code>
-            <p>
-                The <code>&lt;article&gt;</code> tag clearly indicates the
-                role for its content. It's used for content like news stories and blog posts.<br>
-                So <code>&lt;article&gt;</code> is an example of a <strong>semantic tag</strong>.
-            </p>
-            <p>
-                Layout tags like <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;main&gt;</code>
-                and <code>&lt;article&gt;</code> are semantic tags becausse they give 
-                information about what they contain.
-            </p>
-    
-            <p>
-                <code><strong>&lt;section&gt;</strong></code> helps to break down
-                the content into parts. It's another <b>semantic container tag</b>.<br>
-            </p>
-            <code><pre>            &lt;section&gt;
-                &lt;h2&gt;About Us&lt;/h2&gt;
-                &lt;p&gt;We are s small company...&lt;/p&gt;
-                &lt;/section&gt;
-            </pre></code>
-            <p>
-                <code><strong>&lt;aside&gt;</strong></code> is used for secondary,
-                additional or somehow related content.
-            </p>
-            <code><pre>            &lt;aside&gt;
-                &lt;h2&gt;Related Topics&lt;/h2&gt;
-                &lt;p&gt;Did you know...&lt;/p&gt;
-                &lt;/aside&gt;
-            </pre></code>
-            <p>
-                You can combine these elements to create a well-strucutred semantic
-                layour for your content.<br>
-                Semantic tags don't give any visual effect to the content,
-                but they give addition information to search engines.<br>
-                You can nest layout elements to create organized and accessible pages.
-            </p>
-            <p>
-                Nesting <code>&lt;aside&gt;</code> within <code>&lt;article&gt;</code> allows
-                you to provide addition, related content specific to that article.<br>
-                It enhances the user experience and makes the content more organized.<br>
-                e.g.
-            </p>
-            <code><pre>        &lt;html&gt;
-                &lt;head&gt;
-                    &lt;title&gt;Healthcare Blog&lt;/title&gt;
-                &lt;/head&gt;
-                &lt;body&gt;
-                    &lt;header&gt;
-                    &lt;h1&gt;Healthy Recipes Blog&lt;/h1&gt;
-                    &lt;/header&gt;
-                &lt;main&gt;
-                    &lt;article&gt;
-                    &lt;h2&gt;Vegan Stuffed Bell Peppers&lt;/h2&gt;
-                        &lt;section&gt;
-                        &lt;h3&gt;Ingredients&lt;/h3&gt;
-                            &lt;ul&gt;
-                            &lt;li&gt;1 cup cooked quinoa&lt;/li&gt;
-                            &lt;li&gt;...&lt;/li&gt;
-                            &lt;/ul&gt;
-                        &lt;/section&gt;
-    
-                        &lt;section&gt;
-                        &lt;h3&gt;Instructions&lt;/h3&gt;
-                            &lt;ol&gt;
-                            &lt;li&gt;Preheat oven to 375°F.&lt;/li&gt;
-                            &lt;li&gt;...&lt;/li&gt;
-                            &lt;/ol&gt;
-                        &lt;/section&gt;
-    
-                        &lt;!-- &lt;aside&gt; within the &lt;article&gt; adds
-                            more vegan recipes because the article 
-                            is about Vegan Stuffed Bell Peppers.--&gt;
-    
-                        &lt;aside&gt;
-                            &lt;h3&gt;More Vegan Recipes&lt;/h3&gt;
-                            &lt;ul&gt;
-                            &lt;li&gt;
-                            &lt;a href="#"&gt;Vegan Lentil Soup&lt;/a&gt;
-                            &lt;/li&gt;
-                            &lt;/ul&gt;
-                        &lt;/aside&gt;
-                    &lt;/article&gt;
-    
-                    &lt;!-- &lt;aside&gt; outside the &lt;article&gt; adds
-                        more recipes because it is related to 
-                        the entire web page content.--&gt;
-    
-                    &lt;aside&gt;
-                    &lt;h3&gt;Suggested Recipes&lt;/h3&gt;
-                        &lt;ul&gt;
-                        &lt;li&gt;&lt;a href="#"&gt;Fried Rice&lt;/a&gt;&lt;/li&gt;
-                        &lt;li&gt;&lt;a href="#"&gt;Chicken Rings&lt;/a&gt;&lt;/li&gt;
-                        &lt;/ul&gt;
-                    &lt;/aside&gt;
-                &lt;/main&gt;
-                &lt;footer&gt;
-                &lt;p&gt;Healthy Recipes Blog © 2023&lt;/p&gt;
-                &lt;/footer&gt;
-                &lt;/body&gt;
-            &lt;/html&gt;
-            </pre></code>
+            <p><code><strong>&lt;article&gt;</strong></code> represents an independent, self-contained piece of content that would make sense on its own. It's a <strong>semantic tag</strong>.</p>
+            <p><code><strong>&lt;section&gt;</strong></code> helps to break down the content into parts. It's another <b>semantic container tag</b>.</p>
+            <p><code><strong>&lt;aside&gt;</strong></code> is used for secondary, additional or somehow related content.</p>
+            <p>Semantic tags don't give any visual effect to the content, but they give additional information to search engines.</p>
         </section>
     
         <section id="style">
             <h2>17. The style attribute</h2>
-            <p>
-                With the <strong>style</strong> attribute, you can fully customize
-                the visual presentation of your websites, from typography and colors
-                to layout and more.
-            </p>
+            <p>With the <strong>style</strong> attribute, you can fully customize the visual presentation of your websites.</p>
             <h3>Changing the color of text</h3>
-            <code><pre>            &lt;p style="color:green"&gt;
-                Green paragraph
-                &lt;/p&gt;
-            </pre></code>
-            <p style="color:green"> Green paragraph</p>
-            <p>
-                It can be used to define properties like color, 
-                font size and alignment.
-            </p>
-            <code><pre>        &lt;h1 style="color:blue"&gt;Blue Heading&lt;/h1&gt;
-            </pre></code>
-            <h1 style="color:blue">Blue Heading</h1>
-            <p>
-                The style attribute can simplify formatting a lot.<br>
-                You can customize multiple properties at the same time.<br>
-                Just seperate each property:value pair with a <strong>semicolon (;)</strong>.
-            </p>
-            <p>
-                You can control the alignment with the <code><strong>text-align</strong></code> attribute.
-            </p>
-            <code><pre>            &lt;p style="color:red; text-align:right"&gt;Some text&lt;/p&gt;
-            </pre></code>
+            <code><pre>&lt;p style="color:green"&gt;Green paragraph&lt;/p&gt;</pre></code>
+            <p style="color:green">Green paragraph</p>
+            <code><pre>&lt;p style="color:red; text-align:right"&gt;Some text&lt;/p&gt;</pre></code>
             <p style="color:red; text-align:right;">Some text</p>
-            <p>
-                Font size can be controlled with the <code><strong>font-size</strong></code> property.
-            </p>
-            <code><pre>            &lt;p style="font-size:large"&gt;Large paragraph&lt;/p&gt;
-            </pre></code>
+            <code><pre>&lt;p style="font-size:large"&gt;Large paragraph&lt;/p&gt;</pre></code>
             <p style="font-size: large">Large paragraph</p>
-    
-            <p>
-                The <strong><code>background-color</code></strong> property is useful for styling elements like buttons.
-            </p>
-            <code><pre>            &lt;button style="background-color:green"&gt;OK&lt;/button&gt;
-            </pre></code>
+            <code><pre>&lt;button style="background-color:green"&gt;OK&lt;/button&gt;</pre></code>
             <button style="background-color: green">OK</button>
-            <p>
-                The <strong>border</strong> property is a short and simple way to refer to 
-                3 different sub-properties. That's why it can take 3 values.<br>
-                It's an example of style attributes that "requires" multiple values.
-                The only really required border subproperty is the <strong>border-style</strong>.<br>
-                If the width is not specified the default value will be "medium".<br>
-                If the color is not specified, the default color of the text will be applied to the border.
-            </p>
-            <code><pre>            &lt;p style ="border: 1px solid red"&gt;Some text&lt;/p&gt;
-            </pre></code>
+            <code><pre>&lt;p style="border: 1px solid red"&gt;Some text&lt;/p&gt;</pre></code>
             <p style="border: 1px solid red">Some text</p>
-    
-            <p>
-                You'll learn more about styling web pages with CSS.<br>
-                CSS makes your website styling more efficient, more consistent, and more in harmony.
-            </p>
+            <p>You'll learn more about styling web pages with CSS. CSS makes your website styling more efficient, more consistent, and more in harmony.</p>
         </section>
     
         <section id="inline-block">
             <h2>18. Inline and Block Elements</h2>
-            <p>
-                Every HTML element is either <strong>inline</strong> or <strong>block</strong>.<br>
-                This is one of the most important things for web designers and developers.
-            </p>
-            <p>
-                The <strong>border</strong> property is great for helping us see the difference
-                between these 2 types of HTML elements.
-            </p>
-            <code><pre>            &lt;button style="border:solid"&gt;Click me&lt;/button&gt;
-            </pre></code>
-            <p>
-                The borders of the different elements will help you spot the difference.
-            </p>
-            <code><pre>            &lt;h2&gt;Block-Level Elements&lt;/h2&gt;
-                &lt;!--Start on a new line--&gt;
-                    &lt;h3 style="border:solid"&gt;Heading&lt;/h3&gt;
-                    &lt;p style="border:solid"&gt;Paragraph&lt;/p&gt;
-                    &lt;ul style="border:solid"&gt;
-                        &lt;li&gt;List item A&lt;/li&gt;
-                        &lt;li&gt;List item B&lt;/li&gt;
-                    &lt;/ul&gt;
-                &lt;h2&gt;Inline Elements&lt;/h2&gt;
-                &lt;!--Don't start on a new line--&gt;
-                    &lt;p&gt;&lt;b style="border:solid"&gt;Bold&lt;/b&gt; text&lt;/p&gt;
-                    &lt;button style="border:solid"&gt;Click me&lt;/button&gt;
-                    &lt;label style="border:solid"&gt;Label&lt;/label&gt;
-            </pre></code>
-                <h2>Block-Level Elements</h2>
-                <!--Start on a new line-->
-                <h3 style="border:solid">Heading</h3>
-                <p style="border:solid">Paragraph</p>
-                <ul style="border:solid">
-                    <li>List item A</li>
-                    <li>List item B</li>
-                </ul>
-                <h2>Inline Elements</h2>
-                <!--Don't start on a new line-->
-                <p><b style="border:solid">Bold</b> text</p>
-                <button style="border:solid">Click me</button>
-                <label style="border:solid">Label</label>
-            <p>
-                <strong>Block-level</strong> elements always start on a new line.
-                They take up the full width available.<br>
-                <strong>Inline</strong> elements don't start on a new line.
-                They only take up as much width as necessary.<br>
-            </p>
-            <p>
-                Format tags are inline elements:
-                </p><ul>
-                    <li>Bold:<code>&lt;b&gt;</code></li>
-                    <li>Italics:<code>&lt;i&gt;</code></li>
-                    <li>Underlined:<code>&lt;u&gt;</code></li>
-                </ul>
-            <p></p>
-            <p>
-                Inline elements can be nested inside block-level elements.
-            </p>
-            <p>
-                Line break <code>&lt;br&gt;</code> tags are used to used to force inline elements
-                to start on a new line.
-            </p>
-            <p>
-                Line break tags are usually included in forms, because
-                form elements like <code>&lt;input&gt;</code> and <code>&lt;label&gt;</code>
-                are inline elements.
-            </p>
+            <p>Every HTML element is either <strong>inline</strong> or <strong>block</strong>.<br>
+            This is one of the most important things for web designers and developers.</p>
+            <h2>Block-Level Elements</h2>
+            <h3 style="border:1px solid var(--border)">Heading</h3>
+            <p style="border:1px solid var(--border)">Paragraph</p>
+            <ul style="border:1px solid var(--border)">
+                <li>List item A</li>
+                <li>List item B</li>
+            </ul>
+            <h2>Inline Elements</h2>
+            <p><b style="border:1px solid var(--border)">Bold</b> text</p>
+            <button style="border:1px solid var(--border)">Click me</button>
+            <label style="border:1px solid var(--border)">Label</label>
+            <p><strong>Block-level</strong> elements always start on a new line and take up the full width available.<br>
+            <strong>Inline</strong> elements don't start on a new line and only take up as much width as necessary.</p>
         </section>
     
         <section id="divide-conquer">
             <h2>19. Divide &amp; Conquer</h2>
-            <p>
-                Grouping different HTML elements can make your pages faster
-                to load and easier to customize and maintain.
-            </p>
-            <p>
-                The <b><code>&lt;div&gt;</code> element</b> is a container for HTML
-                elements that keeps your pages organized.
-            </p>
-            <p>
-                The <code>&lt;div&gt;</code> element always takes up the full width available.<br>
-                This means the <code>&lt;div&gt;</code> element is a block-level element.<br>
-                This means it starts on a new line.
-            </p>
+            <p>The <b><code>&lt;div&gt;</code> element</b> is a container for HTML elements that keeps your pages organized. It's a block-level element.</p>
             <p>Elements grouped in a <code>&lt;div&gt;</code> can be styled all at once.</p>
-            <code><pre>            
-                &lt;div style="text-align:center"&gt;
-                    &lt;h2&gt;About Me&lt;/h2&gt;
-                    &lt;p&gt;Hi, I'm Ali&lt;/p&gt;
-                    &lt;img src="forest.png" width=50&gt;
-                &lt;/div&gt;
-            </pre></code>
-            <div style="text-align: center">
+            <div style="text-align: center; border: 1px solid var(--border); padding: 10px;">
                 <h2>About me</h2>
                 <p>Hi, I'm Ali</p>
                 <img src="/assets/images/forest.png" width="50">
             </div>
-            <p>
-
-                <code>&lt;div&gt;</code> itself doesn't add any visual effects
-                unless you add a style to it.<br>
-                It's often used to group and style HTML elements.
-            </p>
-            <p>
-                The style in a <b><code>&lt;div&gt;</code></b> container will apply
-                to all its nested elements unless you give them their own.
-            </p>
         </section>
         
         <section id="tables">
             <h2>20. Tables</h2>
-            <p>
-                Tables help you display data in a way that's easy to
-                scan, compare and and analyze.
-            </p>
-            <p>
-                You can add a table using the 
-                <code><strong>&lt;table&gt;</strong></code> container tag.
-            </p>
-            <code><pre>
-                &lt;table&gt;
-                &lt;!--rows and columns--&gt;
-                &lt;/table&gt;
-            </pre></code>
-
-            <p>
-                You can add rows to a table with a
-                <code><strong>&lt;tr&gt;</strong></code> (table row) container tag.<br>
-                Rows are nested inside the <code>&lt;table&gt;</code> tag.
-            </p>
-            <code><pre>
-                &lt;table&gt;
-                &lt;tr&gt;
-                &lt;!--row data--&gt;
-                &lt;/tr&gt;
-                &lt;/table&gt;
-            </pre></code>
-
-            <p>
-                You can add cells with the 
-                <code><strong>&lt;td&gt;</strong></code> (table data) container tag.<br>
-                They are nested inside rows.
-            </p>
-            <code><pre>
-                &lt;table&gt;
-                &lt;tr&gt;
-                &lt;td&gt;Cell 1&lt;/td&gt;
-                &lt;td&gt;Cell 2&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;/table&gt;
-            </pre></code>
-            <p>Borders can be added to tables, rows and cells with the style attribute.<br>
-            (I won't include them for better readability reasons)</p>
-            <table style="border:1px solid">
-                <tr style="border:1px solid">
-                    <td style="border:1px solid">Cell 1</td>
-                    <td style="border:1px solid">Cell 2</td>
-                </tr>
-            </table>
-
-            <p>
-                Tables usually include header, a special row at the top
-                of the table used to label each column.<br>
-                You can create header cells with
-                <code><strong>&lt;th&gt;</strong></code> (table header)
-            </p>
-            <code><pre>
-                &lt;table&gt;
-                &lt;tr&gt;
-                &lt;th&gt;Name&lt;/th&gt; &lt;th&gt;Age&lt;/th&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                &lt;td&gt;Luffy&lt;/td&gt;
-                &lt;td&gt;19&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;tr&gt;
-                &lt;td&gt;Zoro&lt;/td&gt;
-                &lt;td&gt;21&lt;/td&gt;
-                &lt;/tr&gt;
-                &lt;/table&gt;
-            </pre></code>
-            <table style="border:1px solid; border-collapse: collapse;">
+            <p>Tables help you display data in a way that's easy to scan, compare and analyze.</p>
+            <p>Use <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code> (row), <code>&lt;td&gt;</code> (cell), and <code>&lt;th&gt;</code> (header cell):</p>
+            <table>
             <tr>
-                <th style="border:1px solid; padding:5px;">Name</th>
-                <th style="border:1px solid; padding:5px;">Age</th>
+                <th>Name</th>
+                <th>Age</th>
             </tr>
             <tr>
-                <td style="border:1px solid; padding:5px;">Luffy</td>
-                <td style="border:1px solid; padding:5px;">19</td>
+                <td>Luffy</td>
+                <td>19</td>
             </tr>
             <tr>
-                <td style="border:1px solid; padding:5px;">Zoro</td>
-                <td style="border:1px solid; padding:5px;">21</td>
+                <td>Zoro</td>
+                <td>21</td>
             </tr>
             </table>
-            <p>
-                Remember:<br>
-                <code>&lt;tr&gt;</code> elements are nested inside <code>&lt;table&gt;</code><br>
-                <code>&lt;td&gt;</code> elements are nested inside <code>&lt;tr&gt;</code><br>
-                <code>&lt;th&gt;</code> elements are nested inside <code>&lt;tr&gt;</code>
-            </p>
-
-            <p>
-                You can make cells that take up multiple rows and/or columns,
-                using the attributes <strong>colspan</strong> and <strong>rowspan</strong>.<br>
-                This is called merging cells.<br><br>
-                <strong>colspan</strong> is for the number of columns a cell shoul span.
-            </p>
-
-            <code><pre>
-                &lt;td style="border:1px solid black; padding:5px;" colspan="2"&gt;Sum: 900&lt;/td&gt;
-            </pre></code>
-
-            <table style="border:1px solid black; border-collapse:collapse;">
-                <tr>
-                  <th style="border:1px solid black; padding:5px;">Month</th>
-                  <th style="border:1px solid black; padding:5px;">Budget ($)</th>
-                </tr>
-                <tr>
-                  <td style="border:1px solid black; padding:5px;">January</td>
-                  <td style="border:1px solid black; padding:5px;">500</td>
-                </tr>
-                <tr>
-                  <td style="border:1px solid black; padding:5px;">February</td>
-                  <td style="border:1px solid black; padding:5px;">400</td>
-                </tr>
-                <tr>
-                  <td style="border:1px solid black; padding:5px;" colspan="2">Sum: 900</td>
-                </tr>
+            <p>Use <strong>colspan</strong> to span columns and <strong>rowspan</strong> to span rows:</p>
+            <table>
+                <tr><th>Month</th><th>Budget ($)</th><th>Savings ($)</th></tr>
+                <tr><td>January</td><td>500</td><td rowspan="2">150</td></tr>
+                <tr><td>February</td><td>400</td></tr>
+                <tr><td colspan="2">Sum: 900</td><td></td></tr>
             </table>
-
-            <p>
-                The <strong>rowspan</strong> attribute specifies the number of rows
-                a cell should span.<br>You can use rowspan to merge cells vertically.
-            </p>
-            <code><pre>
-              &lt;td style="border:1px solid black; padding:5px;" rowspan="2"&gt;150&lt;/td&gt;
-            </pre></code>
-              <table style="border:1px solid black; border-collapse:collapse;">
-                <tr>
-                  <th style="border:1px solid black; padding:5px;">Month</th>
-                  <th style="border:1px solid black; padding:5px;">Budget ($)</th>
-                  <th style="border:1px solid black; padding:5px;">Savings ($)</th>
-                </tr>
-                <tr>
-                  <td style="border:1px solid black; padding:5px;">January</td>
-                  <td style="border:1px solid black; padding:5px;">500</td>
-                  <td style="border:1px solid black; padding:5px;" rowspan="2">150</td>
-                </tr>
-                <tr>
-                  <td style="border:1px solid black; padding:5px;">February</td>
-                  <td style="border:1px solid black; padding:5px;">400</td>
-                </tr>
-              </table>
         </section>
 
         <section id="javascript">
             <h2>21. Introduction to JavaScript</h2>
-            <p>
-                JavaScript is used to make HTML web pages more interactive and engaging.
-            </p>
-            <p>
-                The <strong>onclick</strong> attribute is used to trigger
-                an action when an HTML element is clicked/tapped.
-            </p>
-            <code><pre>
-                &lt;button onclick=action&gt;Click&lt;/button&gt;
-            </pre></code>
-
-            <p>
-                One of the many actions you can trigger is the display of
-                an alert message.
-            </p>
-            <code><pre>
-                &lt;button onclick="alert('Message')"&gt;Click&lt;/button&gt;
-            </pre></code>
+            <p>JavaScript is used to make HTML web pages more interactive and engaging.</p>
+            <p>The <strong>onclick</strong> attribute triggers an action when an element is clicked/tapped.</p>
+            <code><pre>&lt;button onclick="alert('Message')"&gt;Click&lt;/button&gt;</pre></code>
             <button onclick="alert('Message')">Click</button>
-            
-            <p>
-                You can make other HTML elements interactive.
-            </p>
-            <code><pre>
-            &lt;img src="forest.png" width="100" onclick="alert('a picture of a forest')"&gt;
-            </pre></code>
-            <p>Try clicking on the picture</p>
-            <img src="/assets/images/forest.png" width="100" onclick="alert('a picture of a forest')">
-
-            <p>
-                A <strong>function</strong> is a piece of code that can be "called" and
-                reused in a program as many times as you need.
-            <br><br>
-                <strong><code>alert()</code></strong> is an example of a function that 
-                displays an alert box with a message and an OK button.
-            </p>
-            <p>
-                You can use JavaScript to make changes to HTML elements based on users' actions.
-                For example, this code changes the image when someone clicks the button:<br>
-            </p>
-            <code><pre>
-            &lt;img id="forest" src="forest.png" height="100" width="150"&gt;&lt;br&gt;
-            &lt;button onclick="forest.src='volcano.png'"&gt;Show Volcano&lt;/button&gt;
-            &lt;button onclick="forest.src='forest.png'"&gt;Show Forest&lt;/button&gt;
-            </pre></code>
+            <p>Try clicking on the picture:</p>
+            <img src="/assets/images/forest.png" width="100" onclick="alert('a picture of a forest')" style="cursor:pointer;">
+            <p>You can use JavaScript to make changes to HTML elements based on users' actions.</p>
             <img id="forest" src="/assets/images/forest.png" height="100" width="150"><br>
             <button onclick="forest.src='/assets/images/volcano.png'">Show Volcano</button>
             <button onclick="forest.src='/assets/images/forest.png'">Show Forest</button>
             <br>
-            <p>
-                JavaScript is one of the core web technologies alongside HTML and CSS.<br>
-                HTML controls the structure of a web page.<br>
-                CSS controls the presentation of a web page.<br>
-                JavaScript controls the behaviour of a web page.
-            </p>
-            <p>
-                While the internet and the web are not exactly the same thing,
-                the two terms are often used interchangeably.<br>
-                The web is the largest application on the internet.
-            </p>
+            <p>JavaScript is one of the core web technologies alongside HTML and CSS.<br>
+            HTML controls the structure, CSS controls the presentation, JavaScript controls the behaviour.</p>
         </section>
-        </main>
+    </main>
     
-        <footer>
-            <i>Documentation in progress</i>
-        </footer>
-        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
-        style="position: fixed; 
-               bottom: 20px; 
-               right: 20px; 
-               padding: 10px 10px; 
-               background-color: #000000; 
-               color: white; 
-               border: none; 
-               border-radius: 0px; 
-               cursor: pointer; 
-               font-size: 16px;
-               box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-               z-index: 1000;">
-        ^ Back to Top ^
-        </button>
+    <footer>
+        <i>Documentation in progress</i>
+    </footer>
+    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+    style="position:fixed;bottom:20px;right:20px;padding:10px;background:var(--fg);color:var(--bg);border:none;cursor:pointer;font-size:14px;z-index:1000;">
+    ^ Top ^
+    </button>
 </body>
 </html>
