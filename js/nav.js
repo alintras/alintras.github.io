@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   sidebar.innerHTML = `
     <b id="nav-toggle">Navigation</b>
     <div id="sidebar-body"><br><br>
-    <a href="/../index.html"><img src="/assets/smileys/vhome.png" style="width:18px; height:18px; vertical-align:-2px; image-rendering:pixelated;"> Home</a><br><br>
+    <a href="/../index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px; height:18px; vertical-align:-2px; image-rendering:pixelated;"> Home</a><br><br>
     <details>
       <summary><img src="/assets/smileys/pickaxe.png" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Tools</summary>
       ${item(`<img src="/assets/smileys/mail.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/wondermail/wondermail.html", "PMD RT Wondermail Generator")}
