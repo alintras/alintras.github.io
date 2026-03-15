@@ -22,7 +22,7 @@
     const btn = document.getElementById('theme-toggle');
     if (!btn) return;
     btn.innerHTML = theme === 'dark'
-      ? '<img src="/assets/smileys/Sun.png" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;">'
+      ? '<img src="/assets/smileys/vsun32b.PNG" style="width:18px;height:18px;vertical-align:-4px;image-rendering:pixelated;">'
       : '<img src="/assets/smileys/Moon.gif" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;">';
   }
   
