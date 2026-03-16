@@ -246,6 +246,9 @@ function doSearch() {
     const text = document.getElementById("search-input").value.trim();
     if (!text) return;
 
+    // SAVE IMMEDIATELY: This ensures URLs, shortcuts, and math are all recorded
+    saveSearch(text); 
+
     const spaceAt  = text.indexOf(" ");
     const hasSpace = spaceAt !== -1;
     const keyword  = (hasSpace ? text.slice(0, spaceAt) : text).toLowerCase();
@@ -270,10 +273,11 @@ function doSearch() {
     }
 
     // 4. Engine search fallback
-    saveSearch(text);
+    // (Removed saveSearch(text) from here since it's now at the top)
     const engine = document.getElementById("engine-select").value;
     window.location.href = engines[engine](text);
 }
+
 
 /* =============================================================
    LIVE INPUT HANDLER — previews while typing
