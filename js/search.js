@@ -51,7 +51,6 @@ const engines = {
 
 /* =============================================================
    SHORTCUT COMMANDS
-   Usage: "<keyword> <query>"  e.g. "yt lo-fi music"
 ============================================================= */
 
 const shortcuts = {
@@ -78,7 +77,7 @@ const shortcuts = {
 ============================================================= */
 
 function isURL(str) {
-    if (/\s/.test(str)) return false; // spaces = not a URL
+    if (/\s/.test(str)) return false;
     return /^https?:\/\/.+/.test(str)
         || /^www\..+\..+/.test(str)
         || /^[^\s.]+\.[a-zA-Z]{2,}(\/.*)?$/.test(str);
@@ -89,7 +88,6 @@ function normalizeURL(str) {
 }
 
 function isMath(str) {
-    // Must have at least one digit, at least one operator, and only safe chars
     return /\d/.test(str)
         && /[+\-*/^%]/.test(str)
         && /^[\d\s().+\-*/^%]+$/.test(str.trim());
@@ -166,6 +164,7 @@ function loadEngine() {
 }
 
 function saveSearch(q) {
+    if (!q) return;
     let recent = JSON.parse(localStorage.getItem("recentSearches") || "[]");
     recent = [q, ...recent.filter(r => r !== q)].slice(0, 10);
     localStorage.setItem("recentSearches", JSON.stringify(recent));
@@ -201,7 +200,9 @@ function renderResults(siteMatches, recentMatches) {
     if (recentMatches.length) html += recentBlock(recentMatches);
     if (siteMatches.length) {
         html += '<div class="sr-label">On this site</div>' +
-            siteMatches.map(p => `<a href="${p.url}">${p.title}</a>`).join("");
+            siteMatches.map(p => 
+                `<a href="${p.url}" onclick="saveSearch('${p.title.replace(/'/g, "\\'")}')">${p.title}</a>`
+            ).join("");
     }
 
     if (!html) { box.style.display = "none"; box.innerHTML = ""; return; }
@@ -209,10 +210,13 @@ function renderResults(siteMatches, recentMatches) {
     box.style.display = "block";
 }
 
+/**
+ * UPDATED: Fills the input AND executes the search immediately
+ */
 function fillSearch(e, q) {
     e.preventDefault();
     document.getElementById("search-input").value = q;
-    filterSite();
+    doSearch(); 
 }
 
 function filterSite() {
@@ -220,7 +224,6 @@ function filterSite() {
     const q   = raw.trim().toLowerCase();
     const box = getBox();
 
-    // Don't clobber calc or shortcut hints
     if (isShowingCalc() || isShowingShortcut()) return;
 
     if (!q) {
@@ -239,14 +242,13 @@ function filterSite() {
 }
 
 /* =============================================================
-   DOSEARCH — single entry point, called by Enter / button
+   DOSEARCH — single entry point, called by Enter / button / click
 ============================================================= */
 
 function doSearch() {
     const text = document.getElementById("search-input").value.trim();
     if (!text) return;
 
-    // SAVE IMMEDIATELY: This ensures URLs, shortcuts, and math are all recorded
     saveSearch(text); 
 
     const spaceAt  = text.indexOf(" ");
@@ -254,33 +256,27 @@ function doSearch() {
     const keyword  = (hasSpace ? text.slice(0, spaceAt) : text).toLowerCase();
     const query    = hasSpace ? text.slice(spaceAt + 1).trim() : "";
 
-    // 1. Shortcut command — must have a query after the keyword
     if (shortcuts[keyword] && query) {
         window.location.href = shortcuts[keyword](query);
         return;
     }
 
-    // 2. Bare URL — no spaces, looks like a domain
     if (!hasSpace && isURL(text)) {
         window.location.href = normalizeURL(text);
         return;
     }
 
-    // 3. Math expression
     if (isMath(text)) {
         const val = evalMath(text);
         if (val !== null) { showCalc(val); return; }
     }
 
-    // 4. Engine search fallback
-    // (Removed saveSearch(text) from here since it's now at the top)
     const engine = document.getElementById("engine-select").value;
     window.location.href = engines[engine](text);
 }
 
-
 /* =============================================================
-   LIVE INPUT HANDLER — previews while typing
+   LIVE INPUT HANDLER
 ============================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -299,19 +295,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const keyword  = (hasSpace ? text.slice(0, spaceAt) : text).toLowerCase();
         const query    = hasSpace ? text.slice(spaceAt + 1).trim() : "";
 
-        // Show shortcut hint
         if (shortcuts[keyword]) {
             showShortcutHint(keyword, query);
             return;
         }
 
-        // Show calc preview
         if (isMath(text)) {
             const val = evalMath(text);
             if (val !== null) { showCalc(val); return; }
         }
 
-        // Clear special results, let filterSite() handle the rest
         clearSpecialResults();
         filterSite();
     });
@@ -323,7 +316,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Global keyboard shortcuts
     document.addEventListener("keydown", e => {
         if (e.key === "/" && document.activeElement !== input) {
             e.preventDefault();
@@ -331,6 +323,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (e.key === "Escape") {
             input.blur();
+        }
+        if (e.key === "Enter" && document.activeElement === input) {
+            doSearch();
         }
     });
 });
