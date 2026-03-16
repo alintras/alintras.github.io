@@ -200,9 +200,7 @@ function renderResults(siteMatches, recentMatches) {
     if (recentMatches.length) html += recentBlock(recentMatches);
     if (siteMatches.length) {
         html += '<div class="sr-label">On this site</div>' +
-            siteMatches.map(p => 
-                `<a href="${p.url}" onclick="saveSearch('${p.title.replace(/'/g, "\\'")}')">${p.title}</a>`
-            ).join("");
+            siteMatches.map(p => `<a href="${p.url}">${p.title}</a>`).join("");
     }
 
     if (!html) { box.style.display = "none"; box.innerHTML = ""; return; }
@@ -211,7 +209,7 @@ function renderResults(siteMatches, recentMatches) {
 }
 
 /**
- * UPDATED: Fills the input AND executes the search immediately
+ * UPDATED: Fills the input AND executes the search immediately for recent searches
  */
 function fillSearch(e, q) {
     e.preventDefault();
@@ -242,7 +240,7 @@ function filterSite() {
 }
 
 /* =============================================================
-   DOSEARCH — single entry point, called by Enter / button / click
+   DOSEARCH — single entry point
 ============================================================= */
 
 function doSearch() {
