@@ -68,6 +68,7 @@
     cursor: pointer;
     white-space: nowrap;
     flex: 1;
+    max-width: 80px;
 }
 
 #search-bar > button:hover,
