@@ -52,6 +52,24 @@ const engines = {
 /* =============================================================
    SHORTCUT COMMANDS
 ============================================================= */
+const shortcutBases = {
+    yt:        "https://www.youtube.com",
+    gh:        "https://github.com",
+    r:         "https://www.reddit.com",
+    w:         "https://en.wikipedia.org",
+    mdn:       "https://developer.mozilla.org",
+    so:        "https://stackoverflow.com",
+    npm:       "https://www.npmjs.com",
+    maps:      "https://maps.google.com",
+    img:       "https://images.google.com",
+    tw:        "https://x.com",
+    bp:        "https://bulbapedia.bulbagarden.net",
+    pw:        "https://www.pokewiki.de",
+    ig:        "https://www.instagram.com",
+    emoji:     "https://emojipedia.org",
+    op:        "https://onepiece.tube",
+    ud:        "https://www.urbandictionary.com",
+};
 
 const shortcuts = {
     yt:        q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`,
@@ -129,7 +147,7 @@ function showShortcutHint(keyword, query) {
     const box = getBox();
     box.style.display = "block";
     if (!query) {
-        box.innerHTML = `<div class="sr-label">shortcut</div><a>Type a query after <b>${keyword}</b> and press Enter</a>`;
+        box.innerHTML = `<div class="sr-label">shortcut → ${keyword}</div><a>Press Enter to open <b>${shortcutBases[keyword]}</b></a>`;
     } else {
         box.innerHTML = `<div class="sr-label">shortcut → ${keyword}</div><a>Press Enter to search <b>${query}</b></a>`;
     }
@@ -249,13 +267,27 @@ function doSearch() {
 
     saveSearch(text); 
 
+    const engine = document.getElementById("engine-select").value;
+
+    // 1. Bypass shortcuts if explicitly wrapped in quotes
+    if (text.startsWith('"') && text.endsWith('"') && text.length > 1) {
+        const exactQuery = text.slice(1, -1); // Strip the quotes
+        window.location.href = engines[engine](exactQuery);
+        return;
+    }
+
     const spaceAt  = text.indexOf(" ");
     const hasSpace = spaceAt !== -1;
     const keyword  = (hasSpace ? text.slice(0, spaceAt) : text).toLowerCase();
     const query    = hasSpace ? text.slice(spaceAt + 1).trim() : "";
 
-    if (shortcuts[keyword] && query) {
-        window.location.href = shortcuts[keyword](query);
+    // 2. Handle Shortcuts (Homepage vs. Search)
+    if (shortcuts[keyword]) {
+        if (query) {
+            window.location.href = shortcuts[keyword](query);
+        } else {
+            window.location.href = shortcutBases[keyword];
+        }
         return;
     }
 
@@ -269,7 +301,7 @@ function doSearch() {
         if (val !== null) { showCalc(val); return; }
     }
 
-    const engine = document.getElementById("engine-select").value;
+    // Default engine search
     window.location.href = engines[engine](text);
 }
 
@@ -288,6 +320,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     input.addEventListener("input", () => {
         const text     = input.value.trim();
+
+        // Skip shortcut parsing if user is doing an exact quote search
+        if (text.startsWith('"') && text.endsWith('"') && text.length >= 2) {
+            clearSpecialResults();
+            filterSite();
+            return;
+        }
+
         const spaceAt  = text.indexOf(" ");
         const hasSpace = spaceAt !== -1;
         const keyword  = (hasSpace ? text.slice(0, spaceAt) : text).toLowerCase();

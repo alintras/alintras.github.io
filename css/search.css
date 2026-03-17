@@ -92,6 +92,12 @@
     border-bottom: 1px solid var(--border);
     font-size: 0.9em;
 }
+#site-results a.sr-recent {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block; /* Ensures the ellipsis calculation works properly */
+}
 #site-results a:last-child { border-bottom: none; }
 #site-results a:hover { background: var(--border); color: var(--border); }
 #site-results .sr-label {
