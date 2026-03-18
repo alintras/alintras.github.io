@@ -96,30 +96,30 @@
       overflow-x: auto;
   }
   
-    #header-title-fallback { display: none; }
-    #ascii-header-mobile { display: none; }
+  #header-title-fallback { display: none; }
+  #ascii-header-mobile { display: none; }
   
-  @media (max-width: 400px) {
-      #ascii-header { display: none; }
-      #ascii-header-mobile { display: block; }
-      #ascii-alis {
-        font-size: clamp(5px, 1.55vw, 14px);
-          white-space: pre;
-          margin: 0;
-          padding: 0;
-          overflow-x: hidden;
-      }
-      #ascii-homepage {
-          font-size: clamp(5px, 1.55vw, 14px);
-          white-space: pre;
-          margin: 0;
-          padding: 0;
-          overflow-x: hidden;
-      }
-      body.sidebar-open #ascii-header { display: none; }
-      body.sidebar-open #ascii-header-mobile { display: block; }
-      body.sidebar-open #ascii-header-mobile pre { font-size: clamp(5px, 1.55vw, 14px); }
-  }
+  @media (max-width: 600px) {
+    body.sidebar-open #ascii-header { display: none; }
+    body.sidebar-open #ascii-header-mobile { display: block; }
+    body.sidebar-open #ascii-alis {
+        font-size: clamp(3px, 1.55vw, 13px);
+        white-space: pre;
+        color: var(--fg);
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+    body.sidebar-open #ascii-homepage {
+        font-size: clamp(3px, 1.55vw, 7px);
+        white-space: pre;
+        color: var(--fg);
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+}
+
 
   
   #clock {
