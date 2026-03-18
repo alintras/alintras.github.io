@@ -232,8 +232,9 @@ function renderFavoritesBar() {
     if (!bar) return;
     const favs = getFavorites();
     if (!favs.length) { bar.innerHTML = ""; return; }
+    const wasOpen = document.getElementById("fav-details")?.open ?? false;
     bar.innerHTML =
-        `<details id="fav-details">
+        `<details id="fav-details"${wasOpen ? " open" : ""}>
             <summary><img src="/assets/smileys/star.png" style="width:12px;height:12px;image-rendering:pixelated;vertical-align:middle;"> Favorites (${favs.length})</summary>
             <div id="favorites-list">
                 ${favs.map(f =>
@@ -276,7 +277,7 @@ function recentBlock(matches) {
     return '<div class="sr-label">Recent searches</div>' +
         matches.map(r => {
             const engine  = document.getElementById("engine-select").value;
-            const starred = isFavorite(engines[engine](r));
+            const starred = isURL(r) ? isFavorite(normalizeURL(r)) : isFavorite(engines[engine](r));
             const safeR   = r.replace(/'/g, "\\'");
             return `<div class="sr-item">
                 <a class="sr-recent" href="#" onclick="fillSearch(event,'${safeR}')">
@@ -445,7 +446,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.addEventListener("click", e => {
-        if (!e.target.closest("#search-bar") && !e.target.closest("#site-results")) {
+        if (!e.target.closest("#search-bar") && !e.target.closest("#site-results") && !e.target.closest("#favorites-bar")) {
             const box = getBox();
             box.style.display = "none";
         }
