@@ -193,6 +193,69 @@ function getRecentSearches() {
 }
 
 /* =============================================================
+   FAVORITES
+============================================================= */
+
+function getFavorites() {
+    return JSON.parse(localStorage.getItem("favorites") || "[]");
+}
+
+function isFavorite(url) {
+    return getFavorites().some(f => f.url === url);
+}
+
+function toggleFavorite(url, title) {
+    let favs = getFavorites();
+    const idx = favs.findIndex(f => f.url === url);
+    if (idx === -1) favs.push({ url, title });
+    else            favs.splice(idx, 1);
+    localStorage.setItem("favorites", JSON.stringify(favs));
+    filterSite();
+    renderFavoritesBar();
+    renderFavoritesSidebar();
+}
+
+function toggleFavoriteSearch(query) {
+    const engine = document.getElementById("engine-select").value;
+    const url = engines[engine](query);
+    toggleFavorite(url, query);
+}
+
+function renderFavoritesBar() {
+    const bar = document.getElementById("favorites-bar");
+    if (!bar) return;
+    const favs = getFavorites();
+    if (!favs.length) { bar.innerHTML = ""; return; }
+    bar.innerHTML =
+        `<details id="fav-details">
+            <summary><img src="/assets/smileys/star.png" style="width:12px;height:12px;image-rendering:pixelated;vertical-align:middle;"> Favorites (${favs.length})</summary>
+            <div id="favorites-list">
+                ${favs.map(f =>
+                    `<div class="fav-item">
+                        <a href="${f.url}">${f.title}</a>
+                        <button class="fav-remove" onclick="toggleFavorite('${f.url.replace(/'/g,"\\'")}','${f.title.replace(/'/g,"\\'")}')"><img src="/assets/smileys/star.png" style="width:12px;height:12px;image-rendering:pixelated;vertical-align:middle;"></button>
+                    </div>`
+                ).join("")}
+            </div>
+        </details>`;
+}
+
+function renderFavoritesSidebar() {
+    const sidebar = document.getElementById("favorites-sidebar");
+    if (!sidebar) return;
+    const favs = getFavorites();
+    if (!favs.length) { sidebar.innerHTML = ""; return; }
+    const base = window.location.origin;
+    sidebar.innerHTML = favs.map(f => {
+        const domain = f.url.startsWith("http") ? new URL(f.url).origin : base;
+        return `<a href="${f.url}" title="${f.title}" class="fav-icon">
+            <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=16"
+                 onerror="this.src='/favicon.ico'">
+        </a>`;
+    }).join("");
+}
+
+/* =============================================================
    SITE SEARCH / SUGGESTIONS
 ============================================================= */
 
@@ -205,10 +268,23 @@ function clearRecentSearches() {
 
 function recentBlock(matches) {
     return '<div class="sr-label">Recent searches</div>' +
-        matches.map(r =>
-            `<a class="sr-recent" href="#" onclick="fillSearch(event,'${r.replace(/'/g, "\\'")}')"><img src="/assets/smileys/3oclock.png" style="width:15px; height:15px; vertical-align:-2px; image-rendering:pixelated;"> ${r}</a>`
-        ).join("") +
-        `<a href="#" class="sr-clear" onclick="event.preventDefault();clearRecentSearches()"><img src="/assets/smileys/milk.png" style="width:12px; height:12px; image-rendering:pixelated;"> Clear recent searches</a>`;
+        matches.map(r => {
+            const engine  = document.getElementById("engine-select").value;
+            const starred = isFavorite(engines[engine](r));
+            const safeR   = r.replace(/'/g, "\\'");
+            return `<div class="sr-item">
+                <a class="sr-recent" href="#" onclick="fillSearch(event,'${safeR}')">
+                    <img src="/assets/smileys/3oclock.png" style="width:15px;height:15px;vertical-align:-2px;image-rendering:pixelated;"> ${r}
+                </a>
+                <button class="sr-star${starred ? " starred" : ""}"
+                    onclick="event.preventDefault();event.stopPropagation();toggleFavoriteSearch('${safeR}')">
+                    <img src="/assets/smileys/star.png" style="width:12px;height:12px;image-rendering:pixelated;vertical-align:middle;">
+                </button>
+            </div>`;
+        }).join("") +
+        `<a href="#" class="sr-clear" onclick="event.preventDefault();clearRecentSearches()">
+            <img src="/assets/smileys/milk.png" style="width:12px;height:12px;image-rendering:pixelated;vertical-align:middle;"> Clear recent searches
+        </a>`;
 }
 
 function renderResults(siteMatches, recentMatches) {
@@ -218,7 +294,18 @@ function renderResults(siteMatches, recentMatches) {
     if (recentMatches.length) html += recentBlock(recentMatches);
     if (siteMatches.length) {
         html += '<div class="sr-label">On this site</div>' +
-            siteMatches.map(p => `<a href="${p.url}">${p.title}</a>`).join("");
+            siteMatches.map(p => {
+                const starred   = isFavorite(p.url);
+                const safeUrl   = p.url.replace(/'/g, "\\'");
+                const safeTitle = p.title.replace(/'/g, "\\'");
+                return `<div class="sr-item">
+                    <a href="${p.url}">${p.title}</a>
+                    <button class="sr-star${starred ? " starred" : ""}"
+                        onclick="event.preventDefault();event.stopPropagation();toggleFavorite('${safeUrl}','${safeTitle}')">
+                        <img src="/assets/smileys/star.png" style="width:12px;height:12px;image-rendering:pixelated;vertical-align:middle;">
+                    </button>
+                </div>`;
+            }).join("");
     }
 
     if (!html) { box.style.display = "none"; box.innerHTML = ""; return; }
@@ -226,13 +313,10 @@ function renderResults(siteMatches, recentMatches) {
     box.style.display = "block";
 }
 
-/**
- * UPDATED: Fills the input AND executes the search immediately for recent searches
- */
 function fillSearch(e, q) {
     e.preventDefault();
     document.getElementById("search-input").value = q;
-    doSearch(); 
+    doSearch();
 }
 
 function filterSite() {
@@ -265,13 +349,12 @@ function doSearch() {
     const text = document.getElementById("search-input").value.trim();
     if (!text) return;
 
-    saveSearch(text); 
+    saveSearch(text);
 
     const engine = document.getElementById("engine-select").value;
 
-    // 1. Bypass shortcuts if explicitly wrapped in quotes
     if (text.startsWith('"') && text.endsWith('"') && text.length > 1) {
-        const exactQuery = text.slice(1, -1); // Strip the quotes
+        const exactQuery = text.slice(1, -1);
         window.location.href = engines[engine](exactQuery);
         return;
     }
@@ -281,7 +364,6 @@ function doSearch() {
     const keyword  = (hasSpace ? text.slice(0, spaceAt) : text).toLowerCase();
     const query    = hasSpace ? text.slice(spaceAt + 1).trim() : "";
 
-    // 2. Handle Shortcuts (Homepage vs. Search)
     if (shortcuts[keyword]) {
         if (query) {
             window.location.href = shortcuts[keyword](query);
@@ -301,7 +383,6 @@ function doSearch() {
         if (val !== null) { showCalc(val); return; }
     }
 
-    // Default engine search
     window.location.href = engines[engine](text);
 }
 
@@ -311,6 +392,8 @@ function doSearch() {
 
 document.addEventListener("DOMContentLoaded", () => {
     loadEngine();
+    renderFavoritesBar();
+    renderFavoritesSidebar();
 
     const input = document.getElementById("search-input");
 
@@ -321,9 +404,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     input.addEventListener("input", () => {
-        const text     = input.value.trim();
+        const text = input.value.trim();
 
-        // Skip shortcut parsing if user is doing an exact quote search
         if (text.startsWith('"') && text.endsWith('"') && text.length >= 2) {
             clearSpecialResults();
             filterSite();

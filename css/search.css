@@ -130,3 +130,110 @@
         flex: 1;
     }
 }
+
+/* ── Favorites bar ── */
+#favorites-bar {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 4px;
+    font-size: 0.9em;
+}
+#favorites-bar details summary {
+    cursor: pointer;
+    padding: 2px 4px;
+    list-style: none;
+    user-select: none;
+    opacity: 0.7;
+}
+#favorites-bar details summary::-webkit-details-marker { display: none; }
+#favorites-bar details[open] summary { opacity: 1; }
+#favorites-list {
+    border: 1px solid var(--border);
+    margin-top: 2px;
+}
+.fav-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+.fav-item:last-child { border-bottom: none; }
+.fav-item a {
+    flex: 1;
+    padding: 3px 6px;
+    text-decoration: none;
+    font-size: 0.9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.fav-item a:hover { text-decoration: underline; }
+.fav-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    color: inherit;
+    opacity: 0.4;
+    font-size: 0.9em;
+    flex-shrink: 0;
+}
+.fav-remove:hover { opacity: 1; }
+
+/* ── Stars in site results ── */
+.sr-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+.sr-item:last-child { border-bottom: none; }
+.sr-item > a {
+    flex: 1;
+    padding: 3px 6px;
+    text-decoration: none;
+    font-size: 0.9em;
+    border-bottom: none !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.sr-item:hover { background: var(--border); }
+.sr-item:hover > a { color: #fff; }
+.sr-star {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    color: inherit;
+    opacity: 0.3;
+    font-size: 0.9em;
+    flex-shrink: 0;
+    line-height: 1;
+}
+.sr-star:hover,
+.sr-star.starred { opacity: 1; }
+
+/* ── Sidebar (wide screens only) ── */
+#favorites-sidebar {
+    display: none;
+    position: fixed;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    flex-direction: column;
+    gap: 3px;
+    z-index: 50;
+}
+@media (min-width: 900px) {
+    #favorites-sidebar { display: flex; }
+}
+.fav-icon {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+.fav-icon img { width: 16px; height: 16px; display: block; }
