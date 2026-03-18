@@ -97,11 +97,12 @@ const shortcuts = {
 function isURL(str) {
     if (/\s/.test(str)) return false;
     return /^https?:\/\/.+/.test(str)
-        || /^www\..+\..+/.test(str)
-        || /^[^\s.]+\.[a-zA-Z]{2,}(\/.*)?$/.test(str);
+        || /^www\..+/.test(str)
+        || /^[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}([\/?#].*)?$/.test(str);
 }
 
 function normalizeURL(str) {
+    if (str.startsWith('/')) return str;
     return /^https?:\/\//.test(str) ? str : `https://${str}`;
 }
 
@@ -216,8 +217,13 @@ function toggleFavorite(url, title) {
 }
 
 function toggleFavoriteSearch(query) {
-    const engine = document.getElementById("engine-select").value;
-    const url = engines[engine](query);
+    let url;
+    if (isURL(query)) {
+        url = normalizeURL(query);
+    } else {
+        const engine = document.getElementById("engine-select").value;
+        url = engines[engine](query);
+    }
     toggleFavorite(url, query);
 }
 
@@ -353,9 +359,20 @@ function doSearch() {
 
     const engine = document.getElementById("engine-select").value;
 
+    // 0. Full https:// URLs — navigate immediately
+    if (/^https?:\/\//i.test(text)) {
+        window.location.href = text;
+        return;
+    }
+
+    // 1. Relative paths
+    if (/^\//.test(text)) {
+        window.location.href = text;
+        return;
+    }
+
     if (text.startsWith('"') && text.endsWith('"') && text.length > 1) {
-        const exactQuery = text.slice(1, -1);
-        window.location.href = engines[engine](exactQuery);
+        window.location.href = engines[engine](text.slice(1, -1));
         return;
     }
 
@@ -365,11 +382,7 @@ function doSearch() {
     const query    = hasSpace ? text.slice(spaceAt + 1).trim() : "";
 
     if (shortcuts[keyword]) {
-        if (query) {
-            window.location.href = shortcuts[keyword](query);
-        } else {
-            window.location.href = shortcutBases[keyword];
-        }
+        window.location.href = query ? shortcuts[keyword](query) : shortcutBases[keyword];
         return;
     }
 
