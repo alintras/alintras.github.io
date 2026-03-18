@@ -63,10 +63,12 @@ document.addEventListener("DOMContentLoaded", function () {
   if (localStorage.getItem("sidebarCollapsed") === "1") {
     layoutSidebar.classList.add("collapsed");
   }
+  document.body.classList.add("sidebar-open");  // ← add
 
   toggle.addEventListener("click", function (e) {
     e.stopPropagation();
     layoutSidebar.classList.toggle("collapsed");
+    document.body.classList.toggle("sidebar-open");  // ← add
     localStorage.setItem("sidebarCollapsed",
       layoutSidebar.classList.contains("collapsed") ? "1" : "0");
   });
@@ -74,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
   layoutSidebar.addEventListener("click", function () {
     if (layoutSidebar.classList.contains("collapsed")) {
       layoutSidebar.classList.remove("collapsed");
+      document.body.classList.add("sidebar-open");  // ← add
       localStorage.setItem("sidebarCollapsed", "0");
     }
   });
