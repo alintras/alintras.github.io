@@ -99,7 +99,7 @@
     #header-title-fallback { display: none; }
     #ascii-header-mobile { display: none; }
   
-  @media (max-width: 4&0px) {
+  @media (max-width: 400px) {
       #ascii-header { display: none; }
       #ascii-header-mobile { display: block; }
       #ascii-alis {
