@@ -114,10 +114,10 @@
     body.sidebar-open #ascii-homepage {
         font-size: clamp(3px, 1.55vw, 7px);
         white-space: pre;
+        line-height: 1.1;
         color: var(--fg);
         margin: 0;
         padding: 0;
-        line-height: 1.1;
         overflow-x: hidden;
     }
 }

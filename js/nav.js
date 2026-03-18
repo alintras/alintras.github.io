@@ -62,8 +62,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (localStorage.getItem("sidebarCollapsed") === "1") {
     layoutSidebar.classList.add("collapsed");
-  }
-  document.body.classList.add("sidebar-open");  // ← add
+} else {
+    document.body.classList.add("sidebar-open");  // ← only when open
+}
 
   toggle.addEventListener("click", function (e) {
     e.stopPropagation();
