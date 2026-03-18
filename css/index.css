@@ -116,11 +116,11 @@
           padding: 0;
           overflow-x: hidden;
       }
+      body.sidebar-open #ascii-header { display: none; }
+      body.sidebar-open #ascii-header-mobile { display: block; }
+      body.sidebar-open #ascii-header-mobile pre { font-size: clamp(5px, 1.55vw, 14px); }
   }
 
-  body.sidebar-open #ascii-header { display: none; }
-  body.sidebar-open #ascii-header-mobile { display: block; }
-  body.sidebar-open #ascii-header-mobile pre { font-size: clamp(5px, 1.55vw, 14px); }
   
   #clock {
       margin-right: auto;
