@@ -314,6 +314,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const input = document.getElementById("search-input");
 
+    input.focus();
+
     input.addEventListener("focus", () => {
         filterSite();
     });
