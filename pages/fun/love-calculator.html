@@ -3,316 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Compatibility Calculator ❤️</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5829220477325146" crossorigin="anonymous"></script>
-    <script src="/js/style.js"></script>
+    <title>Love Calculator ☁️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        a { color: inherit; text-decoration: none; }
+        a { color: var(--pink); text-decoration: none; }
+        :root {
+            --bg: #fff5f8;
+            --card-bg: #ffffff;
+            --text: #4a4a4a;
+            --pink: #ff85a1;
+            --border: #4a4a4a;
+            --msg-bg: #fff0f3;
+            --line: #eee;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text: #f0f0f0;
+            --pink: #ffb3c6;
+            --border: #f0f0f0;
+            --msg-bg: #3d2b2f;
+            --line: #444;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Quicksand', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Gaegu', cursive;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             min-height: 100vh;
-            padding: 20px;
+            margin: 0;
+            padding: 40px 20px;
+            overflow-x: hidden;
         }
-        [data-theme="dark"] body {
-            background: linear-gradient(135deg, #2d1b69 0%, #1a0a3d 100%);
+
+        .notebook {
+            position: relative; /* CRITICAL: This keeps sparkles inside the box center */
+            background: var(--card-bg);
+            border: 3px solid var(--border);
+            padding: 30px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 8px 8px 0px var(--border);
+            margin: 20px 0;
         }
-        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .ad-space { background: transparent; border: none; padding: 0; min-height: 90px; }
-        .ad-space.sidebar { min-height: 600px; }
-        .ad-space > div { display: none; }
-        .calculator-wrapper { display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
-        .calculator {
-            background: rgba(255,255,255,0.95); border-radius: 20px;
-            padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+
+        .ascii-art {
+            white-space: pre;
+            font-family: monospace;
+            font-size: 11px;
+            line-height: 1.2;
+            color: var(--pink);
+            text-align: center;
+            margin-bottom: 15px;
+            display: block;
         }
-        [data-theme="dark"] .calculator { background: rgba(30,20,60,0.95); color: #e0d8ff; }
-        h1 { text-align: center; color: #e91e63; font-size: 2.5em; margin-bottom: 10px; font-family: 'Pacifico', cursive; }
-        [data-theme="dark"] h1 { color: #ff6b9d; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-size: 1.1em; }
-        [data-theme="dark"] .subtitle { color: #a090cc; }
-        .input-section { display: flex; gap: 20px; align-items: center; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
-        .name-input-wrapper { flex: 1; min-width: 200px; }
-        label { display: block; color: #555; margin-bottom: 8px; font-weight: 600; font-size: 0.9em; }
-        [data-theme="dark"] label { color: #c0b0e8; }
+
+        h1 { text-align: center; font-size: 2.2rem; margin-bottom: 5px; color: var(--pink); }
+        .subtitle { text-align: center; margin-bottom: 25px; font-size: 1.2rem; }
+        .input-box { margin-bottom: 20px; }
+        
         input[type="text"] {
-            width: 100%; padding: 15px; border: 2px solid #e0e0e0;
-            border-radius: 12px; font-size: 1.1em; background: white; color: #333;
-            font-family: 'Quicksand', sans-serif;
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed var(--border);
+            background: transparent;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1.3rem;
+            outline: none;
+            text-align: center;
         }
-        [data-theme="dark"] input[type="text"] { background: #2a1a4a; border-color: #4a3a7a; color: #e0d8ff; }
-        input[type="text"]:focus { outline: none; border-color: #e91e63; box-shadow: 0 0 0 3px rgba(233,30,99,0.1); }
-        .heart-divider { font-size: 2em; color: #e91e63; margin-top: 25px; animation: heartbeat 1.5s infinite; }
-        @keyframes heartbeat { 0%,100%{transform:scale(1)} 10%,30%{transform:scale(1.1)} 20%,40%{transform:scale(1)} }
+
         button {
-            width: 100%; padding: 18px;
-            background: linear-gradient(135deg, #e91e63, #f06292); color: white;
-            border: none; border-radius: 12px; font-size: 1.2em; font-weight: 600;
-            cursor: pointer; box-shadow: 0 4px 15px rgba(233,30,99,0.4);
-            font-family: 'Quicksand', sans-serif; transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            padding: 15px;
+            background: var(--pink);
+            color: white;
+            border: 3px solid var(--border);
+            font-family: inherit;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.1s;
         }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(233,30,99,0.6); }
-        button:active { transform: translateY(0); }
-        .result-section { margin-top: 40px; text-align: center; display: none; }
-        .result-section.show { display: block; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-        .percentage-display {
-            font-size: 5em; font-weight: bold;
-            background: linear-gradient(135deg,#e91e63,#f06292);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; margin: 20px 0;
+
+        button:hover { transform: scale(1.02); filter: brightness(1.1); }
+        button:active { transform: scale(0.98); }
+
+        #resultArea {
+            margin-top: 30px;
+            display: none;
+            text-align: center;
+            border-top: 2px solid var(--line);
+            padding-top: 20px;
         }
-        .compatibility-bar { width: 100%; height: 40px; background: #f0f0f0; border-radius: 20px; overflow: hidden; margin: 30px 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-        [data-theme="dark"] .compatibility-bar { background: #2a1a4a; }
-        .compatibility-fill { height: 100%; background: linear-gradient(90deg,#e91e63,#f06292,#ff6b9d); border-radius: 20px; transition: width 1s ease-out; display: flex; align-items: center; justify-content: flex-end; padding-right: 15px; color: white; font-weight: bold; }
-        .message { font-size: 1.5em; color: #555; margin: 20px 0; font-weight: 500; line-height: 1.6; }
-        [data-theme="dark"] .message { color: #c0b0e8; }
-        .emoji-display { font-size: 4em; margin: 20px 0; animation: bounce 1s infinite; }
-        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-        .floating-heart { position: fixed; font-size: 2em; animation: float-up 4s ease-in forwards; bottom: 0; }
-        @keyframes float-up { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-100vh) rotate(360deg);opacity:0} }
-        .names-display { font-size: 1.3em; color: #e91e63; margin-bottom: 20px; font-weight: 600; font-family: 'Pacifico', cursive; }
-        .language-switcher { position: fixed; top: 10px; right: 10px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-size: 0.85em; }
-        [data-theme="dark"] .language-switcher { background: rgba(30,20,60,0.95); }
-        .language-switcher select { border: none; background: transparent; font-family: 'Quicksand', sans-serif; font-weight: 600; cursor: pointer; outline: none; color: #666; }
-        [data-theme="dark"] .language-switcher select { color: #c0b0e8; }
-        .cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); color: white; padding: 20px; z-index: 10000; display: none; }
-        .cookie-banner.show { display: block; }
-        .cookie-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-        .cookie-text { flex: 1; min-width: 300px; }
-        .cookie-text h3 { margin-bottom: 8px; }
-        .cookie-text p { font-size: 0.9em; line-height: 1.5; opacity: 0.9; }
-        .cookie-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
-        .cookie-btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Quicksand', sans-serif; width: auto; }
-        .cookie-btn.accept { background: #4CAF50; color: white; }
-        .cookie-btn.decline { background: #f44336; color: white; }
-        @media(max-width:968px){ .calculator-wrapper{grid-template-columns:1fr} .ad-space.sidebar{min-height:120px} h1{font-size:2em} .percentage-display{font-size:4em} }
-        @media(max-width:600px){ .input-section{flex-direction:column} .heart-divider{margin-top:0} .calculator{padding:25px} h1{font-size:1.8em} .percentage-display{font-size:3em} }
+
+        .big-percent { font-size: 4rem; color: var(--pink); font-weight: bold; }
+
+        .message-box {
+            background: var(--msg-bg);
+            padding: 10px;
+            border: 2px solid var(--pink);
+            margin: 10px 0;
+            font-size: 1.2rem;
+        }
+
+        /* Fixed Sparkle Animations */
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 24px;
+            z-index: 100;
+            animation: burst 1s ease-out forwards;
+        }
+
+        @keyframes burst {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--vx)), calc(-50% + var(--vy))) scale(1.5); opacity: 0; }
+        }
+
+        .ultra-love {
+            animation: mega-shake 0.1s infinite, rainbow-border 0.5s infinite;
+            transform-origin: center;
+        }
+
+        @keyframes mega-shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        @keyframes rainbow-border {
+            0% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
+            20% { border-color: #ff8000; box-shadow: 0 0 20px #ff8000; }
+            40% { border-color: #ffff00; box-shadow: 0 0 20px #ffff00; }
+            60% { border-color: #00ff00; box-shadow: 0 0 20px #00ff00; }
+            80% { border-color: #0000ff; box-shadow: 0 0 20px #0000ff; }
+            100% { border-color: #8b00ff; box-shadow: 0 0 20px #8b00ff; }
+        }
+        .home-button { order: -1; } 
     </style>
+    <script src="/js/style.js" defer></script>
+    <script>
+        (function() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
 </head>
 <body>
-<div style="position:fixed;top:10px;left:10px;z-index:1001;">
-    <a href="/index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px;height:18px;vertical-align:-2px;image-rendering:pixelated;"> Home</a>
-</div>
-<div class="language-switcher">
-    🌐 <select id="languageSelect">
-        <option value="en">English</option><option value="es">Español</option><option value="fr">Français</option>
-        <option value="de">Deutsch</option><option value="it">Italiano</option><option value="pt">Português</option>
-        <option value="ru">Русский</option><option value="ja">日本語</option><option value="ko">한국어</option>
-        <option value="zh">中文</option><option value="ar">العربية</option><option value="hi">हिन्दी</option>
-        <option value="tr">Türkçe</option><option value="pl">Polski</option><option value="nl">Nederlands</option>
-    </select>
-</div>
 
-<div class="container">
-    <div class="ad-space top">
-        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-    <div class="calculator-wrapper">
-        <div class="calculator">
-            <h1 id="main-title">💕 Love Calculator 💕</h1>
-            <p class="subtitle" id="subtitle">Discover your compatibility percentage!</p>
-            <div class="input-section">
-                <div class="name-input-wrapper">
-                    <label for="name1" id="label1">Your Name</label>
-                    <input type="text" id="name1" placeholder="Enter your name">
-                </div>
-                <div class="heart-divider">❤️</div>
-                <div class="name-input-wrapper">
-                    <label for="name2" id="label2">Their Name</label>
-                    <input type="text" id="name2" placeholder="Enter their name">
-                </div>
-            </div>
-            <button id="calculateButton">Calculate Love! 💖</button>
-            <div class="result-section" id="resultSection">
-                <div class="names-display" id="namesDisplay"></div>
-                <div class="percentage-display" id="percentage">0%</div>
-                <div class="compatibility-bar">
-                    <div class="compatibility-fill" id="compatibilityFill" style="width:0%"></div>
-                </div>
-                <div class="emoji-display" id="emoji">❤️</div>
-                <div class="message" id="message"></div>
-            </div>
+    <div class="notebook">
+        <pre class="ascii-art">
+ |\__/,|   (`\
+_.|o o  |_   ) )
+-(((---(((--------</pre>
+    
+        <h1>Love Calculator!</h1>
+        <p class="subtitle">Is it true love? 💖</p>
+    
+        <div class="input-box">
+            <input type="text" id="name1" placeholder="First Name..." onkeydown="handleKeyPress(event)" autocomplete="off">
         </div>
-        <div class="ad-space sidebar">
-            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="6230969333" data-ad-format="auto" data-full-width-responsive="true"></ins>
-            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        
+        <div style="text-align: center; font-size: 1.5rem; margin: -10px 0 10px 0; color: var(--pink);">❤</div>
+        
+        <div class="input-box">
+            <input type="text" id="name2" placeholder="Second Name..." onkeydown="handleKeyPress(event)" autocomplete="off">
         </div>
-    </div>
-    <div class="ad-space footer">
-        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5829220477325146" data-ad-slot="7394608271" data-ad-format="auto" data-full-width-responsive="true"></ins>
-        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-</div>
-
-<div id="heartsContainer" style="position:fixed;pointer-events:none;z-index:1000;"></div>
-
-<div class="cookie-banner" id="cookieBanner">
-    <div class="cookie-content">
-        <div class="cookie-text">
-            <h3>🍪 Cookie Notice</h3>
-            <p>We use cookies and similar technologies to personalize content and display advertising.</p>
+    
+        <button onclick="checkLove()">Calculate Love! ✨</button>
+    
+        <div id="resultArea">
+            <div class="big-percent" id="pct">0%</div>
+            <div class="message-box" id="msg">Calculating...</div>
+            <pre class="ascii-art" style="color:var(--text); opacity: 0.6; margin-top:10px;">
+_   _
+/ \ / \
+(   V   )
+\     /
+\   /
+\ /
+V</pre>
         </div>
-        <div class="cookie-buttons">
-            <button class="cookie-btn accept" onclick="acceptCookies()">✓ Accept</button>
-            <button class="cookie-btn decline" onclick="declineCookies()">✗ Decline</button>
-        </div>
-    </div>
-</div>
+    </div> 
 
 <script>
-// Translations (abbreviated — same keys as original)
-const translations = {
-    en:{ title:"Love Calculator", subtitle:"Discover your compatibility percentage!", yourName:"Your Name", theirName:"Their Name", yourNamePlaceholder:"Enter your name", theirNamePlaceholder:"Enter their name", calculate:"Calculate Love! 💖", alertEmpty:"Please enter both names! 💕", messages:{ soulmates:"SOULMATES! 💫 You two are absolutely perfect for each other!", nomatch:"No romantic connection here. Sometimes hearts just don't align.", perfect:"Perfect match! You two are meant to be together!", great:"Great compatibility! You have a strong connection!", good:"Good match! There's definitely potential here!", friends:"Friendship vibes! You might be better as friends." } },
-    de:{ title:"Liebesrechner", subtitle:"Entdecke euren Kompatibilitätsprozentsatz!", yourName:"Dein Name", theirName:"Ihr/Sein Name", yourNamePlaceholder:"Gib deinen Namen ein", theirNamePlaceholder:"Gib ihren/seinen Namen ein", calculate:"Liebe Berechnen! 💖", alertEmpty:"Bitte gib beide Namen ein! 💕", messages:{ soulmates:"SEELENVERWANDTE! 💫 Ihr seid absolut perfekt füreinander!", nomatch:"Keine romantische Verbindung hier.", perfect:"Perfektes Match! Ihr seid füreinander bestimmt!", great:"Große Kompatibilität! Ihr habt eine starke Verbindung!", good:"Gutes Match! Hier ist definitiv Potenzial!", friends:"Freundschafts-Vibes! Ihr könntet bessere Freunde sein." } },
-    es:{ title:"Calculadora del Amor", subtitle:"¡Descubre tu porcentaje de compatibilidad!", yourName:"Tu Nombre", theirName:"Su Nombre", yourNamePlaceholder:"Ingresa tu nombre", theirNamePlaceholder:"Ingresa su nombre", calculate:"¡Calcular el Amor! 💖", alertEmpty:"¡Por favor ingresa ambos nombres! 💕", messages:{ soulmates:"¡ALMAS GEMELAS! 💫", nomatch:"No hay conexión romántica aquí.", perfect:"¡Pareja perfecta!", great:"¡Gran compatibilidad!", good:"¡Buena pareja!", friends:"¡Vibras de amistad!" } },
-    fr:{ title:"Calculateur d'Amour", subtitle:"Découvrez votre pourcentage de compatibilité!", yourName:"Votre Nom", theirName:"Leur Nom", yourNamePlaceholder:"Entrez votre nom", theirNamePlaceholder:"Entrez leur nom", calculate:"Calculer l'Amour! 💖", alertEmpty:"Veuillez entrer les deux noms! 💕", messages:{ soulmates:"ÂMES SŒURS! 💫", nomatch:"Pas de connexion romantique ici.", perfect:"Match parfait!", great:"Grande compatibilité!", good:"Bon match!", friends:"Vibrations d'amitié!" } },
-    it:{ title:"Calcolatore dell'Amore", subtitle:"Scopri la tua percentuale di compatibilità!", yourName:"Il Tuo Nome", theirName:"Il Loro Nome", yourNamePlaceholder:"Inserisci il tuo nome", theirNamePlaceholder:"Inserisci il loro nome", calculate:"Calcola l'Amore! 💖", alertEmpty:"Per favore inserisci entrambi i nomi! 💕", messages:{ soulmates:"ANIME GEMELLE! 💫", nomatch:"Nessuna connessione romantica.", perfect:"Match perfetto!", great:"Grande compatibilità!", good:"Buon match!", friends:"Vibrazioni di amicizia!" } },
-    pt:{ title:"Calculadora do Amor", subtitle:"Descubra sua porcentagem de compatibilidade!", yourName:"Seu Nome", theirName:"Nome Dele/Dela", yourNamePlaceholder:"Digite seu nome", theirNamePlaceholder:"Digite o nome dele/dela", calculate:"Calcular o Amor! 💖", alertEmpty:"Por favor, digite ambos os nomes! 💕", messages:{ soulmates:"ALMAS GÊMEAS! 💫", nomatch:"Sem conexão romântica aqui.", perfect:"Par perfeito!", great:"Ótima compatibilidade!", good:"Bom par!", friends:"Vibes de amizade!" } },
-    ru:{ title:"Калькулятор Любви", subtitle:"Узнайте ваш процент совместимости!", yourName:"Ваше Имя", theirName:"Их Имя", yourNamePlaceholder:"Введите ваше имя", theirNamePlaceholder:"Введите их имя", calculate:"Рассчитать Любовь! 💖", alertEmpty:"Пожалуйста, введите оба имени! 💕", messages:{ soulmates:"РОДСТВЕННЫЕ ДУШИ! 💫", nomatch:"Нет романтической связи.", perfect:"Идеальная пара!", great:"Отличная совместимость!", good:"Хорошая пара!", friends:"Дружеская атмосфера!" } },
-    ja:{ title:"恋愛相性占い", subtitle:"相性パーセンテージを発見しよう！", yourName:"あなたの名前", theirName:"相手の名前", yourNamePlaceholder:"あなたの名前を入力", theirNamePlaceholder:"相手の名前を入力", calculate:"相性を占う！ 💖", alertEmpty:"両方の名前を入力してください！ 💕", messages:{ soulmates:"運命の相手！ 💫", nomatch:"ロマンチックな繋がりなし。", perfect:"完璧なカップル！", great:"素晴らしい相性！", good:"良いマッチ！", friends:"友情の雰囲気！" } },
-    ko:{ title:"사랑 계산기", subtitle:"당신의 궁합 퍼센트를 알아보세요!", yourName:"당신의 이름", theirName:"상대방 이름", yourNamePlaceholder:"이름을 입력하세요", theirNamePlaceholder:"상대방 이름을 입력하세요", calculate:"사랑 계산하기! 💖", alertEmpty:"두 이름을 모두 입력해주세요! 💕", messages:{ soulmates:"운명의 짝! 💫", nomatch:"로맨틱한 연결 없음.", perfect:"완벽한 커플!", great:"훌륭한 궁합!", good:"좋은 매치!", friends:"우정 분위기!" } },
-    zh:{ title:"爱情计算器", subtitle:"发现你们的配对百分比！", yourName:"你的名字", theirName:"对方的名字", yourNamePlaceholder:"输入你的名字", theirNamePlaceholder:"输入对方的名字", calculate:"计算爱情！ 💖", alertEmpty:"请输入两个名字！ 💕", messages:{ soulmates:"天生一对！ 💫", nomatch:"没有浪漫连接。", perfect:"完美配对！", great:"很好的兼容性！", good:"不错的配对！", friends:"友谊氛围！" } },
-    ar:{ title:"حاسبة الحب", subtitle:"اكتشف نسبة التوافق الخاصة بك!", yourName:"اسمك", theirName:"اسمهم", yourNamePlaceholder:"أدخل اسمك", theirNamePlaceholder:"أدخل اسمهم", calculate:"احسب الحب! 💖", alertEmpty:"الرجاء إدخال كلا الاسمين! 💕", messages:{ soulmates:"أرواح توأم! 💫", nomatch:"لا توافق رومانسي.", perfect:"توافق مثالي!", great:"توافق رائع!", good:"توافق جيد!", friends:"أجواء صداقة!" } },
-    hi:{ title:"प्रेम कैलकुलेटर", subtitle:"अपना अनुकूलता प्रतिशत खोजें!", yourName:"आपका नाम", theirName:"उनका नाम", yourNamePlaceholder:"अपना नाम दर्ज करें", theirNamePlaceholder:"उनका नाम दर्ज करें", calculate:"प्रेम की गणना करें! 💖", alertEmpty:"कृपया दोनों नाम दर्ज करें! 💕", messages:{ soulmates:"आत्मीय साथी! 💫", nomatch:"कोई रोमांटिक संबंध नहीं।", perfect:"परफेक्ट मैच!", great:"शानदार अनुकूलता!", good:"अच्छा मैच!", friends:"दोस्ती के संकेत!" } },
-    tr:{ title:"Aşk Hesaplayıcı", subtitle:"Uyumluluk yüzdenizi keşfedin!", yourName:"Senin Adın", theirName:"Onun Adı", yourNamePlaceholder:"Adını gir", theirNamePlaceholder:"Onun adını gir", calculate:"Aşkı Hesapla! 💖", alertEmpty:"Lütfen her iki ismi de girin! 💕", messages:{ soulmates:"Ruh eşleri! 💫", nomatch:"Romantik bağlantı yok.", perfect:"Mükemmel eşleşme!", great:"Harika uyumluluk!", good:"İyi eşleşme!", friends:"Arkadaşlık havası!" } },
-    pl:{ title:"Kalkulator Miłości", subtitle:"Odkryj swój procent zgodności!", yourName:"Twoje Imię", theirName:"Ich Imię", yourNamePlaceholder:"Wprowadź swoje imię", theirNamePlaceholder:"Wprowadź ich imię", calculate:"Oblicz Miłość! 💖", alertEmpty:"Proszę wprowadzić oba imiona! 💕", messages:{ soulmates:"Bratnie dusze! 💫", nomatch:"Brak połączenia romantycznego.", perfect:"Idealne dopasowanie!", great:"Świetna zgodność!", good:"Dobre dopasowanie!", friends:"Klimat przyjaźni!" } },
-    nl:{ title:"Liefde Calculator", subtitle:"Ontdek jullie compatibiliteitspercentage!", yourName:"Jouw Naam", theirName:"Hun Naam", yourNamePlaceholder:"Voer je naam in", theirNamePlaceholder:"Voer hun naam in", calculate:"Bereken Liefde! 💖", alertEmpty:"Voer alsjeblieft beide namen in! 💕", messages:{ soulmates:"Zielsverbonden! 💫", nomatch:"Geen romantische connectie.", perfect:"Perfecte match!", great:"Geweldige compatibiliteit!", good:"Goede match!", friends:"Vriendschap vibes!" } }
-};
+let celebrationTimeout; 
+let loveTimer;
 
-let currentLanguage = 'en';
-let animationInterval = null;
-
-function detectLanguage() {
-    const l = (navigator.language || 'en').split('-')[0];
-    return translations[l] ? l : 'en';
-}
-
-function changeLanguage(lang) {
-    currentLanguage = lang;
-    const t = translations[lang] || translations.en;
-    document.getElementById('main-title').innerHTML = `💕 ${t.title} 💕`;
-    document.getElementById('subtitle').textContent = t.subtitle;
-    document.getElementById('label1').textContent = t.yourName;
-    document.getElementById('label2').textContent = t.theirName;
-    document.getElementById('name1').placeholder = t.yourNamePlaceholder;
-    document.getElementById('name2').placeholder = t.theirNamePlaceholder;
-    document.getElementById('calculateButton').innerHTML = t.calculate;
-    document.getElementById('languageSelect').value = lang;
-    // Update result message if visible
-    const resultSection = document.getElementById('resultSection');
-    if (resultSection.classList.contains('show')) {
-        const pct = parseInt(document.getElementById('percentage').textContent);
-        updateResultMessage(pct);
+function handleKeyPress(event) {
+    if (event.key === "Enter") {
+        checkLove();
     }
 }
 
-function updateResultMessage(percentage) {
-    const t = translations[currentLanguage] || translations.en;
-    const msg = document.getElementById('message');
-    if (percentage === 100) msg.textContent = t.messages.soulmates;
-    else if (percentage === 0) msg.textContent = t.messages.nomatch;
-    else if (percentage >= 80) msg.textContent = t.messages.perfect;
-    else if (percentage >= 60) msg.textContent = t.messages.great;
-    else if (percentage >= 40) msg.textContent = t.messages.good;
-    else msg.textContent = t.messages.friends;
-}
+function checkLove() {
+    const nb = document.querySelector('.notebook');
+    const msgBox = document.getElementById('msg');
+    const pctDisp = document.getElementById('pct');
+    
+    // Instant Reset
+    nb.classList.remove('ultra-love'); 
+    clearTimeout(celebrationTimeout);
+    clearInterval(loveTimer);
+    document.querySelectorAll('.sparkle').forEach(s => s.remove());
+    msgBox.innerText = "Calculating...";
 
-function calculateLove() {
-    const name1 = document.getElementById('name1').value.trim().toLowerCase();
-    const name2 = document.getElementById('name2').value.trim().toLowerCase();
-    const t = translations[currentLanguage] || translations.en;
-    if (!name1 || !name2) { alert(t.alertEmpty); return; }
+    const n1 = document.getElementById('name1').value.trim();
+    const n2 = document.getElementById('name2').value.trim();
+    
+    if (!n1 || !n2) {
+        alert("Oops! Enter two names first! ✨");
+        return;
+    }
 
-    let percentage;
-    if ((name1 === 'vivi' && name2 === 'ali') || (name1 === 'ali' && name2 === 'vivi')) {
-        percentage = 100;
-    } else if (name1 === 'vivi' || name2 === 'vivi') {
-        percentage = 0;
+    // Logic
+    const combined = (n1 + n2).toLowerCase();
+    let score = 0;
+    
+    // Easter Egg
+    const v1 = n1.toLowerCase();
+    const v2 = n2.toLowerCase();
+    const easterEggNames = ['vivi', 'ali', 'ugur', 'vivian', 'vivian helget', 'ali aktas', 'ali ugur', 'ali ugur aktas'];
+    
+    if (easterEggNames.includes(v1) && easterEggNames.includes(v2)) {
+        score = 100;
     } else {
-        const sorted = [name1, name2].sort().join('');
-        let hash = 0;
-        for (let i = 0; i < sorted.length; i++) {
-            hash = ((hash << 5) - hash) + sorted.charCodeAt(i);
-            hash = hash & hash;
-        }
-        percentage = 20 + (Math.abs(hash) % 80);
+        let sum = 0;
+        for(let i=0; i<combined.length; i++) sum += combined.charCodeAt(i);
+        score = (sum % 101);
     }
-    displayResult(name1, name2, percentage);
-}
 
-function displayResult(name1, name2, percentage) {
-    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
-    document.getElementById('namesDisplay').textContent = `${cap(name1)} ❤️ ${cap(name2)}`;
-    document.getElementById('percentage').textContent = '0%';
-    document.getElementById('compatibilityFill').style.width = '0%';
-
-    if (animationInterval) clearInterval(animationInterval);
+    document.getElementById('resultArea').style.display = 'block';
+    
     let current = 0;
-    animationInterval = setInterval(() => {
-        if (current >= percentage) {
-            clearInterval(animationInterval);
-            animationInterval = null;
-            createHearts(percentage);
+    loveTimer = setInterval(() => {
+        if (current >= score) {
+            clearInterval(loveTimer);
+            
+            // UPDATE MESSAGE ONLY AFTER FINISHING
+            if (score === 100) msgBox.innerText = "🌟 DESTINY! You are Soulmates!";
+            else if (score > 80) msgBox.innerText = "🎀 True Love is in the air!";
+            else if (score > 50) msgBox.innerText = "🍭 A Sweet Match!";
+            else if (score > 25) msgBox.innerText = "😬 Yikes... Maybe friends?";
+            else msgBox.innerText = "💔 Oof. The meter says... Nope!";
+
+            if (score === 100) {
+                nb.classList.add('ultra-love');
+                celebrationTimeout = setTimeout(() => nb.classList.remove('ultra-love'), 5000);
+                celebrate(true);
+            } else if (score > 50) {
+                celebrate(false);
+            }
         } else {
-            current = Math.min(current + 2, percentage);
-            document.getElementById('percentage').textContent = current + '%';
-            document.getElementById('compatibilityFill').style.width = current + '%';
+            current++;
+            pctDisp.innerText = current + "%";
         }
-    }, 30);
-
-    const emoji = document.getElementById('emoji');
-    if (percentage === 100) emoji.textContent = '💞';
-    else if (percentage === 0) emoji.textContent = '💔';
-    else if (percentage >= 80) emoji.textContent = '😍';
-    else if (percentage >= 60) emoji.textContent = '💕';
-    else if (percentage >= 40) emoji.textContent = '💖';
-    else emoji.textContent = '💛';
-
-    updateResultMessage(percentage);
-
-    const section = document.getElementById('resultSection');
-    section.classList.add('show');
-    section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 15);
 }
 
-function createHearts(percentage) {
-    const container = document.getElementById('heartsContainer');
-    container.innerHTML = '';
-    const count = percentage > 70 ? 15 : percentage > 40 ? 8 : 5;
+function celebrate(isUltra) {
+    const count = isUltra ? 50 : 15;
+    const nb = document.querySelector('.notebook');
     for (let i = 0; i < count; i++) {
         setTimeout(() => {
-            const h = document.createElement('div');
-            h.className = 'floating-heart';
-            h.textContent = ['❤️','💕','💖','💗','💝'][Math.floor(Math.random() * 5)];
-            h.style.left = Math.random() * 100 + '%';
-            h.style.animationDelay = '0s';
-            h.style.animationDuration = (3 + Math.random()) + 's';
-            container.appendChild(h);
-            setTimeout(() => h.remove(), 4500);
-        }, i * 200);
+            const s = document.createElement('div');
+            s.className = 'sparkle';
+            s.innerHTML = isUltra ? ['💖','✨','⭐','🌈'][Math.floor(Math.random()*4)] : '💖';
+            
+            s.style.left = '50%';
+            s.style.top = '50%';
+            
+            const vx = (Math.random() - 0.5) * 400;
+            const vy = (Math.random() - 0.5) * 400;
+            s.style.setProperty('--vx', `${vx}px`);
+            s.style.setProperty('--vy', `${vy}px`);
+            
+            nb.appendChild(s);
+            setTimeout(() => s.remove(), 1000);
+        }, i * (isUltra ? 20 : 50));
     }
 }
-
-function acceptCookies() { localStorage.setItem('cookieConsent','accepted'); document.getElementById('cookieBanner').classList.remove('show'); }
-function declineCookies() { localStorage.setItem('cookieConsent','declined'); document.getElementById('cookieBanner').classList.remove('show'); }
-
-document.addEventListener('DOMContentLoaded', () => {
-    changeLanguage(detectLanguage());
-    document.getElementById('languageSelect').addEventListener('change', e => changeLanguage(e.target.value));
-    document.getElementById('calculateButton').addEventListener('click', calculateLove);
-    ['name1','name2'].forEach(id => {
-        document.getElementById(id).addEventListener('keypress', e => { if (e.key === 'Enter') calculateLove(); });
-    });
-    if (!localStorage.getItem('cookieConsent')) {
-        document.getElementById('cookieBanner').classList.add('show');
-    }
-});
 </script>
 </body>
 </html>

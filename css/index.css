@@ -1,0 +1,197 @@
+/* ============================================================
+   GLOBAL & THEME (From former style.css)
+   ============================================================ */
+   :root {
+    --bg: #ffffff;
+    --fg: #131313;
+    --border: #131313;
+    --border-muted: #cccccc;
+  }
+  
+  [data-theme="dark"] {
+    --bg: #111111;
+    --fg: #e0e0e0;
+    --border: #555555;
+    --border-muted: #444444;
+  }
+  
+  * {
+    font-family: monospace;
+    box-sizing: border-box;
+  }
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--fg);
+  }
+  
+  a {
+    color: var(--fg);
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* ============================================================
+   LAYOUT STRUCTURE
+   ============================================================ */
+   
+  #main-content {
+    padding: 20px;
+  }
+  
+  /* ============================================================
+     HOMEPAGE COMPONENTS
+     ============================================================ */
+  .main-header {
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+    padding: 0px 20px;
+  }
+  
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  #theme-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    padding: 2px 6px;
+    color: var(--fg);
+  }
+  
+  .main-footer {
+    width: 100%;
+    padding: 20px 30px;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+  
+  /* ============================================================
+     EXISTING INDEX SPECIFIC STYLES
+     ============================================================ */
+  #ascii-header {
+      font-size: clamp(5px, 1.55vw, 14px);
+      color: var(--fg);
+      padding: 0px;
+      margin: 0;
+      white-space: pre;
+      overflow-x: auto;
+  }
+  
+  #header-title-fallback {
+      display: none;
+  }
+  
+  @media (max-width: 480px) {
+      #ascii-header { display: none; }
+      #header-title-fallback { display: block; }
+  }
+  
+  #clock {
+      margin-right: auto;
+      border: 1px solid var(--border);
+      padding: 2px;
+  }
+  
+  /* SEARCH HELP DETAILS */
+  .search-help {
+      margin-top: 16px;
+  }
+  
+  .search-help-summary {
+      cursor: pointer;
+      user-select: none;
+      list-style: none !important; 
+  }
+  
+  .search-help-table {
+      margin-top: 8px;
+      border-collapse: collapse;
+      font-size: 0.9em;
+  }
+  
+  .search-help-table th {
+      text-align: left;
+      padding: 2px 12px 2px 0;
+      border-bottom: 1px solid var(--border);
+  }
+  
+  .search-help-table td {
+      padding: 2px 12px 2px 0;
+  }
+  
+  .search-help-usage {
+      font-size: 0.85em;
+      opacity: 0.6;
+      margin-top: 10px;
+  }
+  
+  #ascii-footer {
+      white-space: pre;
+      overflow-x: auto;
+  }
+  
+  #ascii-footer::-webkit-scrollbar {
+      display: none;
+  }
+  
+  /* GITHUB UPDATE COMPONENT */
+  .update-component {
+      display: inline-flex;
+      width: auto;
+      margin-top: 40px;
+      padding: 5px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-left: 4px solid var(--fg);
+      font-size: 0.9rem;
+  }
+    
+  .update-component .label {
+      font-weight: bold;
+      text-transform: uppercase;
+      flex-shrink: 0;
+  }
+
+  .home-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+  }
+  
+  .home-button img {
+    width: 18px;
+    height: 18px;
+    vertical-align: -2px;
+    image-rendering: pixelated;
+  }
+  
+  @media (max-width: 600px) {
+      .update-component {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        margin-top: 20px;
+        padding: 10px;
+        width: calc(100% - 20px);
+        margin-left: 10px;
+      }
+  }

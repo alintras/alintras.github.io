@@ -1,33 +1,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "/include/xhtml.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr"><head>
-<title>Pokemon Mystery Dungeon - Wonder Mail Generator</title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<style>
-  a { color: inherit; text-decoration: none; }
-</style>
-<script src="/js/style.js"></script>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>Pokemon Mystery Dungeon - Wonder Mail Generator</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/style.js"></script>
 </head>
 <body class="ns-0">
-<div style="position:fixed; top:10px; left:10px;">
-  <a href="/../index.html"><img src="/assets/smileys/vhome.PNG" style="width:24px; height:24px; vertical-align:-7px; image-rendering:pixelated;"> Home</a>
-</div>
-
-<h1><br>Pokemon Mystery Dungeon - Wonder Mail Generator</h1>
-
-<fieldset>
-  <legend>Copyright</legend>
-  <ul>
-      <li>Written by <a href="http://web.archive.org/web/20070701084313/http://www.upokecenter.com:80/mail.php">Peter O.</a> of <a href="http://web.archive.org/web/20080913124315/http://www.upokecenter.com:80/">The Ultimate Pokemon Center</a>.</li>
-      <li>(C) 2007 Peter O.</li>
-      <li>The original can be found at <a href="http://web.archive.org/web/20080913124406/http://www.upokecenter.com/games/dungeon/guides/wondermail.php">http://www.upokecenter.com/games/dungeon/guides/wondermail.php</a>.</li>
-  </ul>
-</fieldset>
-
+<header class="simple-header">
+<h2>Pokemon Mystery Dungeon - Wondermail Generator</h2>
+</header>
 <script src="items-en.js" type="text/javascript"></script>
 <script src="areas-en.js" type="text/javascript"></script>
 <script src="pokemon-en.js" type="text/javascript"></script>
 <script src="flavor-en.js" type="text/javascript"></script>
 <script  type="text/javascript">
+
 var FriendRescue="Friend Rescue"
 var RescueType0="Help me."
 var RescueType1="Find XXPKMN."
@@ -540,10 +529,18 @@ function encwonder(f){
 }
 //]]>
 </script>
-
+<main class="about-content">
+  <fieldset>
+  <legend>Copyright</legend>
+  <ul>
+      <li>Written by <a href="http://web.archive.org/web/20070701084313/http://www.upokecenter.com:80/mail.php">Peter O.</a> of <a href="http://web.archive.org/web/20080913124315/http://www.upokecenter.com:80/">The Ultimate Pokemon Center</a>.</li>
+      <li>(C) 2007 Peter O.</li>
+      <li>The original can be found at <a href="http://web.archive.org/web/20080913124406/http://www.upokecenter.com/games/dungeon/guides/wondermail.php">http://www.upokecenter.com/games/dungeon/guides/wondermail.php</a>.</li>
+  </ul>
+</fieldset>
 <p>Use this tool to generate a Wonder Mail for a rescue mission.  Note also the following.</p><ul><li>For the male sign (&#x2642;), &quot;#&quot; is used instead.</li><li>For the female sign (&#x2640;), &quot;%&quot; is used instead.</li><li>For the ellipsis (&#x2026;), &quot;.&quot; is used instead.</li></ul><p>If you want to accept more than one mission in a dungeon, each Wonder Mail you create should be in a different floor, as you can't accept two missions on the same floor or two escort missions in the same dungeon.</p>
-<p><a href="passwords.html">Detailed information</a> about Wonder Mail passwords is available, 
-as well as a list of <a href="reqflavor.html">special job requests</a>.</p>
+<p><a style="text-decoration: underline;" href="passwords.html">Detailed information</a> about Wonder Mail passwords is available, 
+as well as a list of <a style="text-decoration: underline;" href="reqflavor.html">special job requests</a>.</p>
 <form name="s" action="javascript:void(null)">
 Mission Type:<br/>
 <select name="type" onchange="updateform(this.form);">
@@ -597,5 +594,6 @@ if(debug){
 }
 //--></script><br/>
 </form>
+</main>
 </body>
 </html>

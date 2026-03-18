@@ -1,34 +1,52 @@
-const CACHE="aktas-homepage";
+const CACHE_NAME = "aktas-homepage-v2"; // Increment this (v2, v3) to force an update
 
-const files=[
-
-"/",
-"/style.css",
-"/css/search.css",
-"/css/nav.css",
-"/js/nav.js",
-"/js/script.js",
-"/js/search.js",
-"/js/commands.js"
-
+// 1. Updated file list to match your actual HTML paths
+const PRECACHE_ASSETS = [
+  "/",
+  "/index.html",
+  "/css/index.css",
+  "/css/search.css",
+  "/css/nav.css",
+  "/js/style.js",
+  "/js/nav.js",
+  "/js/search.js",
+  "/js/index.js"
 ];
 
-self.addEventListener("install",e=>{
-
-e.waitUntil(
-
-caches.open(CACHE).then(cache=>cache.addAll(files))
-
-);
-
+// Install: Cache the essential files
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS))
+  );
+  self.skipWaiting(); // Forces the waiting service worker to become active
 });
 
-self.addEventListener("fetch",e=>{
+// Activate: Clean up old caches
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
+        })
+      );
+    })
+  );
+});
 
-e.respondWith(
-
-caches.match(e.request).then(r=>r||fetch(e.request))
-
-);
-
+// Fetch: Network First Strategy
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        // If network is successful, update the cache and return response
+        const resClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
+        return response;
+      })
+      .catch(() => {
+        // If network fails (offline), try the cache
+        return caches.match(event.request);
+      })
+  );
 });

@@ -4,110 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Quote Generator</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-a { color: inherit; text-decoration: none; }
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg);
-    color: var(--fg);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-}
-.container { max-width: 700px; width: 100%; }
-header { text-align: center; margin-bottom: 20px; }
-h1 { font-size: 2em; margin-bottom: 8px; }
-.subtitle { font-size: 1em; opacity: 0.7; }
-.category-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-.category-btn {
-    padding: 6px 14px;
-    background: var(--bg);
-    color: var(--fg);
-    border: 1px solid var(--border);
-    cursor: pointer;
-    font-size: 0.9em;
-}
-.category-btn:hover { background: var(--fg); color: var(--bg); }
-.category-btn.active { background: var(--fg); color: var(--bg); }
-.main-area {
-    border: 1px solid var(--border);
-    padding: 40px 30px;
-    margin-bottom: 20px;
-    min-height: 260px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-.quote-container { text-align: center; margin-bottom: 25px; }
-.quote-text {
-    font-size: 1.4em;
-    line-height: 1.6;
-    color: var(--fg);
-    font-style: italic;
-    margin-bottom: 15px;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.quote-author { font-size: 1em; opacity: 0.7; font-weight: bold; }
-.quote-author::before { content: "— "; }
-.category-badge {
-    display: inline-block;
-    border: 1px solid var(--border-muted);
-    color: var(--fg);
-    opacity: 0.7;
-    padding: 4px 12px;
-    font-size: 0.85em;
-    margin-top: 12px;
-}
-.controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-button {
-    padding: 10px 24px;
-    font-size: 1em;
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--fg);
-    cursor: pointer;
-    font-weight: bold;
-}
-button:hover { background: var(--fg); color: var(--bg); }
-button.copied { background: var(--fg); color: var(--bg); }
-@media (max-width: 600px) {
-    h1 { font-size: 1.5em; }
-    .quote-text { font-size: 1.1em; }
-    .main-area { padding: 25px 15px; }
-}
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
     <script src="/js/style.js"></script>
+    <style>
+        .container { max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+        .panel { border: 1px solid var(--border); padding: 40px 20px; text-align: center; background: var(--bg); }
+        
+        /* Category Filter */
+        .category-filter { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            justify-content: center; 
+            margin-bottom: 10px; 
+        }
+        
+        /* Buttons */
+        button { 
+            background: var(--bg); 
+            color: var(--fg); 
+            border: 1px solid var(--border); 
+            padding: 8px 16px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            font-weight: bold; 
+            font-family: inherit; 
+            transition: all 0.2s;
+        }
+        button:hover { background: var(--fg); color: var(--bg); }
+        button.active { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+        /* Quote Styling */
+        .quote-display { margin: 30px 0; min-height: 120px; display: flex; flex-direction: column; justify-content: center; }
+        #quoteText { 
+            font-size: 1.6em; 
+            font-style: italic; 
+            margin-bottom: 15px; 
+            line-height: 1.4;
+            border-left: 4px solid var(--fg);
+            padding-left: 20px;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #quoteAuthor { 
+            font-weight: bold; 
+            text-align: right; 
+            max-width: 600px; 
+            margin: 0 auto;
+            font-size: 1.1em;
+        }
+
+        .category-badge { 
+            display: inline-block; 
+            border: 1px solid var(--border); 
+            padding: 4px 10px; 
+            font-size: 0.8em; 
+            margin-top: 25px; 
+            text-transform: uppercase; 
+            opacity: 0.7;
+        }
+
+        .controls { 
+            display: flex; 
+            gap: 15px; 
+            justify-content: center; 
+            margin-top: 40px; 
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 500px) {
+            #quoteText { font-size: 1.2em; }
+            .controls button { width: 100%; }
+        }
+    </style>
 </head>
 <body>
-    <div style="position:fixed; top:10px; left:10px;">
-        <a href="/../index.html"><img src="/assets/smileys/vhome.PNG" style="width:18px; height:18px; vertical-align:-2px; image-rendering:pixelated;"> Home</a>
-    </div>
     <div class="container">
-        <header>
-            <h1>Random Quote Generator</h1>
-            <p class="subtitle">Wisdom from great minds, real and fictional</p>
+        <header style="text-align: center; padding: 20px 0; border-bottom: 1px solid var(--border);">
+            <h1>Quote Generator</h1>
+            <p>Get your quote of the day</p>
         </header>
+
         <div class="category-filter" id="categoryFilter">
-            <button class="category-btn active" data-category="all">All</button>
-            <button class="category-btn" data-category="inspirational">Inspirational</button>
-            <button class="category-btn" data-category="motivational">Motivational</button>
-            <button class="category-btn" data-category="life">Life</button>
-            <button class="category-btn" data-category="success">Success</button>
-            <button class="category-btn" data-category="wisdom">Wisdom</button>
-            <button class="category-btn" data-category="anime">Anime</button>
+            <button class="active" data-category="all">All</button>
+            <button data-category="inspirational">Inspirational</button>
+            <button data-category="motivational">Motivational</button>
+            <button data-category="life">Life</button>
+            <button data-category="success">Success</button>
+            <button data-category="wisdom">Wisdom</button>
         </div>
-        <div class="main-area">
-            <div class="quote-container">
-                <div class="quote-text" id="quoteText">Click the button below to get a random quote!</div>
-                <div class="quote-author" id="quoteAuthor"></div>
-                <div class="category-badge" id="categoryBadge" style="display:none;"></div>
+
+        <div class="panel">
+            <div class="quote-display">
+                <div id="quoteText">Loading inspiration...</div>
+                <div id="quoteAuthor"></div>
+                <div><span class="category-badge" id="categoryBadge"></span></div>
             </div>
+            
             <div class="controls">
                 <button id="newQuoteBtn">New Quote</button>
                 <button id="copyBtn">Copy</button>
@@ -115,158 +110,153 @@ button.copied { background: var(--fg); color: var(--bg); }
             </div>
         </div>
     </div>
+
     <script>
         const quotes = [
-            // Inspirational
-            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt", category: "inspirational" },
-            { text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela", category: "inspirational" },
-            { text: "Turn your wounds into wisdom.", author: "Oprah Winfrey", category: "inspirational" },
-            { text: "Everything you've ever wanted is on the other side of fear.", author: "George Addair", category: "inspirational" },
-            { text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson", category: "inspirational" },
-            { text: "Go confidently in the direction of your dreams! Live the life you've imagined.", author: "Henry David Thoreau", category: "inspirational" },
-            { text: "Happiness is not something ready made. It comes from your own actions.", author: "Dalai Lama", category: "inspirational" },
-            { text: "You have power over your mind, not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius", category: "inspirational" },
-            { text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt", category: "inspirational" },
-            { text: "Do one thing every day that scares you.", author: "Eleanor Roosevelt", category: "inspirational" },
+// Inspirational
+{ text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt", category: "inspirational" },
+{ text: "The greatest glory in living lies not in never falling, but in rising every time we fall.", author: "Nelson Mandela", category: "inspirational" },
+{ text: "Turn your wounds into wisdom.", author: "Oprah Winfrey", category: "inspirational" },
+{ text: "Everything you've ever wanted is on the other side of fear.", author: "George Addair", category: "inspirational" },
+{ text: "The only person you are destined to become is the person you decide to be.", author: "Ralph Waldo Emerson", category: "inspirational" },
+{ text: "Go confidently in the direction of your dreams! Live the life you've imagined.", author: "Henry David Thoreau", category: "inspirational" },
+{ text: "Happiness is not something ready made. It comes from your own actions.", author: "Dalai Lama", category: "inspirational" },
+{ text: "You have power over your mind, not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius", category: "inspirational" },
+{ text: "The only limit to our realization of tomorrow is our doubts of today.", author: "Franklin D. Roosevelt", category: "inspirational" },
+{ text: "Do one thing every day that scares you.", author: "Eleanor Roosevelt", category: "inspirational" },
 
-            // Motivational
-            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt", category: "motivational" },
-            { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins", category: "motivational" },
-            { text: "Whether you think you can or you think you can't, you're right.", author: "Henry Ford", category: "motivational" },
-            { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius", category: "motivational" },
-            { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson", category: "motivational" },
-            { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky", category: "motivational" },
-            { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb", category: "motivational" },
-            { text: "Hard work beats talent when talent doesn't work hard.", author: "Tim Notke", category: "motivational" },
-            { text: "Dream big and dare to fail.", author: "Norman Vaughan", category: "motivational" },
-            { text: "Energy and persistence conquer all things.", author: "Benjamin Franklin", category: "motivational" },
+// Motivational
+{ text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt", category: "motivational" },
+{ text: "The only impossible journey is the one you never begin.", author: "Tony Robbins", category: "motivational" },
+{ text: "Whether you think you can or you think you can't, you're right.", author: "Henry Ford", category: "motivational" },
+{ text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius", category: "motivational" },
+{ text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson", category: "motivational" },
+{ text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky", category: "motivational" },
+{ text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb", category: "motivational" },
+{ text: "Hard work beats talent when talent doesn't work hard.", author: "Tim Notke", category: "motivational" },
+{ text: "Dream big and dare to fail.", author: "Norman Vaughan", category: "motivational" },
+{ text: "Energy and persistence conquer all things.", author: "Benjamin Franklin", category: "motivational" },
 
-            // Life
-            { text: "Life is what happens when you're busy making other plans.", author: "John Lennon", category: "life" },
-            { text: "In the end, we only regret the chances we didn't take.", author: "Lewis Carroll", category: "life" },
-            { text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs", category: "life" },
-            { text: "Life is 10% what happens to you and 90% how you react to it.", author: "Charles R. Swindoll", category: "life" },
-            { text: "The purpose of our lives is to be happy.", author: "Dalai Lama", category: "life" },
-            { text: "To live is the rarest thing in the world. Most people just exist.", author: "Oscar Wilde", category: "life" },
-            { text: "Not all those who wander are lost.", author: "J.R.R. Tolkien", category: "life" },
-            { text: "We accept the love we think we deserve.", author: "Stephen Chbosky", category: "life" },
-            { text: "It is not the length of life, but the depth.", author: "Ralph Waldo Emerson", category: "life" },
-            { text: "Almost everything will work again if you unplug it for a few minutes, including you.", author: "Anne Lamott", category: "life" },
+// Life
+{ text: "Life is what happens when you're busy making other plans.", author: "John Lennon", category: "life" },
+{ text: "In the end, we only regret the chances we didn't take.", author: "Lewis Carroll", category: "life" },
+{ text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs", category: "life" },
+{ text: "Life is 10% what happens to you and 90% how you react to it.", author: "Charles R. Swindoll", category: "life" },
+{ text: "The purpose of our lives is to be happy.", author: "Dalai Lama", category: "life" },
+{ text: "To live is the rarest thing in the world. Most people just exist.", author: "Oscar Wilde", category: "life" },
+{ text: "Not all those who wander are lost.", author: "J.R.R. Tolkien", category: "life" },
+{ text: "We accept the love we think we deserve.", author: "Stephen Chbosky", category: "life" },
+{ text: "It is not the length of life, but the depth.", author: "Ralph Waldo Emerson", category: "life" },
+{ text: "Almost everything will work again if you unplug it for a few minutes, including you.", author: "Anne Lamott", category: "life" },
 
-            // Success
-            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", category: "success" },
-            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill", category: "success" },
-            { text: "I have not failed. I've just found 10,000 ways that won't work.", author: "Thomas Edison", category: "success" },
-            { text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau", category: "success" },
-            { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney", category: "success" },
-            { text: "Opportunities don't happen. You create them.", author: "Chris Grosser", category: "success" },
-            { text: "I find that the harder I work, the more luck I seem to have.", author: "Thomas Jefferson", category: "success" },
-            { text: "There are no secrets to success. It is preparation, hard work, and learning from failure.", author: "Colin Powell", category: "success" },
-            { text: "It always seems impossible until it's done.", author: "Nelson Mandela", category: "success" },
-            { text: "The secret of getting ahead is getting started.", author: "Mark Twain", category: "success" },
+// Success
+{ text: "The only way to do great work is to love what you do.", author: "Steve Jobs", category: "success" },
+{ text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill", category: "success" },
+{ text: "I have not failed. I've just found 10,000 ways that won't work.", author: "Thomas Edison", category: "success" },
+{ text: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau", category: "success" },
+{ text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney", category: "success" },
+{ text: "Opportunities don't happen. You create them.", author: "Chris Grosser", category: "success" },
+{ text: "I find that the harder I work, the more luck I seem to have.", author: "Thomas Jefferson", category: "success" },
+{ text: "There are no secrets to success. It is preparation, hard work, and learning from failure.", author: "Colin Powell", category: "success" },
+{ text: "It always seems impossible until it's done.", author: "Nelson Mandela", category: "success" },
+{ text: "The secret of getting ahead is getting started.", author: "Mark Twain", category: "success" },
 
-            // Wisdom
-            { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle", category: "wisdom" },
-            { text: "The mind is everything. What you think you become.", author: "Buddha", category: "wisdom" },
-            { text: "An unexamined life is not worth living.", author: "Socrates", category: "wisdom" },
-            { text: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", author: "Buddha", category: "wisdom" },
-            { text: "Knowing yourself is the beginning of all wisdom.", author: "Aristotle", category: "wisdom" },
-            { text: "The measure of intelligence is the ability to change.", author: "Albert Einstein", category: "wisdom" },
-            { text: "Waste no more time arguing about what a good man should be. Be one.", author: "Marcus Aurelius", category: "wisdom" },
-            { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates", category: "wisdom" },
-            { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle", category: "wisdom" },
-            { text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson", category: "wisdom" },
-            { text: "The unexamined life is not worth living.", author: "Socrates", category: "wisdom" },
-            { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci", category: "wisdom" },
-            { text: "To know what you know and what you do not know, that is true knowledge.", author: "Confucius", category: "wisdom" },
+// Wisdom
+{ text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle", category: "wisdom" },
+{ text: "The mind is everything. What you think you become.", author: "Buddha", category: "wisdom" },
+{ text: "An unexamined life is not worth living.", author: "Socrates", category: "wisdom" },
+{ text: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", author: "Buddha", category: "wisdom" },
+{ text: "Knowing yourself is the beginning of all wisdom.", author: "Aristotle", category: "wisdom" },
+{ text: "The measure of intelligence is the ability to change.", author: "Albert Einstein", category: "wisdom" },
+{ text: "Waste no more time arguing about what a good man should be. Be one.", author: "Marcus Aurelius", category: "wisdom" },
+{ text: "The only true wisdom is in knowing you know nothing.", author: "Socrates", category: "wisdom" },
+{ text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Aristotle", category: "wisdom" },
+{ text: "What lies behind us and what lies before us are tiny matters compared to what lies within us.", author: "Ralph Waldo Emerson", category: "wisdom" },
+{ text: "The unexamined life is not worth living.", author: "Socrates", category: "wisdom" },
+{ text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci", category: "wisdom" },
+{ text: "To know what you know and what you do not know, that is true knowledge.", author: "Confucius", category: "wisdom" },
 
-            // One Piece
-            { text: "Inherited will, the destiny of the age, and the dreams of the people. These are things that will not be stopped.", author: "Gol D. Roger (One Piece)", category: "anime" },
-            { text: "I don't want to conquer anything. I just think the guy with the most freedom in this whole ocean is the Pirate King!", author: "Monkey D. Luffy (One Piece)", category: "anime" },
-            { text: "When do you think people die? When they are hit by a fatal disease? No. It's when they are forgotten.", author: "Dr. Hiriluk (One Piece)", category: "anime" },
-            { text: "Nothing happened.", author: "Roronoa Zoro (One Piece)", category: "anime" },
-            { text: "I don't care what the world thinks. I'm fighting for my crew.", author: "Monkey D. Luffy (One Piece)", category: "anime" },
-            { text: "There are things you can't see unless you change your standing.", author: "Silvers Rayleigh (One Piece)", category: "anime" },
-            { text: "Bring on the hardship. It's preferred in a path of carnage.", author: "Roronoa Zoro (One Piece)", category: "anime" },
-            { text: "Pirates are evil? The Marines are righteous? These terms have always changed throughout the course of history... Whoever wins this war becomes justice!", author: "Donquixote Doflamingo (One Piece)", category: "anime"},
+// One Piece
+{ text: "Inherited will, the destiny of the age, and the dreams of the people. These are things that will not be stopped.", author: "Gol D. Roger (One Piece)", category: "anime" },
+{ text: "I don't want to conquer anything. I just think the guy with the most freedom in this whole ocean is the Pirate King!", author: "Monkey D. Luffy (One Piece)", category: "anime" },
+{ text: "When do you think people die? When they are hit by a fatal disease? No. It's when they are forgotten.", author: "Dr. Hiriluk (One Piece)", category: "anime" },
+{ text: "Nothing happened.", author: "Roronoa Zoro (One Piece)", category: "anime" },
+{ text: "I don't care what the world thinks. I'm fighting for my crew.", author: "Monkey D. Luffy (One Piece)", category: "anime" },
+{ text: "There are things you can't see unless you change your standing.", author: "Silvers Rayleigh (One Piece)", category: "anime" },
+{ text: "Bring on the hardship. It's preferred in a path of carnage.", author: "Roronoa Zoro (One Piece)", category: "anime" },
+{ text: "Pirates are evil? The Marines are righteous? These terms have always changed throughout the course of history... Whoever wins this war becomes justice!", author: "Donquixote Doflamingo (One Piece)", category: "anime"},
 
-            // Vagabond
-            { text: "There is no path. Beyond the horizon there is just more horizon.", author: "Miyamoto Musashi (Vagabond)", category: "anime" },
-            { text: "Strength is not what you have when facing your enemy. It is what you have when facing yourself.", author: "Miyamoto Musashi (Vagabond)", category: "anime" },
-            { text: "To truly know the sword is to know yourself.", author: "Yagyu Sekishusai (Vagabond)", category: "anime" },
-            { text: "Under the great sky, we are all equals. Yet each of us has a different path.", author: "Yagyu Sekishusai (Vagabond)", category: "anime" },
-            { text: "A real warrior doesn't run away. He faces whatever is coming and overcomes it.", author: "Sasaki Kojiro (Vagabond)", category: "anime" },
-            { text: "What does it mean to be the strongest? I used to think it meant defeating everyone. But the real answer is living without shame.", author: "Miyamoto Musashi (Vagabond)", category: "anime" },
+// Vagabond
+{ text: "There is no path. Beyond the horizon there is just more horizon.", author: "Miyamoto Musashi (Vagabond)", category: "anime" },
+{ text: "Strength is not what you have when facing your enemy. It is what you have when facing yourself.", author: "Miyamoto Musashi (Vagabond)", category: "anime" },
+{ text: "To truly know the sword is to know yourself.", author: "Yagyu Sekishusai (Vagabond)", category: "anime" },
+{ text: "Under the great sky, we are all equals. Yet each of us has a different path.", author: "Yagyu Sekishusai (Vagabond)", category: "anime" },
+{ text: "A real warrior doesn't run away. He faces whatever is coming and overcomes it.", author: "Sasaki Kojiro (Vagabond)", category: "anime" },
+{ text: "What does it mean to be the strongest? I used to think it meant defeating everyone. But the real answer is living without shame.", author: "Miyamoto Musashi (Vagabond)", category: "anime" },
 
-            // Berserk
-            { text: "A dream — how can I put it — a man's dream never ends, does it?", author: "Griffith (Berserk)", category: "anime" },
-            { text: "If you lose, you die. If you win, you can live. If you don't fight, you can't win.", author: "Guts (Berserk)", category: "anime" },
-            { text: "In this world, is the destiny of mankind controlled by some transcendental entity or law? At least it is true that man has no control, even over his own will.", author: "Narrator (Berserk)", category: "anime" },
-            { text: "Even if we painstakingly piece together something lost, it doesn't mean things will ever go back to how they were.", author: "Guts (Berserk)", category: "anime" },
+// Berserk
+{ text: "A dream — how can I put it — a man's dream never ends, does it?", author: "Griffith (Berserk)", category: "anime" },
+{ text: "If you lose, you die. If you win, you can live. If you don't fight, you can't win.", author: "Guts (Berserk)", category: "anime" },
+{ text: "In this world, is the destiny of mankind controlled by some transcendental entity or law? At least it is true that man has no control, even over his own will.", author: "Narrator (Berserk)", category: "anime" },
+{ text: "Even if we painstakingly piece together something lost, it doesn't mean things will ever go back to how they were.", author: "Guts (Berserk)", category: "anime" },
 
-            // Naruto
-            { text: "Hard work is worthless for those that don't believe in themselves.", author: "Naruto Uzumaki (Naruto)", category: "anime" },
-            { text: "Those who break the rules are trash, but those who abandon their comrades are worse than trash.", author: "Kakashi Hatake (Naruto)", category: "anime" },
-            { text: "Love breeds sacrifice, which in turn breeds hatred. Then you can know pain.", author: "Pain (Naruto)", category: "anime" },
-            { text: "When people get hurt, they learn to hate. When people hurt others, they become hated. But knowing that pain allows people to be kind.", author: "Nagato (Naruto)", category: "anime" },
+// Naruto
+{ text: "Hard work is worthless for those that don't believe in themselves.", author: "Naruto Uzumaki (Naruto)", category: "anime" },
+{ text: "Those who break the rules are trash, but those who abandon their comrades are worse than trash.", author: "Kakashi Hatake (Naruto)", category: "anime" },
+{ text: "Love breeds sacrifice, which in turn breeds hatred. Then you can know pain.", author: "Pain (Naruto)", category: "anime" },
+{ text: "When people get hurt, they learn to hate. When people hurt others, they become hated. But knowing that pain allows people to be kind.", author: "Nagato (Naruto)", category: "anime" },
 
-            // Attack on Titan
-            { text: "If you win, you live. If you lose, you die. If you don't fight, you can't win.", author: "Eren Yeager (Attack on Titan)", category: "anime" },
-            { text: "The only thing we're allowed to do is to believe that we won't regret the choice we made.", author: "Levi Ackerman (Attack on Titan)", category: "anime" },
-            { text: "This world is merciless, and it's also very beautiful.", author: "Mikasa Ackerman (Attack on Titan)", category: "anime" },
-            { text: "No matter how messed up things get, you can always figure out the best solution.", author: "Levi Ackerman (Attack on Titan)", category: "anime" },
+// Attack on Titan
+{ text: "If you win, you live. If you lose, you die. If you don't fight, you can't win.", author: "Eren Yeager (Attack on Titan)", category: "anime" },
+{ text: "The only thing we're allowed to do is to believe that we won't regret the choice we made.", author: "Levi Ackerman (Attack on Titan)", category: "anime" },
+{ text: "This world is merciless, and it's also very beautiful.", author: "Mikasa Ackerman (Attack on Titan)", category: "anime" },
+{ text: "No matter how messed up things get, you can always figure out the best solution.", author: "Levi Ackerman (Attack on Titan)", category: "anime" },
 
-            // Hunter x Hunter
-            { text: "If you want to get to know someone, find out what makes them angry.", author: "Gon Freecss (Hunter x Hunter)", category: "anime" },
-            { text: "You should enjoy the little detours in life. That's where you'll find the things more important than what you want.", author: "Ging Freecss (Hunter x Hunter)", category: "anime" },
-            { text: "A beast that has tasted human blood will stop at nothing to get more.", author: "Netero (Hunter x Hunter)", category: "anime" },
+// Hunter x Hunter
+{ text: "If you want to get to know someone, find out what makes them angry.", author: "Gon Freecss (Hunter x Hunter)", category: "anime" },
+{ text: "You should enjoy the little detours in life. That's where you'll find the things more important than what you want.", author: "Ging Freecss (Hunter x Hunter)", category: "anime" },
+{ text: "A beast that has tasted human blood will stop at nothing to get more.", author: "Netero (Hunter x Hunter)", category: "anime" },
 
-            // Fullmetal Alchemist
-            { text: "A lesson without pain is meaningless. For you cannot gain anything without sacrificing something else in return.", author: "Edward Elric (Fullmetal Alchemist)", category: "anime" },
-            { text: "There's no such thing as a painless lesson — they just don't exist. Sacrifices are necessary.", author: "Edward Elric (Fullmetal Alchemist)", category: "anime" },
-            { text: "Alchemy: the science of understanding the flow and rebuilding. However, it is not an all-powerful art. It is impossible to create something out of nothing.", author: "Narrator (Fullmetal Alchemist)", category: "anime" },
+// Fullmetal Alchemist
+{ text: "A lesson without pain is meaningless. For you cannot gain anything without sacrificing something else in return.", author: "Edward Elric (Fullmetal Alchemist)", category: "anime" },
+{ text: "There's no such thing as a painless lesson — they just don't exist. Sacrifices are necessary.", author: "Edward Elric (Fullmetal Alchemist)", category: "anime" },
+{ text: "Alchemy: the science of understanding the flow and rebuilding. However, it is not an all-powerful art. It is impossible to create something out of nothing.", author: "Narrator (Fullmetal Alchemist)", category: "anime" },
 
-            // Death Note
-            { text: "The human whose name is written in this note shall die.", author: "Death Note", category: "anime" },
-            { text: "I'll take a potato chip... and eat it!", author: "Light Yagami (Death Note)", category: "anime" },
-            { text: "This world is rotten, and those who are making it rot deserve to die.", author: "Light Yagami (Death Note)", category: "anime" },
-        ];
+// Death Note
+{ text: "The human whose name is written in this note shall die.", author: "Death Note", category: "anime" },
+{ text: "I'll take a potato chip... and eat it!", author: "Light Yagami (Death Note)", category: "anime" },
+{ text: "This world is rotten, and those who are making it rot deserve to die.", author: "Light Yagami (Death Note)", category: "anime" },
+];
 
         const quoteText = document.getElementById('quoteText');
         const quoteAuthor = document.getElementById('quoteAuthor');
         const categoryBadge = document.getElementById('categoryBadge');
+        const categoryButtons = document.querySelectorAll('#categoryFilter button');
         const newQuoteBtn = document.getElementById('newQuoteBtn');
         const copyBtn = document.getElementById('copyBtn');
         const tweetBtn = document.getElementById('tweetBtn');
-        const categoryButtons = document.querySelectorAll('.category-btn');
 
         let currentCategory = 'all';
         let currentQuote = null;
 
         function getRandomQuote() {
-            let filtered = currentCategory === 'all' ? quotes : quotes.filter(q => q.category === currentCategory);
-            if (filtered.length === 0) filtered = quotes;
-            currentQuote = filtered[Math.floor(Math.random() * filtered.length)];
-            quoteText.textContent = '"' + currentQuote.text + '"';
-            quoteAuthor.textContent = currentQuote.author;
-            categoryBadge.textContent = currentQuote.category.charAt(0).toUpperCase() + currentQuote.category.slice(1);
-            categoryBadge.style.display = 'inline-block';
-        }
+            const filtered = currentCategory === 'all' 
+                ? quotes 
+                : quotes.filter(q => q.category === currentCategory);
+            
+            if (filtered.length === 0) return;
 
-        function copyQuote() {
-            if (!currentQuote) return;
-            const text = '"' + currentQuote.text + '" — ' + currentQuote.author;
-            navigator.clipboard.writeText(text).then(() => {
-                copyBtn.textContent = 'Copied!';
-                copyBtn.classList.add('copied');
-                setTimeout(() => { copyBtn.textContent = 'Copy'; copyBtn.classList.remove('copied'); }, 2000);
-            }).catch(() => alert('Failed to copy.'));
-        }
+            // Prevent picking the same quote twice in a row if possible
+            let newQuote;
+            do {
+                newQuote = filtered[Math.floor(Math.random() * filtered.length)];
+            } while (newQuote === currentQuote && filtered.length > 1);
 
-        function tweetQuote() {
-            if (!currentQuote) return;
-            const text = '"' + currentQuote.text + '" — ' + currentQuote.author;
-            window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+            currentQuote = newQuote;
+            
+            quoteText.textContent = `"${currentQuote.text}"`;
+            quoteAuthor.textContent = `— ${currentQuote.author}`;
+            categoryBadge.textContent = currentQuote.category;
         }
 
         categoryButtons.forEach(btn => {
@@ -279,8 +269,27 @@ button.copied { background: var(--fg); color: var(--bg); }
         });
 
         newQuoteBtn.addEventListener('click', getRandomQuote);
-        copyBtn.addEventListener('click', copyQuote);
-        tweetBtn.addEventListener('click', tweetQuote);
+
+        copyBtn.addEventListener('click', async () => {
+            if (!currentQuote) return;
+            const fullText = `"${currentQuote.text}" — ${currentQuote.author}`;
+            try {
+                await navigator.clipboard.writeText(fullText);
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => copyBtn.textContent = originalText, 2000);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+        });
+
+        tweetBtn.addEventListener('click', () => {
+            if (!currentQuote) return;
+            const tweetText = encodeURIComponent(`"${currentQuote.text}" — ${currentQuote.author}`);
+            window.open(`https://twitter.com/intent/tweet?text=${tweetText}`, '_blank');
+        });
+
+        // Initialize first quote
         getRandomQuote();
     </script>
 </body>

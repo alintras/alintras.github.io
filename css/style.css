@@ -1,107 +1,141 @@
-/* =====================================================
-   CSS VARIABLES (THEME)
-===================================================== */
 :root {
-   --bg: #ffffff;
-   --fg: #131313;
-   --border: #131313;
-   --border-muted: #cccccc;
- }
- [data-theme="dark"] {
-   --bg: #111111;
-   --fg: #e0e0e0;
-   --border: #555555;
-   --border-muted: #444444;
- }
- 
- /* =====================================================
-    BASE
- ===================================================== */
- html, body {
-   height: 100%;
-   margin: 0;
-   padding: 0;
- }
- body {
-   display: flex;
-   flex-direction: column;
-   min-height: 100vh;
-   background: var(--bg);
-   color: var(--fg);
-   font-family: monospace;
-   margin: 0;
-   padding: 0;
- }
- a {
-   color: var(--text);
-   text-decoration: none;
- }
- a:hover {
-   text-decoration: underline;
- }
- main {
-   max-width: 100%;
-   box-sizing: border-box;
- }
- header {
-  border-bottom:1px solid var(--border);
- }
- footer {
-   padding: 20px;
-   border-top: 1px solid var(--border);
-   margin-top: auto;
- }
- 
- /* =====================================================
-    LAYOUT HELPERS
- ===================================================== */
- #layout {
-   flex: 1;
- }
- #main-content {
-   flex: 1;
- }
- .title-row {
-   display: flex;
-   align-items: center;
-   gap: 10px;
- }
- .title-row h3 {
-   margin: 0;
- }
- 
- /* =====================================================
-    THEME TOGGLE BUTTON
- ===================================================== */
- #theme-toggle {
-   position: fixed;
-   top: 10px;
-   right: 10px;
-   z-index: 1000;
-   background: none;
-   border: 1px solid var(--border);
-   cursor: pointer;
-   padding: 2px 6px;
-   font-size: 14px;
-   color: var(--fg);
- }
- 
- /* =====================================================
-    COMPONENTS
- ===================================================== */
- .ascii-footer {
-   font-family: 'Courier New', monospace;
-   white-space: pre;
-   margin: 0;
-   padding: 0;
-   line-height: 1.2;
-   font-size: 12px;
- }
- .h {
-   background: #2b2b2b;
-   color: #ffffff;
-   padding: 0.1rem 0.3rem;
-   border-radius: 4px;
-   font-size: 0.95em;
-   font-family: "Fira Code", monospace;
- }
+  --bg: #ffffff;
+  --fg: #131313;
+  --border: #131313;
+  --border-muted: #cccccc;
+}
+
+[data-theme="dark"] {
+  --bg: #111111;
+  --fg: #e0e0e0;
+  --border: #555555;
+  --border-muted: #444444;
+}
+
+* {
+font-family:monospace;
+}
+
+/* BASE */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: monospace;
+  padding: 20px;
+  margin: 40px auto;
+  max-width: 800px;
+}
+
+/* LINKS */
+a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LAYOUT */
+#layout {
+  flex: 1;
+}
+
+#main-content {
+  padding: 20px;
+}
+
+/* HEADER */
+.main-header {
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+}
+
+/* FOOTER */
+.main-footer {
+  padding: 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* TITLE ROW */
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#title { font-size: 0.95em;
+  font-weight: bold;
+  flex: 1;
+  padding:20px
+}
+
+/* THEME BUTTON */
+#theme-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  padding: 2px 6px;
+  color: var(--fg);
+}
+
+/* =========================
+   SHARED HEADER
+========================= */
+.simple-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* =========================
+   SHARED FOOTER
+========================= */
+.main-footer {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px 30px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+/* =========================
+   ABOUT PAGE
+========================= */
+.about-content {
+  padding: 50px;
+}
+
+.about-content img {
+  width: 32px;
+  height: 32px;
+  vertical-align: middle;
+  image-rendering: pixelated;
+}
+
+/* =========================
+   HOME BUTTON
+========================= */
+.home-button {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+}
+
+.home-button img {
+  width: 18px;
+  height: 18px;
+  vertical-align: -2px;
+  image-rendering: pixelated;
+}

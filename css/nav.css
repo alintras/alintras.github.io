@@ -1,21 +1,22 @@
 #layout {
     display: flex;
+    flex: 1;
     width: 100%;
-    max-width: 100%;
+    align-items: flex-start;
 }
 
 #layout-sidebar {
     border-right: 1px solid var(--border);
-    padding: 20px;
     transition: width 0.2s, padding 0.2s;
     white-space: nowrap;
     overflow: hidden;
     flex-shrink: 0;
+    padding: 50px 20px;          /* Adjust this to move the [+] away from the very edge */
+    min-height: 100%;      /* Makes the vertical line go all the way down */
 }
 
 #layout-sidebar.collapsed {
-    width: 24px;
-    padding: 816x 20px;
+    padding: 50px 10px; 
     cursor: pointer;
 }
 
@@ -33,7 +34,7 @@
     min-height: 80vh;
     display: flex;
     flex-direction: column;
-    padding: 8px;
+    padding: 0px;
 }
 
 #nav-toggle {
