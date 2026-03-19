@@ -31,7 +31,7 @@ body {
   font-family: monospace;
   padding: 20px;
   margin: 40px auto;
-  max-width: 800px;
+  max-width: 560px;
 }
 
 /* LINKS */
@@ -57,12 +57,6 @@ a:hover {
 .main-header {
   border-bottom: 1px solid var(--border);
   width: 100%;
-}
-
-/* FOOTER */
-.main-footer {
-  padding: 20px;
-  border-top: 1px solid var(--border);
 }
 
 /* TITLE ROW */
@@ -106,6 +100,9 @@ a:hover {
   box-sizing: border-box;
   padding: 20px 30px;
   border-top: 1px solid var(--border);
+  position: fixed;
+  bottom: 0px;
+  text-align: 0;
 }
 
 /* =========================
@@ -130,6 +127,13 @@ a:hover {
   top: 10px;
   left: 10px;
   z-index: 100;
+}
+
+.home-button a {
+  background: var(--card-bg); border: 2px solid var(--border);
+  padding: 5px 12px; box-shadow: 4px 4px 0px var(--border);
+  text-decoration: none; color: var(--text); font-weight: bold;
+  display: flex; align-items: center; gap: 8px;
 }
 
 .home-button img {

@@ -1,5 +1,5 @@
-const CACHE_NAME = "aktas-homepage-v3"; // Increment this (v2, v3) to force an update
-// 1. Updated file list to match your actual HTML paths
+const CACHE_NAME = "alintras-homepage-v1"; // Increment this to force an update
+
 const PRECACHE_ASSETS = [
   "/",
   "/index.html",

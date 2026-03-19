@@ -3,18 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>file transfer</title>
+  <title>File Transfer</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/style.js" defer></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Courier New', Courier, monospace;
-      background: #fff; color: #000;
-      padding: 24px 20px;
-      max-width: 560px;
-      margin: 0 auto;
-    }
     h1 { font-size: 1.1rem; font-weight: normal; margin-bottom: 4px; border-bottom: 1px solid #000; padding-bottom: 10px; }
-    .subtitle { font-size: 0.75rem; opacity: 0.5; margin-bottom: 20px; padding-top: 6px; }
+    .subtitle { font-size: 0.75rem; opacity: 0.5; padding-top: 6px; margin-bottom: 20px; }
     .mode-row { display: flex; gap: 8px; margin-bottom: 24px; }
     button {
       font-family: 'Courier New', Courier, monospace;
@@ -28,253 +23,222 @@
     button.active { background: #000; color: #fff; }
     .label { font-size: 0.8rem; margin-bottom: 6px; opacity: 0.6; }
     .status-line { font-size: 0.85rem; margin: 10px 0; min-height: 1.2em; }
-    textarea {
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 0.65rem;
-      border: 1px solid #000;
-      padding: 8px; width: 100%;
-      resize: vertical; height: 80px;
-      background: #fff; color: #000; outline: none;
+    #code-display {
+      font-size: 2.2rem; letter-spacing: 0.25em;
+      border: 1px solid #000; padding: 12px 20px;
+      display: inline-block; margin-bottom: 14px;
     }
-    .btn-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    #qr-wrap { margin-bottom: 14px; }
+    #qr-wrap canvas, #qr-wrap img { display: block; image-rendering: pixelated; }
+    input[type="text"] {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.4rem; letter-spacing: 0.2em;
+      border: 1px solid #000; padding: 8px 10px;
+      width: 160px; background: #fff; color: #000; outline: none;
+    }
+    input[type="file"] { font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; }
     .progress-wrap { border: 1px solid #000; height: 14px; width: 100%; margin-top: 10px; }
     .progress-bar { height: 100%; background: #000; width: 0%; transition: width 0.08s linear; }
     #download-area { margin-top: 14px; }
     #download-area a { font-family: 'Courier New', Courier, monospace; font-size: 0.95rem; color: #000; text-decoration: underline; }
-    .section { margin-top: 20px; border-top: 1px solid #000; padding-top: 16px; }
-    .step-num { font-size: 0.75rem; opacity: 0.45; margin-bottom: 4px; }
-    /* QR scanner overlay */
-    #scanner-overlay {
-      display: none; position: fixed; inset: 0;
-      background: #fff; z-index: 100; padding: 20px;
-      overflow-y: auto;
-    }
-    #scanner-overlay h2 { font-size: 1rem; font-weight: normal; margin-bottom: 16px; border-bottom: 1px solid #000; padding-bottom: 8px; }
-    #qr-video { width: 100%; max-width: 400px; display: block; border: 1px solid #000; }
-    #qr-canvas { display: none; }
-    #scanner-status { font-size: 0.85rem; margin-top: 10px; }
-    input[type="file"] { font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; }
+    .section { margin-top: 16px; }
+    #send-ui, #recv-ui { display: none; }
   </style>
 </head>
 <body>
 
   <h1>[ file transfer ]</h1>
-  <div class="subtitle">local network &middot; end-to-end encrypted &middot; no external servers</div>
+  <div class="subtitle">local network &middot; end-to-end encrypted &middot; never leaves your network</div>
 
   <div class="mode-row">
     <button id="btn-send-mode">send</button>
     <button id="btn-recv-mode">receive</button>
   </div>
 
-  <div id="send-ui" style="display:none"></div>
-  <div id="recv-ui"  style="display:none"></div>
+  <!-- SEND -->
+  <div id="send-ui">
+    <div class="label">your code — share with receiver:</div>
+    <div id="code-display">------</div>
+    <div class="label">or scan:</div>
+    <div id="qr-wrap"></div>
+    <div class="status-line" id="send-status">initialising...</div>
 
-  <!-- QR scanner overlay -->
-  <div id="scanner-overlay">
-    <h2>[ scan QR ]</h2>
-    <video id="qr-video" autoplay playsinline muted></video>
-    <canvas id="qr-canvas"></canvas>
-    <div id="scanner-status">scanning...</div>
-    <div class="btn-row" style="margin-top:12px">
-      <button id="btn-close-scanner">cancel</button>
+    <div id="file-section" style="display:none">
+      <div class="section">
+        <input type="file" id="file-input">
+        <br><br>
+        <button id="btn-send-file">send file</button>
+      </div>
+      <div class="progress-wrap" id="s-pw" style="display:none"><div class="progress-bar" id="s-pb"></div></div>
+      <div class="status-line" id="send-file-status"></div>
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
-  <script>
-    const CHUNK_SIZE  = 64 * 1024;
-    const MAX_BUFFERED = 1024 * 1024;
+  <!-- RECEIVE -->
+  <div id="recv-ui">
+    <div class="label">enter sender code:</div>
+    <input type="text" id="code-input" maxlength="6" placeholder="ABC123" autocomplete="off" spellcheck="false">
+    <br><br>
+    <button id="btn-connect">connect</button>
+    <div class="status-line" id="recv-status"></div>
+    <div class="progress-wrap" id="r-pw" style="display:none"><div class="progress-bar" id="r-pb"></div></div>
+    <div id="download-area"></div>
+  </div>
 
-    // No STUN/TURN = stays on local network, DTLS encryption enforced by WebRTC spec
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script type="module">
+    import { initializeApp }        from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, remove, get }
+      from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyBp7xO_MO-mRTPpKctSxUhvh_yAFAOUEhQ",
+      authDomain:        "alintras-34e4a.firebaseapp.com",
+      databaseURL:       "https://alintras-34e4a-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId:         "alintras-34e4a",
+      storageBucket:     "alintras-34e4a.firebasestorage.app",
+      messagingSenderId: "511873774665",
+      appId:             "1:511873774665:web:be8946f5bb146f3eb3bb98"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
+
+    // ── WebRTC config: no STUN/TURN = local network only ────────────────────
     const PC_CONFIG = { iceServers: [] };
+
+    const CHUNK_SIZE   = 64 * 1024;
+    const MAX_BUFFERED = 1024 * 1024;
+    const SESSION_TTL  = 2 * 60 * 1000; // 2 min auto-cleanup
 
     // ── SW streaming ────────────────────────────────────────────────────────
     let swReady = false;
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then(reg => { if (reg.active) swReady = true; });
-    }
+    if ('serviceWorker' in navigator)
+      navigator.serviceWorker.ready.then(r => { if (r.active) swReady = true; });
+
     function randId() { return Math.random().toString(36).slice(2,10) + Math.random().toString(36).slice(2,10); }
     function waitSwReady(id) {
       return new Promise(resolve => {
-        function h(e) {
-          if (e.data?.type === 'STREAM_READY' && e.data.id === id) {
-            navigator.serviceWorker.removeEventListener('message', h); resolve();
-          }
-        }
+        function h(e) { if (e.data?.type==='STREAM_READY' && e.data.id===id) { navigator.serviceWorker.removeEventListener('message',h); resolve(); } }
         navigator.serviceWorker.addEventListener('message', h);
         setTimeout(resolve, 500);
       });
     }
 
-    // ── QR Scanner ──────────────────────────────────────────────────────────
-    let scannerCb = null, scannerStream = null, scannerRaf = null;
-
-    document.getElementById('btn-close-scanner').onclick = stopScanner;
-
-    function startScanner(cb) {
-      scannerCb = cb;
-      document.getElementById('scanner-overlay').style.display = 'block';
-      document.getElementById('scanner-status').textContent = 'starting camera...';
-      const video  = document.getElementById('qr-video');
-      const canvas = document.getElementById('qr-canvas');
-      const ctx    = canvas.getContext('2d');
-
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-        .then(stream => {
-          scannerStream = stream;
-          video.srcObject = stream;
-          video.play();
-          document.getElementById('scanner-status').textContent = 'scanning...';
-          function tick() {
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-              canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-              ctx.drawImage(video, 0, 0);
-              const img  = ctx.getImageData(0, 0, canvas.width, canvas.height);
-              const code = jsQR(img.data, img.width, img.height);
-              if (code) { stopScanner(); scannerCb(code.data); return; }
-            }
-            scannerRaf = requestAnimationFrame(tick);
-          }
-          scannerRaf = requestAnimationFrame(tick);
-        })
-        .catch(err => { document.getElementById('scanner-status').textContent = 'camera error: ' + err.message; });
+    // ── helpers ─────────────────────────────────────────────────────────────
+    function randomCode() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let c = ''; for (let i=0;i<6;i++) c += chars[Math.floor(Math.random()*chars.length)]; return c;
     }
 
-    function stopScanner() {
-      document.getElementById('scanner-overlay').style.display = 'none';
-      if (scannerRaf) { cancelAnimationFrame(scannerRaf); scannerRaf = null; }
-      if (scannerStream) { scannerStream.getTracks().forEach(t => t.stop()); scannerStream = null; }
-    }
-
-    // ── SDP helpers ─────────────────────────────────────────────────────────
-    function encodeSD(sd) { return btoa(JSON.stringify({ type: sd.type, sdp: sd.sdp })); }
-    function decodeSD(str) { return JSON.parse(atob(str.trim())); }
-
-    function waitIceComplete(pc) {
+    function waitIce(pc) {
       return new Promise(resolve => {
         if (pc.iceGatheringState === 'complete') { resolve(); return; }
-        const h = () => { if (pc.iceGatheringState === 'complete') { pc.removeEventListener('icegatheringstatechange', h); resolve(); } };
+        const h = () => { if (pc.iceGatheringState==='complete') { pc.removeEventListener('icegatheringstatechange',h); resolve(); } };
         pc.addEventListener('icegatheringstatechange', h);
-        setTimeout(resolve, 5000); // safety timeout
+        setTimeout(resolve, 5000);
       });
     }
 
-    function makeQR(container, text) {
-      container.innerHTML = '';
-      new QRCode(container, { text, width: 200, height: 200, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.L });
+    function showDownloadLink(url, filename) {
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      a.textContent = '[ download ' + filename + ' ]';
+      const area = document.getElementById('download-area');
+      area.innerHTML = ''; area.appendChild(a); a.click();
     }
 
-    function copyBtn(btnId, getText, statusId) {
-      document.getElementById(btnId).onclick = () => {
-        navigator.clipboard.writeText(getText()).then(() => {
-          if (statusId) document.getElementById(statusId).textContent = 'copied.';
-        });
-      };
-    }
+    // ── mode buttons ────────────────────────────────────────────────────────
+    const btnSend = document.getElementById('btn-send-mode');
+    const btnRecv = document.getElementById('btn-recv-mode');
+    btnSend.onclick = () => { btnSend.classList.add('active'); btnRecv.classList.remove('active'); startSend(); };
+    btnRecv.onclick = () => { btnRecv.classList.add('active'); btnSend.classList.remove('active'); startRecv(); };
 
-    // ── Mode buttons ────────────────────────────────────────────────────────
-    const btnSendMode = document.getElementById('btn-send-mode');
-    const btnRecvMode = document.getElementById('btn-recv-mode');
-    btnSendMode.onclick = () => { btnSendMode.classList.add('active'); btnRecvMode.classList.remove('active'); startSendMode(); };
-    btnRecvMode.onclick = () => { btnRecvMode.classList.add('active'); btnSendMode.classList.remove('active'); startRecvMode(); };
+    const urlCode = new URLSearchParams(location.search).get('code');
+    if (urlCode) { btnRecv.classList.add('active'); startRecv(urlCode.toUpperCase()); }
 
-    // ── SEND ────────────────────────────────────────────────────────────────
-    function startSendMode() {
+    // ════════════════════════════════════════════════════════════════════════
+    // SEND
+    // ════════════════════════════════════════════════════════════════════════
+    async function startSend() {
       document.getElementById('recv-ui').style.display = 'none';
-      const ui = document.getElementById('send-ui');
-      ui.style.display = 'block';
-      ui.innerHTML = `
-        <div id="s1">
-          <div class="step-num">step 1 of 2</div>
-          <div class="label">share this offer with the receiver (QR or copy):</div>
-          <div id="s-qr" style="margin:12px 0"></div>
-          <textarea id="s-offer-txt" readonly></textarea>
-          <div class="btn-row">
-            <button id="s-copy">copy</button>
-          </div>
-          <div class="status-line" id="s1-status">generating...</div>
-        </div>
-        <div id="s2" class="section" style="display:none">
-          <div class="step-num">step 2 of 2</div>
-          <div class="label">enter the receiver's answer:</div>
-          <textarea id="s-answer-in" placeholder="paste answer here..."></textarea>
-          <div class="btn-row">
-            <button id="s-scan-ans">scan QR</button>
-            <button id="s-submit-ans">connect</button>
-          </div>
-          <div class="status-line" id="s2-status"></div>
-        </div>
-        <div id="s3" class="section" style="display:none">
-          <div class="label">connected. select file to send:</div>
-          <input type="file" id="file-input">
-          <br><br>
-          <button id="btn-send-file">send file</button>
-          <div class="progress-wrap" id="s-pw" style="display:none"><div class="progress-bar" id="s-pb"></div></div>
-          <div class="status-line" id="s3-status"></div>
-        </div>
-      `;
+      document.getElementById('send-ui').style.display = 'block';
+      document.getElementById('file-section').style.display = 'none';
+
+      const code    = randomCode();
+      const session = ref(db, 'transfer/' + code);
+
+      document.getElementById('code-display').textContent = code;
+      document.getElementById('send-status').textContent  = 'setting up...';
+
+      // QR points to this page with ?code= so receiver auto-fills
+      const qrWrap = document.getElementById('qr-wrap');
+      qrWrap.innerHTML = '';
+      new QRCode(qrWrap, {
+        text: location.origin + location.pathname + '?code=' + code,
+        width: 140, height: 140, colorDark: '#000', colorLight: '#fff'
+      });
 
       const pc = new RTCPeerConnection(PC_CONFIG);
       const dc = pc.createDataChannel('ft', { ordered: true });
 
-      (async () => {
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-        document.getElementById('s1-status').textContent = 'gathering local network info...';
-        await waitIceComplete(pc);
-        const encoded = encodeSD(pc.localDescription);
-        document.getElementById('s-offer-txt').value = encoded;
-        makeQR(document.getElementById('s-qr'), encoded);
-        document.getElementById('s1-status').textContent = 'share the offer, then enter the receiver\'s answer below.';
-        document.getElementById('s2').style.display = 'block';
-        copyBtn('s-copy', () => document.getElementById('s-offer-txt').value, 's1-status');
-      })();
+      // Gather ICE candidates into the offer SDP
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      await waitIce(pc);
 
-      document.getElementById('s-scan-ans').onclick = () => startScanner(data => { document.getElementById('s-answer-in').value = data; });
+      // Write offer to Firebase
+      await set(session, {
+        offer: { type: pc.localDescription.type, sdp: pc.localDescription.sdp },
+        ts: Date.now()
+      });
 
-      document.getElementById('s-submit-ans').onclick = async () => {
-        const raw = document.getElementById('s-answer-in').value.trim();
-        if (!raw) { document.getElementById('s2-status').textContent = 'paste the answer first.'; return; }
-        try {
-          await pc.setRemoteDescription(decodeSD(raw));
-          document.getElementById('s2-status').textContent = 'connecting...';
-          document.getElementById('s-submit-ans').disabled = true;
-        } catch(e) { document.getElementById('s2-status').textContent = 'invalid answer: ' + e.message; }
-      };
+      document.getElementById('send-status').textContent = 'waiting for receiver...';
+
+      // Schedule cleanup so stale sessions don't pile up
+      setTimeout(() => remove(session), SESSION_TTL);
+
+      // Watch for answer
+      const unsub = onValue(session, async snap => {
+        const data = snap.val();
+        if (!data?.answer) return;
+        unsub(); // stop listening
+        await pc.setRemoteDescription(data.answer);
+        // Clean up Firebase — handshake done, connection is local from here
+        remove(session);
+      });
 
       dc.onopen = () => {
-        document.getElementById('s1').style.display = 'none';
-        document.getElementById('s2').style.display = 'none';
-        document.getElementById('s3').style.display = 'block';
+        document.getElementById('send-status').textContent = 'connected.';
+        document.getElementById('file-section').style.display = 'block';
         setupSendFile(dc);
       };
 
       pc.onconnectionstatechange = () => {
         if (pc.connectionState === 'failed')
-          document.getElementById('s2-status').textContent = 'connection failed. reload and try again.';
+          document.getElementById('send-status').textContent = 'connection failed. reload and try again.';
       };
     }
 
     function setupSendFile(dc) {
       document.getElementById('btn-send-file').onclick = () => {
         const file = document.getElementById('file-input').files[0];
-        if (!file) { document.getElementById('s3-status').textContent = 'no file selected.'; return; }
+        if (!file) { document.getElementById('send-file-status').textContent = 'no file selected.'; return; }
         document.getElementById('btn-send-file').disabled = true;
         const reader = new FileReader();
         reader.onload = e => {
           const buf = e.target.result;
           const totalChunks = Math.ceil(buf.byteLength / CHUNK_SIZE);
-          dc.send(JSON.stringify({ type: 'meta', name: file.name, size: file.size, totalChunks }));
+          dc.send(JSON.stringify({ type:'meta', name:file.name, size:file.size, totalChunks }));
           document.getElementById('s-pw').style.display = 'block';
           const bar = document.getElementById('s-pb');
           let i = 0;
           function next() {
-            if (i >= totalChunks) { document.getElementById('s3-status').textContent = 'done.'; return; }
+            if (i >= totalChunks) { document.getElementById('send-file-status').textContent = 'done.'; return; }
             if (dc.bufferedAmount > MAX_BUFFERED) { setTimeout(next, 50); return; }
             dc.send(buf.slice(i * CHUNK_SIZE, (i+1) * CHUNK_SIZE));
             bar.style.width = ((i+1)/totalChunks*100) + '%';
-            document.getElementById('s3-status').textContent = 'sending... ' + Math.round((i+1)/totalChunks*100) + '%';
+            document.getElementById('send-file-status').textContent = 'sending... ' + Math.round((i+1)/totalChunks*100) + '%';
             i++; setTimeout(next, 0);
           }
           next();
@@ -283,86 +247,69 @@
       };
     }
 
-    // ── RECEIVE ─────────────────────────────────────────────────────────────
-    function startRecvMode() {
+    // ════════════════════════════════════════════════════════════════════════
+    // RECEIVE
+    // ════════════════════════════════════════════════════════════════════════
+    function startRecv(prefill) {
       document.getElementById('send-ui').style.display = 'none';
-      const ui = document.getElementById('recv-ui');
-      ui.style.display = 'block';
-      ui.innerHTML = `
-        <div id="r1">
-          <div class="step-num">step 1 of 2</div>
-          <div class="label">enter the sender's offer:</div>
-          <textarea id="r-offer-in" placeholder="paste offer here..."></textarea>
-          <div class="btn-row">
-            <button id="r-scan-offer">scan QR</button>
-            <button id="r-submit-offer">next</button>
-          </div>
-          <div class="status-line" id="r1-status"></div>
-        </div>
-        <div id="r2" class="section" style="display:none">
-          <div class="step-num">step 2 of 2</div>
-          <div class="label">share this answer with the sender (QR or copy):</div>
-          <div id="r-qr" style="margin:12px 0"></div>
-          <textarea id="r-answer-txt" readonly></textarea>
-          <div class="btn-row">
-            <button id="r-copy-ans">copy</button>
-          </div>
-          <div class="status-line" id="r2-status">waiting for connection...</div>
-        </div>
-        <div class="progress-wrap" id="r-pw" style="display:none"><div class="progress-bar" id="r-pb"></div></div>
-        <div class="status-line" id="r-status"></div>
-        <div id="download-area"></div>
-      `;
+      document.getElementById('recv-ui').style.display = 'block';
+      if (prefill) document.getElementById('code-input').value = prefill;
 
-      document.getElementById('r-scan-offer').onclick = () => startScanner(data => { document.getElementById('r-offer-in').value = data; });
+      document.getElementById('btn-connect').onclick = async () => {
+        const code = document.getElementById('code-input').value.trim().toUpperCase();
+        if (code.length !== 6) { document.getElementById('recv-status').textContent = 'enter a 6-character code.'; return; }
 
-      document.getElementById('r-submit-offer').onclick = async () => {
-        const raw = document.getElementById('r-offer-in').value.trim();
-        if (!raw) { document.getElementById('r1-status').textContent = 'paste the offer first.'; return; }
-        try {
-          const pc = new RTCPeerConnection(PC_CONFIG);
-          await pc.setRemoteDescription(decodeSD(raw));
-          const answer = await pc.createAnswer();
-          await pc.setLocalDescription(answer);
-          document.getElementById('r1-status').textContent = 'gathering local network info...';
-          await waitIceComplete(pc);
-          const encoded = encodeSD(pc.localDescription);
-          document.getElementById('r1').style.display = 'none';
-          document.getElementById('r2').style.display = 'block';
-          document.getElementById('r-answer-txt').value = encoded;
-          makeQR(document.getElementById('r-qr'), encoded);
-          copyBtn('r-copy-ans', () => encoded, 'r2-status');
+        document.getElementById('btn-connect').disabled = true;
+        document.getElementById('recv-status').textContent = 'looking up code...';
 
-          pc.ondatachannel = e => {
-            document.getElementById('r2').style.display = 'none';
-            const dc = e.channel;
-            dc.binaryType = 'arraybuffer';
-            setupReceive(dc);
-          };
+        const session = ref(db, 'transfer/' + code);
+        const snap    = await get(session);
+        if (!snap.exists() || !snap.val().offer) {
+          document.getElementById('recv-status').textContent = 'code not found or expired.';
+          document.getElementById('btn-connect').disabled = false;
+          return;
+        }
 
-          pc.onconnectionstatechange = () => {
-            if (pc.connectionState === 'failed')
-              document.getElementById('r2-status').textContent = 'connection failed. reload and try again.';
-          };
-        } catch(e) { document.getElementById('r1-status').textContent = 'invalid offer: ' + e.message; }
+        document.getElementById('recv-status').textContent = 'connecting...';
+
+        const pc = new RTCPeerConnection(PC_CONFIG);
+        await pc.setRemoteDescription(snap.val().offer);
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        await waitIce(pc);
+
+        // Write answer — sender picks it up and removes the session
+        await set(ref(db, 'transfer/' + code + '/answer'), { type: pc.localDescription.type, sdp: pc.localDescription.sdp });
+
+        pc.ondatachannel = e => {
+          const dc = e.channel;
+          dc.binaryType = 'arraybuffer';
+          document.getElementById('recv-status').textContent = 'connected. waiting for file...';
+          setupRecv(dc);
+        };
+
+        pc.onconnectionstatechange = () => {
+          if (pc.connectionState === 'failed')
+            document.getElementById('recv-status').textContent = 'connection failed. reload and try again.';
+        };
       };
     }
 
-    async function setupReceive(dc) {
-      let meta = null, transferId = null, fallbackChunks = [], received = 0, usingSW = false;
+    async function setupRecv(dc) {
+      let meta=null, transferId=null, fallbackChunks=[], received=0, usingSW=false;
       dc.onmessage = async e => {
         if (typeof e.data === 'string') {
           const msg = JSON.parse(e.data);
           if (msg.type !== 'meta') return;
-          meta = msg; received = 0; fallbackChunks = []; transferId = randId();
+          meta=msg; received=0; fallbackChunks=[]; transferId=randId();
           usingSW = swReady && !!navigator.serviceWorker.controller;
           document.getElementById('r-pw').style.display = 'block';
-          document.getElementById('r-pb').style.width = '0%';
-          document.getElementById('r-status').textContent = 'receiving: ' + meta.name;
+          document.getElementById('r-pb').style.width   = '0%';
+          document.getElementById('recv-status').textContent = 'receiving: ' + meta.name;
           document.getElementById('download-area').innerHTML = '';
           if (usingSW) {
             const rp = waitSwReady(transferId);
-            navigator.serviceWorker.controller.postMessage({ type: 'STREAM_CREATE', id: transferId, filename: meta.name, size: meta.size });
+            navigator.serviceWorker.controller.postMessage({ type:'STREAM_CREATE', id:transferId, filename:meta.name, size:meta.size });
             await rp;
             showDownloadLink('/sw-transfer/' + transferId, meta.name);
           }
@@ -370,31 +317,22 @@
           received++;
           const pct = Math.round(received / meta.totalChunks * 100);
           document.getElementById('r-pb').style.width = pct + '%';
-          document.getElementById('r-status').textContent = 'receiving: ' + meta.name + ' — ' + pct + '%';
+          document.getElementById('recv-status').textContent = 'receiving: ' + meta.name + ' — ' + pct + '%';
           if (usingSW) {
-            navigator.serviceWorker.controller.postMessage({ type: 'STREAM_CHUNK', id: transferId, chunk: e.data }, [e.data]);
+            navigator.serviceWorker.controller.postMessage({ type:'STREAM_CHUNK', id:transferId, chunk:e.data }, [e.data]);
             if (received === meta.totalChunks) {
-              navigator.serviceWorker.controller.postMessage({ type: 'STREAM_END', id: transferId });
-              document.getElementById('r-status').textContent = 'transfer complete.';
+              navigator.serviceWorker.controller.postMessage({ type:'STREAM_END', id:transferId });
+              document.getElementById('recv-status').textContent = 'transfer complete.';
             }
           } else {
             fallbackChunks.push(e.data);
             if (received === meta.totalChunks) {
               showDownloadLink(URL.createObjectURL(new Blob(fallbackChunks)), meta.name);
-              document.getElementById('r-status').textContent = 'transfer complete.';
+              document.getElementById('recv-status').textContent = 'transfer complete.';
             }
           }
         }
       };
-    }
-
-    function showDownloadLink(url, filename) {
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      a.textContent = '[ download ' + filename + ' ]';
-      document.getElementById('download-area').innerHTML = '';
-      document.getElementById('download-area').appendChild(a);
-      a.click();
     }
   </script>
 </body>
