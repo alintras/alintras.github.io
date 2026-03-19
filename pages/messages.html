@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Messages</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/style.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <style>
+    #compose {
+      border: 1px solid var(--border);
+      padding: 12px;
+      margin-bottom: 32px;
+    }
+    #user-id-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+    #user-id-display { font-weight: bold; }
+    #msg-text {
+      width: 100%;
+      height: 80px;
+      font-family: monospace;
+      font-size: 14px;
+      border: 1px solid var(--border);
+      padding: 6px;
+      resize: vertical;
+      background: var(--bg);
+      color: var(--fg);
+      box-sizing: border-box;
+    }
+    #image-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+    #image-label {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      font-family: monospace;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--fg);
+      display: inline-block;
+    }
+    #image-label:hover { opacity: 0.7; }
+    #file-input { display: none; }
+    #image-preview { max-height: 60px; max-width: 120px; border: 1px solid var(--border); display: none; }
+    #clear-img { font-size: 12px; cursor: pointer; border: none; background: none; text-decoration: underline; font-family: monospace; color: var(--fg); display: none; }
+    #submit-row { display: flex; justify-content: flex-end; margin-top: 10px; }
+    #submit-btn {
+      border: 1px solid var(--border);
+      background: var(--fg);
+      color: var(--bg);
+      font-family: monospace;
+      font-size: 14px;
+      padding: 6px 16px;
+      cursor: pointer;
+    }
+    #submit-btn:hover { opacity: 0.8; }
+    #submit-btn:disabled { opacity: 0.4; cursor: default; }
+    #status { font-size: 12px; margin-top: 6px; text-align: right; min-height: 16px; }
+    #feed-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+    #feed-header h2 { font-size: 14px; font-weight: bold; margin: 0; }
+    #msg-count { font-size: 12px; }
+    .msg-card { border: 1px solid var(--border); padding: 10px 12px; margin-bottom: 10px; }
+    .msg-meta { font-size: 11px; margin-bottom: 6px; display: flex; gap: 16px; align-items: center; }
+    .msg-id { font-weight: bold; }
+    .msg-body { white-space: pre-wrap; word-break: break-word; line-height: 1.5; }
+    .msg-image { display: block; max-width: 100%; max-height: 300px; margin-top: 10px; border: 1px solid var(--border); }
+    .del-btn { margin-left: auto; font-size: 11px; cursor: pointer; border: none; background: none; text-decoration: underline; font-family: monospace; color: var(--fg); padding: 0; }
+    #loading, #empty { font-size: 13px; padding: 12px 0; }
+    #err-box { border: 1px solid var(--border); padding: 10px 12px; margin-bottom: 16px; font-size: 13px; display: none; }
+  </style>
+</head>
+<body>
+  <button id="theme-toggle" onclick="toggleTheme()"></button>
+
+  <h1>Messages</h1>
+  <div id="err-box"></div>
+
+  <div id="compose">
+    <div id="user-id-row">Your ID: <span id="user-id-display">—</span></div>
+    <label for="msg-text">Message</label>
+    <textarea id="msg-text" placeholder="Write something…" maxlength="500"></textarea>
+    <div id="image-row">
+      <label id="image-label" for="file-input">+ image</label>
+      <input type="file" id="file-input" accept="image/*" />
+      <img id="image-preview" alt="preview" />
+      <button id="clear-img">remove</button>
+    </div>
+    <div id="submit-row"><button id="submit-btn">Post</button></div>
+    <div id="status"></div>
+  </div>
+
+  <div id="feed-header">
+    <h2>All messages</h2>
+    <span id="msg-count"></span>
+  </div>
+  <div id="loading">Loading…</div>
+  <div id="feed"></div>
+  <div id="empty" style="display:none">No messages yet. Be the first!</div>
+
+<script>
+const firebaseConfig = {
+  apiKey:            "AIzaSyBp7xO_MO-mRTPpKctSxUhvh_yAFAOUEhQ",
+  authDomain:        "alintras-34e4a.firebaseapp.com",
+  databaseURL:       "https://alintras-34e4a-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "alintras-34e4a",
+  storageBucket:     "alintras-34e4a.firebasestorage.app",
+  messagingSenderId: "511873774665",
+  appId:             "1:511873774665:web:a143a5fc7e6a6c29b3bb98"
+};
+
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+var ID_KEY = 'guestbook_uid';
+var myId = localStorage.getItem(ID_KEY);
+if (!myId) {
+  myId = Math.random().toString(36).slice(2, 8).toUpperCase();
+  localStorage.setItem(ID_KEY, myId);
+}
+document.getElementById('user-id-display').textContent = myId;
+
+function setStatus(msg) { document.getElementById('status').textContent = msg; }
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatDate(ts) {
+  var d = new Date(ts);
+  return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+       + ' ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+}
+
+var pendingBase64 = null;
+
+function resizeAndEncode(file) {
+  var isPng = file.type === 'image/png';
+  return new Promise(function(resolve, reject) {
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function() {
+      URL.revokeObjectURL(url);
+      var w = img.width, h = img.height, MAX = 600;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else       { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      var c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      var ctx = c.getContext('2d');
+      if (!isPng) { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h); }
+      ctx.drawImage(img, 0, 0, w, h);
+      resolve(isPng ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.6));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+document.getElementById('file-input').addEventListener('change', function() {
+  var file = this.files[0];
+  if (!file) return;
+  setStatus('Processing…');
+  var self = this;
+  resizeAndEncode(file).then(function(b64) {
+    var kb = Math.round(b64.length * 0.75 / 1024);
+    if (kb > 500) {
+      setStatus('Too large after compression (' + kb + ' KB). Use a smaller image.');
+      self.value = ''; return;
+    }
+    pendingBase64 = b64;
+    var prev = document.getElementById('image-preview');
+    prev.src = b64; prev.style.display = 'block';
+    document.getElementById('clear-img').style.display = 'inline';
+    setStatus('');
+  }).catch(function() { setStatus('Could not load image.'); self.value = ''; });
+});
+
+document.getElementById('clear-img').addEventListener('click', function() {
+  pendingBase64 = null;
+  var prev = document.getElementById('image-preview');
+  prev.style.display = 'none'; prev.src = '';
+  this.style.display = 'none';
+  document.getElementById('file-input').value = '';
+});
+
+document.getElementById('submit-btn').addEventListener('click', function() {
+  var text = document.getElementById('msg-text').value.trim();
+  if (!text && !pendingBase64) { setStatus('Nothing to post.'); return; }
+
+  var btn = this;
+  btn.disabled = true;
+  setStatus('Posting…');
+
+  db.ref('messages').push({
+    uid:   myId,
+    text:  text || null,
+    image: pendingBase64 || null,
+    ts:    firebase.database.ServerValue.TIMESTAMP
+  }).then(function() {
+    document.getElementById('msg-text').value = '';
+    pendingBase64 = null;
+    document.getElementById('image-preview').style.display = 'none';
+    document.getElementById('image-preview').src = '';
+    document.getElementById('clear-img').style.display = 'none';
+    document.getElementById('file-input').value = '';
+    setStatus('Posted!');
+    setTimeout(function() { setStatus(''); }, 3000);
+    btn.disabled = false;
+  }).catch(function(err) {
+    setStatus('Error: ' + (err.code || '') + ' ' + err.message);
+    console.error(err);
+    btn.disabled = false;
+  });
+});
+
+db.ref('messages').on('value', function(snap) {
+  document.getElementById('loading').style.display = 'none';
+
+  var msgs = [];
+  snap.forEach(function(child) {
+    var v = child.val();
+    msgs.push({ id: child.key, uid: v.uid, text: v.text, image: v.image, ts: v.ts });
+  });
+  msgs.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); });
+
+  document.getElementById('msg-count').textContent = msgs.length ? '(' + msgs.length + ')' : '';
+
+  var feed = document.getElementById('feed');
+  var empty = document.getElementById('empty');
+
+  if (!msgs.length) { feed.innerHTML = ''; empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  var html = '';
+  for (var i = 0; i < msgs.length; i++) {
+    var m = msgs[i];
+    html += '<div class="msg-card">';
+    html += '<div class="msg-meta">';
+    html += '<span class="msg-id">' + escHtml(m.uid) + '</span>';
+    html += '<span>' + (m.ts ? formatDate(m.ts) : '—') + '</span>';
+    if (m.uid === myId) html += '<button class="del-btn" data-id="' + m.id + '">delete</button>';
+    html += '</div>';
+    if (m.text)  html += '<div class="msg-body">' + escHtml(m.text) + '</div>';
+    if (m.image) html += '<img class="msg-image" src="' + m.image + '" alt="attached image" loading="lazy" />';
+    html += '</div>';
+  }
+  feed.innerHTML = html;
+
+  var btns = feed.querySelectorAll('.del-btn');
+  for (var j = 0; j < btns.length; j++) {
+    btns[j].addEventListener('click', function() {
+      db.ref('messages/' + this.getAttribute('data-id')).remove();
+    });
+  }
+}, function(err) {
+  document.getElementById('err-box').textContent = '⚠ Failed to load: ' + err.message;
+  document.getElementById('err-box').style.display = 'block';
+  document.getElementById('loading').style.display = 'none';
+});
+</script>
+</body>
+</html>
