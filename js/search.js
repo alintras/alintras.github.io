@@ -1,3 +1,6 @@
+let historyIndex = -1;
+let historyDraft = "";
+
 /* =============================================================
    SITE PAGES
 ============================================================= */
@@ -418,6 +421,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     input.addEventListener("input", () => {
+        historyIndex = -1;
+        historyDraft = "";
+
         const text = input.value.trim();
 
         if (text.startsWith('"') && text.endsWith('"') && text.length >= 2) {
@@ -460,7 +466,28 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.key === "Escape") {
             input.blur();
         }
+    
+        // ── History navigation ──
+        if (document.activeElement === input && (e.key === "ArrowUp" || e.key === "ArrowDown")) {
+            const recent = getRecentSearches();
+            if (!recent.length) return;
+            e.preventDefault(); // don't move cursor
+    
+            if (e.key === "ArrowUp") {
+                if (historyIndex === -1) historyDraft = input.value;
+                historyIndex = Math.min(historyIndex + 1, recent.length - 1);
+            } else {
+                historyIndex = Math.max(historyIndex - 1, -1);
+            }
+    
+            input.value = historyIndex === -1 ? historyDraft : recent[historyIndex];
+            // move cursor to end
+            input.setSelectionRange(input.value.length, input.value.length);
+            return;
+        }
+    
         if (e.key === "Enter" && document.activeElement === input) {
+            historyIndex = -1;
             doSearch();
         }
     });
