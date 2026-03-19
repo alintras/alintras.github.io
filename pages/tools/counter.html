@@ -3,11 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Counter</title>
+<title>(Shiny) Counter</title>
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/style.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Courier New", monospace;
+    background: var(--bg);
+    color: var(--fg);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
 
   header {
     border-bottom: 1px solid var(--fg);
@@ -15,6 +25,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
   }
 
   header h1 { font-size: 1rem; font-weight: bold; flex: 1; }
@@ -38,6 +50,7 @@
     border-bottom: 1px solid var(--fg);
     gap: 0;
     overflow-x: auto;
+    flex-shrink: 0;
   }
 
   .tab {
@@ -212,7 +225,7 @@
 <body>
 
 <header>
-  <h1>★彡 (shiny) counter 彡★</h1>
+  <h1>✧･ﾟ: *✧ (shiny) counter ✧* :･ﾟ✧</h1>
   <button id="keybind-btn" title="set hotkey"></button>
 </header>
 
