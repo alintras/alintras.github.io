@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item(`<img src="/assets/smileys/pokeball.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/pokefinder.html", "GEN 3 Pokémon Finder")}
       ${item(`<img src="/assets/smileys/squirtle.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/iv-calc.html", "GEN 3 IV Calculator")}
       ${item(`<img src="/assets/smileys/pencil.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/pixelart.html", "Pixel Artist")}
+      ${item(`<img src="/assets/smileys/transfer.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/file-transfer.html", "File Transfer")}
       ${item(`<img src="/assets/smileys/count.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/cps-counter.html", "CPS Counter")}
       ${item(`<img src="/assets/smileys/lock.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/password-generator.html", "Password Generator")}
       ${item(`<img src="/assets/smileys/unit-calc.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/unit-converter.html", "Unit Converter")}
