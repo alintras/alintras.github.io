@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item(`<img src="/assets/smileys/mail.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/wondermail/wondermail.html", "PMD RT Wondermail Generator")}
       ${item(`<img src="/assets/smileys/pokeball.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/pokefinder.html", "GEN 3 Pokémon Finder")}
       ${item(`<img src="/assets/smileys/squirtle.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/iv-calc.html", "GEN 3 IV Calculator")}
-      ${item(`<img src="/assets/smileys/pencil.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/pixelart.html", "Pixel Art Maker")}
+      ${item(`<img src="/assets/smileys/pencil.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/pixelart.html", "Pixel Artist")}
       ${item(`<img src="/assets/smileys/count.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/cps-counter.html", "CPS Counter")}
       ${item(`<img src="/assets/smileys/lock.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/password-generator.html", "Password Generator")}
       ${item(`<img src="/assets/smileys/unit-calc.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/unit-converter.html", "Unit Converter")}
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     </details><br>
     <details>
       <summary><img src="/assets/smileys/laugh.gif" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Fun</summary>
-      ${item(`<img src="/assets/smileys/love-calc.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/love-calculator.html", "Love Compatibility Calculator")}
+      ${item(`<img src="/assets/smileys/love-calc.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/love-calculator.html", "Love Calculator")}
       ${item(`<img src="/assets/smileys/valentine.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/vivi.html", "Valentines 2026")}
       ${item(`<img src="/assets/smileys/dice.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/simple-physics.html", "Simple Physics")}
       ${item(`<img src="/assets/smileys/ID.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/fun/ausweis.html", "ID Generator")}
