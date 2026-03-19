@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Counter</title>
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/style.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  header {
+    border-bottom: 1px solid var(--fg);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  header h1 { font-size: 1rem; font-weight: bold; flex: 1; }
+
+  #keybind-btn {
+    font-family: "Courier New", monospace;
+    font-size: 0.75rem;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--fg);
+    padding: 3px 8px;
+    cursor: pointer;
+    opacity: 0.6;
+    flex-shrink: 0;
+  }
+  #keybind-btn:hover { opacity: 1; }
+
+  #counter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--fg);
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 8px 14px;
+    font-family: "Courier New", monospace;
+    font-size: 0.85rem;
+    border: none;
+    border-right: 1px solid var(--fg);
+    background: var(--bg);
+    color: var(--fg);
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .tab.active { background: var(--fg); color: var(--bg); }
+
+  .tab-close {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 0.75rem;
+    opacity: 0.5;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+  .tab.active .tab-close { opacity: 0.7; color: var(--bg); }
+  .tab-close:hover { opacity: 1; }
+
+  #add-counter-btn {
+    padding: 8px 14px;
+    font-family: "Courier New", monospace;
+    font-size: 0.85rem;
+    border: none;
+    background: var(--bg);
+    cursor: pointer;
+    white-space: nowrap;
+    color: var(--fg);
+    opacity: 0.5;
+  }
+  #add-counter-btn:hover { opacity: 1; }
+
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    gap: 12px;
+    overflow: hidden;
+  }
+
+  #counter-name-display {
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    flex: 2;
+  }
+
+  #count-display {
+    font-size: clamp(3rem, 18vw, 7rem);
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    letter-spacing: -2px;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+
+  #hit-btn {
+    width: 100%;
+    flex: 1;
+    font-family: "Courier New", monospace;
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+    font-weight: bold;
+    background: var(--fg);
+    color: var(--bg);
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    min-height: 80px;
+  }
+
+  #hit-btn:active { opacity: 0.75; }
+
+  #top-bar {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--fg);
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  #top-bar button {
+    flex: 1;
+    padding: 8px;
+    font-family: "Courier New", monospace;
+    font-size: 0.8rem;
+    background: var(--bg);
+    color: var(--fg);
+    border: none;
+    border-right: 1px solid var(--fg);
+    cursor: pointer;
+    opacity: 0.6;
+  }
+  #top-bar button:last-child { border-right: none; }
+  #top-bar button:hover { opacity: 1; }
+  #top-bar button:active { opacity: 0.4; }
+
+  /* Modal */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  #modal-overlay.open { display: flex; }
+
+  #modal {
+    background: var(--bg);
+    border: 1px solid var(--fg);
+    padding: 24px;
+    width: min(320px, 90vw);
+    font-family: "Courier New", monospace;
+    color: var(--fg);
+  }
+
+  #modal h2 { font-size: 1rem; margin-bottom: 16px; }
+
+  #modal input {
+    width: 100%;
+    font-family: "Courier New", monospace;
+    font-size: 1rem;
+    border: 1px solid var(--fg);
+    padding: 8px;
+    outline: none;
+    margin-bottom: 16px;
+    background: var(--bg);
+    color: var(--fg);
+  }
+
+  #modal-btns { display: flex; gap: 0; border: 1px solid var(--fg); }
+  #modal-btns button {
+    flex: 1;
+    padding: 10px;
+    font-family: "Courier New", monospace;
+    font-size: 0.9rem;
+    background: var(--bg);
+    color: var(--fg);
+    border: none;
+    border-right: 1px solid var(--fg);
+    cursor: pointer;
+  }
+  #modal-btns button:last-child { border-right: none; }
+  #modal-btns button.primary { background: var(--fg); color: var(--bg); }
+  #modal-btns button:hover:not(.primary) { opacity: 0.7; }
+
+  #empty-state {
+    text-align: center;
+    color: var(--fg);
+    opacity: 0.5;
+    font-size: 0.9rem;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>★彡 (shiny) counter 彡★</h1>
+  <button id="keybind-btn" title="set hotkey"></button>
+</header>
+
+<div id="counter-tabs"></div>
+
+<div id="main">
+  <div id="empty-state">no counters yet.<br>press [+] to add one.</div>
+
+  <div id="counter-ui" style="display:none; flex-direction:column; align-items:stretch; gap:12px; width:100%; flex:1; overflow:hidden;">
+    <div id="top-bar">
+      <button id="undo-btn">↩ undo</button>
+      <button id="counter-name-display" title="tap to rename"></button>
+      <button id="reset-btn">reset</button>
+    </div>
+    <div id="count-display" style="text-align:center;">0</div>
+    <button id="hit-btn">+ ENCOUNTER</button>
+  </div>
+</div>
+
+<!-- Modal for name input -->
+<div id="modal-overlay">
+  <div id="modal">
+    <h2 id="modal-title">new counter</h2>
+    <input type="text" id="modal-input" maxlength="32" placeholder="e.g. Giratina, Starter...">
+    <div id="modal-btns">
+      <button id="modal-cancel">cancel</button>
+      <button id="modal-confirm" class="primary">confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const HOTKEY_KEY = 'shiny_counter_hotkey';
+  let hotkey = localStorage.getItem(HOTKEY_KEY) || ' ';
+
+  function hotkeyLabel(k) {
+    return k === ' ' ? 'space' : k;
+  }
+
+  function updateKeybindBtn() {
+    document.getElementById('keybind-btn').textContent = '[' + hotkeyLabel(hotkey) + ']';
+  }
+
+  document.getElementById('keybind-btn').addEventListener('click', () => {
+    document.getElementById('keybind-btn').blur();
+    const overlay = document.getElementById('modal-overlay');
+    document.getElementById('modal-title').textContent = 'press any key...';
+    document.getElementById('modal-input').style.display = 'none';
+    document.getElementById('modal-confirm').style.display = 'none';
+    document.getElementById('modal-cancel').textContent = 'cancel';
+    modalCallback = null;
+    overlay.classList.add('open');
+
+    function onKey(e) {
+      e.preventDefault();
+      if (e.key === 'Escape') { closeModal(); return; }
+      hotkey = e.key;
+      localStorage.setItem(HOTKEY_KEY, hotkey);
+      updateKeybindBtn();
+      closeModal();
+    }
+    overlay.addEventListener('keydown', onKey, { once: true });
+    // also catch it on document in case overlay isn't focused
+    document.addEventListener('keydown', onKey, { once: true });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('modal-overlay').classList.contains('open')) return;
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === hotkey) {
+      e.preventDefault();
+      document.getElementById('hit-btn').click();
+    }
+  });
+
+  const STORAGE_KEY = 'shiny_counters_v1';
+
+  let state = {
+    counters: [],
+    active: null
+  };
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) state = JSON.parse(raw);
+    } catch(e) {}
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function genId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  }
+
+  function getActive() {
+    return state.counters.find(c => c.id === state.active) || null;
+  }
+
+  function render() {
+    const tabsEl = document.getElementById('counter-tabs');
+    tabsEl.innerHTML = '';
+
+    state.counters.forEach(c => {
+      const tab = document.createElement('button');
+      tab.className = 'tab' + (c.id === state.active ? ' active' : '');
+      tab.dataset.id = c.id;
+
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = c.name;
+      tab.appendChild(nameSpan);
+
+      const closeSpan = document.createElement('span');
+      closeSpan.className = 'tab-close';
+      closeSpan.textContent = '×';
+      closeSpan.dataset.id = c.id;
+      tab.appendChild(closeSpan);
+
+      tabsEl.appendChild(tab);
+    });
+
+    const addBtn = document.createElement('button');
+    addBtn.id = 'add-counter-btn';
+    addBtn.textContent = '[+]';
+    tabsEl.appendChild(addBtn);
+
+    const active = getActive();
+    const ui = document.getElementById('counter-ui');
+    const empty = document.getElementById('empty-state');
+
+    if (active) {
+      ui.style.display = 'flex';
+      empty.style.display = 'none';
+      document.getElementById('counter-name-display').textContent = active.name;
+      document.getElementById('count-display').textContent = active.count;
+    } else {
+      ui.style.display = 'none';
+      empty.style.display = 'block';
+    }
+  }
+
+  document.getElementById('counter-tabs').addEventListener('click', e => {
+    if (e.target.classList.contains('tab-close')) {
+      const id = e.target.dataset.id;
+      const name = state.counters.find(c=>c.id===id)?.name;
+      openConfirm(`delete "${name}"?`, () => {
+        state.counters = state.counters.filter(c => c.id !== id);
+        if (state.active === id) state.active = state.counters[0]?.id || null;
+        saveState(); render();
+      });
+      return;
+    }
+    const tab = e.target.closest('.tab');
+    if (tab) {
+      state.active = tab.dataset.id;
+      saveState(); render();
+      return;
+    }
+    if (e.target.id === 'add-counter-btn') {
+      openModal('new counter', '', name => {
+        const id = genId();
+        state.counters.push({ id, name, count: 0, history: [] });
+        state.active = id;
+        saveState(); render();
+      });
+    }
+  });
+
+  document.getElementById('counter-name-display').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    openModal('rename counter', active.name, name => {
+      active.name = name;
+      saveState(); render();
+    });
+  });
+
+  document.getElementById('hit-btn').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    active.history.push(active.count);
+    if (active.history.length > 200) active.history.shift();
+    active.count++;
+    saveState(); render();
+  });
+
+  document.getElementById('undo-btn').addEventListener('click', () => {
+    const active = getActive();
+    if (!active || !active.history.length) return;
+    active.count = active.history.pop();
+    saveState(); render();
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    openConfirm(`reset "${active.name}" to 0?`, () => {
+      active.history = [];
+      active.count = 0;
+      saveState(); render();
+    });
+  });
+
+  let modalCallback = null;
+
+  function openConfirm(message, cb) {
+    document.getElementById('modal-title').textContent = message;
+    document.getElementById('modal-input').style.display = 'none';
+    document.getElementById('modal-confirm').textContent = 'yes';
+    document.getElementById('modal-cancel').textContent = 'no';
+    modalCallback = cb;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function openModal(title, value, cb) {
+    modalCallback = cb;
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-input').style.display = '';
+    document.getElementById('modal-input').value = value;
+    document.getElementById('modal-confirm').textContent = 'confirm';
+    document.getElementById('modal-cancel').textContent = 'cancel';
+    document.getElementById('modal-overlay').classList.add('open');
+    setTimeout(() => document.getElementById('modal-input').focus(), 50);
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.getElementById('modal-confirm').style.display = '';
+    modalCallback = null;
+  }
+
+  function confirmModal() {
+    const input = document.getElementById('modal-input');
+    if (input.style.display !== 'none') {
+      const val = input.value.trim();
+      if (!val) { input.focus(); return; }
+    }
+    if (modalCallback) modalCallback(document.getElementById('modal-input').value.trim());
+    closeModal();
+  }
+
+  document.getElementById('modal-cancel').addEventListener('click', closeModal);
+  document.getElementById('modal-confirm').addEventListener('click', confirmModal);
+  document.getElementById('modal-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirmModal();
+    if (e.key === 'Escape') closeModal();
+  });
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+
+  loadState();
+  if (state.counters.length === 0) state.active = null;
+  updateKeybindBtn();
+  render();
+</script>
+</body>
+</html>

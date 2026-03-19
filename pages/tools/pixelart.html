@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pixel Art Editor</title>
+<title>Pixel Art Maker</title>
 <link rel="stylesheet" href="/css/style.css">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -116,7 +116,7 @@ button:disabled:active { background: var(--bg); color: var(--fg); }
 <body>
 
 <div id="topbar">
-  <span id="title">Pixel Art Editor</span>
+  <span id="title">-=[ Pixel Art ]=-</span>
   <div class="tool-group">
     <button class="size-btn" data-size="8">8</button>
     <button class="size-btn active" data-size="16">16</button>
@@ -380,6 +380,7 @@ button:disabled:active { background: var(--bg); color: var(--fg); }
   }
 
   canvasArea.addEventListener("pointerdown", e => {
+    if (e.target.tagName === 'BUTTON') return;
     e.preventDefault();
     canvasArea.setPointerCapture(e.pointerId);
     activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
@@ -528,6 +529,7 @@ button:disabled:active { background: var(--bg); color: var(--fg); }
       if (savedPixels && savedGridSize) {
         pixels = JSON.parse(savedPixels);
         gridSize = parseInt(savedGridSize);
+        cellSize = calcCellSize();
         document.querySelectorAll(".size-btn").forEach(b => {
             b.classList.toggle("active", parseInt(b.dataset.size) === gridSize);
         });
@@ -651,6 +653,15 @@ button:disabled:active { background: var(--bg); color: var(--fg); }
     if (traceImage) redraw();
   });
   traceClearBtn.addEventListener("click", () => { traceImage = null; traceClearBtn.style.display = "none"; redraw(); });
+
+  // Horizontal scroll on PC for toolbar and palette row
+  [document.getElementById("toolbar"), document.getElementById("palette-row")].forEach(el => {
+    el.addEventListener("wheel", e => {
+      if (e.deltaY === 0) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    }, { passive: false });
+  });
 
   setActiveColor("#000000");
   initGrid(false);

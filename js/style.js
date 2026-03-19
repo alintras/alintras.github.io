@@ -62,3 +62,18 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.appendChild(footer);
   }
 });
+
+  //Icon
+  // Create a link element
+  var link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/png'; // or 'image/x-icon'
+  link.href = '/assets/icon/favicon-16x16.png'; // path to your favicon
+
+  // Remove any existing favicon
+  var head = document.getElementsByTagName('head')[0];
+  var existing = document.querySelector("link[rel='icon']");
+  if (existing) head.removeChild(existing);
+
+  // Add the new favicon
+  head.appendChild(link);
