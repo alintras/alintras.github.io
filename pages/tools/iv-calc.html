@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gen 3 IV Calculator</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/style.js" defer></script>
+  <style>
+    #wrap { max-width: 860px; padding: 1rem; }
+    h1 { font-size: 1.2rem; margin: 0 0 0.4rem; }
+    p.desc { margin: 0 0 1rem; font-size: 0.85rem; }
+
+    .section-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+      margin: 0.9rem 0 0.3rem; border-bottom: 1px solid var(--border,#000); padding-bottom: 2px;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 0.5rem; margin-bottom: 0.5rem; }
+    .field { display: flex; flex-direction: column; gap: 2px; }
+    .field label { font-size: 0.75rem; }
+    .field input, .field select {
+      font-family: monospace; font-size: 0.85rem;
+      border: 1px solid var(--border,#000);
+      background: var(--bg,#fff); color: var(--fg,#000);
+      padding: 3px 5px; width: 100%; box-sizing: border-box;
+    }
+
+    /* stat rows */
+    #stat-table { width: 100%; border-collapse: collapse; margin-bottom: 0.75rem; }
+    #stat-table th, #stat-table td {
+      border: 1px solid var(--border,#000); padding: 3px 6px; font-size: 0.82rem;
+    }
+    #stat-table th { text-align: left; font-size: 0.75rem; }
+    #stat-table input { width: 100%; box-sizing: border-box; font-family: monospace; font-size: 0.82rem;
+      border: none; background: transparent; color: var(--fg,#000); padding: 0; }
+    #stat-table input:focus { outline: 1px solid var(--border,#000); }
+    td.iv-result { font-family: monospace; font-size: 0.82rem; min-width: 80px; }
+    td.iv-result.perfect { font-weight: bold; }
+    td.iv-result.impossible { opacity: 0.4; }
+    td.nature-plus  { color: inherit; font-weight: bold; }
+    td.nature-minus { opacity: 0.55; }
+
+    #calc-btn {
+      font-family: monospace; font-size: 0.85rem;
+      border: 1px solid var(--border,#000);
+      background: var(--bg,#fff); color: var(--fg,#000);
+      padding: 4px 14px; cursor: pointer; margin-top: 0.25rem;
+    }
+    #calc-btn:hover { background: var(--fg,#000); color: var(--bg,#fff); }
+
+    .note { font-size: 0.75rem; border: 1px solid var(--border,#000); padding: 0.4rem 0.6rem; margin-bottom: 0.75rem; }
+    a.tool-link { font-size: 0.8rem; }
+
+    @media (max-width: 500px) {
+      #wrap { padding: 0.6rem; }
+      .grid { grid-template-columns: 1fr 1fr; }
+      .field input, .field select { font-size: 1rem; padding: 6px 5px; }
+      #calc-btn { padding: 8px 16px; font-size: 1rem; }
+      #stat-table th, #stat-table td { padding: 4px 4px; font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="wrap">
+    <header class="simple-header">
+    <h1>Gen 3 IV Calculator</h1>
+    <p class="desc">
+      Enter a Pokémon's stats to find its possible IVs.
+      <a class="tool-link" href="pokefinder.html">Find any Pokémon →</a>
+    </p>
+    </header>
+<!--
+    <div class="note">
+      HP formula: <code>⌊(2B + IV + ⌊EV/4⌋) × L / 100⌋ + L + 10</code><br>
+      Other stats: <code>⌊(⌊(2B + IV + ⌊EV/4⌋) × L / 100⌋ + 5) × N⌋</code> where N = 1.1 / 0.9 / 1.0
+    </div>
+-->
+    <div class="section-label">Pokémon</div>
+    <div class="grid">
+      <div class="field" style="grid-column: span 2">
+        <label>Species</label>
+        <select id="species" onchange="onSpecies()"></select>
+      </div>
+      <div class="field">
+        <label>Level</label>
+        <input id="level" type="number" min="1" max="100" value="50">
+      </div>
+      <div class="field">
+        <label>Nature</label>
+        <select id="nature" onchange="updateNatureHighlight()">
+          <option value="0">Hardy</option><option value="1">Lonely</option><option value="2">Brave</option>
+          <option value="3">Adamant</option><option value="4">Naughty</option><option value="5">Bold</option>
+          <option value="6">Docile</option><option value="7">Relaxed</option><option value="8">Impish</option>
+          <option value="9">Lax</option><option value="10">Timid</option><option value="11">Hasty</option>
+          <option value="12">Serious</option><option value="13">Jolly</option><option value="14">Naive</option>
+          <option value="15">Modest</option><option value="16">Mild</option><option value="17">Quiet</option>
+          <option value="18">Bashful</option><option value="19">Rash</option><option value="20">Calm</option>
+          <option value="21">Gentle</option><option value="22">Sassy</option><option value="23">Careful</option>
+          <option value="24">Quirky</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-label">Stats &amp; EVs</div>
+    <table id="stat-table">
+      <thead>
+        <tr><th>Stat</th><th>Base</th><th>EV (0–252)</th><th>Actual stat</th><th>IV range</th></tr>
+      </thead>
+      <tbody id="stat-tbody"></tbody>
+    </table>
+
+    <button id="calc-btn" onclick="calculate()">Calculate IVs</button>
+  </div>
+
+  <script>
+    // ── Base stats [name, hp, atk, def, spa, spd, spe] ──────────────────────
+    const DEX = [
+      ["Bulbasaur",45,49,49,65,65,45],["Ivysaur",60,62,63,80,80,60],["Venusaur",80,82,83,100,100,80],
+      ["Charmander",39,52,43,60,50,65],["Charmeleon",58,64,58,80,65,80],["Charizard",78,84,78,109,85,100],
+      ["Squirtle",44,48,65,50,64,43],["Wartortle",59,63,80,65,80,58],["Blastoise",79,83,100,85,105,78],
+      ["Caterpie",45,30,35,20,20,45],["Metapod",50,20,55,25,25,30],["Butterfree",60,45,50,90,80,70],
+      ["Weedle",40,35,30,20,20,50],["Kakuna",45,25,50,25,25,35],["Beedrill",65,90,40,45,80,75],
+      ["Pidgey",40,45,40,35,35,56],["Pidgeotto",63,60,55,50,50,71],["Pidgeot",83,80,75,70,70,101],
+      ["Rattata",30,56,35,25,35,72],["Raticate",55,81,60,50,70,97],
+      ["Spearow",40,60,30,31,31,70],["Fearow",65,90,65,61,61,100],
+      ["Ekans",35,60,44,40,54,55],["Arbok",60,85,69,65,79,80],
+      ["Pikachu",35,55,30,50,40,90],["Raichu",60,90,55,90,80,110],
+      ["Sandshrew",50,75,85,20,30,40],["Sandslash",75,100,110,45,55,65],
+      ["Nidoran-F",55,47,52,40,40,41],["Nidorina",70,62,67,55,55,56],["Nidoqueen",90,82,87,75,85,76],
+      ["Nidoran-M",46,57,40,40,40,50],["Nidorino",61,72,57,55,55,65],["Nidoking",81,92,77,85,75,85],
+      ["Clefairy",70,45,48,60,65,35],["Clefable",95,70,73,85,90,60],
+      ["Vulpix",38,41,40,50,65,65],["Ninetales",73,76,75,81,100,100],
+      ["Jigglypuff",115,45,20,45,25,20],["Wigglytuff",140,70,45,75,50,45],
+      ["Zubat",40,45,35,30,40,55],["Golbat",75,80,70,65,75,90],
+      ["Oddish",45,50,55,75,65,30],["Gloom",60,65,70,85,75,40],["Vileplume",75,80,85,100,90,50],
+      ["Paras",35,70,55,45,55,25],["Parasect",60,95,80,60,80,30],
+      ["Venonat",60,55,50,40,55,45],["Venomoth",70,65,60,90,75,90],
+      ["Diglett",10,55,25,35,45,95],["Dugtrio",35,80,50,50,70,120],
+      ["Meowth",40,45,35,40,40,90],["Persian",65,70,60,65,65,115],
+      ["Psyduck",50,52,48,65,50,55],["Golduck",80,82,78,95,80,85],
+      ["Mankey",40,80,35,35,45,70],["Primeape",65,105,60,60,70,95],
+      ["Growlithe",55,70,45,70,50,60],["Arcanine",90,110,80,100,80,95],
+      ["Poliwag",40,50,40,40,40,90],["Poliwhirl",65,65,65,50,50,90],["Poliwrath",90,85,95,70,90,70],
+      ["Abra",25,20,15,105,55,90],["Kadabra",40,35,30,120,70,105],["Alakazam",55,50,45,135,85,120],
+      ["Machop",70,80,50,35,35,35],["Machoke",80,100,70,50,60,45],["Machamp",90,130,80,65,85,55],
+      ["Bellsprout",50,75,35,70,30,40],["Weepinbell",65,90,50,85,45,55],["Victreebel",80,105,65,100,60,70],
+      ["Tentacool",40,40,35,50,100,70],["Tentacruel",80,70,65,80,120,100],
+      ["Geodude",40,80,100,30,30,20],["Graveler",55,95,115,45,45,35],["Golem",80,110,130,55,65,45],
+      ["Ponyta",50,85,55,65,65,90],["Rapidash",65,100,70,80,80,105],
+      ["Slowpoke",90,65,65,40,40,15],["Slowbro",95,75,110,100,80,30],
+      ["Magnemite",25,35,70,95,55,45],["Magneton",50,60,95,120,70,70],
+      ["Farfetch'd",52,65,55,58,62,60],
+      ["Doduo",35,85,45,35,35,75],["Dodrio",60,110,70,60,60,110],
+      ["Seel",65,45,55,45,70,45],["Dewgong",90,70,80,70,95,70],
+      ["Grimer",80,80,50,40,50,25],["Muk",105,105,75,65,100,50],
+      ["Shellder",30,65,100,45,25,40],["Cloyster",50,95,180,85,45,70],
+      ["Gastly",30,35,30,100,35,80],["Haunter",45,50,45,115,55,95],["Gengar",60,65,60,130,75,110],
+      ["Onix",35,45,160,30,45,70],
+      ["Drowzee",60,48,45,43,90,42],["Hypno",85,73,70,73,115,67],
+      ["Krabby",30,105,90,25,25,50],["Kingler",55,130,115,50,50,75],
+      ["Voltorb",40,30,50,55,55,100],["Electrode",60,50,70,80,80,150],
+      ["Exeggcute",60,40,80,60,45,40],["Exeggutor",95,95,85,125,65,55],
+      ["Cubone",50,50,95,40,50,35],["Marowak",60,80,110,50,80,45],
+      ["Hitmonlee",50,120,53,35,110,87],["Hitmonchan",50,105,79,35,110,76],
+      ["Lickitung",90,55,75,60,75,30],
+      ["Koffing",40,65,95,60,45,35],["Weezing",65,90,120,85,70,60],
+      ["Rhyhorn",80,85,95,30,30,25],["Rhydon",105,130,120,45,45,40],
+      ["Chansey",250,5,5,35,105,50],
+      ["Tangela",65,55,115,100,40,60],
+      ["Kangaskhan",105,95,80,40,80,90],
+      ["Horsea",30,40,70,70,25,60],["Seadra",55,65,95,95,45,85],
+      ["Goldeen",45,67,60,35,50,63],["Seaking",80,92,65,65,80,68],
+      ["Staryu",30,45,55,70,55,85],["Starmie",60,75,85,100,85,115],
+      ["Mr. Mime",40,45,65,100,120,90],
+      ["Scyther",70,110,80,55,80,105],
+      ["Jynx",65,50,35,115,95,95],
+      ["Electabuzz",65,83,57,95,85,105],["Magmar",65,95,57,100,85,93],
+      ["Pinsir",65,125,100,55,70,85],["Tauros",75,100,95,40,70,110],
+      ["Magikarp",20,10,55,15,20,80],["Gyarados",95,125,79,60,100,81],
+      ["Lapras",130,85,80,85,95,60],["Ditto",48,48,48,48,48,48],
+      ["Eevee",55,55,50,45,65,55],["Vaporeon",130,65,60,110,95,65],
+      ["Jolteon",65,65,60,110,95,130],["Flareon",65,130,60,95,110,65],
+      ["Porygon",65,60,70,85,75,40],
+      ["Omanyte",35,40,100,90,55,35],["Omastar",70,60,125,115,70,55],
+      ["Kabuto",30,80,90,55,45,55],["Kabutops",60,115,105,65,70,80],
+      ["Aerodactyl",80,105,65,60,75,130],
+      ["Snorlax",160,110,65,65,110,30],
+      ["Articuno",90,85,100,95,125,85],["Zapdos",90,90,85,125,90,100],["Moltres",90,100,90,125,85,90],
+      ["Dratini",41,64,45,50,50,50],["Dragonair",61,84,65,70,70,70],["Dragonite",91,134,95,100,100,80],
+      ["Mewtwo",106,110,90,154,90,130],["Mew",100,100,100,100,100,100],
+      // Gen 2
+      ["Chikorita",45,49,65,49,65,45],["Bayleef",60,62,80,63,80,60],["Meganium",80,82,100,83,100,80],
+      ["Cyndaquil",39,52,43,60,50,65],["Quilava",58,64,58,80,65,80],["Typhlosion",78,84,78,109,85,100],
+      ["Totodile",50,65,64,44,48,43],["Croconaw",65,80,80,59,63,58],["Feraligatr",85,105,100,79,83,78],
+      ["Sentret",35,46,34,35,45,20],["Furret",85,76,64,45,55,90],
+      ["Hoothoot",60,30,30,36,56,50],["Noctowl",100,50,50,76,96,70],
+      ["Ledyba",40,20,30,40,80,55],["Ledian",55,35,50,55,110,85],
+      ["Spinarak",40,60,40,40,40,30],["Ariados",70,90,70,60,60,40],
+      ["Crobat",85,90,80,70,80,130],
+      ["Chinchou",75,38,38,56,56,67],["Lanturn",125,58,58,76,76,67],
+      ["Pichu",20,40,15,35,35,60],["Cleffa",50,25,28,45,55,15],["Igglybuff",90,30,15,40,20,15],
+      ["Togepi",35,20,65,40,65,20],["Togetic",55,40,85,80,105,40],
+      ["Natu",40,50,45,70,45,70],["Xatu",65,75,70,95,70,95],
+      ["Mareep",55,40,40,65,45,35],["Flaaffy",70,55,55,80,60,45],["Ampharos",90,75,75,115,90,55],
+      ["Bellossom",75,80,85,90,100,50],
+      ["Marill",70,20,50,20,50,40],["Azumarill",100,50,80,50,80,50],
+      ["Sudowoodo",70,100,115,30,65,30],
+      ["Politoed",90,75,75,90,100,70],
+      ["Hoppip",35,35,40,35,55,50],["Skiploom",55,45,50,45,65,80],["Jumpluff",75,55,70,55,85,110],
+      ["Aipom",55,70,55,40,55,85],
+      ["Sunkern",30,30,30,30,30,30],["Sunflora",75,75,55,105,85,30],
+      ["Yanma",65,65,45,75,45,95],
+      ["Wooper",55,45,45,25,25,15],["Quagsire",95,85,85,65,65,35],
+      ["Espeon",65,65,60,130,95,110],["Umbreon",95,65,110,60,130,65],
+      ["Murkrow",60,85,42,85,42,91],
+      ["Slowking",95,75,80,100,110,30],
+      ["Misdreavus",60,60,60,85,85,85],
+      ["Unown",48,72,48,72,48,48],
+      ["Wobbuffet",190,33,58,33,58,33],
+      ["Girafarig",70,80,65,90,65,85],
+      ["Pineco",50,65,90,35,35,15],["Forretress",75,90,140,60,60,40],
+      ["Dunsparce",100,70,70,65,65,45],
+      ["Gligar",65,75,105,35,65,85],
+      ["Steelix",75,85,200,55,65,30],
+      ["Snubbull",60,80,50,40,40,30],["Granbull",90,120,75,60,60,45],
+      ["Qwilfish",65,95,75,55,55,85],
+      ["Scizor",70,130,100,55,80,65],
+      ["Shuckle",20,10,230,10,230,5],
+      ["Heracross",80,125,75,40,95,85],
+      ["Sneasel",55,95,55,35,75,115],
+      ["Teddiursa",60,80,50,50,50,40],["Ursaring",90,130,75,75,75,55],
+      ["Slugma",40,40,40,70,40,20],["Magcargo",50,50,120,80,80,30],
+      ["Swinub",50,50,40,30,30,50],["Piloswine",100,100,80,60,60,50],
+      ["Corsola",55,55,85,65,85,35],
+      ["Remoraid",35,65,35,65,35,65],["Octillery",75,105,75,105,75,45],
+      ["Delibird",45,55,45,65,45,75],
+      ["Mantine",65,40,70,80,140,70],
+      ["Skarmory",65,80,140,40,70,70],
+      ["Houndour",45,60,30,80,50,65],["Houndoom",75,90,50,110,80,95],
+      ["Kingdra",75,95,95,95,95,85],
+      ["Phanpy",90,60,60,40,40,40],["Donphan",90,120,120,60,60,50],
+      ["Porygon2",85,80,90,105,95,60],
+      ["Stantler",73,95,62,85,65,85],
+      ["Smeargle",55,20,35,20,45,75],
+      ["Tyrogue",35,35,35,35,35,35],
+      ["Hitmontop",50,95,95,35,110,70],
+      ["Smoochum",45,30,15,85,65,65],
+      ["Elekid",45,63,37,65,55,95],["Magby",45,75,37,70,55,83],
+      ["Miltank",95,80,105,40,70,100],
+      ["Blissey",255,10,10,75,135,55],
+      ["Raikou",90,85,75,115,100,115],["Entei",115,115,85,90,75,100],["Suicune",100,75,115,90,115,85],
+      ["Larvitar",50,64,50,45,50,41],["Pupitar",70,84,70,65,70,51],["Tyranitar",100,134,110,95,100,61],
+      ["Lugia",106,90,130,90,154,110],["Ho-Oh",106,130,90,110,154,90],
+      ["Celebi",100,100,100,100,100,100],
+      // Gen 3
+      ["Treecko",40,45,35,65,55,70],["Grovyle",50,65,45,85,65,95],["Sceptile",70,85,65,105,85,120],
+      ["Torchic",45,60,40,70,50,45],["Combusken",60,85,60,85,60,55],["Blaziken",80,120,70,110,70,80],
+      ["Mudkip",50,70,50,50,50,40],["Marshtomp",70,85,70,60,70,50],["Swampert",100,110,90,85,90,60],
+      ["Poochyena",35,55,35,30,30,35],["Mightyena",70,90,70,60,60,70],
+      ["Zigzagoon",38,30,41,30,41,60],["Linoone",78,70,61,50,61,100],
+      ["Wurmple",45,45,35,20,30,20],["Silcoon",50,35,55,25,25,15],
+      ["Beautifly",60,70,50,100,50,65],["Cascoon",50,35,55,25,25,15],["Dustox",60,50,70,50,90,65],
+      ["Lotad",40,30,30,40,50,30],["Lombre",60,50,50,60,70,50],["Ludicolo",80,70,70,90,100,70],
+      ["Seedot",40,40,50,30,30,30],["Nuzleaf",70,70,40,60,40,60],["Shiftry",90,100,60,90,60,80],
+      ["Taillow",40,55,30,30,30,85],["Swellow",60,85,60,50,50,125],
+      ["Wingull",40,30,30,55,30,85],["Pelipper",60,50,100,95,70,65],
+      ["Ralts",28,25,25,45,35,40],["Kirlia",38,35,35,65,55,50],["Gardevoir",68,65,65,125,115,80],
+      ["Surskit",40,30,32,50,52,65],["Masquerain",70,60,62,100,82,80],
+      ["Shroomish",60,40,60,40,60,35],["Breloom",60,130,80,60,60,70],
+      ["Slakoth",60,60,60,35,35,30],["Vigoroth",80,80,80,55,55,90],["Slaking",150,160,100,95,65,100],
+      ["Nincada",31,45,90,30,30,40],["Ninjask",61,90,45,50,50,160],["Shedinja",1,90,45,30,30,40],
+      ["Whismur",64,51,23,51,23,28],["Loudred",84,71,43,71,43,48],["Exploud",104,91,63,91,63,68],
+      ["Makuhita",72,60,30,20,30,25],["Hariyama",144,120,60,40,60,50],
+      ["Azurill",50,20,40,20,40,20],
+      ["Nosepass",30,45,135,45,90,30],
+      ["Skitty",50,45,45,35,35,50],["Delcatty",70,65,65,55,55,70],
+      ["Sableye",50,75,75,65,65,50],["Mawile",50,85,85,55,55,50],
+      ["Aron",50,70,100,40,40,30],["Lairon",60,90,140,50,50,40],["Aggron",70,110,180,60,60,50],
+      ["Meditite",30,40,55,40,55,60],["Medicham",60,60,75,60,75,80],
+      ["Electrike",40,45,40,65,40,65],["Manectric",70,75,60,105,60,105],
+      ["Plusle",60,50,40,85,75,95],["Minun",60,40,50,75,85,95],
+      ["Volbeat",65,73,55,47,75,85],["Illumise",65,47,55,73,75,85],
+      ["Roselia",50,60,45,100,80,65],
+      ["Gulpin",70,43,53,43,53,40],["Swalot",100,73,83,73,83,55],
+      ["Carvanha",45,90,20,65,20,65],["Sharpedo",70,120,40,95,40,95],
+      ["Wailmer",130,70,35,70,35,60],["Wailord",170,90,45,90,45,60],
+      ["Numel",60,60,40,65,45,35],["Camerupt",70,100,70,105,75,40],
+      ["Torkoal",70,85,140,85,70,20],
+      ["Spoink",60,25,35,70,80,60],["Grumpig",80,45,65,90,110,80],
+      ["Spinda",60,60,60,60,60,60],
+      ["Trapinch",45,100,45,45,45,10],["Vibrava",50,70,50,50,50,70],["Flygon",80,100,80,80,80,100],
+      ["Cacnea",50,85,40,85,40,35],["Cacturne",70,115,60,115,60,55],
+      ["Swablu",45,40,60,40,75,50],["Altaria",75,70,90,70,105,80],
+      ["Zangoose",73,115,60,60,60,90],["Seviper",73,100,60,100,60,65],
+      ["Lunatone",70,55,65,95,85,70],["Solrock",70,95,85,55,65,70],
+      ["Barboach",50,48,43,46,41,60],["Whiscash",110,78,73,76,71,60],
+      ["Corphish",43,80,65,50,35,35],["Crawdaunt",63,120,85,90,55,55],
+      ["Baltoy",40,40,55,40,70,55],["Claydol",60,70,105,70,120,75],
+      ["Lileep",66,41,77,61,87,23],["Cradily",86,81,97,81,107,43],
+      ["Anorith",45,95,50,40,50,75],["Armaldo",75,125,100,70,80,45],
+      ["Feebas",20,15,20,10,55,80],["Milotic",95,60,79,100,125,81],
+      ["Castform",70,70,70,70,70,70],
+      ["Kecleon",60,90,70,60,120,40],
+      ["Shuppet",44,75,35,63,33,45],["Banette",64,115,65,83,63,65],
+      ["Duskull",20,40,90,30,90,25],["Dusclops",40,70,130,60,130,25],
+      ["Tropius",99,68,83,72,87,51],
+      ["Chimecho",65,50,70,95,80,65],
+      ["Absol",65,130,60,75,60,75],
+      ["Wynaut",95,23,48,23,48,23],
+      ["Snorunt",50,50,50,50,50,50],["Glalie",80,80,80,80,80,80],
+      ["Spheal",70,40,50,55,50,25],["Sealeo",90,60,70,75,70,45],["Walrein",110,80,90,95,90,65],
+      ["Clamperl",35,64,85,74,55,32],["Huntail",55,104,105,94,75,52],["Gorebyss",55,84,105,114,75,52],
+      ["Relicanth",100,90,130,45,65,55],
+      ["Luvdisc",43,30,55,40,65,97],
+      ["Bagon",45,75,60,40,30,50],["Shelgon",65,95,100,60,50,50],["Salamence",95,135,80,110,80,100],
+      ["Beldum",40,55,80,35,60,30],["Metang",60,75,100,55,80,50],["Metagross",80,135,130,95,90,70],
+      ["Regirock",80,100,200,50,100,50],["Regice",80,50,100,100,200,50],["Registeel",80,75,150,75,150,50],
+      ["Latias",80,80,90,110,130,110],["Latios",80,90,80,130,110,110],
+      ["Kyogre",100,100,90,150,140,90],["Groudon",100,150,140,100,90,90],
+      ["Rayquaza",105,150,90,150,90,95],
+      ["Jirachi",100,100,100,100,100,100],
+      ["Deoxys",50,150,50,150,50,150],
+    ];
+
+    // Nature table: [boosted stat idx, hindered stat idx] (1=Atk,2=Def,3=SpA,4=SpD,5=Spe), null=neutral
+    const NATURE_MOD = [
+      null,       // Hardy
+      [1,2],      // Lonely  +Atk -Def
+      [1,5],      // Brave   +Atk -Spe
+      [1,3],      // Adamant +Atk -SpA
+      [1,4],      // Naughty +Atk -SpD
+      [2,1],      // Bold    +Def -Atk
+      null,       // Docile
+      [2,5],      // Relaxed +Def -Spe
+      [2,3],      // Impish  +Def -SpA
+      [2,4],      // Lax     +Def -SpD
+      [5,1],      // Timid   +Spe -Atk
+      [5,2],      // Hasty   +Spe -Def
+      null,       // Serious
+      [5,3],      // Jolly   +Spe -SpA
+      [5,4],      // Naive   +Spe -SpD
+      [3,1],      // Modest  +SpA -Atk
+      [3,2],      // Mild    +SpA -Def
+      [3,5],      // Quiet   +SpA -Spe
+      null,       // Bashful
+      [3,4],      // Rash    +SpA -SpD
+      [4,1],      // Calm    +SpD -Atk
+      [4,2],      // Gentle  +SpD -Def
+      [4,5],      // Sassy   +SpD -Spe
+      [4,3],      // Careful +SpD -SpA
+      null,       // Quirky
+    ];
+
+    const STAT_NAMES = ['HP','Atk','Def','SpA','SpD','Spe'];
+    const LS_KEY = 'gen3ivcalc';
+
+    // ── Populate species dropdown ────────────────────────────────────────────
+    (function() {
+      const sel = document.getElementById('species');
+      DEX.forEach(([name], i) => {
+        const o = document.createElement('option');
+        o.value = i; o.textContent = `#${String(i+1).padStart(3,'0')} ${name}`;
+        sel.appendChild(o);
+      });
+    })();
+
+    // ── Build stat input rows ────────────────────────────────────────────────
+    function buildRows() {
+      const tbody = document.getElementById('stat-tbody');
+      tbody.innerHTML = '';
+      STAT_NAMES.forEach((name, i) => {
+        const tr = document.createElement('tr');
+        tr.id = `row-${i}`;
+        tr.innerHTML = `
+          <td id="label-${i}">${name}</td>
+          <td id="base-${i}">—</td>
+          <td><input id="ev-${i}" type="number" min="0" max="252" value="0" step="4" oninput="saveInputs()"></td>
+          <td><input id="stat-${i}" type="number" min="1" max="999" placeholder="?" oninput="saveInputs()"></td>
+          <td id="iv-${i}" class="iv-result">—</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    buildRows();
+
+    function onSpecies() {
+      const idx = +document.getElementById('species').value;
+      const [, hp, atk, def, spa, spd, spe] = DEX[idx];
+      const bases = [hp, atk, def, spa, spd, spe];
+      bases.forEach((b, i) => { document.getElementById(`base-${i}`).textContent = b; });
+      updateNatureHighlight();
+      saveInputs();
+    }
+    onSpecies();
+
+    function updateNatureHighlight() {
+      const nat = +document.getElementById('nature').value;
+      const mod = NATURE_MOD[nat];
+      STAT_NAMES.forEach((_, i) => {
+        const lbl = document.getElementById(`label-${i}`);
+        lbl.className = '';
+        if (!mod || i === 0) return; // HP unaffected
+        if (i === mod[0]) lbl.className = 'nature-plus';
+        if (i === mod[1]) lbl.className = 'nature-minus';
+      });
+      saveInputs();
+    }
+
+    // ── Stat formula ─────────────────────────────────────────────────────────
+    function calcHP(base, iv, ev, level) {
+      return Math.floor((2*base + iv + Math.floor(ev/4)) * level / 100) + level + 10;
+    }
+    function calcStat(base, iv, ev, level, mult) {
+      return Math.floor((Math.floor((2*base + iv + Math.floor(ev/4)) * level / 100) + 5) * mult);
+    }
+
+    function natMult(statIdx, natIdx) {
+      const mod = NATURE_MOD[natIdx];
+      if (!mod || statIdx === 0) return 1.0;
+      if (statIdx === mod[0]) return 1.1;
+      if (statIdx === mod[1]) return 0.9;
+      return 1.0;
+    }
+
+    // ── Calculate ────────────────────────────────────────────────────────────
+    function calculate() {
+      const speciesIdx = +document.getElementById('species').value;
+      const level      = +document.getElementById('level').value;
+      const natIdx     = +document.getElementById('nature').value;
+      const [, hp, atk, def, spa, spd, spe] = DEX[speciesIdx];
+      const bases = [hp, atk, def, spa, spd, spe];
+
+      STAT_NAMES.forEach((_, i) => {
+        const statEl = document.getElementById(`stat-${i}`);
+        const evEl   = document.getElementById(`ev-${i}`);
+        const resEl  = document.getElementById(`iv-${i}`);
+        const statVal = parseInt(statEl.value);
+        const ev      = Math.max(0, Math.min(252, parseInt(evEl.value) || 0));
+        const base    = bases[i];
+        const mult    = natMult(i, natIdx);
+
+        if (isNaN(statVal) || statVal < 1) { resEl.textContent = '—'; resEl.className = 'iv-result'; return; }
+
+        const matching = [];
+        for (let iv = 0; iv <= 31; iv++) {
+          const computed = i === 0
+            ? calcHP(base, iv, ev, level)
+            : calcStat(base, iv, ev, level, mult);
+          if (computed === statVal) matching.push(iv);
+        }
+
+        if (matching.length === 0) {
+          resEl.textContent = 'impossible';
+          resEl.className = 'iv-result impossible';
+        } else {
+          const lo = matching[0], hi = matching[matching.length-1];
+          resEl.textContent = lo === hi ? `${lo}` : `${lo}–${hi}`;
+          resEl.className = 'iv-result' + (hi === 31 ? ' perfect' : '');
+        }
+      });
+    }
+
+    // ── localStorage ─────────────────────────────────────────────────────────
+    function saveInputs() {
+      const data = {
+        species: document.getElementById('species').value,
+        level:   document.getElementById('level').value,
+        nature:  document.getElementById('nature').value,
+      };
+      STAT_NAMES.forEach((_, i) => {
+        data[`ev${i}`]   = document.getElementById(`ev-${i}`).value;
+        data[`stat${i}`] = document.getElementById(`stat-${i}`).value;
+      });
+      try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e) {}
+    }
+
+    function restoreInputs() {
+      let data;
+      try { data = JSON.parse(localStorage.getItem(LS_KEY)); } catch(e) {}
+      if (!data) return;
+      if (data.species !== undefined) document.getElementById('species').value = data.species;
+      if (data.level   !== undefined) document.getElementById('level').value   = data.level;
+      if (data.nature  !== undefined) document.getElementById('nature').value  = data.nature;
+      STAT_NAMES.forEach((_, i) => {
+        if (data[`ev${i}`]   !== undefined) document.getElementById(`ev-${i}`).value   = data[`ev${i}`];
+        if (data[`stat${i}`] !== undefined) document.getElementById(`stat-${i}`).value = data[`stat${i}`];
+      });
+      onSpecies();
+    }
+
+    // Attach save on change for level/nature/species
+    ['species','level','nature'].forEach(id =>
+      document.getElementById(id).addEventListener('change', () => {
+        if (id === 'species') onSpecies();
+        if (id === 'nature')  updateNatureHighlight();
+        saveInputs();
+      })
+    );
+
+    restoreInputs();
+  </script>
+</body>
+</html>

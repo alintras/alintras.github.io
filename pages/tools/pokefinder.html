@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gen 3 Pokémon Finder</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/style.js" defer></script>
+  <style>
+    #wrap { max-width: 960px; padding: 1rem; }
+    h1 { font-size: 1.2rem; margin: 0 0 0.4rem; }
+    p.desc { margin: 0 0 1rem; font-size: 0.85rem; }
+
+    .section-label {
+      font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+      margin: 0.9rem 0 0.3rem; border-bottom: 1px solid var(--border, #000); padding-bottom: 2px;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin-bottom: 0.5rem; }
+    .grid-iv { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; margin-bottom: 0.5rem; }
+    .field { display: flex; flex-direction: column; gap: 2px; }
+    .field label { font-size: 0.75rem; }
+    .field input, .field select {
+      font-family: monospace; font-size: 0.85rem;
+      border: 1px solid var(--border, #000);
+      background: var(--bg, #fff); color: var(--fg, #000);
+      padding: 3px 5px; width: 100%; box-sizing: border-box;
+    }
+    .field input:disabled, .field select:disabled { opacity: 0.4; }
+    .iv-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+
+    .battery-row { display: flex; gap: 1.2rem; align-items: center; margin: 0.4rem 0 0.6rem; font-size: 0.82rem; flex-wrap: wrap; }
+    .battery-row label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+    .battery-row input[type=checkbox] { margin: 0; cursor: pointer; }
+
+    #controls { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin: 0.75rem 0 0.5rem; }
+    #controls button {
+      font-family: monospace; font-size: 0.85rem;
+      border: 1px solid var(--border, #000);
+      background: var(--bg, #fff); color: var(--fg, #000);
+      padding: 4px 12px; cursor: pointer;
+    }
+    #controls button:hover { background: var(--fg, #000); color: var(--bg, #fff); }
+    #controls button:disabled { opacity: 0.4; cursor: default; }
+    #status { font-size: 0.8rem; }
+
+    #progress { width: 100%; height: 3px; background: var(--border, #000); opacity: 0.25; margin-bottom: 0.5rem; display: none; }
+    #progress-bar { height: 100%; background: var(--fg, #000); width: 0%; }
+
+    #results-wrap { overflow-x: auto; margin-top: 0.5rem; -webkit-overflow-scrolling: touch; }
+    table { border-collapse: collapse; font-size: 0.75rem; width: 100%; }
+    th, td { border: 1px solid var(--border, #000); padding: 2px 6px; white-space: nowrap; }
+    th { text-align: left; }
+    .mono { font-family: monospace; }
+    td.star { font-weight: bold; }
+    td.square { font-weight: bold; }
+
+    .note { font-size: 0.75rem; border: 1px solid var(--border, #000); padding: 0.4rem 0.6rem; margin-bottom: 0.75rem; }
+    a.tool-link { font-size: 0.8rem; }
+
+    @media (max-width: 500px) {
+      #wrap { padding: 0.6rem; }
+      .grid { grid-template-columns: 1fr 1fr; }
+      .grid-iv { grid-template-columns: 1fr 1fr; }
+      .field input, .field select { font-size: 1rem; padding: 6px 5px; }
+      #controls button { padding: 8px 16px; font-size: 1rem; }
+      .battery-row { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="wrap">
+    <header class="simple-header">
+        <h1>Gen 3 LCGRNG - Pokémon Finder</h1>
+        <p class="desc">
+        <!--LCG: <code>s' = s × 0x41C64E6D + 0x6073 (mod 2³²)</code>.-->
+        <a class="tool-link" href="iv-calc.html">IV Calculator →</a>
+        </p>
+    </header>
+<!--
+    <div class="note">
+      <strong>Shiny:</strong> SV = TID⊕SID⊕PID_high⊕PID_low · Square if SV=0 · Star if 1–7<br>
+      <strong>IVs:</strong> word1 → HP/Atk/Def · word2 → SpA/SpD/Spe · Method is set automatically by category.
+    </div>
+-->
+    <div class="section-label">Category &amp; Pokémon</div>
+    <div class="grid">
+      <div class="field">
+        <label>Category</label>
+        <select id="category" onchange="onCategory()">
+          <option value="stationary">Stationary</option>
+          <option value="wild">Wild</option>
+          <option value="gift">Gift</option>
+          <option value="egg">Egg</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Pokémon</label>
+        <select id="species" onchange="onSpecies()"></select>
+      </div>
+      <div class="field" id="method-field" style="display:none">
+        <label>Method</label>
+        <select id="method">
+          <option value="1">Method 1</option>
+          <option value="2">Method 2</option>
+          <option value="3">Method 3</option>
+          <option value="4">Method 4</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-label">Seed &amp; advances</div>
+    <div class="grid">
+      <div class="field">
+        <label>Initial seed (hex)</label>
+        <input id="seed" type="text" value="0000" maxlength="8">
+      </div>
+      <div class="field">
+        <label>Initial advances</label>
+        <input id="adv-min" type="number" min="0" value="0">
+      </div>
+      <div class="field">
+        <label>Max advances</label>
+        <input id="adv-max" type="number" min="1" value="10000">
+      </div>
+    </div>
+
+    <div class="battery-row">
+      <label><input type="checkbox" id="dead-rs" onchange="onBattery(event)"> Dead battery Ruby/Sapphire (0x05A0)</label>
+      <label><input type="checkbox" id="dead-em" onchange="onBattery(event)"> Dead battery Emerald (0x0000)</label>
+    </div>
+
+    <div class="section-label">Filters</div>
+    <div class="grid">
+      <div class="field">
+        <label>TID</label>
+        <input id="tid" type="number" min="0" max="65535" value="0">
+      </div>
+      <div class="field">
+        <label>SID</label>
+        <input id="sid" type="number" min="0" max="65535" value="0">
+      </div>
+      <div class="field">
+        <label>Shiny</label>
+        <select id="shiny">
+          <option value="any">Any</option>
+          <option value="shiny">Shiny</option>
+          <option value="star">Star (SV 1–7)</option>
+          <option value="square">Square (SV 0)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Nature</label>
+        <select id="nature">
+          <option value="-1">Any</option>
+          <option value="0">Hardy</option><option value="1">Lonely</option><option value="2">Brave</option><option value="3">Adamant</option><option value="4">Naughty</option>
+          <option value="5">Bold</option><option value="6">Docile</option><option value="7">Relaxed</option><option value="8">Impish</option><option value="9">Lax</option>
+          <option value="10">Timid</option><option value="11">Hasty</option><option value="12">Serious</option><option value="13">Jolly</option><option value="14">Naive</option>
+          <option value="15">Modest</option><option value="16">Mild</option><option value="17">Quiet</option><option value="18">Bashful</option><option value="19">Rash</option>
+          <option value="20">Calm</option><option value="21">Gentle</option><option value="22">Sassy</option><option value="23">Careful</option><option value="24">Quirky</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Ability</label>
+        <select id="ability">
+          <option value="-1">Any</option>
+          <option value="0" id="abi0-opt">Ability 1</option>
+          <option value="1" id="abi1-opt">Ability 2</option>
+        </select>
+      </div>
+      <div class="field" id="gender-field">
+        <label>Gender</label>
+        <select id="gender">
+          <option value="-1">Any</option>
+          <option value="0">Male</option>
+          <option value="1">Female</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Hidden Power type</label>
+        <select id="hp-type">
+          <option value="-1">Any</option>
+          <option value="0">Fighting</option><option value="1">Flying</option><option value="2">Poison</option><option value="3">Ground</option>
+          <option value="4">Rock</option><option value="5">Bug</option><option value="6">Ghost</option><option value="7">Steel</option>
+          <option value="8">Fire</option><option value="9">Water</option><option value="10">Grass</option><option value="11">Electric</option>
+          <option value="12">Psychic</option><option value="13">Ice</option><option value="14">Dragon</option><option value="15">Dark</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-label">IV filters <span style="font-size:0.7rem;font-weight:normal">(min / max)</span></div>
+    <div class="grid-iv">
+      <div class="field"><label>HP</label>  <div class="iv-pair"><input class="iv-min" type="number" min="0" max="31" value="0"><input class="iv-max" type="number" min="0" max="31" value="31"></div></div>
+      <div class="field"><label>Atk</label> <div class="iv-pair"><input class="iv-min" type="number" min="0" max="31" value="0"><input class="iv-max" type="number" min="0" max="31" value="31"></div></div>
+      <div class="field"><label>Def</label> <div class="iv-pair"><input class="iv-min" type="number" min="0" max="31" value="0"><input class="iv-max" type="number" min="0" max="31" value="31"></div></div>
+      <div class="field"><label>SpA</label> <div class="iv-pair"><input class="iv-min" type="number" min="0" max="31" value="0"><input class="iv-max" type="number" min="0" max="31" value="31"></div></div>
+      <div class="field"><label>SpD</label> <div class="iv-pair"><input class="iv-min" type="number" min="0" max="31" value="0"><input class="iv-max" type="number" min="0" max="31" value="31"></div></div>
+      <div class="field"><label>Spe</label> <div class="iv-pair"><input class="iv-min" type="number" min="0" max="31" value="0"><input class="iv-max" type="number" min="0" max="31" value="31"></div></div>
+    </div>
+
+    <div id="controls">
+      <button id="btn-search" onclick="startSearch()">Search</button>
+      <button id="btn-stop" onclick="stopSearch()" disabled>Stop</button>
+      <span id="status">—</span>
+    </div>
+    <div id="progress"><div id="progress-bar"></div></div>
+
+    <div id="results-wrap">
+      <table id="results-table" style="display:none">
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // ── Species data ─────────────────────────────────────────────────────────
+    // { name, method, genderRatio (255=genderless,0=male-only,127=50/50 etc),
+    //   ability1, ability2 (null if only one) }
+    const CATEGORIES = {
+      stationary: [
+        { name:'Kyogre',     method:1, ratio:255, a1:'Drizzle',      a2:null },
+        { name:'Groudon',    method:1, ratio:255, a1:'Drought',      a2:null },
+        { name:'Rayquaza',   method:1, ratio:255, a1:'Air Lock',     a2:null },
+        { name:'Regirock',   method:1, ratio:255, a1:'Clear Body',   a2:null },
+        { name:'Regice',     method:1, ratio:255, a1:'Clear Body',   a2:null },
+        { name:'Registeel',  method:1, ratio:255, a1:'Clear Body',   a2:null },
+        { name:'Latios',     method:1, ratio:255, a1:'Levitate',     a2:null },
+        { name:'Latias',     method:1, ratio:255, a1:'Levitate',     a2:null },
+        { name:'Mewtwo',     method:1, ratio:255, a1:'Pressure',     a2:null },
+        { name:'Articuno',   method:1, ratio:255, a1:'Pressure',     a2:null },
+        { name:'Zapdos',     method:1, ratio:255, a1:'Pressure',     a2:null },
+        { name:'Moltres',    method:1, ratio:255, a1:'Pressure',     a2:null },
+        { name:'Lugia',      method:1, ratio:255, a1:'Pressure',     a2:null },
+        { name:'Ho-Oh',      method:1, ratio:255, a1:'Pressure',     a2:null },
+        { name:'Deoxys',     method:1, ratio:255, a1:'Pressure',     a2:null },
+        { name:'Jirachi',    method:1, ratio:255, a1:'Serene Grace', a2:null },
+        { name:'Sudowoodo',  method:1, ratio:127, a1:'Rock Head',    a2:'Sturdy' },
+        { name:'Electrode',  method:1, ratio:255, a1:'Soundproof',   a2:'Static' },
+        { name:'Kecleon',    method:1, ratio:127, a1:'Color Change', a2:null },
+        { name:'Castform',   method:1, ratio:127, a1:'Forecast',     a2:null },
+        { name:'Snorlax',    method:1, ratio:127, a1:'Immunity',     a2:'Thick Fat' },
+      ],
+      wild: [
+        // Wild uses method 1-4 chosen by user; species just for labeling
+        { name:'(generic wild)', method:null, ratio:127, a1:'Ability 1', a2:'Ability 2' },
+        { name:'Golbat',     method:null, ratio:127, a1:'Inner Focus', a2:null },
+        { name:'Sableye',    method:null, ratio:127, a1:'Keen Eye',   a2:null },
+        { name:'Mawile',     method:null, ratio:127, a1:'Hyper Cutter',a2:'Intimidate' },
+        { name:'Lairon',     method:null, ratio:127, a1:'Sturdy',     a2:'Rock Head' },
+        { name:'Medicham',   method:null, ratio:127, a1:'Pure Power',  a2:null },
+        { name:'Tentacool',  method:null, ratio:127, a1:'Clear Body', a2:'Liquid Ooze' },
+        { name:'Wingull',    method:null, ratio:127, a1:'Keen Eye',   a2:null },
+        { name:'Pelipper',   method:null, ratio:127, a1:'Keen Eye',   a2:null },
+        { name:'Absol',      method:null, ratio:127, a1:'Pressure',   a2:null },
+        { name:'Vulpix',     method:null, ratio:191, a1:'Flash Fire',  a2:null },
+        { name:'Geodude',    method:null, ratio:127, a1:'Rock Head',   a2:'Sturdy' },
+        { name:'Magnemite',  method:null, ratio:255, a1:'Magnet Pull', a2:'Sturdy' },
+        { name:'Voltorb',    method:null, ratio:255, a1:'Soundproof',  a2:'Static' },
+        { name:'Staryu',     method:null, ratio:255, a1:'Illuminate',  a2:'Natural Cure' },
+        { name:'Slowpoke',   method:null, ratio:127, a1:'Oblivious',  a2:'Own Tempo' },
+      ],
+      gift: [
+        { name:'Wynaut (egg)',   method:1, ratio:127, a1:'Shadow Tag',  a2:null },
+        { name:'Castform (gift)',method:1, ratio:127, a1:'Forecast',    a2:null },
+        { name:'Beldum',         method:1, ratio:255, a1:'Clear Body',  a2:null },
+        { name:'Togepi (egg)',   method:1, ratio:127, a1:'Hustle',      a2:'Serene Grace' },
+        { name:'Eevee',          method:1, ratio:31,  a1:'Run Away',    a2:'Adaptability' },
+      ],
+      egg: [
+        { name:'(generic egg)',  method:1, ratio:127, a1:'Ability 1',  a2:'Ability 2' },
+      ],
+    };
+
+    let currentSpecies = CATEGORIES.stationary[0];
+
+    function onCategory(silent) {
+      const cat = document.getElementById('category').value;
+      const sel = document.getElementById('species');
+      sel.innerHTML = '';
+      CATEGORIES[cat].forEach((s, i) => {
+        const o = document.createElement('option');
+        o.value = i; o.textContent = s.name;
+        sel.appendChild(o);
+      });
+      document.getElementById('method-field').style.display = cat === 'wild' ? '' : 'none';
+      if (!silent) onSpecies();
+    }
+
+    function onSpecies() {
+      const cat = document.getElementById('category').value;
+      const idx = +document.getElementById('species').value;
+      currentSpecies = CATEGORIES[cat][idx];
+
+      // Update ability labels
+      document.getElementById('abi0-opt').textContent = currentSpecies.a1;
+      document.getElementById('abi1-opt').textContent = currentSpecies.a2 || currentSpecies.a1;
+      // Disable ability 2 option if species only has one ability
+      document.getElementById('abi1-opt').disabled = !currentSpecies.a2;
+
+      // Hide gender filter for genderless
+      document.getElementById('gender-field').style.display =
+        currentSpecies.ratio === 255 ? 'none' : '';
+    }
+
+    // ── localStorage ────────────────────────────────────────────────────────
+    const LS_KEY = 'gen3sf';
+    const PERSIST_IDS = ['category','seed','adv-min','adv-max','tid','sid','shiny','nature','ability','gender','hp-type','method','dead-rs','dead-em'];
+
+    function saveState() {
+      const data = {};
+      PERSIST_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        data[id] = el.type === 'checkbox' ? el.checked : el.value;
+      });
+      // IV min/max
+      data.ivMins = [...document.querySelectorAll('.iv-min')].map(x => x.value);
+      data.ivMaxs = [...document.querySelectorAll('.iv-max')].map(x => x.value);
+      // species index
+      data.species = document.getElementById('species').value;
+      try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch(e) {}
+    }
+
+    function restoreState() {
+      let data;
+      try { data = JSON.parse(localStorage.getItem(LS_KEY)); } catch(e) {}
+      if (!data) return;
+
+      // category first so species list is populated
+      if (data.category) {
+        document.getElementById('category').value = data.category;
+        onCategory(true); // silent = skip species restore inside onCategory
+      }
+      if (data.species !== undefined) {
+        document.getElementById('species').value = data.species;
+        onSpecies();
+      }
+      PERSIST_IDS.filter(id => id !== 'category').forEach(id => {
+        const el = document.getElementById(id);
+        if (!el || data[id] === undefined) return;
+        if (el.type === 'checkbox') el.checked = data[id];
+        else el.value = data[id];
+      });
+      // Re-apply battery lock state
+      const rs = document.getElementById('dead-rs');
+      const em = document.getElementById('dead-em');
+      const si = document.getElementById('seed');
+      if (rs.checked)      { si.value = '05A0'; si.disabled = true; }
+      else if (em.checked) { si.value = '0000'; si.disabled = true; }
+      if (data.seed && !rs.checked && !em.checked) si.value = data.seed;
+      // IV filters
+      if (data.ivMins) [...document.querySelectorAll('.iv-min')].forEach((el,i) => { if (data.ivMins[i] !== undefined) el.value = data.ivMins[i]; });
+      if (data.ivMaxs) [...document.querySelectorAll('.iv-max')].forEach((el,i) => { if (data.ivMaxs[i] !== undefined) el.value = data.ivMaxs[i]; });
+    }
+
+    // Attach save listeners after DOM ready
+    function attachSaveListeners() {
+      PERSIST_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', saveState);
+      });
+      document.querySelectorAll('.iv-min, .iv-max').forEach(el => el.addEventListener('change', saveState));
+    }
+
+    // Init
+    onCategory();
+    restoreState();
+    attachSaveListeners();
+
+    // ── LCG ──────────────────────────────────────────────────────────────────
+    const LCG_A = 0x41C64E6D, LCG_C = 0x6073;
+    function lcg(s) { return (Math.imul(s >>> 0, LCG_A) + LCG_C) >>> 0; }
+    function advanceN(seed, n) { for (let i = 0; i < n; i++) seed = lcg(seed); return seed >>> 0; }
+
+    // PID = (r_high << 16) | r_low  per Haskell nextPID
+    function generate(state, method) {
+      const s = [state];
+      for (let i = 1; i <= 6; i++) s.push(lcg(s[i-1]));
+      const r = s.map(x => x >>> 16);
+      let pl, ph, iv1, iv2;
+      switch (+method) {
+        case 1: pl=r[1];ph=r[2];iv1=r[3];iv2=r[4]; break;
+        case 2: pl=r[1];ph=r[3];iv1=r[4];iv2=r[5]; break;
+        case 3: pl=r[2];ph=r[3];iv1=r[4];iv2=r[5]; break;
+        case 4: pl=r[2];ph=r[4];iv1=r[5];iv2=r[6]; break;
+      }
+      const pid = ((ph << 16) | pl) >>> 0;
+      return { pid, ivs: [
+        iv1 & 0x1F, (iv1>>5)&0x1F, (iv1>>10)&0x1F,  // HP, Atk, Def
+        (iv2>>5)&0x1F, (iv2>>10)&0x1F, iv2 & 0x1F    // SpA, SpD, Spe
+      ]};
+    }
+
+    function sv(pid, tid, sid)      { return ((pid>>>16)^(pid&0xFFFF)^tid^sid)>>>0; }
+    function shinyType(pid, tid, sid) {
+      const v = sv(pid, tid, sid);
+      return v===0 ? 'square' : v<8 ? 'star' : 'none';
+    }
+
+    function calcGender(pid, ratio) {
+      if (ratio === 255) return '—';
+      if (ratio === 0)   return 'male';
+      if (ratio === 254) return 'female';
+      return (pid & 0xFF) < ratio ? 'female' : 'male';
+    }
+
+    const HP_TYPES = ['Fighting','Flying','Poison','Ground','Rock','Bug','Ghost','Steel','Fire','Water','Grass','Electric','Psychic','Ice','Dragon','Dark'];
+    function hpType(ivs) {
+      const [hp,atk,def,spa,spd,spe] = ivs;
+      return Math.floor(((hp&1)|((atk&1)<<1)|((def&1)<<2)|((spe&1)<<3)|((spa&1)<<4)|((spd&1)<<5)) * 15 / 63);
+    }
+    function hpPower(ivs) {
+      const [hp,atk,def,spa,spd,spe] = ivs;
+      return Math.floor((((hp>>1)&1)|(((atk>>1)&1)<<1)|(((def>>1)&1)<<2)|(((spe>>1)&1)<<3)|(((spa>>1)&1)<<4)|(((spd>>1)&1)<<5)) * 40 / 63) + 30;
+    }
+
+    const NATURES = ['Hardy','Lonely','Brave','Adamant','Naughty','Bold','Docile','Relaxed','Impish','Lax','Timid','Hasty','Serious','Jolly','Naive','Modest','Mild','Quiet','Bashful','Rash','Calm','Gentle','Sassy','Careful','Quirky'];
+
+    function onBattery(e) {
+      const rs = document.getElementById('dead-rs');
+      const em = document.getElementById('dead-em');
+      if (e.target===rs && rs.checked) em.checked = false;
+      if (e.target===em && em.checked) rs.checked = false;
+      const si = document.getElementById('seed');
+      if (rs.checked)      { si.value='05A0'; si.disabled=true; }
+      else if (em.checked) { si.value='0000'; si.disabled=true; }
+      else                 { si.disabled=false; }
+    }
+
+    let stopFlag = false;
+
+    function startSearch() {
+      const tid    = +document.getElementById('tid').value || 0;
+      const sid    = +document.getElementById('sid').value || 0;
+      const shinyF = document.getElementById('shiny').value;
+      const natF   = +document.getElementById('nature').value;
+      const abiF   = +document.getElementById('ability').value;
+      const genF   = +document.getElementById('gender').value;
+      const hpTF   = +document.getElementById('hp-type').value;
+      const advMin = Math.max(0, +document.getElementById('adv-min').value || 0);
+      const advMax = Math.max(1, +document.getElementById('adv-max').value || 10000);
+      const mins   = [...document.querySelectorAll('.iv-min')].map(x=>+x.value);
+      const maxs   = [...document.querySelectorAll('.iv-max')].map(x=>+x.value);
+      const initSeed = parseInt(document.getElementById('seed').value.replace(/^0x/i,''),16) >>> 0;
+      const method = currentSpecies.method ?? +document.getElementById('method').value;
+      const ratio  = currentSpecies.ratio;
+
+      if (isNaN(initSeed)) { setStatus('Invalid seed.'); return; }
+
+      document.getElementById('tbody').innerHTML = '';
+      buildHeader(ratio !== 255);
+      document.getElementById('results-table').style.display = '';
+      document.getElementById('btn-search').disabled = true;
+      document.getElementById('btn-stop').disabled = false;
+      document.getElementById('progress').style.display = 'block';
+      document.getElementById('progress-bar').style.width = '0%';
+      stopFlag = false;
+
+      let state = advanceN(initSeed, advMin);
+      const total = advMax - advMin;
+      let cur = advMin, found = 0;
+
+      function chunk() {
+        if (stopFlag) { done(found, total, true); return; }
+        const end = Math.min(cur + 20000, advMax);
+
+        for (let adv = cur; adv <= end; adv++) {
+          const { pid, ivs } = generate(state, method);
+          state = lcg(state);
+
+          const st = shinyType(pid, tid, sid);
+          if (shinyF==='shiny'  && st==='none')   continue;
+          if (shinyF==='star'   && st!=='star')   continue;
+          if (shinyF==='square' && st!=='square') continue;
+
+          if (natF !== -1 && (pid%25) !== natF) continue;
+          if (abiF !== -1 && (pid&1)  !== abiF) continue;
+
+          if (ratio !== 255 && genF !== -1) {
+            const g = calcGender(pid, ratio);
+            if (genF===0 && g!=='male')   continue;
+            if (genF===1 && g!=='female') continue;
+          }
+
+          let ivOk = true;
+          for (let i=0;i<6;i++) if (ivs[i]<mins[i]||ivs[i]>maxs[i]) { ivOk=false; break; }
+          if (!ivOk) continue;
+
+          const hpt = hpType(ivs);
+          if (hpTF !== -1 && hpt !== hpTF) continue;
+
+          const abiName = (pid&1) ? (currentSpecies.a2||currentSpecies.a1) : currentSpecies.a1;
+          addRow(adv, pid, st, sv(pid,tid,sid), pid%25, abiName,
+                 ratio!==255 ? calcGender(pid,ratio) : null, ivs, hpt, hpPower(ivs));
+          found++;
+        }
+
+        cur = end + 1;
+        const pct = ((cur-advMin)/total*100).toFixed(1);
+        document.getElementById('progress-bar').style.width = pct+'%';
+        setStatus(`${pct}% · ${found} found`);
+        if (cur > advMax) done(found, total, false);
+        else setTimeout(chunk, 0);
+      }
+      setTimeout(chunk, 0);
+    }
+
+    function buildHeader(showGender) {
+      const th = document.getElementById('thead');
+      th.innerHTML = `<tr>
+        <th>Adv.</th><th>PID</th><th>Shiny</th><th>SV</th><th>Nature</th><th>Ability</th>
+        ${showGender ? '<th>Gender</th>' : ''}
+        <th>HP</th><th>Atk</th><th>Def</th><th>SpA</th><th>SpD</th><th>Spe</th>
+        <th>HP type</th><th>HP pwr</th>
+      </tr>`;
+    }
+
+    function stopSearch() { stopFlag = true; }
+
+    function done(found, total, stopped) {
+      document.getElementById('btn-search').disabled = false;
+      document.getElementById('btn-stop').disabled = true;
+      document.getElementById('progress-bar').style.width = '100%';
+      setStatus(`${stopped?'Stopped. ':'Done. '}${found} result${found!==1?'s':''} in ${total.toLocaleString()} advances.`);
+    }
+
+    function setStatus(msg) { document.getElementById('status').textContent = msg; }
+
+    function addRow(adv, pid, shiny, svVal, nat, abiName, gen, ivs, hpt, hpp) {
+      const tr = document.createElement('tr');
+      const shinyLabel = shiny==='square' ? '■ Square' : shiny==='star' ? '★ Star' : '—';
+      tr.innerHTML = [
+        `<td>${adv}</td>`,
+        `<td class="mono">${pid.toString(16).toUpperCase().padStart(8,'0')}</td>`,
+        `<td class="${shiny!=='none'?shiny:''}">${shinyLabel}</td>`,
+        `<td>${svVal}</td>`,
+        `<td>${NATURES[nat]}</td>`,
+        `<td>${abiName}</td>`,
+        gen !== null ? `<td>${gen}</td>` : '',
+        ...ivs.map(v=>`<td>${v}</td>`),
+        `<td>${HP_TYPES[hpt]}</td>`,
+        `<td>${hpp}</td>`,
+      ].join('');
+      document.getElementById('tbody').appendChild(tr);
+    }
+  </script>
+</body>
+</html>
