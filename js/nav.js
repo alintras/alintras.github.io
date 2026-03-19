@@ -56,8 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
       ${item(`<img src="/assets/smileys/counter.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/math-history.html", "Math History")}
       ${item(`<img src="/assets/smileys/counter.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/math-prereq.html", "Math Prerequisites")}
     </details><br>
-    ${item(`<img src="/assets/smileys/person.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/about.html", "About")}
     ${item(`<img src="/assets/smileys/spbubble.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/messages.html", "Messages")}
+    ${item(`<img src="/assets/smileys/person.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/about.html", "About")}
     </div>
   `;
 
