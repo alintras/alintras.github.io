@@ -100,7 +100,6 @@ a:hover {
   box-sizing: border-box;
   padding: 20px 30px;
   border-top: 1px solid var(--border);
-  position: fixed;
   bottom: 0px;
   text-align: 0;
 }
