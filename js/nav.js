@@ -8,7 +8,10 @@ document.addEventListener("DOMContentLoaded", function () {
       <td><a href="${href}">${label}</a></td>
     </tr></table>`;
   }
-  /*  ${item(`<img src="/assets/smileys/bomb.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/voltorb-solver.html", "HGSS Voltorb Solver")} */
+  /*  inactive pages
+      ${item(`<img src="/assets/smileys/bomb.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/voltorb-solver.html", "HGSS Voltorb Solver")} 
+      ${item(`<img src="/assets/smileys/squirtle.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/iv-calc.html", "GEN 3-5 IV Calculator")}
+  */
   sidebar.innerHTML = `
     <b id="nav-toggle">Navigation</b>
     <div id="sidebar-body"><br><br>
@@ -17,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
       <summary><img src="/assets/smileys/pickaxe.png" style="width:16px; height:16px; vertical-align:-2px; image-rendering:pixelated;"> Tools</summary>
       ${item(`<img src="/assets/smileys/mail.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/wondermail/wondermail.html", "PMD RT Wondermail Generator")}
       ${item(`<img src="/assets/smileys/apokeball.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/pokefinder.html", "GEN 3 Pokémon Finder")}
-      ${item(`<img src="/assets/smileys/squirtle.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/iv-calc.html", "GEN 3 IV Calculator")}
       ${item(`<img src="/assets/smileys/shcounter.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/counter.html", "(Shiny) Counter")}
       ${item(`<img src="/assets/smileys/pencil.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/pixelart.html", "Pixel Art")}
       ${item(`<img src="/assets/smileys/transfer.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/file-transfer.html", "File Transfer")}

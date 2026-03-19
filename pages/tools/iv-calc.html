@@ -444,11 +444,16 @@
 
         const matching = [];
         for (let iv = 0; iv <= 31; iv++) {
-          const computed = i === 0
-            ? calcHP(base, iv, ev, level)
-            : calcStat(base, iv, ev, level, mult);
+          let computed;
+          if (i === 0) {
+            computed = (DEX[speciesIdx][0] === "Shedinja") ? 1 : calcHP(base, iv, ev, level);
+          } else {
+            computed = calcStat(base, iv, ev, level, mult);
+          }
+          
+          // ADD THIS LINE
           if (computed === statVal) matching.push(iv);
-        }
+        } // ADD THIS CLOSING BRACE
 
         if (matching.length === 0) {
           resEl.textContent = 'impossible';
