@@ -31,7 +31,7 @@
 
   header h1 { font-size: 1rem; font-weight: bold; flex: 1; }
 
-  #keybind-btn {
+  #keybind-btn, #export-btn, #import-btn {
     font-family: "Courier New", monospace;
     font-size: 0.75rem;
     background: var(--bg);
@@ -42,7 +42,7 @@
     opacity: 0.6;
     flex-shrink: 0;
   }
-  #keybind-btn:hover { opacity: 1; }
+  #keybind-btn:hover, #export-btn:hover, #import-btn:hover { opacity: 1; }
 
   #counter-tabs {
     display: flex;
@@ -225,9 +225,12 @@
 <body>
 
 <header>
-  <h1>✧･ﾟ: *✧ (shiny) counter ✧* :･ﾟ✧</h1>
+  <h1>★彡 (shiny) counter 彡★</h1>
+  <button id="import-btn" title="import backup">↑</button>
+  <button id="export-btn" title="export backup">↓</button>
   <button id="keybind-btn" title="set hotkey"></button>
 </header>
+<input type="file" id="import-file" accept=".json" style="display:none">
 
 <div id="counter-tabs"></div>
 
@@ -240,7 +243,7 @@
       <button id="counter-name-display" title="tap to rename"></button>
       <button id="reset-btn">reset</button>
     </div>
-    <div id="count-display" style="text-align:center;">0</div>
+    <div id="count-display" style="text-align:center; cursor:pointer;" title="tap to edit">0</div>
     <button id="hit-btn">+ ENCOUNTER</button>
   </div>
 </div>
@@ -396,6 +399,18 @@
     }
   });
 
+  document.getElementById('count-display').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    openModal('set count', String(active.count), val => {
+      const n = parseInt(val);
+      if (isNaN(n) || n < 0) return;
+      active.history.push(active.count);
+      active.count = n;
+      saveState(); render();
+    }, 'number');
+  });
+
   document.getElementById('counter-name-display').addEventListener('click', () => {
     const active = getActive();
     if (!active) return;
@@ -412,6 +427,7 @@
     if (active.history.length > 200) active.history.shift();
     active.count++;
     saveState(); render();
+    checkReminder();
   });
 
   document.getElementById('undo-btn').addEventListener('click', () => {
@@ -442,15 +458,18 @@
     document.getElementById('modal-overlay').classList.add('open');
   }
 
-  function openModal(title, value, cb) {
+  function openModal(title, value, cb, inputType = 'text') {
     modalCallback = cb;
     document.getElementById('modal-title').textContent = title;
-    document.getElementById('modal-input').style.display = '';
-    document.getElementById('modal-input').value = value;
+    const input = document.getElementById('modal-input');
+    input.type = inputType;
+    input.min = inputType === 'number' ? '0' : '';
+    input.style.display = '';
+    input.value = value;
     document.getElementById('modal-confirm').textContent = 'confirm';
     document.getElementById('modal-cancel').textContent = 'cancel';
     document.getElementById('modal-overlay').classList.add('open');
-    setTimeout(() => document.getElementById('modal-input').focus(), 50);
+    setTimeout(() => input.focus(), 50);
   }
 
   function closeModal() {
@@ -478,6 +497,63 @@
   document.getElementById('modal-overlay').addEventListener('click', e => {
     if (e.target === document.getElementById('modal-overlay')) closeModal();
   });
+
+  // Export
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const data = JSON.stringify(state, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `shiny-counters-${date}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    localStorage.setItem('shiny_last_export', totalEncounters());
+  });
+
+  // Import
+  document.getElementById('import-btn').addEventListener('click', () => {
+    document.getElementById('import-file').click();
+  });
+
+  document.getElementById('import-file').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const parsed = JSON.parse(ev.target.result);
+        if (!parsed.counters) throw new Error();
+        openConfirm('overwrite current data with backup?', () => {
+          state = parsed;
+          saveState();
+          render();
+        });
+      } catch {
+        openConfirm('invalid backup file.', () => {});
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  // Reminder
+  const REMINDER_INTERVAL = 100;
+
+  function totalEncounters() {
+    return state.counters.reduce((sum, c) => sum + c.count, 0);
+  }
+
+  function checkReminder() {
+    const lastExport = parseInt(localStorage.getItem('shiny_last_export') || '0');
+    const total = totalEncounters();
+    if (total > 0 && total - lastExport >= REMINDER_INTERVAL) {
+      openConfirm(`${total} encounters logged — export a backup?`, () => {
+        document.getElementById('export-btn').click();
+      });
+    }
+  }
 
   loadState();
   if (state.counters.length === 0) state.active = null;
