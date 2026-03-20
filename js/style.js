@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
       home.innerHTML = `
           <a href="/index.html">
               <img src="/assets/smileys/vhome.PNG" alt="Home">
-              Home
+              [Home]
           </a>
       `;
       document.body.appendChild(home);
