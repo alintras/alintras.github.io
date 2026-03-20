@@ -16,7 +16,7 @@ body {
 canvas { display:block; }
 #hud {
   position: fixed;
-  top: 14px; left: 18px;
+  top: 50px; left: 18px;
   pointer-events: none;
   z-index: 10;
   display: flex;
@@ -25,7 +25,10 @@ canvas { display:block; }
   gap: 8px;
 }
 #home-btn {
-  pointer-events: all;
+  position: fixed;
+  top: 14px;
+  left: 18px;
+  z-index: 10;
   background: none;
   border: 1px solid rgba(255,255,255,0.2);
   color: rgba(255,255,255,0.5);
@@ -65,10 +68,8 @@ canvas { display:block; }
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="hud">
-  <a id="home-btn" href="/index.html">HOME</a>
-  <span id="ncount">0</span>
-</div>
+<a id="home-btn" href="/index.html">HOME</a>
+<div id="hud"><span id="ncount">0</span></div>
 <button id="mode-btn">REPEL</button>
 
 <script>
