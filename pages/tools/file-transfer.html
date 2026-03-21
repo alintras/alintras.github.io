@@ -8,24 +8,25 @@
   <script src="/js/style.js" defer></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    h1 { font-size: 1.1rem; font-weight: normal; margin-bottom: 4px; border-bottom: 1px solid #000; padding-bottom: 10px; }
+    body { background: var(--bg); color: var(--fg); }
+    h1 { font-size: 1.1rem; font-weight: normal; margin-bottom: 4px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
     .subtitle { font-size: 0.75rem; opacity: 0.5; padding-top: 6px; margin-bottom: 20px; }
     .mode-row { display: flex; gap: 8px; margin-bottom: 24px; }
     button {
       font-family: 'Courier New', Courier, monospace;
       font-size: 0.9rem;
-      background: #fff; color: #000;
-      border: 1px solid #000;
+      background: var(--bg); color: var(--fg);
+      border: 1px solid var(--border);
       padding: 7px 16px; cursor: pointer;
     }
-    button:hover:not(:disabled) { background: #000; color: #fff; }
+    button:hover:not(:disabled) { background: var(--fg); color: var(--bg); }
     button:disabled { opacity: 0.35; cursor: default; }
-    button.active { background: #000; color: #fff; }
+    button.active { background: var(--fg); color: var(--bg); }
     .label { font-size: 0.8rem; margin-bottom: 6px; opacity: 0.6; }
     .status-line { font-size: 0.85rem; margin: 10px 0; min-height: 1.2em; }
     #code-display {
       font-size: 2.2rem; letter-spacing: 0.25em;
-      border: 1px solid #000; padding: 12px 20px;
+      border: 1px solid var(--border); padding: 12px 20px;
       display: inline-block; margin-bottom: 14px;
     }
     #qr-wrap { margin-bottom: 14px; }
@@ -33,14 +34,14 @@
     input[type="text"] {
       font-family: 'Courier New', Courier, monospace;
       font-size: 1.4rem; letter-spacing: 0.2em;
-      border: 1px solid #000; padding: 8px 10px;
-      width: 160px; background: #fff; color: #000; outline: none;
+      border: 1px solid var(--border); padding: 8px 10px;
+      width: 160px; background: var(--bg); color: var(--fg); outline: none;
     }
-    input[type="file"] { font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; }
-    .progress-wrap { border: 1px solid #000; height: 14px; width: 100%; margin-top: 10px; }
-    .progress-bar { height: 100%; background: #000; width: 0%; transition: width 0.08s linear; }
-    #download-area { margin-top: 14px; }
-    #download-area a { font-family: 'Courier New', Courier, monospace; font-size: 0.95rem; color: #000; text-decoration: underline; }
+    input[type="file"] { font-family: 'Courier New', Courier, monospace; font-size: 0.85rem; color: var(--fg); }
+    .progress-wrap { border: 1px solid var(--border); height: 14px; width: 100%; margin-top: 10px; }
+    .progress-bar { height: 100%; background: var(--fg); width: 0%; transition: width 0.08s linear; }
+    #download-area { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+    #download-area a { font-family: 'Courier New', Courier, monospace; font-size: 0.95rem; color: var(--fg); text-decoration: underline; }
     .section { margin-top: 16px; }
     #send-ui, #recv-ui { display: none; }
   </style>
@@ -48,7 +49,7 @@
 <body>
 
   <h1>[ file transfer ]</h1>
-  <div class="subtitle">local network &middot; end-to-end encrypted</div>
+  <div class="subtitle">local network &middot; end-to-end encrypted &middot; all devices</div>
 
   <div class="mode-row">
     <button id="btn-send-mode">send</button>
@@ -65,9 +66,9 @@
 
     <div id="file-section" style="display:none">
       <div class="section">
-        <input type="file" id="file-input">
+        <input type="file" id="file-input" multiple>
         <br><br>
-        <button id="btn-send-file">send file</button>
+        <button id="btn-send-file">send files</button>
       </div>
       <div class="progress-wrap" id="s-pw" style="display:none"><div class="progress-bar" id="s-pb"></div></div>
       <div class="status-line" id="send-file-status"></div>
@@ -87,7 +88,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script type="module">
-    import { initializeApp }        from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove, get }
       from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 
@@ -104,12 +105,10 @@
     const app = initializeApp(firebaseConfig);
     const db  = getDatabase(app);
 
-    // ── WebRTC config: no STUN/TURN = local network only ────────────────────
-    const PC_CONFIG = { iceServers: [] };
-
+    const PC_CONFIG    = { iceServers: [] };
     const CHUNK_SIZE   = 64 * 1024;
     const MAX_BUFFERED = 1024 * 1024;
-    const SESSION_TTL  = 2 * 60 * 1000; // 2 min auto-cleanup
+    const SESSION_TTL  = 2 * 60 * 1000;
 
     // ── SW streaming ────────────────────────────────────────────────────────
     let swReady = false;
@@ -140,12 +139,12 @@
       });
     }
 
-    function showDownloadLink(url, filename) {
+    function appendDownloadLink(url, filename) {
       const a = document.createElement('a');
       a.href = url; a.download = filename;
       a.textContent = '[ download ' + filename + ' ]';
-      const area = document.getElementById('download-area');
-      area.innerHTML = ''; area.appendChild(a); a.click();
+      document.getElementById('download-area').appendChild(a);
+      a.click();
     }
 
     // ── mode buttons ────────────────────────────────────────────────────────
@@ -171,40 +170,36 @@
       document.getElementById('code-display').textContent = code;
       document.getElementById('send-status').textContent  = 'setting up...';
 
-      // QR points to this page with ?code= so receiver auto-fills
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       const qrWrap = document.getElementById('qr-wrap');
       qrWrap.innerHTML = '';
       new QRCode(qrWrap, {
         text: location.origin + location.pathname + '?code=' + code,
-        width: 140, height: 140, colorDark: '#000', colorLight: '#fff'
+        width: 140, height: 140,
+        colorDark: isDark ? '#e0e0e0' : '#000000',
+        colorLight: isDark ? '#111111' : '#ffffff'
       });
 
       const pc = new RTCPeerConnection(PC_CONFIG);
       const dc = pc.createDataChannel('ft', { ordered: true });
 
-      // Gather ICE candidates into the offer SDP
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
       await waitIce(pc);
 
-      // Write offer to Firebase
       await set(session, {
         offer: { type: pc.localDescription.type, sdp: pc.localDescription.sdp },
         ts: Date.now()
       });
 
       document.getElementById('send-status').textContent = 'waiting for receiver...';
-
-      // Schedule cleanup so stale sessions don't pile up
       setTimeout(() => remove(session), SESSION_TTL);
 
-      // Watch for answer
       const unsub = onValue(session, async snap => {
         const data = snap.val();
         if (!data?.answer) return;
-        unsub(); // stop listening
+        unsub();
         await pc.setRemoteDescription(data.answer);
-        // Clean up Firebase — handshake done, connection is local from here
         remove(session);
       });
 
@@ -221,29 +216,36 @@
     }
 
     function setupSendFile(dc) {
-      document.getElementById('btn-send-file').onclick = () => {
-        const file = document.getElementById('file-input').files[0];
-        if (!file) { document.getElementById('send-file-status').textContent = 'no file selected.'; return; }
+      document.getElementById('btn-send-file').onclick = async () => {
+        const files = [...document.getElementById('file-input').files];
+        if (!files.length) { document.getElementById('send-file-status').textContent = 'no files selected.'; return; }
         document.getElementById('btn-send-file').disabled = true;
-        const reader = new FileReader();
-        reader.onload = e => {
-          const buf = e.target.result;
+        document.getElementById('s-pw').style.display = 'block';
+        const bar = document.getElementById('s-pb');
+
+        for (let f = 0; f < files.length; f++) {
+          const file = files[f];
+          const buf  = await file.arrayBuffer();
           const totalChunks = Math.ceil(buf.byteLength / CHUNK_SIZE);
           dc.send(JSON.stringify({ type:'meta', name:file.name, size:file.size, totalChunks }));
-          document.getElementById('s-pw').style.display = 'block';
-          const bar = document.getElementById('s-pb');
-          let i = 0;
-          function next() {
-            if (i >= totalChunks) { document.getElementById('send-file-status').textContent = 'done.'; return; }
-            if (dc.bufferedAmount > MAX_BUFFERED) { setTimeout(next, 50); return; }
-            dc.send(buf.slice(i * CHUNK_SIZE, (i+1) * CHUNK_SIZE));
-            bar.style.width = ((i+1)/totalChunks*100) + '%';
-            document.getElementById('send-file-status').textContent = 'sending... ' + Math.round((i+1)/totalChunks*100) + '%';
-            i++; setTimeout(next, 0);
-          }
-          next();
-        };
-        reader.readAsArrayBuffer(file);
+
+          await new Promise(resolve => {
+            let i = 0;
+            function next() {
+              if (i >= totalChunks) { resolve(); return; }
+              if (dc.bufferedAmount > MAX_BUFFERED) { setTimeout(next, 50); return; }
+              dc.send(buf.slice(i * CHUNK_SIZE, (i+1) * CHUNK_SIZE));
+              bar.style.width = ((i+1)/totalChunks*100) + '%';
+              document.getElementById('send-file-status').textContent =
+                '[' + (f+1) + '/' + files.length + '] ' + file.name + ' — ' + Math.round((i+1)/totalChunks*100) + '%';
+              i++; setTimeout(next, 0);
+            }
+            next();
+          });
+        }
+
+        document.getElementById('send-file-status').textContent =
+          'done. (' + files.length + ' file' + (files.length > 1 ? 's' : '') + ')';
       };
     }
 
@@ -278,13 +280,12 @@
         await pc.setLocalDescription(answer);
         await waitIce(pc);
 
-        // Write answer — sender picks it up and removes the session
         await set(ref(db, 'transfer/' + code + '/answer'), { type: pc.localDescription.type, sdp: pc.localDescription.sdp });
 
         pc.ondatachannel = e => {
           const dc = e.channel;
           dc.binaryType = 'arraybuffer';
-          document.getElementById('recv-status').textContent = 'connected. waiting for file...';
+          document.getElementById('recv-status').textContent = 'connected. waiting for files...';
           setupRecv(dc);
         };
 
@@ -296,22 +297,22 @@
     }
 
     async function setupRecv(dc) {
-      let meta=null, transferId=null, fallbackChunks=[], received=0, usingSW=false;
+      let meta=null, transferId=null, fallbackChunks=[], received=0, usingSW=false, sessionCleared=false;
       dc.onmessage = async e => {
         if (typeof e.data === 'string') {
           const msg = JSON.parse(e.data);
           if (msg.type !== 'meta') return;
           meta=msg; received=0; fallbackChunks=[]; transferId=randId();
           usingSW = swReady && !!navigator.serviceWorker.controller;
+          if (!sessionCleared) { document.getElementById('download-area').innerHTML = ''; sessionCleared=true; }
           document.getElementById('r-pw').style.display = 'block';
           document.getElementById('r-pb').style.width   = '0%';
           document.getElementById('recv-status').textContent = 'receiving: ' + meta.name;
-          document.getElementById('download-area').innerHTML = '';
           if (usingSW) {
             const rp = waitSwReady(transferId);
             navigator.serviceWorker.controller.postMessage({ type:'STREAM_CREATE', id:transferId, filename:meta.name, size:meta.size });
             await rp;
-            showDownloadLink('/sw-transfer/' + transferId, meta.name);
+            appendDownloadLink('/sw-transfer/' + transferId, meta.name);
           }
         } else {
           received++;
@@ -322,13 +323,13 @@
             navigator.serviceWorker.controller.postMessage({ type:'STREAM_CHUNK', id:transferId, chunk:e.data }, [e.data]);
             if (received === meta.totalChunks) {
               navigator.serviceWorker.controller.postMessage({ type:'STREAM_END', id:transferId });
-              document.getElementById('recv-status').textContent = 'transfer complete.';
+              document.getElementById('recv-status').textContent = 'done.';
             }
           } else {
             fallbackChunks.push(e.data);
             if (received === meta.totalChunks) {
-              showDownloadLink(URL.createObjectURL(new Blob(fallbackChunks)), meta.name);
-              document.getElementById('recv-status').textContent = 'transfer complete.';
+              appendDownloadLink(URL.createObjectURL(new Blob(fallbackChunks)), meta.name);
+              document.getElementById('recv-status').textContent = 'done.';
             }
           }
         }

@@ -30,6 +30,14 @@
     <script src="/js/search.js" defer></script>
     <script src="/js/index.js" defer></script>
     <script src="/js/service-worker.js" defer></script>
+    <script src="/js/stats.js" defer></script>
+    <script src="/js/reminder.js" defer></script>
+    <script defer>
+    document.addEventListener('DOMContentLoaded', function() {
+        initStats('site-stats');
+        initReminder();
+    });
+</script>
 </head>
 
 <body>
@@ -157,7 +165,7 @@
 </div>
 
 <footer class="main-footer">
-    <p>&copy; 2026 | <a href="mailto:alintras@proton.me">alintras@proton.me</a></p>
+    <p>&copy; 2026 | <a href="mailto:alintras@proton.me">alintras@proton.me</a> | <span id="site-stats"></span></p>
     <pre id="ascii-footer"></pre>
     <div id="github-update" class="update-component">
         <span class="label">Latest Update:</span>&nbsp;

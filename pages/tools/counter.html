@@ -24,12 +24,12 @@
     padding: 10px 16px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     flex-shrink: 0;
-    flex-wrap: wrap;
+    min-height: 0;
   }
 
-  header h1 { font-size: 1rem; font-weight: bold; flex: 1; }
+  header h1 { font-size: 1rem; font-weight: bold; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   #keybind-btn, #export-btn, #import-btn {
     font-family: "Courier New", monospace;
@@ -225,7 +225,8 @@
 <body>
 
 <header>
-  <h1>★彡 (shiny) counter 彡★</h1>
+  <h1>★(shiny) counter★</h1>
+  <button id="reminder-btn" title="toggle backup reminder"></button>
   <button id="import-btn" title="import backup">↑</button>
   <button id="export-btn" title="export backup">↓</button>
   <button id="keybind-btn" title="set hotkey"></button>
@@ -254,6 +255,7 @@
     <h2 id="modal-title">new counter</h2>
     <input type="text" id="modal-input" maxlength="32" placeholder="e.g. Giratina, Starter...">
     <div id="modal-btns">
+      <button id="modal-skip" style="display:none"></button>
       <button id="modal-cancel">cancel</button>
       <button id="modal-confirm" class="primary">confirm</button>
     </div>
@@ -453,7 +455,9 @@
     document.getElementById('modal-title').textContent = message;
     document.getElementById('modal-input').style.display = 'none';
     document.getElementById('modal-confirm').textContent = 'yes';
+    document.getElementById('modal-confirm').style.display = '';
     document.getElementById('modal-cancel').textContent = 'no';
+    document.getElementById('modal-skip').style.display = 'none';
     modalCallback = cb;
     document.getElementById('modal-overlay').classList.add('open');
   }
@@ -467,7 +471,9 @@
     input.style.display = '';
     input.value = value;
     document.getElementById('modal-confirm').textContent = 'confirm';
+    document.getElementById('modal-confirm').style.display = '';
     document.getElementById('modal-cancel').textContent = 'cancel';
+    document.getElementById('modal-skip').style.display = 'none';
     document.getElementById('modal-overlay').classList.add('open');
     setTimeout(() => input.focus(), 50);
   }
@@ -475,6 +481,7 @@
   function closeModal() {
     document.getElementById('modal-overlay').classList.remove('open');
     document.getElementById('modal-confirm').style.display = '';
+    document.getElementById('modal-skip').style.display = 'none';
     modalCallback = null;
   }
 
@@ -540,24 +547,62 @@
 
   // Reminder
   const REMINDER_INTERVAL = 100;
+  const REMINDER_KEY = 'shiny_reminder_enabled';
+  const REMINDED_KEY = 'shiny_last_reminded';
 
   function totalEncounters() {
     return state.counters.reduce((sum, c) => sum + c.count, 0);
   }
 
+  function reminderEnabled() {
+    return localStorage.getItem(REMINDER_KEY) !== 'false';
+  }
+
+  function updateReminderBtn() {
+    const on = reminderEnabled();
+    const btn = document.getElementById('reminder-btn');
+    btn.textContent = on ? '[🔔]' : '[🔕]';
+    btn.title = on ? 'backup reminder on' : 'backup reminder off';
+  }
+
+  document.getElementById('reminder-btn').addEventListener('click', () => {
+    const next = !reminderEnabled();
+    localStorage.setItem(REMINDER_KEY, next);
+    updateReminderBtn();
+  });
+
   function checkReminder() {
-    const lastExport = parseInt(localStorage.getItem('shiny_last_export') || '0');
+    if (!reminderEnabled()) return;
+    const lastReminded = parseInt(localStorage.getItem(REMINDED_KEY) || '0');
     const total = totalEncounters();
-    if (total > 0 && total - lastExport >= REMINDER_INTERVAL) {
-      openConfirm(`${total} encounters logged — export a backup?`, () => {
-        document.getElementById('export-btn').click();
-      });
-    }
+    if (total - lastReminded < REMINDER_INTERVAL) return;
+    // Mark as reminded NOW so it won't fire again for another 100
+    localStorage.setItem(REMINDED_KEY, total);
+    openReminderModal(total);
+  }
+
+  function openReminderModal(total) {
+    document.getElementById('modal-title').textContent = `${total} encounters — export a backup?`;
+    document.getElementById('modal-input').style.display = 'none';
+    document.getElementById('modal-confirm').textContent = 'export';
+    document.getElementById('modal-confirm').style.display = '';
+    document.getElementById('modal-cancel').textContent = 'not now';
+    const skip = document.getElementById('modal-skip');
+    skip.textContent = "don't ask again";
+    skip.style.display = '';
+    skip.onclick = () => {
+      localStorage.setItem(REMINDER_KEY, 'false');
+      updateReminderBtn();
+      closeModal();
+    };
+    modalCallback = () => { document.getElementById('export-btn').click(); };
+    document.getElementById('modal-overlay').classList.add('open');
   }
 
   loadState();
   if (state.counters.length === 0) state.active = null;
   updateKeybindBtn();
+  updateReminderBtn();
   render();
 </script>
 </body>
