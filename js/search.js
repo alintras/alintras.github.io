@@ -224,8 +224,17 @@ function toggleFavoriteSearch(query) {
     if (isURL(query)) {
         url = normalizeURL(query);
     } else {
-        const engine = document.getElementById("engine-select").value;
-        url = engines[engine](query);
+        const spaceAt  = query.indexOf(" ");
+        const hasSpace = spaceAt !== -1;
+        const keyword  = (hasSpace ? query.slice(0, spaceAt) : query).toLowerCase();
+        const rest     = hasSpace ? query.slice(spaceAt + 1).trim() : "";
+
+        if (shortcuts[keyword]) {
+            url = rest ? shortcuts[keyword](rest) : shortcutBases[keyword];
+        } else {
+            const engine = document.getElementById("engine-select").value;
+            url = engines[engine](query);
+        }
     }
     toggleFavorite(url, query);
 }
