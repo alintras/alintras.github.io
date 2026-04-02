@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   /*  inactive pages
       ${item(`<img src="/assets/smileys/bomb.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/voltorb-solver.html", "HGSS Voltorb Solver")} 
       ${item(`<img src="/assets/smileys/squirtle.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/tools/iv-calc.html", "GEN 3-5 IV Calculator")}
+      ${item(`<img src="/assets/smileys/code-man.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/c.html", "C")}
   */
   sidebar.innerHTML = `
     <b id="nav-toggle">Navigation</b>
@@ -55,7 +56,6 @@ document.addEventListener("DOMContentLoaded", function () {
       <summary><img src="/assets/smileys/notebook.png" style="width:16px; height:16px; vertical-align:middle; image-rendering:pixelated;"> Stuff</summary>
       ${item(`<img src="/assets/smileys/bulb.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/git.html", "Git")}
       ${item(`<img src="/assets/smileys/code-woman.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/html.html", "HTML")}
-      ${item(`<img src="/assets/smileys/code-man.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/c.html", "C")}
       ${item(`<img src="/assets/smileys/counter.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/math-history.html", "Math History")}
       ${item(`<img src="/assets/smileys/counter.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/math-prereq.html", "Math Prerequisites")}
     </details><br>

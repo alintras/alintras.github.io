@@ -5,6 +5,14 @@ setInterval(() => {
         now.toLocaleTimeString();
 }, 1000);
 
+/*
+const frames = [
+    ` [•.•]  [•.•] `,
+    ` [o.o]  [o.o] `, 
+    ` [•.•]  [•.•] `,
+    ` [x.x]  [x.x] `  
+];
+*/
 
 // ASCII FOOTER ANIMATION
 const frames = [
