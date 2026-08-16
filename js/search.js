@@ -74,6 +74,7 @@ const shortcutBases = {
     ud:        "https://www.urbandictionary.com",
     aw:        "https://aniworld.to",
 worlde:        "https://www.nytimes.com/games/wordle/index.html",
+   ttv:        "https://www.twitch.tv/",
 };
 
 const shortcuts = {
@@ -94,6 +95,7 @@ const shortcuts = {
     op:        q => `https://onepiece.tube/anime/folge/${encodeURIComponent(q)}`,
     ud:        q => `https://www.urbandictionary.com/define.php?term=${encodeURIComponent(q)}`,
     aw:        q => `https://aniworld.to/anime/stream/${encodeURIComponent(q.toLowerCase().replace(/\s+/g, '-'))}`,
+    ttv:       q => `https://www.twitch.tv/${encodeURIComponent(q)}`,
 };
 
 /* =============================================================
