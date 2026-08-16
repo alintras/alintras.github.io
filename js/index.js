@@ -19,9 +19,9 @@ const safeStorage = {
 function getGreeting(hour) {
     if (hour < 5)  return 'Working late?';
     if (hour < 12) return 'Good morning!';
-    if (hour < 18) return 'Good afternoon!';
-    if (hour < 22) return 'Good evening!';
-    return 'Burning the midnight oil?';
+    if (hour < 18) return 'Hey there!';
+    if (hour < 22) return 'Hey there!';
+    return 'Hey there!';
 }
 
 function getSignoff(hour) {
