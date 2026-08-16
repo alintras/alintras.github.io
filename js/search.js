@@ -72,7 +72,8 @@ const shortcutBases = {
     emoji:     "https://emojipedia.org",
     op:        "https://onepiece.tube",
     ud:        "https://www.urbandictionary.com",
-aw:        "https://aniworld.to",
+    aw:        "https://aniworld.to",
+worlde:        "https://www.nytimes.com/games/wordle/index.html",
 };
 
 const shortcuts = {
@@ -92,7 +93,7 @@ const shortcuts = {
     emoji:     q => `https://emojipedia.org/search/?q=${encodeURIComponent(q)}`,
     op:        q => `https://onepiece.tube/anime/folge/${encodeURIComponent(q)}`,
     ud:        q => `https://www.urbandictionary.com/define.php?term=${encodeURIComponent(q)}`,
-aw:        q => `https://aniworld.to/anime/stream/${encodeURIComponent(q.toLowerCase().replace(/\s+/g, '-'))}`,
+    aw:        q => `https://aniworld.to/anime/stream/${encodeURIComponent(q.toLowerCase().replace(/\s+/g, '-'))}`,
 };
 
 /* =============================================================
