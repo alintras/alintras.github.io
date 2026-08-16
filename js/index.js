@@ -57,28 +57,46 @@ const FRICTION = 0.985;
 const BOUNCE = 0.55;
 const MIN_VELOCITY = 0.3;
 
-// Initialize dancers always aligned on reload
-for (let i = 0; i < NUM_DANCERS; i++) {
-    const dancer = document.createElement('div');
-    dancer.className = 'dancer';
-    dancer.dataset.id = 'dancer-' + i;
-    dancer.style.position = 'fixed';
-    dancer.style.whiteSpace = 'pre';
-    dancer.style.cursor = 'grab';
-    dancer.style.userSelect = 'none';
-    dancer.style.fontFamily = 'monospace';
-    dancer.textContent = dancerFrames[0];
+// Initialize dancers safely below footer elements
+function initDancers() {
+    const rect = footerEl ? footerEl.getBoundingClientRect() : { left: 50, top: window.innerHeight - 80 };
+    
+    for (let i = 0; i < NUM_DANCERS; i++) {
+        const dancer = document.createElement('div');
+        dancer.className = 'dancer';
+        dancer.dataset.id = 'dancer-' + i;
+        dancer.style.position = 'fixed';
+        dancer.style.whiteSpace = 'pre';
+        dancer.style.cursor = 'grab';
+        dancer.style.userSelect = 'none';
+        dancer.style.fontFamily = 'monospace';
+        dancer.textContent = dancerFrames[0];
 
-    // Align evenly relative to footerEl
-    const rect = footerEl ? footerEl.getBoundingClientRect() : { left: 100, top: window.innerHeight - 100 };
-    dancer.style.left = (rect.left + i * 90) + 'px';
-    dancer.style.top = rect.top + 'px';
+        // Read saved position OR calculate alignment below footer
+        const saved = safeStorage.getItem(dancer.dataset.id);
+        if (saved) {
+            const pos = JSON.parse(saved);
+            dancer.style.left = pos.x + 'px';
+            dancer.style.top = pos.y + 'px';
+        } else {
+            dancer.style.left = (rect.left + (i * 100)) + 'px';
+            dancer.style.top = (rect.top + 20) + 'px';
+        }
 
-    document.body.appendChild(dancer);
-    dancers.push({ el: dancer, vx: 0, vy: 0, physicsActive: false });
+        document.body.appendChild(dancer);
+        dancers.push({ el: dancer, vx: 0, vy: 0, physicsActive: false });
+        makeDraggable(dancers[i]);
+    }
 }
 
-// Dance animation loop: dance continuous EXCEPT when being dragged
+// Run setup after DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDancers);
+} else {
+    initDancers();
+}
+
+// Dance animation loop: continuously dance EXCEPT when being dragged
 let frameIndex = 0;
 setInterval(() => {
     frameIndex = (frameIndex + 1) % dancerFrames.length;
@@ -153,55 +171,59 @@ function resolveObstacleCollision(d, dancerRect, obstacle) {
     return true;
 }
 
-// Resolve collisions between two dancers
+// Multi-pass collision handling allowing multi-body hit reactions
 function resolveDancerCollisions() {
-    for (let i = 0; i < dancers.length; i++) {
-        for (let j = i + 1; j < dancers.length; j++) {
-            const d1 = dancers[i];
-            const d2 = dancers[j];
+    const passes = 2; // Iterations to ensure chained reactions propagate
+    for (let pass = 0; pass < passes; pass++) {
+        for (let i = 0; i < dancers.length; i++) {
+            for (let j = i + 1; j < dancers.length; j++) {
+                const d1 = dancers[i];
+                const d2 = dancers[j];
 
-            const r1 = d1.el.getBoundingClientRect();
-            const r2 = d2.el.getBoundingClientRect();
+                const r1 = d1.el.getBoundingClientRect();
+                const r2 = d2.el.getBoundingClientRect();
 
-            const overlapX = r1.left < r2.right && r1.right > r2.left;
-            const overlapY = r1.top < r2.bottom && r1.bottom > r2.top;
+                const overlapX = r1.left < r2.right && r1.right > r2.left;
+                const overlapY = r1.top < r2.bottom && r1.bottom > r2.top;
 
-            if (overlapX && overlapY) {
-                const overlapLeft = r1.right - r2.left;
-                const overlapRight = r2.right - r1.left;
-                const overlapTop = r1.bottom - r2.top;
-                const overlapBottom = r2.bottom - r1.top;
+                if (overlapX && overlapY) {
+                    const overlapLeft = r1.right - r2.left;
+                    const overlapRight = r2.right - r1.left;
+                    const overlapTop = r1.bottom - r2.top;
+                    const overlapBottom = r2.bottom - r1.top;
 
-                const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
+                    const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
 
-                if (minOverlap === overlapLeft || minOverlap === overlapRight) {
-                    const shift = minOverlap / 2;
-                    if (r1.left < r2.left) {
-                        d1.el.style.left = (d1.el.offsetLeft - shift) + 'px';
-                        d2.el.style.left = (d2.el.offsetLeft + shift) + 'px';
+                    if (minOverlap === overlapLeft || minOverlap === overlapRight) {
+                        const shift = minOverlap / 2;
+                        if (r1.left < r2.left) {
+                            d1.el.style.left = (d1.el.offsetLeft - shift) + 'px';
+                            d2.el.style.left = (d2.el.offsetLeft + shift) + 'px';
+                        } else {
+                            d1.el.style.left = (d1.el.offsetLeft + shift) + 'px';
+                            d2.el.style.left = (d2.el.offsetLeft - shift) + 'px';
+                        }
+                        const v1 = d1.vx, v2 = d2.vx;
+                        d1.vx = v2 * BOUNCE;
+                        d2.vx = v1 * BOUNCE;
                     } else {
-                        d1.el.style.left = (d1.el.offsetLeft + shift) + 'px';
-                        d2.el.style.left = (d2.el.offsetLeft - shift) + 'px';
+                        const shift = minOverlap / 2;
+                        if (r1.top < r2.top) {
+                            d1.el.style.top = (d1.el.offsetTop - shift) + 'px';
+                            d2.el.style.top = (d2.el.offsetTop + shift) + 'px';
+                        } else {
+                            d1.el.style.top = (d1.el.offsetTop + shift) + 'px';
+                            d2.el.style.top = (d2.el.offsetTop - shift) + 'px';
+                        }
+                        const v1 = d1.vy, v2 = d2.vy;
+                        d1.vy = v2 * BOUNCE;
+                        d2.vy = v1 * BOUNCE;
                     }
-                    const tempVx = d1.vx;
-                    d1.vx = d2.vx * BOUNCE;
-                    d2.vx = tempVx * BOUNCE;
-                } else {
-                    const shift = minOverlap / 2;
-                    if (r1.top < r2.top) {
-                        d1.el.style.top = (d1.el.offsetTop - shift) + 'px';
-                        d2.el.style.top = (d2.el.offsetTop + shift) + 'px';
-                    } else {
-                        d1.el.style.top = (d1.el.offsetTop + shift) + 'px';
-                        d2.el.style.top = (d2.el.offsetTop - shift) + 'px';
-                    }
-                    const tempVy = d1.vy;
-                    d1.vy = d2.vy * BOUNCE;
-                    d2.vy = tempVy * BOUNCE;
+
+                    // Activate physics on both dancers so momentum cascades
+                    d1.physicsActive = true;
+                    d2.physicsActive = true;
                 }
-
-                d1.physicsActive = true;
-                d2.physicsActive = true;
             }
         }
     }
@@ -235,7 +257,6 @@ function makeDraggable(d) {
         el.style.left = (clientX - offsetX) + 'px';
         el.style.top = (clientY - offsetY) + 'px';
 
-        // Update velocity calculated from motion delta
         d.vx = (clientX - lastX) / dt * 16;
         d.vy = (clientY - lastY) / dt * 16;
 
@@ -249,15 +270,15 @@ function makeDraggable(d) {
         el.classList.remove('dragging');
         el.style.cursor = 'grab';
 
-        // Check if movement stopped before release; if so, clear velocity
         const now = performance.now();
         if (now - lastTime > 100 || (Math.abs(d.vx) < 1.5 && Math.abs(d.vy) < 1.5)) {
             d.vx = 0;
             d.vy = 0;
-            d.physicsActive = GRAVITY_ENABLED; // Only drop if gravity is on
+            d.physicsActive = GRAVITY_ENABLED;
         } else {
-            d.physicsActive = true; // Flung with velocity
+            d.physicsActive = true;
         }
+        savePosition(d);
     }
 
     el.addEventListener('mousedown', (e) => onDown(e.clientX, e.clientY));
@@ -274,8 +295,6 @@ function makeDraggable(d) {
     }, { passive: true });
     document.addEventListener('touchend', onUp);
 }
-
-dancers.forEach(makeDraggable);
 
 let GRAVITY_ENABLED = false;
 
@@ -295,20 +314,18 @@ function globalPhysicsLoop() {
     const outer = getOuterBounds();
     const obstacles = getObstacleRects();
 
-    // Check collisions between dancers first
+    // Check collisions between all dancers
     resolveDancerCollisions();
 
     dancers.forEach(d => {
         if (d.el.classList.contains('dragging')) return;
 
-        // Obstacle collisions
         let hitObstacle = false;
         const rect = d.el.getBoundingClientRect();
         obstacles.forEach(obs => {
             if (resolveObstacleCollision(d, rect, obs)) hitObstacle = true;
         });
 
-        // Sidebar/Outer bounds collision check
         const currentRect = d.el.getBoundingClientRect();
         if (currentRect.left < outer.minX) {
             d.el.style.left = outer.minX + 'px';
