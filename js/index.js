@@ -17,15 +17,15 @@ const safeStorage = {
 };
 
 function getGreeting(hour) {
-    if (hour < 5)  return 'Working late?';
+    if (hour < 5)  return 'Hey there!';
     if (hour < 12) return 'Good morning!';
-    if (hour < 18) return 'Good afternoon!';
-    if (hour < 22) return 'Good evening!';
+    if (hour < 18) return 'Hey there!';
+    if (hour < 22) return 'Hey there!';
     return 'Burning the midnight oil?';
 }
 
 function getSignoff(hour) {
-    if (hour < 12) return 'Welcome to my page. Have a great day!';
+    if (hour < 12) return 'Welcome to my page. Have a nice day!';
     if (hour < 18) return 'Welcome to my page. Have a good rest of your day!';
     return 'Welcome to my page. Have a good evening!';
 }
@@ -57,9 +57,23 @@ const FRICTION = 0.985;
 const BOUNCE = 0.55;
 const MIN_VELOCITY = 0.3;
 
-// Initialize dancers safely below footer elements
+// Helper: Calculate screen bounds for random placement
+function getOuterBounds() {
+    const sidebar = document.querySelector('#sidebar') || document.querySelector('nav');
+    const footer = document.querySelector('footer');
+    const header = document.querySelector('header');
+
+    return {
+        minX: sidebar ? sidebar.getBoundingClientRect().right : 0,
+        maxX: window.innerWidth,
+        minY: header ? header.getBoundingClientRect().bottom : 0,
+        maxY: footer ? footer.getBoundingClientRect().top : window.innerHeight
+    };
+}
+
+// Initialize dancers: Restore saved placement or generate completely random position
 function initDancers() {
-    const rect = footerEl ? footerEl.getBoundingClientRect() : { left: 50, top: window.innerHeight - 80 };
+    const bounds = getOuterBounds();
     
     for (let i = 0; i < NUM_DANCERS; i++) {
         const dancer = document.createElement('div');
@@ -72,15 +86,19 @@ function initDancers() {
         dancer.style.fontFamily = 'monospace';
         dancer.textContent = dancerFrames[0];
 
-        // Read saved position OR calculate alignment below footer
+        // 1. Try restoring position from storage
         const saved = safeStorage.getItem(dancer.dataset.id);
         if (saved) {
             const pos = JSON.parse(saved);
             dancer.style.left = pos.x + 'px';
             dancer.style.top = pos.y + 'px';
         } else {
-            dancer.style.left = (rect.left + (i * 100)) + 'px';
-            dancer.style.top = (rect.top + 20) + 'px';
+            // 2. Completely random position on screen (within bounds)
+            const randomX = Math.floor(bounds.minX + Math.random() * (bounds.maxX - bounds.minX - 60));
+            const randomY = Math.floor(bounds.minY + Math.random() * (bounds.maxY - bounds.minY - 60));
+            
+            dancer.style.left = Math.max(bounds.minX, randomX) + 'px';
+            dancer.style.top = Math.max(bounds.minY, randomY) + 'px';
         }
 
         document.body.appendChild(dancer);
@@ -110,20 +128,6 @@ setInterval(() => {
 function savePosition(d) {
     const rect = d.el.getBoundingClientRect();
     safeStorage.setItem(d.el.dataset.id, JSON.stringify({ x: rect.left, y: rect.top }));
-}
-
-// Outer bounds calculation
-function getOuterBounds() {
-    const sidebar = document.querySelector('#sidebar') || document.querySelector('nav');
-    const footer = document.querySelector('footer');
-    const header = document.querySelector('header');
-
-    return {
-        minX: sidebar ? sidebar.getBoundingClientRect().right : 0,
-        maxX: window.innerWidth,
-        minY: header ? header.getBoundingClientRect().bottom : 0,
-        maxY: footer ? footer.getBoundingClientRect().top : window.innerHeight
-    };
 }
 
 // Obstacles rect list
@@ -278,6 +282,8 @@ function makeDraggable(d) {
         } else {
             d.physicsActive = true;
         }
+        
+        // Save dropped position into storage
         savePosition(d);
     }
 
