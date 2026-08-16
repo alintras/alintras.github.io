@@ -17,7 +17,7 @@ const safeStorage = {
 };
 
 function getGreeting(hour) {
-    if (hour < 5)  return 'Hey there!';
+    if (hour < 5)  return 'Hey there!';
     if (hour < 12) return 'Good morning!';
     if (hour < 18) return 'Hey there!';
     if (hour < 22) return 'Hey there!';
@@ -48,7 +48,7 @@ const dancerFrames = [
    /  \\`
 ];
 
-const NUM_DANCERS = 3;
+const NUM_DANCERS = 4; // Matches the screenshot layout
 const footerEl = document.getElementById('ascii-footer');
 const dancers = [];
 
@@ -57,48 +57,53 @@ const FRICTION = 0.985;
 const BOUNCE = 0.55;
 const MIN_VELOCITY = 0.3;
 
-// Helper: Calculate screen bounds for random placement
+// Clean outer bounds calculation (accounts for page scrolling)
 function getOuterBounds() {
     const sidebar = document.querySelector('#sidebar') || document.querySelector('nav');
     const footer = document.querySelector('footer');
     const header = document.querySelector('header');
 
     return {
-        minX: sidebar ? sidebar.getBoundingClientRect().right : 0,
-        maxX: window.innerWidth,
-        minY: header ? header.getBoundingClientRect().bottom : 0,
-        maxY: footer ? footer.getBoundingClientRect().top : window.innerHeight
+        minX: sidebar ? sidebar.getBoundingClientRect().right + window.scrollX : 0,
+        maxX: window.innerWidth + window.scrollX,
+        minY: header ? header.getBoundingClientRect().bottom + window.scrollY : 0,
+        maxY: footer ? footer.getBoundingClientRect().top + window.scrollY : (document.documentElement.scrollHeight || window.innerHeight)
     };
 }
 
-// Initialize dancers: Restore saved placement or generate completely random position
+// Initialize dancers aligned directly inside/below #ascii-footer as in the screenshot
 function initDancers() {
-    const bounds = getOuterBounds();
-    
+    // Hide original static text container if present
+    if (footerEl) footerEl.style.visibility = 'hidden';
+
+    // Position setup
+    const rect = footerEl ? footerEl.getBoundingClientRect() : { left: 20, top: 300 };
+    const startX = rect.left + window.scrollX;
+    const startY = rect.top + window.scrollY;
+
     for (let i = 0; i < NUM_DANCERS; i++) {
         const dancer = document.createElement('div');
         dancer.className = 'dancer';
         dancer.dataset.id = 'dancer-' + i;
-        dancer.style.position = 'fixed';
+        dancer.style.position = 'absolute'; // Absolute positioning allows scrolling with page
         dancer.style.whiteSpace = 'pre';
         dancer.style.cursor = 'grab';
         dancer.style.userSelect = 'none';
+        dancer.style.webkitUserSelect = 'none';
+        dancer.style.touchAction = 'none'; // Prevents mobile pull-to-refresh
         dancer.style.fontFamily = 'monospace';
         dancer.textContent = dancerFrames[0];
 
-        // 1. Try restoring position from storage
+        // Read saved position OR default to clean horizontal layout
         const saved = safeStorage.getItem(dancer.dataset.id);
         if (saved) {
             const pos = JSON.parse(saved);
             dancer.style.left = pos.x + 'px';
             dancer.style.top = pos.y + 'px';
         } else {
-            // 2. Completely random position on screen (within bounds)
-            const randomX = Math.floor(bounds.minX + Math.random() * (bounds.maxX - bounds.minX - 60));
-            const randomY = Math.floor(bounds.minY + Math.random() * (bounds.maxY - bounds.minY - 60));
-            
-            dancer.style.left = Math.max(bounds.minX, randomX) + 'px';
-            dancer.style.top = Math.max(bounds.minY, randomY) + 'px';
+            // Default position exactly as shown in screenshot
+            dancer.style.left = (startX + (i * 70)) + 'px';
+            dancer.style.top = startY + 'px';
         }
 
         document.body.appendChild(dancer);
@@ -126,17 +131,27 @@ setInterval(() => {
 }, 300);
 
 function savePosition(d) {
-    const rect = d.el.getBoundingClientRect();
-    safeStorage.setItem(d.el.dataset.id, JSON.stringify({ x: rect.left, y: rect.top }));
+    safeStorage.setItem(d.el.dataset.id, JSON.stringify({ 
+        x: parseFloat(d.el.style.left), 
+        y: parseFloat(d.el.style.top) 
+    }));
 }
 
-// Obstacles rect list
+// Obstacles rect list in document coordinates
 function getObstacleRects() {
     const selectors = ['#search-input', '#engine-select', '#search-button', '#clock'];
     return selectors
         .map(sel => document.querySelector(sel))
         .filter(Boolean)
-        .map(el => el.getBoundingClientRect());
+        .map(el => {
+            const r = el.getBoundingClientRect();
+            return {
+                left: r.left + window.scrollX,
+                right: r.right + window.scrollX,
+                top: r.top + window.scrollY,
+                bottom: r.bottom + window.scrollY
+            };
+        });
 }
 
 // Resolve collisions with environment obstacles
@@ -152,8 +167,8 @@ function resolveObstacleCollision(d, dancerRect, obstacle) {
 
     const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
     const el = d.el;
-    let x = el.offsetLeft;
-    let y = el.offsetTop;
+    let x = parseFloat(el.style.left);
+    let y = parseFloat(el.style.top);
 
     if (minOverlap === overlapLeft) {
         x -= overlapLeft;
@@ -177,7 +192,7 @@ function resolveObstacleCollision(d, dancerRect, obstacle) {
 
 // Multi-pass collision handling allowing multi-body hit reactions
 function resolveDancerCollisions() {
-    const passes = 2; // Iterations to ensure chained reactions propagate
+    const passes = 2;
     for (let pass = 0; pass < passes; pass++) {
         for (let i = 0; i < dancers.length; i++) {
             for (let j = i + 1; j < dancers.length; j++) {
@@ -201,11 +216,11 @@ function resolveDancerCollisions() {
                     if (minOverlap === overlapLeft || minOverlap === overlapRight) {
                         const shift = minOverlap / 2;
                         if (r1.left < r2.left) {
-                            d1.el.style.left = (d1.el.offsetLeft - shift) + 'px';
-                            d2.el.style.left = (d2.el.offsetLeft + shift) + 'px';
+                            d1.el.style.left = (parseFloat(d1.el.style.left) - shift) + 'px';
+                            d2.el.style.left = (parseFloat(d2.el.style.left) + shift) + 'px';
                         } else {
-                            d1.el.style.left = (d1.el.offsetLeft + shift) + 'px';
-                            d2.el.style.left = (d2.el.offsetLeft - shift) + 'px';
+                            d1.el.style.left = (parseFloat(d1.el.style.left) + shift) + 'px';
+                            d2.el.style.left = (parseFloat(d2.el.style.left) - shift) + 'px';
                         }
                         const v1 = d1.vx, v2 = d2.vx;
                         d1.vx = v2 * BOUNCE;
@@ -213,18 +228,17 @@ function resolveDancerCollisions() {
                     } else {
                         const shift = minOverlap / 2;
                         if (r1.top < r2.top) {
-                            d1.el.style.top = (d1.el.offsetTop - shift) + 'px';
-                            d2.el.style.top = (d2.el.offsetTop + shift) + 'px';
+                            d1.el.style.top = (parseFloat(d1.el.style.top) - shift) + 'px';
+                            d2.el.style.top = (parseFloat(d2.el.style.top) + shift) + 'px';
                         } else {
-                            d1.el.style.top = (d1.el.offsetTop + shift) + 'px';
-                            d2.el.style.top = (d2.el.offsetTop - shift) + 'px';
+                            d1.el.style.top = (parseFloat(d1.el.style.top) + shift) + 'px';
+                            d2.el.style.top = (parseFloat(d2.el.style.top) - shift) + 'px';
                         }
                         const v1 = d1.vy, v2 = d2.vy;
                         d1.vy = v2 * BOUNCE;
                         d2.vy = v1 * BOUNCE;
                     }
 
-                    // Activate physics on both dancers so momentum cascades
                     d1.physicsActive = true;
                     d2.physicsActive = true;
                 }
@@ -242,12 +256,17 @@ function makeDraggable(d) {
         d.physicsActive = false;
         d.vx = 0;
         d.vy = 0;
-        const rect = el.getBoundingClientRect();
-        offsetX = clientX - rect.left;
-        offsetY = clientY - rect.top;
-        lastX = clientX;
-        lastY = clientY;
+        
+        const pageX = clientX + window.scrollX;
+        const pageY = clientY + window.scrollY;
+
+        offsetX = pageX - parseFloat(el.style.left || 0);
+        offsetY = pageY - parseFloat(el.style.top || 0);
+        
+        lastX = pageX;
+        lastY = pageY;
         lastTime = performance.now();
+        
         el.classList.add('dragging');
         el.style.cursor = 'grabbing';
         el.style.zIndex = 1000;
@@ -255,17 +274,21 @@ function makeDraggable(d) {
 
     function onMove(clientX, clientY) {
         if (!el.classList.contains('dragging')) return;
+        
         const now = performance.now();
         const dt = Math.max(now - lastTime, 1);
 
-        el.style.left = (clientX - offsetX) + 'px';
-        el.style.top = (clientY - offsetY) + 'px';
+        const pageX = clientX + window.scrollX;
+        const pageY = clientY + window.scrollY;
 
-        d.vx = (clientX - lastX) / dt * 16;
-        d.vy = (clientY - lastY) / dt * 16;
+        el.style.left = (pageX - offsetX) + 'px';
+        el.style.top = (pageY - offsetY) + 'px';
 
-        lastX = clientX;
-        lastY = clientY;
+        d.vx = (pageX - lastX) / dt * 16;
+        d.vy = (pageY - lastY) / dt * 16;
+
+        lastX = pageX;
+        lastY = pageY;
         lastTime = now;
     }
 
@@ -283,22 +306,29 @@ function makeDraggable(d) {
             d.physicsActive = true;
         }
         
-        // Save dropped position into storage
         savePosition(d);
     }
 
+    // Mouse handlers
     el.addEventListener('mousedown', (e) => onDown(e.clientX, e.clientY));
     document.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
     document.addEventListener('mouseup', onUp);
 
+    // Touch handlers with e.preventDefault to block mobile refresh gestures
     el.addEventListener('touchstart', (e) => {
+        if (e.cancelable) e.preventDefault();
         const t = e.touches[0];
         onDown(t.clientX, t.clientY);
-    });
+    }, { passive: false });
+
     document.addEventListener('touchmove', (e) => {
-        const t = e.touches[0];
-        onMove(t.clientX, t.clientY);
-    }, { passive: true });
+        if (el.classList.contains('dragging')) {
+            if (e.cancelable) e.preventDefault();
+            const t = e.touches[0];
+            onMove(t.clientX, t.clientY);
+        }
+    }, { passive: false });
+
     document.addEventListener('touchend', onUp);
 }
 
@@ -326,14 +356,25 @@ function globalPhysicsLoop() {
     dancers.forEach(d => {
         if (d.el.classList.contains('dragging')) return;
 
-        let hitObstacle = false;
-        const rect = d.el.getBoundingClientRect();
+        let x = parseFloat(d.el.style.left);
+        let y = parseFloat(d.el.style.top);
+        const width = d.el.offsetWidth || 50;
+        const height = d.el.offsetHeight || 50;
+
+        const dancerRect = {
+            left: x,
+            right: x + width,
+            top: y,
+            bottom: y + height
+        };
+
+        // Obstacle checks
         obstacles.forEach(obs => {
-            if (resolveObstacleCollision(d, rect, obs)) hitObstacle = true;
+            resolveObstacleCollision(d, dancerRect, obs);
         });
 
-        const currentRect = d.el.getBoundingClientRect();
-        if (currentRect.left < outer.minX) {
+        // Sidebar check
+        if (x < outer.minX) {
             d.el.style.left = outer.minX + 'px';
             d.vx = Math.abs(d.vx) * BOUNCE + 1;
             d.physicsActive = true;
@@ -347,13 +388,12 @@ function globalPhysicsLoop() {
         d.vx *= FRICTION;
         d.vy *= FRICTION;
 
-        let x = d.el.offsetLeft + d.vx;
-        let y = d.el.offsetTop + d.vy;
+        x += d.vx;
+        y += d.vy;
 
-        const r = d.el.getBoundingClientRect();
-        const maxX = outer.maxX - r.width;
+        const maxX = outer.maxX - width;
         const minX = outer.minX;
-        const maxY = outer.maxY - r.height;
+        const maxY = outer.maxY - height;
         const minY = outer.minY;
 
         if (x < minX) { x = minX; d.vx *= -BOUNCE; }
