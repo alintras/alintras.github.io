@@ -25,7 +25,7 @@ function getGreeting(hour) {
 }
 
 function getSignoff(hour) {
-    if (hour < 12) return 'Welcome to my page. Have a great day!';
+    if (hour < 12) return 'Welcome to my page. Have a nice day!';
     if (hour < 18) return 'Welcome to my page. Have a good rest of your day!';
     return 'Welcome to my page. Have a good evening!';
 }
@@ -40,14 +40,14 @@ setInterval(() => {
 
 const frames = [
     `
-(•.•)/  (•.•)/  (•.•)/  (•.•)/  (•.•)/
-<)  )   <)  )   <)  )   <)  )   <)  )  
-/  \\    /  \\    /  \\    /  \\    /  \\  
+(•.•)/  (•.•)/  (•.•)/  
+<)  )   <)  )   <)  )   
+/  \\    /  \\    /  \\   
     `,
     `
-\\(•.•)  \\(•.•)  \\(•.•)  \\(•.•)  \\(•.•) 
- (  (>   (  (>   (  (>   (  (>   (  (>  
- /  \\    /  \\    /  \\    /  \\    /  \\  
+\\(•.•)  \\(•.•)  \\(•.•) 
+ (  (>   (  (>   (  (>   
+ /  \\    /  \\    /  \\  
     `  
 ];
 
