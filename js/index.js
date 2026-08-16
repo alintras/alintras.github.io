@@ -48,7 +48,7 @@ const dancerFrames = [
    /  \\`
 ];
 
-const NUM_DANCERS = 4; // Matches the screenshot layout
+const NUM_DANCERS = 3;
 const footerEl = document.getElementById('ascii-footer');
 const dancers = [];
 
@@ -57,7 +57,7 @@ const FRICTION = 0.985;
 const BOUNCE = 0.55;
 const MIN_VELOCITY = 0.3;
 
-// Clean outer bounds calculation (accounts for page scrolling)
+// Outer bounds calculation (document coordinates)
 function getOuterBounds() {
     const sidebar = document.querySelector('#sidebar') || document.querySelector('nav');
     const footer = document.querySelector('footer');
@@ -71,55 +71,56 @@ function getOuterBounds() {
     };
 }
 
-// Initialize dancers aligned directly inside/below #ascii-footer as in the screenshot
+// Initialize dancers inside the footer container so they scroll naturally
 function initDancers() {
-    // Hide original static text container if present
-    if (footerEl) footerEl.style.visibility = 'hidden';
+    if (!footerEl) return;
 
-    // Position setup
-    const rect = footerEl ? footerEl.getBoundingClientRect() : { left: 20, top: 300 };
-    const startX = rect.left + window.scrollX;
-    const startY = rect.top + window.scrollY;
+    // Clear static text inside footer
+    footerEl.textContent = '';
+    footerEl.style.display = 'flex';
+    footerEl.style.gap = '25px';
+    footerEl.style.flexWrap = 'wrap';
 
     for (let i = 0; i < NUM_DANCERS; i++) {
         const dancer = document.createElement('div');
         dancer.className = 'dancer';
         dancer.dataset.id = 'dancer-' + i;
-        dancer.style.position = 'absolute'; // Absolute positioning allows scrolling with page
         dancer.style.whiteSpace = 'pre';
         dancer.style.cursor = 'grab';
         dancer.style.userSelect = 'none';
         dancer.style.webkitUserSelect = 'none';
-        dancer.style.touchAction = 'none'; // Prevents mobile pull-to-refresh
+        dancer.style.touchAction = 'none'; // Prevent touch scroll on mobile drag
         dancer.style.fontFamily = 'monospace';
+        dancer.style.display = 'inline-block';
         dancer.textContent = dancerFrames[0];
 
-        // Read saved position OR default to clean horizontal layout
+        const dancerObj = { el: dancer, vx: 0, vy: 0, physicsActive: false, isMoved: false };
+
+        // Read saved position OR keep inside static flexbox flow
         const saved = safeStorage.getItem(dancer.dataset.id);
         if (saved) {
             const pos = JSON.parse(saved);
+            dancer.style.position = 'absolute';
             dancer.style.left = pos.x + 'px';
             dancer.style.top = pos.y + 'px';
+            document.body.appendChild(dancer); // Attached directly to body only if moved
+            dancerObj.isMoved = true;
         } else {
-            // Default position exactly as shown in screenshot
-            dancer.style.left = (startX + (i * 70)) + 'px';
-            dancer.style.top = startY + 'px';
+            footerEl.appendChild(dancer); // Sits cleanly in normal page layout
         }
 
-        document.body.appendChild(dancer);
-        dancers.push({ el: dancer, vx: 0, vy: 0, physicsActive: false });
-        makeDraggable(dancers[i]);
+        dancers.push(dancerObj);
+        makeDraggable(dancerObj);
     }
 }
 
-// Run setup after DOM ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initDancers);
 } else {
     initDancers();
 }
 
-// Dance animation loop: continuously dance EXCEPT when being dragged
+// Dance animation loop: continuous dance EXCEPT when being dragged
 let frameIndex = 0;
 setInterval(() => {
     frameIndex = (frameIndex + 1) % dancerFrames.length;
@@ -131,13 +132,14 @@ setInterval(() => {
 }, 300);
 
 function savePosition(d) {
+    if (!d.isMoved) return;
     safeStorage.setItem(d.el.dataset.id, JSON.stringify({ 
         x: parseFloat(d.el.style.left), 
         y: parseFloat(d.el.style.top) 
     }));
 }
 
-// Obstacles rect list in document coordinates
+// Obstacles rect list
 function getObstacleRects() {
     const selectors = ['#search-input', '#engine-select', '#search-button', '#clock'];
     return selectors
@@ -154,7 +156,6 @@ function getObstacleRects() {
         });
 }
 
-// Resolve collisions with environment obstacles
 function resolveObstacleCollision(d, dancerRect, obstacle) {
     const overlapX = dancerRect.left < obstacle.right && dancerRect.right > obstacle.left;
     const overlapY = dancerRect.top < obstacle.bottom && dancerRect.bottom > obstacle.top;
@@ -190,7 +191,6 @@ function resolveObstacleCollision(d, dancerRect, obstacle) {
     return true;
 }
 
-// Multi-pass collision handling allowing multi-body hit reactions
 function resolveDancerCollisions() {
     const passes = 2;
     for (let pass = 0; pass < passes; pass++) {
@@ -198,6 +198,9 @@ function resolveDancerCollisions() {
             for (let j = i + 1; j < dancers.length; j++) {
                 const d1 = dancers[i];
                 const d2 = dancers[j];
+
+                // Skip if neither has been moved into dynamic space
+                if (!d1.isMoved && !d2.isMoved) continue;
 
                 const r1 = d1.el.getBoundingClientRect();
                 const r2 = d2.el.getBoundingClientRect();
@@ -216,11 +219,11 @@ function resolveDancerCollisions() {
                     if (minOverlap === overlapLeft || minOverlap === overlapRight) {
                         const shift = minOverlap / 2;
                         if (r1.left < r2.left) {
-                            d1.el.style.left = (parseFloat(d1.el.style.left) - shift) + 'px';
-                            d2.el.style.left = (parseFloat(d2.el.style.left) + shift) + 'px';
+                            if (d1.isMoved) d1.el.style.left = (parseFloat(d1.el.style.left) - shift) + 'px';
+                            if (d2.isMoved) d2.el.style.left = (parseFloat(d2.el.style.left) + shift) + 'px';
                         } else {
-                            d1.el.style.left = (parseFloat(d1.el.style.left) + shift) + 'px';
-                            d2.el.style.left = (parseFloat(d2.el.style.left) - shift) + 'px';
+                            if (d1.isMoved) d1.el.style.left = (parseFloat(d1.el.style.left) + shift) + 'px';
+                            if (d2.isMoved) d2.el.style.left = (parseFloat(d2.el.style.left) - shift) + 'px';
                         }
                         const v1 = d1.vx, v2 = d2.vx;
                         d1.vx = v2 * BOUNCE;
@@ -228,11 +231,11 @@ function resolveDancerCollisions() {
                     } else {
                         const shift = minOverlap / 2;
                         if (r1.top < r2.top) {
-                            d1.el.style.top = (parseFloat(d1.el.style.top) - shift) + 'px';
-                            d2.el.style.top = (parseFloat(d2.el.style.top) + shift) + 'px';
+                            if (d1.isMoved) d1.el.style.top = (parseFloat(d1.el.style.top) - shift) + 'px';
+                            if (d2.isMoved) d2.el.style.top = (parseFloat(d2.el.style.top) + shift) + 'px';
                         } else {
-                            d1.el.style.top = (parseFloat(d1.el.style.top) + shift) + 'px';
-                            d2.el.style.top = (parseFloat(d2.el.style.top) - shift) + 'px';
+                            if (d1.isMoved) d1.el.style.top = (parseFloat(d1.el.style.top) + shift) + 'px';
+                            if (d2.isMoved) d2.el.style.top = (parseFloat(d2.el.style.top) - shift) + 'px';
                         }
                         const v1 = d1.vy, v2 = d2.vy;
                         d1.vy = v2 * BOUNCE;
@@ -252,7 +255,19 @@ function makeDraggable(d) {
     let offsetX = 0, offsetY = 0;
     let lastX = 0, lastY = 0, lastTime = 0;
 
+    function detachToBody() {
+        if (!d.isMoved) {
+            const rect = el.getBoundingClientRect();
+            el.style.position = 'absolute';
+            el.style.left = (rect.left + window.scrollX) + 'px';
+            el.style.top = (rect.top + window.scrollY) + 'px';
+            document.body.appendChild(el);
+            d.isMoved = true;
+        }
+    }
+
     function onDown(clientX, clientY) {
+        detachToBody();
         d.physicsActive = false;
         d.vx = 0;
         d.vy = 0;
@@ -309,12 +324,10 @@ function makeDraggable(d) {
         savePosition(d);
     }
 
-    // Mouse handlers
     el.addEventListener('mousedown', (e) => onDown(e.clientX, e.clientY));
     document.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
     document.addEventListener('mouseup', onUp);
 
-    // Touch handlers with e.preventDefault to block mobile refresh gestures
     el.addEventListener('touchstart', (e) => {
         if (e.cancelable) e.preventDefault();
         const t = e.touches[0];
@@ -341,7 +354,10 @@ if (gravityToggleBtn) {
         gravityToggleBtn.textContent = GRAVITY_ENABLED ? '🌍 Gravity: ON' : '🌌 Gravity: OFF';
 
         if (GRAVITY_ENABLED) {
-            dancers.forEach(d => { d.physicsActive = true; });
+            dancers.forEach(d => { 
+                if (d.makeDraggable) d.makeDraggable.detachToBody();
+                d.physicsActive = true; 
+            });
         }
     });
 }
@@ -350,11 +366,10 @@ function globalPhysicsLoop() {
     const outer = getOuterBounds();
     const obstacles = getObstacleRects();
 
-    // Check collisions between all dancers
     resolveDancerCollisions();
 
     dancers.forEach(d => {
-        if (d.el.classList.contains('dragging')) return;
+        if (!d.isMoved || d.el.classList.contains('dragging')) return;
 
         let x = parseFloat(d.el.style.left);
         let y = parseFloat(d.el.style.top);
@@ -368,12 +383,10 @@ function globalPhysicsLoop() {
             bottom: y + height
         };
 
-        // Obstacle checks
         obstacles.forEach(obs => {
             resolveObstacleCollision(d, dancerRect, obs);
         });
 
-        // Sidebar check
         if (x < outer.minX) {
             d.el.style.left = outer.minX + 'px';
             d.vx = Math.abs(d.vx) * BOUNCE + 1;
