@@ -112,7 +112,7 @@ async function fetchLatestCommit(username, repo) {
       messageElement.textContent = lastCommit.commit.message + ' ';
       
       const commitDate = new Date(lastCommit.commit.author.date);
-      dateElement.textContent = `(${commitDate.toLocaleDateString()})`;
+      dateElement.textContent = ` (${commitDate.toLocaleDateString()})`;
   
     } catch (error) {
       console.error('Error fetching GitHub commit:', error);
