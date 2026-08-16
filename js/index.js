@@ -1,8 +1,23 @@
-// CLOCK
+function getGreeting(hour) {
+    if (hour < 5)  return 'Working late?';
+    if (hour < 12) return 'Good morning!';
+    if (hour < 18) return 'Good afternoon!';
+    if (hour < 22) return 'Good evening!';
+    return 'Burning the midnight oil?';
+}
+
+function getSignoff(hour) {
+    if (hour < 12) return 'Welcome to my page. Have a great day!';
+    if (hour < 18) return 'Welcome to my page. Have a good rest of your day!';
+    return 'Welcome to my page. Have a good evening!';
+}
+
+// CLOCK + GREETING
 setInterval(() => {
     const now = new Date();
-    document.getElementById("clock").textContent =
-        now.toLocaleTimeString();
+    document.getElementById("clock").textContent = now.toLocaleTimeString();
+    document.getElementById("greeting").textContent = getGreeting(now.getHours());
+    document.getElementById("signoff").textContent = getSignoff(now.getHours());
 }, 1000);
 
 /*
