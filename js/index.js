@@ -107,14 +107,12 @@ async function fetchLatestCommit(username, repo) {
       if (!response.ok) throw new Error('Network response was not ok');
       
       const data = await response.json();
-      const lastCommit = data[0]; // The first item is always the newest
+      const lastCommit = data[0];
   
-      // Update the UI
-      messageElement.textContent = lastCommit.commit.message;
+      messageElement.textContent = lastCommit.commit.message + ' ';
       
-      // Optional: Format the date
       const commitDate = new Date(lastCommit.commit.author.date);
-      dateElement.textContent = ` (${commitDate.toLocaleDateString()})`;
+      dateElement.textContent = `(${commitDate.toLocaleDateString()})`;
   
     } catch (error) {
       console.error('Error fetching GitHub commit:', error);
@@ -122,7 +120,6 @@ async function fetchLatestCommit(username, repo) {
     }
   }
   
-  // Initialize: Replace with your actual username and repo name
   fetchLatestCommit('alintras', 'alintras.github.io');
 
 // SERVICE WORKER
