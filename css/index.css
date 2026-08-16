@@ -176,7 +176,6 @@
   .update-component {
       display: inline-flex;
       width: auto;
-      margin-top: 40px;
       padding: 5px;
       background: var(--bg);
       border-top: 1px solid var(--border);

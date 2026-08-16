@@ -38,16 +38,20 @@ setInterval(() => {
     document.getElementById("signoff").textContent = getSignoff(now.getHours());
 }, 1000);
 
-/*
 const frames = [
-    ` [•.•]  [•.•] `,
-    ` [o.o]  [o.o] `, 
-    ` [•.•]  [•.•] `,
-    ` [x.x]  [x.x] `  
+    `
+(•.•)/  (•.•)/  (•.•)/  (•.•)/  (•.•)/
+<)  )   <)  )   <)  )   <)  )   <)  )  
+/  \\    /  \\    /  \\    /  \\    /  \\  
+    `,
+    `
+\\(•.•)  \\(•.•)  \\(•.•)  \\(•.•)  \\(•.•) 
+ (  (>   (  (>   (  (>   (  (>   (  (>  
+ /  \\    /  \\    /  \\    /  \\    /  \\  
+    `  
 ];
-*/
 
-// ASCII FOOTER ANIMATION
+/*
 const frames = [
 ` 
  ,…,    ,_     ,…,    ,_     ,…,    ,_     ,…,   
@@ -60,6 +64,7 @@ const frames = [
  """    """    """    """    """    """    """ 
 `
 ];
+*/
 
 let i = 0;
 
