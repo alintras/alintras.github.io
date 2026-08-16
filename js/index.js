@@ -139,12 +139,35 @@ function savePosition(d) {
     }));
 }
 
-// Obstacles rect list
 function getObstacleRects() {
-    const selectors = ['#search-input', '#engine-select', '#search-button', '#clock'];
-    return selectors
-        .map(sel => document.querySelector(sel))
-        .filter(Boolean)
+    const selectors = [
+        '#search-input', 
+        '#engine-select', 
+        '#search-button', 
+        '#clock',
+        '.search-results',      // Search suggestion lists / favorites
+        '.dropdown-menu',       // Generic dropdowns
+        'details[open]',        // Expanded details elements & contents
+        'p',                    // Page text blocks
+        'h1, h2, h3, h4',       // Headings
+        'a',                    // Links
+        '.search-help'          // Search keywords container
+    ];
+
+    const elements = [];
+    selectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => elements.push(el));
+    });
+
+    return elements
+        .filter(el => {
+            // Ignore the dancer elements themselves so they don't treat themselves as background obstacles
+            if (el.classList.contains('dancer') || el.closest('#ascii-footer')) return false;
+            
+            // Only include visible elements on screen
+            const r = el.getBoundingClientRect();
+            return r.width > 0 && r.height > 0;
+        })
         .map(el => {
             const r = el.getBoundingClientRect();
             return {
@@ -366,13 +389,16 @@ function globalPhysicsLoop() {
     const outer = getOuterBounds();
     const obstacles = getObstacleRects();
 
+    // Multi-pass dancer-to-dancer collisions
     resolveDancerCollisions();
 
     dancers.forEach(d => {
-        if (!d.isMoved || d.el.classList.contains('dragging')) return;
+        if (d.el.classList.contains('dragging')) return;
 
-        let x = parseFloat(d.el.style.left);
-        let y = parseFloat(d.el.style.top);
+        // Automatically detach to absolute body positioning if pushed by expanding layout
+        let x = d.isMoved ? parseFloat(d.el.style.left) : (d.el.getBoundingClientRect().left + window.scrollX);
+        let y = d.isMoved ? parseFloat(d.el.style.top) : (d.el.getBoundingClientRect().top + window.scrollY);
+
         const width = d.el.offsetWidth || 50;
         const height = d.el.offsetHeight || 50;
 
@@ -383,10 +409,22 @@ function globalPhysicsLoop() {
             bottom: y + height
         };
 
+        // Check collisions against text & expanding menus
+        let pushedByObstacle = false;
         obstacles.forEach(obs => {
-            resolveObstacleCollision(d, dancerRect, obs);
+            if (resolveObstacleCollision(d, dancerRect, obs)) {
+                pushedByObstacle = true;
+            }
         });
 
+        // If a newly expanded menu pushed the dancer, detach it so it can float freely
+        if (pushedByObstacle && !d.isMoved) {
+            d.isMoved = true;
+            d.el.style.position = 'absolute';
+            document.body.appendChild(d.el);
+        }
+
+        // Keep inside screen boundaries
         if (x < outer.minX) {
             d.el.style.left = outer.minX + 'px';
             d.vx = Math.abs(d.vx) * BOUNCE + 1;
@@ -417,7 +455,8 @@ function globalPhysicsLoop() {
         d.el.style.left = x + 'px';
         d.el.style.top = y + 'px';
 
-        if (Math.abs(d.vx) < MIN_VELOCITY && Math.abs(d.vy) < MIN_VELOCITY && y >= maxY - 1) {
+        // Settle physics once momentum fades
+        if (Math.abs(d.vx) < MIN_VELOCITY && Math.abs(d.vy) < MIN_VELOCITY && (!GRAVITY_ENABLED || y >= maxY - 1)) {
             d.physicsActive = false;
             d.vx = 0;
             d.vy = 0;
