@@ -40,7 +40,7 @@ coinDisplay.style.right = '15px';
 coinDisplay.style.fontFamily = 'monospace';
 coinDisplay.style.color = '#ffd700'; // Gold
 coinDisplay.style.fontSize = '16px';
-coinDisplay.style.zIndex = '1000';
+coinDisplay.style.zIndex = '10000';
 coinDisplay.style.pointerEvents = 'none';
 coinDisplay.textContent = `Coins: ${totalCoins}`;
 document.body.appendChild(coinDisplay);
@@ -61,13 +61,12 @@ function createFloatingText(x, y, text, color = '#ffd700', duration = 1500) {
     el.style.fontFamily = 'monospace';
     el.style.fontWeight = 'bold';
     el.style.pointerEvents = 'none';
-    el.style.zIndex = '9999';
+    el.style.zIndex = '10000';
     el.style.transition = `top ${duration}ms ease-out, opacity ${duration}ms ease-in`;
     document.body.appendChild(el);
 
-    // Trigger reflow
-    void el.offsetWidth;
-    el.style.top = `${y - 60}px`; // Float upwards
+    void el.offsetWidth; // Trigger reflow
+    el.style.top = `${y - 60}px`;
     el.style.opacity = '0';
 
     setTimeout(() => el.remove(), duration);
@@ -110,7 +109,11 @@ function initDancers() {
         dancer.style.webkitUserSelect = 'none';
         dancer.style.touchAction = 'none';
         dancer.style.fontFamily = 'monospace';
+        dancer.style.fontSize = '14px';
+        dancer.style.lineHeight = '1.2';
+        dancer.style.color = 'inherit';
         dancer.style.display = 'inline-block';
+        dancer.style.zIndex = '999'; // Ensure visible layer above layout
         dancer.textContent = dancerFrames[0];
 
         const dancerObj = { 
@@ -119,7 +122,6 @@ function initDancers() {
             vy: 0, 
             physicsActive: false, 
             isMoved: false,
-            // Coin properties
             inSwing: false,
             bounceCombo: 0,
             swingTotal: 0,
@@ -128,12 +130,23 @@ function initDancers() {
 
         const saved = safeStorage.getItem(dancer.dataset.id);
         if (saved) {
-            const pos = JSON.parse(saved);
-            dancer.style.position = 'absolute';
-            dancer.style.left = pos.x + 'px';
-            dancer.style.top = pos.y + 'px';
-            document.body.appendChild(dancer);
-            dancerObj.isMoved = true;
+            try {
+                const pos = JSON.parse(saved);
+                const outer = getOuterBounds();
+                
+                // Clamp coordinates to stay on screen
+                const clampedX = Math.max(outer.minX, Math.min(pos.x, outer.maxX - 60));
+                const clampedY = Math.max(outer.minY, Math.min(pos.y, outer.maxY - 60));
+
+                dancer.style.position = 'absolute';
+                dancer.style.left = clampedX + 'px';
+                dancer.style.top = clampedY + 'px';
+                dancer.style.zIndex = '999';
+                document.body.appendChild(dancer);
+                dancerObj.isMoved = true;
+            } catch(e) {
+                dancerRow.appendChild(dancer);
+            }
         } else {
             dancerRow.appendChild(dancer);
         }
@@ -203,17 +216,14 @@ function getObstacleRects() {
 
 function triggerBounce(d, x, y) {
     const now = performance.now();
-    // Debounce to prevent multiple triggers in a single frame/corner snag
     if (d.inSwing && (now - d.lastBounceTime > 150)) {
         d.bounceCombo++;
         d.lastBounceTime = now;
         
-        // Exponential formula: base 5, * 1.5 per extra bounce
         const gained = Math.floor(5 * Math.pow(1.5, d.bounceCombo - 1));
         d.swingTotal += gained;
         addCoins(gained);
         
-        // Show gained per bounce
         createFloatingText(x + 20, y, `+${gained} (x${d.bounceCombo})`, '#ffd700');
     }
 }
@@ -240,7 +250,6 @@ function resolveObstaclesForDancer(d, obstacles, iterations = 3) {
             const overlapBottom = obs.bottom - rect.top;
             const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
 
-            // Added + 1.5 pushback to strictly un-stick from the containers
             if (minOverlap === overlapLeft) {
                 x -= (overlapLeft + 1.5);
                 if (d.vx > 0) d.vx = -d.vx * BOUNCE - 0.5;
@@ -259,7 +268,6 @@ function resolveObstaclesForDancer(d, obstacles, iterations = 3) {
             hitAny = true;
             pushed = true;
             
-            // Update rect for next obstacle check
             rect.left = x; rect.right = x + width;
             rect.top = y; rect.bottom = y + height;
         }
@@ -270,6 +278,7 @@ function resolveObstaclesForDancer(d, obstacles, iterations = 3) {
         if (!d.isMoved) {
             d.isMoved = true;
             d.el.style.position = 'absolute';
+            d.el.style.zIndex = '999';
             document.body.appendChild(d.el);
         }
         d.el.style.left = x + 'px';
@@ -279,7 +288,6 @@ function resolveObstaclesForDancer(d, obstacles, iterations = 3) {
     return { x, y, width, height };
 }
 
-// ... [Keep existing resolveDancerCollisions exact logic here] ...
 function resolveDancerCollisions() {
     const passes = 2;
     for (let pass = 0; pass < passes; pass++) {
@@ -304,7 +312,7 @@ function resolveDancerCollisions() {
                     const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
 
                     if (minOverlap === overlapLeft || minOverlap === overlapRight) {
-                        const shift = (minOverlap / 2) + 1; // +1 to prevent sticking
+                        const shift = (minOverlap / 2) + 1;
                         if (r1.left < r2.left) {
                             if (d1.isMoved) d1.el.style.left = (parseFloat(d1.el.style.left) - shift) + 'px';
                             if (d2.isMoved) d2.el.style.left = (parseFloat(d2.el.style.left) + shift) + 'px';
@@ -316,7 +324,7 @@ function resolveDancerCollisions() {
                         d1.vx = v2 * BOUNCE;
                         d2.vx = v1 * BOUNCE;
                     } else {
-                        const shift = (minOverlap / 2) + 1; // +1 to prevent sticking
+                        const shift = (minOverlap / 2) + 1;
                         if (r1.top < r2.top) {
                             if (d1.isMoved) d1.el.style.top = (parseFloat(d1.el.style.top) - shift) + 'px';
                             if (d2.isMoved) d2.el.style.top = (parseFloat(d2.el.style.top) + shift) + 'px';
@@ -350,10 +358,11 @@ function makeDraggable(d) {
             el.style.position = 'absolute';
             el.style.left = (rect.left + window.scrollX) + 'px';
             el.style.top = (rect.top + window.scrollY) + 'px';
+            el.style.zIndex = '999';
             document.body.appendChild(el);
             d.isMoved = true;
         }
-    }
+    };
 
     function onDown(clientX, clientY) {
         d.detachToBody();
@@ -361,9 +370,7 @@ function makeDraggable(d) {
         d.vx = 0;
         d.vy = 0;
         
-        // Reset swing logic on grab
         if (d.inSwing && d.swingTotal > 0) {
-            // If they grabbed it before it stopped, show what they had so far
             createFloatingText(parseFloat(el.style.left), parseFloat(el.style.top), `Swing Total: ${d.swingTotal}`, '#00ffcc', 2000);
         }
         d.inSwing = false;
@@ -382,7 +389,7 @@ function makeDraggable(d) {
         
         el.classList.add('dragging');
         el.style.cursor = 'grabbing';
-        el.style.zIndex = 1000;
+        el.style.zIndex = '1000';
     }
 
     function onMove(clientX, clientY) {
@@ -409,6 +416,7 @@ function makeDraggable(d) {
         if (!el.classList.contains('dragging')) return;
         el.classList.remove('dragging');
         el.style.cursor = 'grab';
+        el.style.zIndex = '999';
 
         const now = performance.now();
         if (now - lastTime > 100 || (Math.abs(d.vx) < 1.5 && Math.abs(d.vy) < 1.5)) {
@@ -417,7 +425,6 @@ function makeDraggable(d) {
             d.physicsActive = GRAVITY_ENABLED;
         } else {
             d.physicsActive = true;
-            // Initiate swing state if thrown!
             d.inSwing = true;
         }
         
@@ -472,7 +479,6 @@ function globalPhysicsLoop() {
         const width = pos.width;
         const height = pos.height;
 
-        // Outer bounds checks & bounce triggers
         if (x < outer.minX) { 
             x = outer.minX; d.vx = Math.abs(d.vx) * BOUNCE + 1; d.physicsActive = true; 
             triggerBounce(d, x, y);
@@ -507,13 +513,11 @@ function globalPhysicsLoop() {
         d.el.style.left = x + 'px';
         d.el.style.top = y + 'px';
 
-        // Check if movement stopped
         if (Math.abs(d.vx) < MIN_VELOCITY && Math.abs(d.vy) < MIN_VELOCITY && (!GRAVITY_ENABLED || y >= outer.maxY - height - 1)) {
             d.physicsActive = false;
             d.vx = 0;
             d.vy = 0;
             
-            // End of swing!
             if (d.inSwing) {
                 d.inSwing = false;
                 if (d.swingTotal > 0) {
@@ -528,8 +532,6 @@ function globalPhysicsLoop() {
 }
 requestAnimationFrame(globalPhysicsLoop);
 
-// --- BUG FIX: DETAILS ELEMENT GLITCH ---
-// Push dancers out of the way when details open so they don't get trapped.
 document.querySelectorAll("details").forEach(details => {
     details.addEventListener("toggle", () => {
         if (details.open) {
@@ -537,14 +539,12 @@ document.querySelectorAll("details").forEach(details => {
             dancers.forEach(d => {
                 const dr = d.el.getBoundingClientRect();
                 
-                // If the dancer is currently inside the newly expanded details bounding box...
                 if (dr.left < rect.right && dr.right > rect.left && dr.top < rect.bottom && dr.bottom > rect.top) {
                     d.detachToBody();
                     
                     const toRight = rect.right - dr.left;
                     const toBottom = rect.bottom - dr.top;
                     
-                    // Push them to whichever escape route is shorter (right or below)
                     if (toRight < toBottom) {
                         d.el.style.left = (parseFloat(d.el.style.left || dr.left) + toRight + 15) + "px";
                     } else {
