@@ -1,5 +1,6 @@
 // --- buddies.js ---
 
+// Storage fallback helper
 const safeStorage = {
     _memory: {},
     getItem(key) {
@@ -12,6 +13,7 @@ const safeStorage = {
     }
 };
 
+// Dancer frames & configuration
 const dancerFrames = [
 ` (•.•)/
  <)  )
@@ -30,7 +32,7 @@ const BOUNCE = 0.55;
 const MIN_VELOCITY = 0.3;
 let GRAVITY_ENABLED = false;
 
-// --- COIN SYSTEM UI ---
+// --- COIN DISPLAY ---
 let totalCoins = parseInt(localStorage.getItem('buddy_coins') || '0');
 const coinDisplay = document.createElement('div');
 coinDisplay.id = 'buddy-coin-display';
@@ -38,12 +40,11 @@ coinDisplay.style.position = 'fixed';
 coinDisplay.style.top = '15px';
 coinDisplay.style.right = '15px';
 coinDisplay.style.fontFamily = 'monospace';
-coinDisplay.style.color = '#ffd700'; // Gold
+coinDisplay.style.color = '#ffd700';
 coinDisplay.style.fontSize = '16px';
 coinDisplay.style.zIndex = '10000';
 coinDisplay.style.pointerEvents = 'none';
 coinDisplay.textContent = `Coins: ${totalCoins}`;
-document.body.appendChild(coinDisplay);
 
 function addCoins(amount) {
     totalCoins += amount;
@@ -65,14 +66,14 @@ function createFloatingText(x, y, text, color = '#ffd700', duration = 1500) {
     el.style.transition = `top ${duration}ms ease-out, opacity ${duration}ms ease-in`;
     document.body.appendChild(el);
 
-    void el.offsetWidth; // Trigger reflow
+    void el.offsetWidth;
     el.style.top = `${y - 60}px`;
     el.style.opacity = '0';
 
     setTimeout(() => el.remove(), duration);
 }
 
-// --- CORE LOGIC ---
+// --- BOUNDS & OBSTACLES ---
 function getOuterBounds() {
     const sidebar = document.querySelector('#sidebar') || document.querySelector('nav');
     const footer = document.querySelector('footer');
@@ -86,110 +87,10 @@ function getOuterBounds() {
     };
 }
 
-function initDancers() {
-    const footerEl = document.getElementById('ascii-footer');
-    if (!footerEl) return;
-    footerEl.textContent = '';
-
-    const dancerRow = document.createElement('div');
-    dancerRow.id = 'dancer-row';
-    dancerRow.style.display = 'flex';
-    dancerRow.style.gap = '25px';
-    dancerRow.style.flexWrap = 'wrap';
-    dancerRow.style.width = '100%';
-    footerEl.appendChild(dancerRow);
-
-    for (let i = 0; i < NUM_DANCERS; i++) {
-        const dancer = document.createElement('div');
-        dancer.className = 'dancer';
-        dancer.dataset.id = 'dancer-' + i;
-        dancer.style.whiteSpace = 'pre';
-        dancer.style.cursor = 'grab';
-        dancer.style.userSelect = 'none';
-        dancer.style.webkitUserSelect = 'none';
-        dancer.style.touchAction = 'none';
-        dancer.style.fontFamily = 'monospace';
-        dancer.style.fontSize = '14px';
-        dancer.style.lineHeight = '1.2';
-        dancer.style.color = 'inherit';
-        dancer.style.display = 'inline-block';
-        dancer.style.zIndex = '999'; // Ensure visible layer above layout
-        dancer.textContent = dancerFrames[0];
-
-        const dancerObj = { 
-            el: dancer, 
-            vx: 0, 
-            vy: 0, 
-            physicsActive: false, 
-            isMoved: false,
-            inSwing: false,
-            bounceCombo: 0,
-            swingTotal: 0,
-            lastBounceTime: 0
-        };
-
-        const saved = safeStorage.getItem(dancer.dataset.id);
-        if (saved) {
-            try {
-                const pos = JSON.parse(saved);
-                const outer = getOuterBounds();
-                
-                // Clamp coordinates to stay on screen
-                const clampedX = Math.max(outer.minX, Math.min(pos.x, outer.maxX - 60));
-                const clampedY = Math.max(outer.minY, Math.min(pos.y, outer.maxY - 60));
-
-                dancer.style.position = 'absolute';
-                dancer.style.left = clampedX + 'px';
-                dancer.style.top = clampedY + 'px';
-                dancer.style.zIndex = '999';
-                document.body.appendChild(dancer);
-                dancerObj.isMoved = true;
-            } catch(e) {
-                dancerRow.appendChild(dancer);
-            }
-        } else {
-            dancerRow.appendChild(dancer);
-        }
-
-        dancers.push(dancerObj);
-        makeDraggable(dancerObj);
-    }
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initDancers);
-} else {
-    initDancers();
-}
-
-let frameIndex = 0;
-setInterval(() => {
-    frameIndex = (frameIndex + 1) % dancerFrames.length;
-    dancers.forEach((d, i) => {
-        if (!d.el.classList.contains('dragging')) {
-            d.el.textContent = dancerFrames[(frameIndex + i) % dancerFrames.length];
-        }
-    });
-}, 300);
-
-function savePosition(d) {
-    if (!d.isMoved) return;
-    safeStorage.setItem(d.el.dataset.id, JSON.stringify({ 
-        x: parseFloat(d.el.style.left), 
-        y: parseFloat(d.el.style.top) 
-    }));
-}
-
 function getObstacleRects() {
     const selectors = [
-        '#search-input',
-        '#engine-select',
-        '#search-button',
-        '#clock',
-        '.search-results',
-        '.dropdown-menu',
-        'details[open] > *:not(summary)',
-        '.search-help summary'
+        '#search-input', '#engine-select', '#search-button', '#clock',
+        '.search-results', '.dropdown-menu', 'details[open] > *:not(summary)', '.search-help summary'
     ];
 
     const elements = [];
@@ -214,16 +115,108 @@ function getObstacleRects() {
         });
 }
 
+// --- INITIALIZATION ---
+function initDancers() {
+    const footerEl = document.getElementById('ascii-footer');
+    if (!footerEl || dancers.length > 0) return;
+    
+    if (!document.getElementById('buddy-coin-display')) {
+        document.body.appendChild(coinDisplay);
+    }
+
+    footerEl.textContent = '';
+
+    const dancerRow = document.createElement('div');
+    dancerRow.id = 'dancer-row';
+    dancerRow.style.display = 'flex';
+    dancerRow.style.gap = '25px';
+    dancerRow.style.flexWrap = 'wrap';
+    dancerRow.style.width = '100%';
+    footerEl.appendChild(dancerRow);
+
+    for (let i = 0; i < NUM_DANCERS; i++) {
+        const dancer = document.createElement('div');
+        dancer.className = 'dancer';
+        dancer.dataset.id = 'dancer-' + i;
+        dancer.style.whiteSpace = 'pre';
+        dancer.style.cursor = 'grab';
+        dancer.style.userSelect = 'none';
+        dancer.style.webkitUserSelect = 'none';
+        dancer.style.touchAction = 'none';
+        dancer.style.fontFamily = 'monospace';
+        dancer.style.fontSize = '14px';
+        dancer.style.lineHeight = '1.2';
+        dancer.style.color = 'inherit';
+        dancer.style.display = 'inline-block';
+        dancer.style.zIndex = '999';
+        dancer.textContent = dancerFrames[0];
+
+        const dancerObj = { 
+            el: dancer, 
+            vx: 0, 
+            vy: 0, 
+            physicsActive: false, 
+            isMoved: false,
+            inSwing: false,
+            bounceCombo: 0,
+            swingTotal: 0,
+            lastBounceTime: 0
+        };
+
+        const saved = safeStorage.getItem(dancer.dataset.id);
+        if (saved) {
+            try {
+                const pos = JSON.parse(saved);
+                const outer = getOuterBounds();
+                const clampedX = Math.max(outer.minX, Math.min(pos.x, outer.maxX - 60));
+                const clampedY = Math.max(outer.minY, Math.min(pos.y, outer.maxY - 60));
+
+                dancer.style.position = 'absolute';
+                dancer.style.left = clampedX + 'px';
+                dancer.style.top = clampedY + 'px';
+                dancer.style.zIndex = '999';
+                document.body.appendChild(dancer);
+                dancerObj.isMoved = true;
+            } catch(e) {
+                dancerRow.appendChild(dancer);
+            }
+        } else {
+            dancerRow.appendChild(dancer);
+        }
+
+        dancers.push(dancerObj);
+        makeDraggable(dancerObj);
+    }
+}
+
+// Frame Animation Loop
+let frameIndex = 0;
+setInterval(() => {
+    frameIndex = (frameIndex + 1) % dancerFrames.length;
+    dancers.forEach((d, i) => {
+        if (!d.el.classList.contains('dragging')) {
+            d.el.textContent = dancerFrames[(frameIndex + i) % dancerFrames.length];
+        }
+    });
+}, 300);
+
+function savePosition(d) {
+    if (!d.isMoved) return;
+    safeStorage.setItem(d.el.dataset.id, JSON.stringify({ 
+        x: parseFloat(d.el.style.left), 
+        y: parseFloat(d.el.style.top) 
+    }));
+}
+
+// --- BOUNCE & PHYSICS LOGIC ---
 function triggerBounce(d, x, y) {
     const now = performance.now();
     if (d.inSwing && (now - d.lastBounceTime > 150)) {
         d.bounceCombo++;
         d.lastBounceTime = now;
-        
         const gained = Math.floor(5 * Math.pow(1.5, d.bounceCombo - 1));
         d.swingTotal += gained;
         addCoins(gained);
-        
         createFloatingText(x + 20, y, `+${gained} (x${d.bounceCombo})`, '#ffd700');
     }
 }
@@ -289,64 +282,55 @@ function resolveObstaclesForDancer(d, obstacles, iterations = 3) {
 }
 
 function resolveDancerCollisions() {
-    const passes = 2;
-    for (let pass = 0; pass < passes; pass++) {
-        for (let i = 0; i < dancers.length; i++) {
-            for (let j = i + 1; j < dancers.length; j++) {
-                const d1 = dancers[i];
-                const d2 = dancers[j];
-                if (!d1.isMoved && !d2.isMoved) continue;
+    for (let i = 0; i < dancers.length; i++) {
+        for (let j = i + 1; j < dancers.length; j++) {
+            const d1 = dancers[i];
+            const d2 = dancers[j];
+            if (!d1.isMoved && !d2.isMoved) continue;
 
-                const r1 = d1.el.getBoundingClientRect();
-                const r2 = d2.el.getBoundingClientRect();
+            const r1 = d1.el.getBoundingClientRect();
+            const r2 = d2.el.getBoundingClientRect();
 
-                const overlapX = r1.left < r2.right && r1.right > r2.left;
-                const overlapY = r1.top < r2.bottom && r1.bottom > r2.top;
+            if (r1.left < r2.right && r1.right > r2.left && r1.top < r2.bottom && r1.bottom > r2.top) {
+                const overlapLeft = r1.right - r2.left;
+                const overlapRight = r2.right - r1.left;
+                const overlapTop = r1.bottom - r2.top;
+                const overlapBottom = r2.bottom - r1.top;
 
-                if (overlapX && overlapY) {
-                    const overlapLeft = r1.right - r2.left;
-                    const overlapRight = r2.right - r1.left;
-                    const overlapTop = r1.bottom - r2.top;
-                    const overlapBottom = r2.bottom - r1.top;
+                const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
 
-                    const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
-
-                    if (minOverlap === overlapLeft || minOverlap === overlapRight) {
-                        const shift = (minOverlap / 2) + 1;
-                        if (r1.left < r2.left) {
-                            if (d1.isMoved) d1.el.style.left = (parseFloat(d1.el.style.left) - shift) + 'px';
-                            if (d2.isMoved) d2.el.style.left = (parseFloat(d2.el.style.left) + shift) + 'px';
-                        } else {
-                            if (d1.isMoved) d1.el.style.left = (parseFloat(d1.el.style.left) + shift) + 'px';
-                            if (d2.isMoved) d2.el.style.left = (parseFloat(d2.el.style.left) - shift) + 'px';
-                        }
-                        const v1 = d1.vx, v2 = d2.vx;
-                        d1.vx = v2 * BOUNCE;
-                        d2.vx = v1 * BOUNCE;
+                if (minOverlap === overlapLeft || minOverlap === overlapRight) {
+                    const shift = (minOverlap / 2) + 1;
+                    if (r1.left < r2.left) {
+                        if (d1.isMoved) d1.el.style.left = (parseFloat(d1.el.style.left) - shift) + 'px';
+                        if (d2.isMoved) d2.el.style.left = (parseFloat(d2.el.style.left) + shift) + 'px';
                     } else {
-                        const shift = (minOverlap / 2) + 1;
-                        if (r1.top < r2.top) {
-                            if (d1.isMoved) d1.el.style.top = (parseFloat(d1.el.style.top) - shift) + 'px';
-                            if (d2.isMoved) d2.el.style.top = (parseFloat(d2.el.style.top) + shift) + 'px';
-                        } else {
-                            if (d1.isMoved) d1.el.style.top = (parseFloat(d1.el.style.top) + shift) + 'px';
-                            if (d2.isMoved) d2.el.style.top = (parseFloat(d2.el.style.top) - shift) + 'px';
-                        }
-                        const v1 = d1.vy, v2 = d2.vy;
-                        d1.vy = v2 * BOUNCE;
-                        d2.vy = v1 * BOUNCE;
+                        if (d1.isMoved) d1.el.style.left = (parseFloat(d1.el.style.left) + shift) + 'px';
+                        if (d2.isMoved) d2.el.style.left = (parseFloat(d2.el.style.left) - shift) + 'px';
                     }
-
-                    triggerBounce(d1, parseFloat(d1.el.style.left), parseFloat(d1.el.style.top));
-                    triggerBounce(d2, parseFloat(d2.el.style.left), parseFloat(d2.el.style.top));
-                    d1.physicsActive = true;
-                    d2.physicsActive = true;
+                    const v1 = d1.vx; d1.vx = d2.vx * BOUNCE; d2.vx = v1 * BOUNCE;
+                } else {
+                    const shift = (minOverlap / 2) + 1;
+                    if (r1.top < r2.top) {
+                        if (d1.isMoved) d1.el.style.top = (parseFloat(d1.el.style.top) - shift) + 'px';
+                        if (d2.isMoved) d2.el.style.top = (parseFloat(d2.el.style.top) + shift) + 'px';
+                    } else {
+                        if (d1.isMoved) d1.el.style.top = (parseFloat(d1.el.style.top) + shift) + 'px';
+                        if (d2.isMoved) d2.el.style.top = (parseFloat(d2.el.style.top) - shift) + 'px';
+                    }
+                    const v1 = d1.vy; d1.vy = d2.vy * BOUNCE; d2.vy = v1 * BOUNCE;
                 }
+
+                triggerBounce(d1, parseFloat(d1.el.style.left), parseFloat(d1.el.style.top));
+                triggerBounce(d2, parseFloat(d2.el.style.left), parseFloat(d2.el.style.top));
+                d1.physicsActive = true;
+                d2.physicsActive = true;
             }
         }
     }
 }
 
+// --- DRAGGING INTERACTION ---
 function makeDraggable(d) {
     const el = d.el;
     let offsetX = 0, offsetY = 0;
@@ -367,8 +351,7 @@ function makeDraggable(d) {
     function onDown(clientX, clientY) {
         d.detachToBody();
         d.physicsActive = false;
-        d.vx = 0;
-        d.vy = 0;
+        d.vx = 0; d.vy = 0;
         
         if (d.inSwing && d.swingTotal > 0) {
             createFloatingText(parseFloat(el.style.left), parseFloat(el.style.top), `Swing Total: ${d.swingTotal}`, '#00ffcc', 2000);
@@ -383,8 +366,7 @@ function makeDraggable(d) {
         offsetX = pageX - parseFloat(el.style.left || 0);
         offsetY = pageY - parseFloat(el.style.top || 0);
         
-        lastX = pageX;
-        lastY = pageY;
+        lastX = pageX; lastY = pageY;
         lastTime = performance.now();
         
         el.classList.add('dragging');
@@ -397,7 +379,6 @@ function makeDraggable(d) {
         
         const now = performance.now();
         const dt = Math.max(now - lastTime, 1);
-
         const pageX = clientX + window.scrollX;
         const pageY = clientY + window.scrollY;
 
@@ -407,8 +388,7 @@ function makeDraggable(d) {
         d.vx = (pageX - lastX) / dt * 16;
         d.vy = (pageY - lastY) / dt * 16;
 
-        lastX = pageX;
-        lastY = pageY;
+        lastX = pageX; lastY = pageY;
         lastTime = now;
     }
 
@@ -420,8 +400,7 @@ function makeDraggable(d) {
 
         const now = performance.now();
         if (now - lastTime > 100 || (Math.abs(d.vx) < 1.5 && Math.abs(d.vy) < 1.5)) {
-            d.vx = 0;
-            d.vy = 0;
+            d.vx = 0; d.vy = 0;
             d.physicsActive = GRAVITY_ENABLED;
         } else {
             d.physicsActive = true;
@@ -450,20 +429,7 @@ function makeDraggable(d) {
     document.addEventListener('touchend', onUp);
 }
 
-const gravityToggleBtn = document.getElementById('gravity-toggle');
-if (gravityToggleBtn) {
-    gravityToggleBtn.addEventListener('click', () => {
-        GRAVITY_ENABLED = !GRAVITY_ENABLED;
-        gravityToggleBtn.textContent = GRAVITY_ENABLED ? '🌍 Gravity: ON' : '🌌 Gravity: OFF';
-        if (GRAVITY_ENABLED) {
-            dancers.forEach(d => { 
-                d.detachToBody();
-                d.physicsActive = true; 
-            });
-        }
-    });
-}
-
+// --- GLOBAL PHYSICS LOOP ---
 function globalPhysicsLoop() {
     const outer = getOuterBounds();
     const obstacles = getObstacleRects();
@@ -474,27 +440,13 @@ function globalPhysicsLoop() {
         if (d.el.classList.contains('dragging')) return;
 
         const pos = resolveObstaclesForDancer(d, obstacles);
-        let x = pos.x;
-        let y = pos.y;
-        const width = pos.width;
-        const height = pos.height;
+        let x = pos.x, y = pos.y;
+        const width = pos.width, height = pos.height;
 
-        if (x < outer.minX) { 
-            x = outer.minX; d.vx = Math.abs(d.vx) * BOUNCE + 1; d.physicsActive = true; 
-            triggerBounce(d, x, y);
-        }
-        if (x > outer.maxX - width) { 
-            x = outer.maxX - width; d.vx = -Math.abs(d.vx) * BOUNCE - 1; d.physicsActive = true; 
-            triggerBounce(d, x, y);
-        }
-        if (y < outer.minY) { 
-            y = outer.minY; d.vy = Math.abs(d.vy) * BOUNCE + 1; d.physicsActive = true; 
-            triggerBounce(d, x, y);
-        }
-        if (y > outer.maxY - height) { 
-            y = outer.maxY - height; d.vy = -Math.abs(d.vy) * BOUNCE - 1; d.physicsActive = true; 
-            triggerBounce(d, x, y);
-        }
+        if (x < outer.minX) { x = outer.minX; d.vx = Math.abs(d.vx) * BOUNCE + 1; d.physicsActive = true; triggerBounce(d, x, y); }
+        if (x > outer.maxX - width) { x = outer.maxX - width; d.vx = -Math.abs(d.vx) * BOUNCE - 1; d.physicsActive = true; triggerBounce(d, x, y); }
+        if (y < outer.minY) { y = outer.minY; d.vy = Math.abs(d.vy) * BOUNCE + 1; d.physicsActive = true; triggerBounce(d, x, y); }
+        if (y > outer.maxY - height) { y = outer.maxY - height; d.vy = -Math.abs(d.vy) * BOUNCE - 1; d.physicsActive = true; triggerBounce(d, x, y); }
 
         if (d.isMoved) {
             d.el.style.left = x + 'px';
@@ -515,14 +467,10 @@ function globalPhysicsLoop() {
 
         if (Math.abs(d.vx) < MIN_VELOCITY && Math.abs(d.vy) < MIN_VELOCITY && (!GRAVITY_ENABLED || y >= outer.maxY - height - 1)) {
             d.physicsActive = false;
-            d.vx = 0;
-            d.vy = 0;
-            
+            d.vx = 0; d.vy = 0;
             if (d.inSwing) {
                 d.inSwing = false;
-                if (d.swingTotal > 0) {
-                    createFloatingText(x, y - 20, `Swing Total: ${d.swingTotal}`, '#00ffcc', 2500);
-                }
+                if (d.swingTotal > 0) createFloatingText(x, y - 20, `Swing Total: ${d.swingTotal}`, '#00ffcc', 2500);
             }
             savePosition(d);
         }
@@ -530,29 +478,14 @@ function globalPhysicsLoop() {
 
     requestAnimationFrame(globalPhysicsLoop);
 }
-requestAnimationFrame(globalPhysicsLoop);
 
-document.querySelectorAll("details").forEach(details => {
-    details.addEventListener("toggle", () => {
-        if (details.open) {
-            const rect = details.getBoundingClientRect();
-            dancers.forEach(d => {
-                const dr = d.el.getBoundingClientRect();
-                
-                if (dr.left < rect.right && dr.right > rect.left && dr.top < rect.bottom && dr.bottom > rect.top) {
-                    d.detachToBody();
-                    
-                    const toRight = rect.right - dr.left;
-                    const toBottom = rect.bottom - dr.top;
-                    
-                    if (toRight < toBottom) {
-                        d.el.style.left = (parseFloat(d.el.style.left || dr.left) + toRight + 15) + "px";
-                    } else {
-                        d.el.style.top = (parseFloat(d.el.style.top || dr.top) + toBottom + 15) + "px";
-                    }
-                    d.physicsActive = true;
-                }
-            });
-        }
+// Auto-start initialization when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        initDancers();
+        requestAnimationFrame(globalPhysicsLoop);
     });
-});
+} else {
+    initDancers();
+    requestAnimationFrame(globalPhysicsLoop);
+}
