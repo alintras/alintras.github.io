@@ -71,15 +71,18 @@ function getOuterBounds() {
     };
 }
 
-// Initialize dancers inside the footer container so they scroll naturally
 function initDancers() {
     if (!footerEl) return;
 
-    // Clear static text inside footer
     footerEl.textContent = '';
-    footerEl.style.display = 'flex';
-    footerEl.style.gap = '25px';
-    footerEl.style.flexWrap = 'wrap';
+
+    const dancerRow = document.createElement('div');
+    dancerRow.id = 'dancer-row';
+    dancerRow.style.display = 'flex';
+    dancerRow.style.gap = '25px';
+    dancerRow.style.flexWrap = 'wrap';
+    dancerRow.style.width = '100%';
+    footerEl.appendChild(dancerRow);
 
     for (let i = 0; i < NUM_DANCERS; i++) {
         const dancer = document.createElement('div');
@@ -89,24 +92,23 @@ function initDancers() {
         dancer.style.cursor = 'grab';
         dancer.style.userSelect = 'none';
         dancer.style.webkitUserSelect = 'none';
-        dancer.style.touchAction = 'none'; // Prevent touch scroll on mobile drag
+        dancer.style.touchAction = 'none';
         dancer.style.fontFamily = 'monospace';
         dancer.style.display = 'inline-block';
         dancer.textContent = dancerFrames[0];
 
         const dancerObj = { el: dancer, vx: 0, vy: 0, physicsActive: false, isMoved: false };
 
-        // Read saved position OR keep inside static flexbox flow
         const saved = safeStorage.getItem(dancer.dataset.id);
         if (saved) {
             const pos = JSON.parse(saved);
             dancer.style.position = 'absolute';
             dancer.style.left = pos.x + 'px';
             dancer.style.top = pos.y + 'px';
-            document.body.appendChild(dancer); // Attached directly to body only if moved
+            document.body.appendChild(dancer);
             dancerObj.isMoved = true;
         } else {
-            footerEl.appendChild(dancer); // Sits cleanly in normal page layout
+            dancerRow.appendChild(dancer); // own row, no overlap with footer text
         }
 
         dancers.push(dancerObj);
@@ -141,17 +143,14 @@ function savePosition(d) {
 
 function getObstacleRects() {
     const selectors = [
-        '#search-input', 
-        '#engine-select', 
-        '#search-button', 
+        '#search-input',
+        '#engine-select',
+        '#search-button',
         '#clock',
-        '.search-results',      // Search suggestion lists / favorites
-        '.dropdown-menu',       // Generic dropdowns
-        'details[open]',        // Expanded details elements & contents
-        'p',                    // Page text blocks
-        'h1, h2, h3, h4',       // Headings
-        'a',                    // Links
-        '.search-help'          // Search keywords container
+        '.search-results',
+        '.dropdown-menu',
+        'details[open] > *:not(summary)', // only the expanded CONTENT, not the whole <details>
+        '.search-help summary'
     ];
 
     const elements = [];
@@ -161,10 +160,7 @@ function getObstacleRects() {
 
     return elements
         .filter(el => {
-            // Ignore the dancer elements themselves so they don't treat themselves as background obstacles
             if (el.classList.contains('dancer') || el.closest('#ascii-footer')) return false;
-            
-            // Only include visible elements on screen
             const r = el.getBoundingClientRect();
             return r.width > 0 && r.height > 0;
         })
@@ -179,39 +175,61 @@ function getObstacleRects() {
         });
 }
 
-function resolveObstacleCollision(d, dancerRect, obstacle) {
-    const overlapX = dancerRect.left < obstacle.right && dancerRect.right > obstacle.left;
-    const overlapY = dancerRect.top < obstacle.bottom && dancerRect.bottom > obstacle.top;
-    if (!overlapX || !overlapY) return false;
+function resolveObstaclesForDancer(d, obstacles, iterations = 5) {
+    let x = d.isMoved ? parseFloat(d.el.style.left) : (d.el.getBoundingClientRect().left + window.scrollX);
+    let y = d.isMoved ? parseFloat(d.el.style.top) : (d.el.getBoundingClientRect().top + window.scrollY);
+    const width = d.el.offsetWidth || 50;
+    const height = d.el.offsetHeight || 50;
+    let pushed = false;
 
-    const overlapLeft = dancerRect.right - obstacle.left;
-    const overlapRight = obstacle.right - dancerRect.left;
-    const overlapTop = dancerRect.bottom - obstacle.top;
-    const overlapBottom = obstacle.bottom - dancerRect.top;
+    for (let iter = 0; iter < iterations; iter++) {
+        let hitAny = false;
+        const rect = { left: x, right: x + width, top: y, bottom: y + height };
 
-    const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
-    const el = d.el;
-    let x = parseFloat(el.style.left);
-    let y = parseFloat(el.style.top);
+        for (const obs of obstacles) {
+            const overlapX = rect.left < obs.right && rect.right > obs.left;
+            const overlapY = rect.top < obs.bottom && rect.bottom > obs.top;
+            if (!overlapX || !overlapY) continue;
 
-    if (minOverlap === overlapLeft) {
-        x -= overlapLeft;
-        d.vx = -Math.abs(d.vx) * BOUNCE - 0.5;
-    } else if (minOverlap === overlapRight) {
-        x += overlapRight;
-        d.vx = Math.abs(d.vx) * BOUNCE + 0.5;
-    } else if (minOverlap === overlapTop) {
-        y -= overlapTop;
-        d.vy = -Math.abs(d.vy) * BOUNCE - 0.5;
-    } else {
-        y += overlapBottom;
-        d.vy = Math.abs(d.vy) * BOUNCE + 0.5;
+            const overlapLeft = rect.right - obs.left;
+            const overlapRight = obs.right - rect.left;
+            const overlapTop = rect.bottom - obs.top;
+            const overlapBottom = obs.bottom - rect.top;
+            const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
+
+            if (minOverlap === overlapLeft) {
+                x -= overlapLeft;
+                d.vx = -Math.abs(d.vx) * BOUNCE - 0.5;
+            } else if (minOverlap === overlapRight) {
+                x += overlapRight;
+                d.vx = Math.abs(d.vx) * BOUNCE + 0.5;
+            } else if (minOverlap === overlapTop) {
+                y -= overlapTop;
+                d.vy = -Math.abs(d.vy) * BOUNCE - 0.5;
+            } else {
+                y += overlapBottom;
+                d.vy = Math.abs(d.vy) * BOUNCE + 0.5;
+            }
+            hitAny = true;
+            pushed = true;
+            rect.left = x; rect.right = x + width;
+            rect.top = y; rect.bottom = y + height;
+        }
+        if (!hitAny) break;
     }
 
-    el.style.left = x + 'px';
-    el.style.top = y + 'px';
-    d.physicsActive = true;
-    return true;
+    if (pushed) {
+        if (!d.isMoved) {
+            d.isMoved = true;
+            d.el.style.position = 'absolute';
+            document.body.appendChild(d.el);
+        }
+        d.el.style.left = x + 'px';
+        d.el.style.top = y + 'px';
+        d.physicsActive = true;
+    }
+
+    return { x, y, width, height };
 }
 
 function resolveDancerCollisions() {
@@ -389,46 +407,27 @@ function globalPhysicsLoop() {
     const outer = getOuterBounds();
     const obstacles = getObstacleRects();
 
-    // Multi-pass dancer-to-dancer collisions
     resolveDancerCollisions();
 
     dancers.forEach(d => {
         if (d.el.classList.contains('dragging')) return;
 
-        // Automatically detach to absolute body positioning if pushed by expanding layout
-        let x = d.isMoved ? parseFloat(d.el.style.left) : (d.el.getBoundingClientRect().left + window.scrollX);
-        let y = d.isMoved ? parseFloat(d.el.style.top) : (d.el.getBoundingClientRect().top + window.scrollY);
+        // Resolve obstacle overlaps first (multi-pass, avoids landing in another container)
+        const pos = resolveObstaclesForDancer(d, obstacles);
+        let x = pos.x;
+        let y = pos.y;
+        const width = pos.width;
+        const height = pos.height;
 
-        const width = d.el.offsetWidth || 50;
-        const height = d.el.offsetHeight || 50;
+        // Keep inside outer bounds too
+        if (x < outer.minX) { x = outer.minX; d.vx = Math.abs(d.vx) * BOUNCE + 1; d.physicsActive = true; }
+        if (x > outer.maxX - width) { x = outer.maxX - width; d.vx = -Math.abs(d.vx) * BOUNCE - 1; d.physicsActive = true; }
+        if (y < outer.minY) { y = outer.minY; d.vy = Math.abs(d.vy) * BOUNCE + 1; d.physicsActive = true; }
+        if (y > outer.maxY - height) { y = outer.maxY - height; d.vy = -Math.abs(d.vy) * BOUNCE - 1; d.physicsActive = true; }
 
-        const dancerRect = {
-            left: x,
-            right: x + width,
-            top: y,
-            bottom: y + height
-        };
-
-        // Check collisions against text & expanding menus
-        let pushedByObstacle = false;
-        obstacles.forEach(obs => {
-            if (resolveObstacleCollision(d, dancerRect, obs)) {
-                pushedByObstacle = true;
-            }
-        });
-
-        // If a newly expanded menu pushed the dancer, detach it so it can float freely
-        if (pushedByObstacle && !d.isMoved) {
-            d.isMoved = true;
-            d.el.style.position = 'absolute';
-            document.body.appendChild(d.el);
-        }
-
-        // Keep inside screen boundaries
-        if (x < outer.minX) {
-            d.el.style.left = outer.minX + 'px';
-            d.vx = Math.abs(d.vx) * BOUNCE + 1;
-            d.physicsActive = true;
+        if (d.isMoved) {
+            d.el.style.left = x + 'px';
+            d.el.style.top = y + 'px';
         }
 
         if (!d.physicsActive) return;
@@ -455,7 +454,6 @@ function globalPhysicsLoop() {
         d.el.style.left = x + 'px';
         d.el.style.top = y + 'px';
 
-        // Settle physics once momentum fades
         if (Math.abs(d.vx) < MIN_VELOCITY && Math.abs(d.vy) < MIN_VELOCITY && (!GRAVITY_ENABLED || y >= maxY - 1)) {
             d.physicsActive = false;
             d.vx = 0;
