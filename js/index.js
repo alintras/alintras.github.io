@@ -1,3 +1,21 @@
+const safeStorage = {
+  _memory: {},
+  getItem(key) {
+    try {
+      return sessionStorage.getItem(key);
+    } catch (e) {
+      return this._memory[key] || null;
+    }
+  },
+  setItem(key, value) {
+    try {
+      sessionStorage.setItem(key, value);
+    } catch (e) {
+      this._memory[key] = value;
+    }
+  }
+};
+
 function getGreeting(hour) {
     if (hour < 5)  return 'Hey there!';
     if (hour < 12) return 'Good morning!';

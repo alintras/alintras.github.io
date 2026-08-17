@@ -22,7 +22,6 @@ const dancerFrames = [
 ];
 
 const NUM_DANCERS = 3;
-const footerEl = document.getElementById('ascii-footer');
 const dancers = [];
 
 const GRAVITY = 0.6;
@@ -89,6 +88,7 @@ function getOuterBounds() {
 }
 
 function initDancers() {
+    const footerEl = document.getElementById('ascii-footer');
     if (!footerEl) return;
     footerEl.textContent = '';
 
