@@ -146,7 +146,7 @@ function initDancers() {
         dancer.style.fontFamily = 'monospace';
         dancer.style.fontSize = '14px';
         dancer.style.lineHeight = '1.2';
-        dancer.style.color = 'inherit';
+        dancer.style.color = 'currentColor'; // Ensures visibility in dark/light themes
         dancer.style.display = 'inline-block';
         dancer.style.zIndex = '999';
         dancer.textContent = dancerFrames[0];
@@ -171,12 +171,17 @@ function initDancers() {
                 const clampedX = Math.max(outer.minX, Math.min(pos.x, outer.maxX - 60));
                 const clampedY = Math.max(outer.minY, Math.min(pos.y, outer.maxY - 60));
 
-                dancer.style.position = 'absolute';
-                dancer.style.left = clampedX + 'px';
-                dancer.style.top = clampedY + 'px';
-                dancer.style.zIndex = '999';
-                document.body.appendChild(dancer);
-                dancerObj.isMoved = true;
+                // Verify validity before restoring absolute position
+                if (!isNaN(clampedX) && !isNaN(clampedY) && clampedY > 0) {
+                    dancer.style.position = 'absolute';
+                    dancer.style.left = clampedX + 'px';
+                    dancer.style.top = clampedY + 'px';
+                    dancer.style.zIndex = '999';
+                    document.body.appendChild(dancer);
+                    dancerObj.isMoved = true;
+                } else {
+                    dancerRow.appendChild(dancer);
+                }
             } catch(e) {
                 dancerRow.appendChild(dancer);
             }
