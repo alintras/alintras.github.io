@@ -23,7 +23,7 @@ function initStats(target) {
     // Render skeleton
     el.style.fontFamily = 'Courier New, monospace';
     el.style.fontSize = '0.85em';
-    el.innerHTML = '<span id="_stats-stay">stay: 0s</span>';
+    el.innerHTML = '<span id="_stats-stay">stay: 0s</span> <span id="_stats-score">| score: 0</span>';
 
     // --- Stay length (live counter) ---
     function updateStay() {
