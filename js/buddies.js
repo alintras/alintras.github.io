@@ -167,13 +167,20 @@ function initDancers() {
 
     footerEl.textContent = '';
 
-    const dancerRow = document.createElement('div');
-    dancerRow.id = 'dancer-row';
-    dancerRow.style.display = 'flex';
-    dancerRow.style.gap = '25px';
-    dancerRow.style.flexWrap = 'wrap';
-    dancerRow.style.width = '100%';
-    footerEl.appendChild(dancerRow);
+    // Create container with explicit inline-flex styling so items NEVER stack vertically
+    let dancerRow = document.getElementById('dancer-row');
+    if (!dancerRow) {
+        dancerRow = document.createElement('div');
+        dancerRow.id = 'dancer-row';
+        dancerRow.style.display = 'flex';
+        dancerRow.style.flexDirection = 'row';
+        dancerRow.style.flexWrap = 'nowrap';
+        dancerRow.style.gap = '25px';
+        dancerRow.style.alignItems = 'flex-start';
+        dancerRow.style.width = '100%';
+        dancerRow.style.marginTop = '10px';
+        footerEl.appendChild(dancerRow);
+    }
 
     for (let i = 0; i < NUM_DANCERS; i++) {
         const dancer = document.createElement('div');
@@ -188,7 +195,7 @@ function initDancers() {
         dancer.style.fontSize = '12px';
         dancer.style.lineHeight = '1.2';
         dancer.style.color = 'currentColor';
-        dancer.style.display = 'inline-block';
+        dancer.style.display = 'inline-block'; // Ensures inline layout behavior
         dancer.style.zIndex = '999';
         dancer.textContent = dancerFrames[0];
 
@@ -205,6 +212,8 @@ function initDancers() {
         };
 
         const saved = safeStorage.getItem(dancer.dataset.id);
+        let restored = false;
+
         if (saved) {
             try {
                 const pos = JSON.parse(saved);
@@ -212,20 +221,23 @@ function initDancers() {
                 const clampedX = Math.max(outer.minX, Math.min(pos.x, outer.maxX - 60));
                 const clampedY = Math.max(outer.minY, Math.min(pos.y, outer.maxY - 60));
 
-                if (!isNaN(clampedX) && !isNaN(clampedY) && clampedY > 0) {
+                // Only treat as moved if Y coordinate is reasonable and non-zero
+                if (!isNaN(clampedX) && !isNaN(clampedY) && clampedY > 50) {
                     dancer.style.position = 'absolute';
                     dancer.style.left = clampedX + 'px';
                     dancer.style.top = clampedY + 'px';
                     dancer.style.zIndex = '999';
                     document.body.appendChild(dancer);
                     dancerObj.isMoved = true;
-                } else {
-                    dancerRow.appendChild(dancer);
+                    restored = true;
                 }
             } catch(e) {
-                dancerRow.appendChild(dancer);
+                restored = false;
             }
-        } else {
+        }
+
+        if (!restored) {
+            dancer.style.position = 'static'; // Keep in flex container flow
             dancerRow.appendChild(dancer);
         }
 
