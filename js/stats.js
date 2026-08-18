@@ -36,6 +36,17 @@ function initStats(target) {
             stayEl.textContent = 'stay: ' + (m > 0 ? m + 'm ' : '') + s + 's';
         }
     }
+   // --- Score (live counter) ---
+    function updateScore() {
+        const scoreEl = document.getElementById('_stats-score');
+        if (scoreEl && typeof totalCoins !== 'undefined') {
+            scoreEl.textContent = `| score: ${formatNumber(totalCoins)}`;
+        }
+    }
+updateStay();
+updateScore();
+setInterval(() => {
     updateStay();
-    setInterval(updateStay, 1000);
+    updateScore();
+}, 1000);
 }
