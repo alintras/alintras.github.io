@@ -30,29 +30,45 @@ const GRAVITY = 0.6;
 const FRICTION = 0.985;
 const BOUNCE = 0.55;
 const MIN_VELOCITY = 0.3;
+const REST_THRESHOLD = 1;
 let GRAVITY_ENABLED = false;
 
 // --- COIN DISPLAY ---
 let totalCoins = parseInt(localStorage.getItem('buddy_coins') || '0');
-const coinDisplay = document.createElement('div');
-coinDisplay.id = 'buddy-coin-display';
-coinDisplay.style.position = 'fixed';
-coinDisplay.style.top = '15px';
-coinDisplay.style.right = '15px';
-coinDisplay.style.fontFamily = 'monospace';
-coinDisplay.style.color = '#ffd700';
-coinDisplay.style.fontSize = '16px';
-coinDisplay.style.zIndex = '10000';
-coinDisplay.style.pointerEvents = 'none';
-coinDisplay.textContent = `Coins: ${totalCoins}`;
+
+function formatNumber(n) {
+    return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+function abbreviateNumber(n) {
+    n = Math.floor(n);
+    if (n < 1000) return n.toString();
+
+    const tiers = [
+        { value: 1e12, suffix: 't' },
+        { value: 1e9,  suffix: 'b' },
+        { value: 1e6,  suffix: 'm' },
+        { value: 1e3,  suffix: 'k' }
+    ];
+
+    for (const tier of tiers) {
+        if (n >= tier.value) {
+            if (tier.suffix === 't' && n >= 1e15) {
+                return n.toExponential(2).replace('e+', 'e');
+            }
+            const scaled = n / tier.value;
+            const short = scaled % 1 === 0 ? scaled.toString() : scaled.toFixed(1);
+            return short + tier.suffix;
+        }
+    }
+}
 
 function addCoins(amount) {
     totalCoins += amount;
-    coinDisplay.textContent = `Coins: ${totalCoins}`;
     localStorage.setItem('buddy_coins', totalCoins.toString());
 }
 
-function createFloatingText(x, y, text, color = '#ffd700', duration = 1500) {
+function createFloatingText(x, y, text, color = 'white', duration = 1500) {
     const el = document.createElement('div');
     el.textContent = text;
     el.style.position = 'absolute';
@@ -73,6 +89,74 @@ function createFloatingText(x, y, text, color = '#ffd700', duration = 1500) {
     setTimeout(() => el.remove(), duration);
 }
 
+// --- CACHED OBSTACLES ---
+let cachedObstacles = [];
+
+function refreshObstacleCache() {
+    cachedObstacles = getObstacleRects();
+    /*
+    // Remove after debugging!
+document.querySelectorAll('.debug-obstacle-box').forEach(el => el.remove());
+cachedObstacles.forEach(obs => {
+    const box = document.createElement('div');
+    box.className = 'debug-obstacle-box';
+    box.style.cssText = `position:absolute;left:${obs.left}px;top:${obs.top}px;width:${obs.right-obs.left}px;height:${obs.bottom-obs.top}px;outline:1px red solid;pointer-events:none;z-index:99999;`;
+    document.body.appendChild(box);
+    });
+    */
+}
+
+window.addEventListener('resize', refreshObstacleCache);
+window.addEventListener('scroll', refreshObstacleCache);
+setInterval(refreshObstacleCache, 500);
+
+function getObstacleRects() {
+    const selectors = [
+        '#search-input', '#engine-select', '#search-button', '#clock',
+        '.search-results', '.dropdown-menu', 'details[open] > *:not(summary)', '.search-help summary',
+        '.search-help', '#favorites-bar', '#favorites-sidebar',
+        '#greeting', '#signoff',
+    ];
+
+    const elements = [];
+    selectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => elements.push(el));
+    });
+
+    return elements
+        .filter(el => {
+            // Ignore dancers, footer, and floating text elements
+            if (el.classList.contains('dancer') || el.closest('#ascii-footer')) return false;
+            
+            // Check bounding dimensions
+            const r = el.getBoundingClientRect();
+            if (r.width <= 0 || r.height <= 0) return false;
+
+            // Check actual CSS visibility state
+            const style = window.getComputedStyle(el);
+            if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
+
+            return true;
+        })
+        .map(el => {
+            const r = el.getBoundingClientRect();
+            return {
+                left: r.left + window.scrollX,
+                right: r.right + window.scrollX,
+                top: r.top + window.scrollY,
+                bottom: r.bottom + window.scrollY
+            };
+        });
+}
+
+function isInsideAnyObstacle(x, y, width = 40, height = 40) {
+    const rect = { left: x, right: x + width, top: y, bottom: y + height };
+    return cachedObstacles.some(obs => 
+        rect.left < obs.right && rect.right > obs.left &&
+        rect.top < obs.bottom && rect.bottom > obs.top
+    );
+}
+
 // --- BOUNDS & OBSTACLES ---
 function getOuterBounds() {
     const sidebar = document.querySelector('#sidebar') || document.querySelector('nav');
@@ -87,42 +171,12 @@ function getOuterBounds() {
     };
 }
 
-function getObstacleRects() {
-    const selectors = [
-        '#search-input', '#engine-select', '#search-button', '#clock',
-        '.search-results', '.dropdown-menu', 'details[open] > *:not(summary)', '.search-help summary'
-    ];
-
-    const elements = [];
-    selectors.forEach(sel => {
-        document.querySelectorAll(sel).forEach(el => elements.push(el));
-    });
-
-    return elements
-        .filter(el => {
-            if (el.classList.contains('dancer') || el.closest('#ascii-footer')) return false;
-            const r = el.getBoundingClientRect();
-            return r.width > 0 && r.height > 0;
-        })
-        .map(el => {
-            const r = el.getBoundingClientRect();
-            return {
-                left: r.left + window.scrollX,
-                right: r.right + window.scrollX,
-                top: r.top + window.scrollY,
-                bottom: r.bottom + window.scrollY
-            };
-        });
-}
-
 // --- INITIALIZATION ---
 function initDancers() {
+    refreshObstacleCache();
+
     const footerEl = document.getElementById('ascii-footer');
     if (!footerEl || dancers.length > 0) return;
-    
-    if (!document.getElementById('buddy-coin-display')) {
-        document.body.appendChild(coinDisplay);
-    }
 
     footerEl.textContent = '';
 
@@ -144,9 +198,9 @@ function initDancers() {
         dancer.style.webkitUserSelect = 'none';
         dancer.style.touchAction = 'none';
         dancer.style.fontFamily = 'monospace';
-        dancer.style.fontSize = '14px';
+        dancer.style.fontSize = '12px';
         dancer.style.lineHeight = '1.2';
-        dancer.style.color = 'currentColor'; // Ensures visibility in dark/light themes
+        dancer.style.color = 'currentColor';
         dancer.style.display = 'inline-block';
         dancer.style.zIndex = '999';
         dancer.textContent = dancerFrames[0];
@@ -171,7 +225,6 @@ function initDancers() {
                 const clampedX = Math.max(outer.minX, Math.min(pos.x, outer.maxX - 60));
                 const clampedY = Math.max(outer.minY, Math.min(pos.y, outer.maxY - 60));
 
-                // Verify validity before restoring absolute position
                 if (!isNaN(clampedX) && !isNaN(clampedY) && clampedY > 0) {
                     dancer.style.position = 'absolute';
                     dancer.style.left = clampedX + 'px';
@@ -192,6 +245,15 @@ function initDancers() {
         dancers.push(dancerObj);
         makeDraggable(dancerObj);
     }
+
+    requestAnimationFrame(() => {
+        dancers.forEach(d => {
+            if (d.isMoved) {
+                resolveObstaclesForDancer(d, cachedObstacles);
+            }
+        });
+        resolveDancerCollisions();
+    });
 }
 
 // Frame Animation Loop
@@ -213,16 +275,30 @@ function savePosition(d) {
     }));
 }
 
+// --- COMBO COLOR TIERS (1x to 10x+) ---
+const COMBO_COLORS = [
+    '#a0a0a0', '#55ff55', '#00e5ff', '#3b82f6', '#a855ff',
+    '#ffd700', '#ff8c42', '#ff2e2e', '#ff007f', '#00ffff'
+];
+
+function getBounceColor(combo) {
+    const index = Math.min(Math.max(0, combo - 1), COMBO_COLORS.length - 1);
+    return COMBO_COLORS[index];
+}
+
 // --- BOUNCE & PHYSICS LOGIC ---
 function triggerBounce(d, x, y) {
     const now = performance.now();
     if (d.inSwing && (now - d.lastBounceTime > 150)) {
         d.bounceCombo++;
         d.lastBounceTime = now;
+        
         const gained = Math.floor(5 * Math.pow(1.5, d.bounceCombo - 1));
         d.swingTotal += gained;
         addCoins(gained);
-        createFloatingText(x + 20, y, `+${gained} (x${d.bounceCombo})`, '#ffd700');
+
+        const color = getBounceColor(d.bounceCombo);
+        createFloatingText(x + 20, y, `+${abbreviateNumber(gained)} (x${d.bounceCombo})`, color);
     }
 }
 
@@ -248,21 +324,26 @@ function resolveObstaclesForDancer(d, obstacles, iterations = 3) {
             const overlapBottom = obs.bottom - rect.top;
             const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
 
+            // Pop out with extra padding (+2px) to prevent sticking
             if (minOverlap === overlapLeft) {
-                x -= (overlapLeft + 1.5);
-                if (d.vx > 0) d.vx = -d.vx * BOUNCE - 0.5;
+                x -= (overlapLeft + 2);
+                d.vx = Math.abs(d.vx) < 1 ? 0 : -d.vx * BOUNCE;
             } else if (minOverlap === overlapRight) {
-                x += (overlapRight + 1.5);
-                if (d.vx < 0) d.vx = -d.vx * BOUNCE + 0.5;
+                x += (overlapRight + 2);
+                d.vx = Math.abs(d.vx) < 1 ? 0 : -d.vx * BOUNCE;
             } else if (minOverlap === overlapTop) {
-                y -= (overlapTop + 1.5);
-                if (d.vy > 0) d.vy = -d.vy * BOUNCE - 0.5;
+                y -= (overlapTop + 2);
+                d.vy = Math.abs(d.vy) < 1 ? 0 : -d.vy * BOUNCE;
             } else {
-                y += (overlapBottom + 1.5);
-                if (d.vy < 0) d.vy = -d.vy * BOUNCE + 0.5;
+                y += (overlapBottom + 2);
+                d.vy = Math.abs(d.vy) < 1 ? 0 : -d.vy * BOUNCE;
             }
-            
-            triggerBounce(d, x, y);
+
+            // Only trigger bounce combo if velocity is non-negligible
+            if (Math.abs(d.vx) > 0.5 || Math.abs(d.vy) > 0.5) {
+                triggerBounce(d, x, y);
+            }
+
             hitAny = true;
             pushed = true;
             
@@ -359,7 +440,7 @@ function makeDraggable(d) {
         d.vx = 0; d.vy = 0;
         
         if (d.inSwing && d.swingTotal > 0) {
-            createFloatingText(parseFloat(el.style.left), parseFloat(el.style.top), `Swing Total: ${d.swingTotal}`, '#00ffcc', 2000);
+            createFloatingText(parseFloat(el.style.left), parseFloat(el.style.top), `Total: ${abbreviateNumber(d.swingTotal)}`, 'white', 2000);
         }
         d.inSwing = false;
         d.bounceCombo = 0;
@@ -368,8 +449,12 @@ function makeDraggable(d) {
         const pageX = clientX + window.scrollX;
         const pageY = clientY + window.scrollY;
 
-        offsetX = pageX - parseFloat(el.style.left || 0);
-        offsetY = pageY - parseFloat(el.style.top || 0);
+        // FIX 2 Safe Fallback Calculation
+        const currentLeft = parseFloat(el.style.left) || (el.getBoundingClientRect().left + window.scrollX);
+        const currentTop = parseFloat(el.style.top) || (el.getBoundingClientRect().top + window.scrollY);
+
+        offsetX = pageX - currentLeft;
+        offsetY = pageY - currentTop;
         
         lastX = pageX; lastY = pageY;
         lastTime = performance.now();
@@ -402,6 +487,18 @@ function makeDraggable(d) {
         el.classList.remove('dragging');
         el.style.cursor = 'grab';
         el.style.zIndex = '999';
+
+        const currentX = parseFloat(el.style.left);
+        const currentY = parseFloat(el.style.top);
+
+        if (d.isMoved && !isNaN(currentX) && !isNaN(currentY)) {
+            if (isInsideAnyObstacle(currentX, currentY, el.offsetWidth, el.offsetHeight)) {
+                const outer = getOuterBounds();
+                el.style.top = (outer.maxY - 50) + 'px';
+                d.vx = 0;
+                d.vy = 0;
+            }
+        }
 
         const now = performance.now();
         if (now - lastTime > 100 || (Math.abs(d.vx) < 1.5 && Math.abs(d.vy) < 1.5)) {
@@ -437,14 +534,13 @@ function makeDraggable(d) {
 // --- GLOBAL PHYSICS LOOP ---
 function globalPhysicsLoop() {
     const outer = getOuterBounds();
-    const obstacles = getObstacleRects();
 
     resolveDancerCollisions();
 
     dancers.forEach(d => {
         if (d.el.classList.contains('dragging')) return;
 
-        const pos = resolveObstaclesForDancer(d, obstacles);
+        const pos = resolveObstaclesForDancer(d, cachedObstacles);
         let x = pos.x, y = pos.y;
         const width = pos.width, height = pos.height;
 
@@ -475,7 +571,7 @@ function globalPhysicsLoop() {
             d.vx = 0; d.vy = 0;
             if (d.inSwing) {
                 d.inSwing = false;
-                if (d.swingTotal > 0) createFloatingText(x, y - 20, `Swing Total: ${d.swingTotal}`, '#00ffcc', 2500);
+                if (d.swingTotal > 0) createFloatingText(x, y - 20, `Total: ${abbreviateNumber(d.swingTotal)}`, 'white', 2500);
             }
             savePosition(d);
         }
