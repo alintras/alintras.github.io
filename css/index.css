@@ -245,3 +245,9 @@
   #main-content p {
     width: fit-content;
 }
+
+.dancer {
+    display: inline-block;
+    white-space: pre;
+    font-family: monospace;
+}
