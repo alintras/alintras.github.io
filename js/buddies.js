@@ -94,16 +94,6 @@ let cachedObstacles = [];
 
 function refreshObstacleCache() {
     cachedObstacles = getObstacleRects();
-    /*
-    // Remove after debugging!
-document.querySelectorAll('.debug-obstacle-box').forEach(el => el.remove());
-cachedObstacles.forEach(obs => {
-    const box = document.createElement('div');
-    box.className = 'debug-obstacle-box';
-    box.style.cssText = `position:absolute;left:${obs.left}px;top:${obs.top}px;width:${obs.right-obs.left}px;height:${obs.bottom-obs.top}px;outline:1px red solid;pointer-events:none;z-index:99999;`;
-    document.body.appendChild(box);
-    });
-    */
 }
 
 window.addEventListener('resize', refreshObstacleCache);
@@ -125,14 +115,11 @@ function getObstacleRects() {
 
     return elements
         .filter(el => {
-            // Ignore dancers, footer, and floating text elements
             if (el.classList.contains('dancer') || el.closest('#ascii-footer')) return false;
             
-            // Check bounding dimensions
             const r = el.getBoundingClientRect();
             if (r.width <= 0 || r.height <= 0) return false;
 
-            // Check actual CSS visibility state
             const style = window.getComputedStyle(el);
             if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') return false;
 
@@ -324,7 +311,6 @@ function resolveObstaclesForDancer(d, obstacles, iterations = 3) {
             const overlapBottom = obs.bottom - rect.top;
             const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
 
-            // Pop out with extra padding (+2px) to prevent sticking
             if (minOverlap === overlapLeft) {
                 x -= (overlapLeft + 2);
                 d.vx = Math.abs(d.vx) < 1 ? 0 : -d.vx * BOUNCE;
@@ -339,7 +325,6 @@ function resolveObstaclesForDancer(d, obstacles, iterations = 3) {
                 d.vy = Math.abs(d.vy) < 1 ? 0 : -d.vy * BOUNCE;
             }
 
-            // Only trigger bounce combo if velocity is non-negligible
             if (Math.abs(d.vx) > 0.5 || Math.abs(d.vy) > 0.5) {
                 triggerBounce(d, x, y);
             }
@@ -423,19 +408,19 @@ function makeDraggable(d) {
     let lastX = 0, lastY = 0, lastTime = 0;
 
     d.detachToBody = function() {
-        if (!d.isMoved) {
+        if (el.parentNode !== document.body) {
             const rect = el.getBoundingClientRect();
             el.style.position = 'absolute';
             el.style.left = (rect.left + window.scrollX) + 'px';
             el.style.top = (rect.top + window.scrollY) + 'px';
             el.style.zIndex = '999';
             document.body.appendChild(el);
-            d.isMoved = true;
         }
     };
 
     function onDown(clientX, clientY) {
         d.detachToBody();
+        d.isMoved = true;
         d.physicsActive = false;
         d.vx = 0; d.vy = 0;
         
@@ -449,7 +434,6 @@ function makeDraggable(d) {
         const pageX = clientX + window.scrollX;
         const pageY = clientY + window.scrollY;
 
-        // FIX 2 Safe Fallback Calculation
         const currentLeft = parseFloat(el.style.left) || (el.getBoundingClientRect().left + window.scrollX);
         const currentTop = parseFloat(el.style.top) || (el.getBoundingClientRect().top + window.scrollY);
 
@@ -580,13 +564,50 @@ function globalPhysicsLoop() {
     requestAnimationFrame(globalPhysicsLoop);
 }
 
-// Auto-start initialization when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        initDancers();
-        requestAnimationFrame(globalPhysicsLoop);
+// --- STARTING LINEUP POSITIONING ---
+function placeDancersInStartingRow() {
+    const anchorEl = document.querySelector('.search-help') || 
+                     document.querySelector('#search-bar') ||
+                     document.querySelector('#search-input');
+
+    if (!anchorEl) return;
+
+    const anchorRect = anchorEl.getBoundingClientRect();
+    const startY = anchorRect.bottom + window.scrollY + 8;
+    const startX = anchorRect.left + window.scrollX;
+    const spacingX = 48; 
+
+    dancers.forEach((d, i) => {
+        if (!d.isMoved) {
+            d.detachToBody();
+
+            const x = startX + (i * spacingX);
+            const y = startY;
+
+            d.vx = 0;
+            d.vy = 0;
+
+            d.el.style.position = 'absolute';
+            d.el.style.left = `${x}px`;
+            d.el.style.top = `${y}px`;
+        }
     });
-} else {
+}
+
+// Auto-start initialization when DOM is ready
+function startBuddiesApp() {
     initDancers();
+    placeDancersInStartingRow();
     requestAnimationFrame(globalPhysicsLoop);
 }
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startBuddiesApp);
+} else {
+    startBuddiesApp();
+}
+
+window.addEventListener('load', () => {
+    refreshObstacleCache();
+    placeDancersInStartingRow();
+});
