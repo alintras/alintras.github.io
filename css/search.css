@@ -138,6 +138,9 @@
     margin-bottom: 4px;
     font-size: 0.9em;
 }
+#favorites-bar details {
+    width: fit-content;
+}
 #favorites-bar details summary {
     cursor: pointer;
     padding: 2px 4px;
