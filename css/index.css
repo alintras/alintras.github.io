@@ -63,6 +63,18 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    width: fit-content; /* Shrinks the flex container width to the exact text edge */
+  }
+
+  /* Strip default h2 margins that pad out the row's height */
+  .title-row h2,
+  #greeting {
+      width: fit-content;
+  }
+
+  /* Tighten the signoff text right below it as well */
+  #signoff {
+      width: fit-content;
   }
   
   #theme-toggle {
@@ -133,39 +145,45 @@
   /* SEARCH HELP DETAILS */
   .search-help {
       margin-top: 16px;
+      width: fit-content;
   }
   
   .search-help-summary {
       cursor: pointer;
       user-select: none;
-      list-style: none !important; 
+      list-style: none !important;
+      width: fit-content;
   }
   
   .search-help-table {
       margin-top: 8px;
       border-collapse: collapse;
       font-size: 0.9em;
+      width: fit-content;
   }
   
   .search-help-table th {
       text-align: left;
       padding: 2px 12px 2px 0;
       border-bottom: 1px solid var(--border);
-  }
+      width: fit-content;
+    }
   
   .search-help-table td {
       padding: 2px 12px 2px 0;
+      width: fit-content;
   }
   
   .search-help-usage {
       font-size: 0.85em;
       opacity: 0.6;
       margin-top: 10px;
+      width: fit-content;
   }
   
   #ascii-footer {
       display: block;
-      width: 100%;
+      width: fit-content;
       min-height: 50px;
       white-space: pre;
       overflow-x: auto;
@@ -218,3 +236,12 @@
         margin-left: 10px;
       }
   }
+
+  .search-help,
+  #favorites-bar details,
+  #profile-section,
+  #main-content h1,
+  #main-content h2,
+  #main-content p {
+    width: fit-content;
+}
