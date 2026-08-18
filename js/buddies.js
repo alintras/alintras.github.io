@@ -564,32 +564,42 @@ function globalPhysicsLoop() {
     requestAnimationFrame(globalPhysicsLoop);
 }
 
-// --- STARTING LINEUP POSITIONING ---
+// --- UPDATED STARTING LINEUP ---
 function placeDancersInStartingRow() {
-    const anchorEl = document.querySelector('.search-help') || 
-                     document.querySelector('#search-bar') ||
-                     document.querySelector('#search-input');
+    let container = document.getElementById('dancer-row');
+    
+    // Create the starting row container if it doesn't exist yet
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'dancer-row';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'row';
+        container.style.gap = '20px';
+        container.style.marginTop = '12px';
+        container.style.marginBottom = '12px';
+        container.style.alignItems = 'flex-start';
 
-    if (!anchorEl) return;
+        // Insert right after search container or search help
+        const anchorEl = document.querySelector('.search-help') || 
+                         document.querySelector('#search-input') ||
+                         document.querySelector('#search-bar');
 
-    const anchorRect = anchorEl.getBoundingClientRect();
-    const startY = anchorRect.bottom + window.scrollY + 8;
-    const startX = anchorRect.left + window.scrollX;
-    const spacingX = 48; 
+        if (anchorEl && anchorEl.parentNode) {
+            anchorEl.parentNode.insertBefore(container, anchorEl.nextSibling);
+        } else {
+            document.body.appendChild(container);
+        }
+    }
 
-    dancers.forEach((d, i) => {
+    dancers.forEach((d) => {
+        // If the user hasn't dragged this dancer yet, keep it flow-positioned inside the flex row
         if (!d.isMoved) {
-            d.detachToBody();
-
-            const x = startX + (i * spacingX);
-            const y = startY;
-
+            if (d.el.parentNode !== container) {
+                container.appendChild(d.el);
+            }
+            d.el.style.position = 'static';
             d.vx = 0;
             d.vy = 0;
-
-            d.el.style.position = 'absolute';
-            d.el.style.left = `${x}px`;
-            d.el.style.top = `${y}px`;
         }
     });
 }
