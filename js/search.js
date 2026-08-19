@@ -99,6 +99,8 @@ const shortcuts = {
     aw:        q => `https://aniworld.to/anime/stream/${encodeURIComponent(q.toLowerCase().replace(/\s+/g, '-'))}`,
     ttv:       q => `https://www.twitch.tv/${encodeURIComponent(q)}`,
     moo:       q => `https://moodle.lmu.de/course/search.php?search=${encodeURIComponent(q)}`,
+    wordle: () => shortcutBases.wordle,
+    lsf:    () => shortcutBases.lsf,
 };
 
 /* =============================================================
