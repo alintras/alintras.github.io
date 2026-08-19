@@ -75,6 +75,8 @@ const shortcutBases = {
     aw:        "https://aniworld.to",
 worlde:        "https://www.nytimes.com/games/wordle/index.html",
    ttv:        "https://www.twitch.tv/",
+   lsf:        "https://lsf.verwaltung.uni-muenchen.de/"
+   moo:        "https://moodle.lmu.de/"
 };
 
 const shortcuts = {
@@ -96,6 +98,7 @@ const shortcuts = {
     ud:        q => `https://www.urbandictionary.com/define.php?term=${encodeURIComponent(q)}`,
     aw:        q => `https://aniworld.to/anime/stream/${encodeURIComponent(q.toLowerCase().replace(/\s+/g, '-'))}`,
     ttv:       q => `https://www.twitch.tv/${encodeURIComponent(q)}`,
+    moo:       q => `https://moodle.lmu.de/course/search.php?search=${encodeURIComponent(q)}`,
 };
 
 /* =============================================================
