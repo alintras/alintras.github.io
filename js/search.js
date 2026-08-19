@@ -73,7 +73,7 @@ const shortcutBases = {
     op:        "https://onepiece.tube",
     ud:        "https://www.urbandictionary.com",
     aw:        "https://aniworld.to",
-worlde:        "https://www.nytimes.com/games/wordle/index.html",
+wordle:        "https://www.nytimes.com/games/wordle/index.html",
    ttv:        "https://www.twitch.tv/",
    lsf:        "https://lsf.verwaltung.uni-muenchen.de/",
    moo:        "https://moodle.lmu.de/",
