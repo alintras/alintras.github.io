@@ -77,6 +77,7 @@ wordle:        "https://www.nytimes.com/games/wordle/index.html",
    ttv:        "https://www.twitch.tv/",
    lsf:        "https://lsf.verwaltung.uni-muenchen.de/",
    moo:        "https://moodle.lmu.de/",
+   mc:         "https://namemc.com",
 };
 
 const shortcuts = {
@@ -101,6 +102,7 @@ const shortcuts = {
     moo:       q => `https://moodle.lmu.de/course/search.php?search=${encodeURIComponent(q)}`,
     wordle: () => shortcutBases.wordle,
     lsf:    () => shortcutBases.lsf,
+    mc:        q => `https://namemc.com/search?q=${encodeURIComponent(q)}`,
 };
 
 /* =============================================================
