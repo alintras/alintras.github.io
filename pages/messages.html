@@ -238,54 +238,56 @@ document.getElementById('submit-btn').addEventListener('click', function() {
   });
 });
 
-db.ref('messages').on('value', function(snap) {
-  document.getElementById('loading').style.display = 'none';
+authReady.then(function() {
+  db.ref('messages').on('value', function(snap) {
+    document.getElementById('loading').style.display = 'none';
 
-  var msgs = [];
-  snap.forEach(function(child) {
-    var v = child.val();
-    msgs.push({ id: child.key, uid: v.uid, text: v.text, image: v.image, ts: v.ts });
-  });
-  msgs.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); });
-
-  document.getElementById('msg-count').textContent = msgs.length ? '(' + msgs.length + ')' : '';
-
-  var feed = document.getElementById('feed');
-  var empty = document.getElementById('empty');
-
-  if (!msgs.length) { feed.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-
-  var html = '';
-  for (var i = 0; i < msgs.length; i++) {
-    var m = msgs[i];
-    html += '<div class="msg-card">';
-    html += '<div class="msg-meta">';
-    html += '<span class="msg-id">' + escHtml(m.uid) + '</span>';
-    html += '<span>' + (m.ts ? formatDate(m.ts) : '—') + '</span>';
-    if (m.authUid && m.authUid === myAuthUid) html += '<button class="del-btn" data-id="' + m.id + '">delete</button>';
-    html += '</div>';
-    if (m.text)  html += '<div class="msg-body">' + escHtml(m.text) + '</div>';
-    if (m.image) html += '<img class="msg-image" src="' + m.image + '" alt="attached image" loading="lazy" />';
-    html += '</div>';
-  }
-  feed.innerHTML = html;
-
-  var btns = feed.querySelectorAll('.del-btn');
-  for (var j = 0; j < btns.length; j++) {
-    btns[j].addEventListener('click', function() {
-      var id = this.getAttribute('data-id');
-      authReady.then(function() {
-        return db.ref('messages/' + id).remove();
-      }).catch(function(err) {
-        console.error('Delete failed:', err);
-      });
+    var msgs = [];
+    snap.forEach(function(child) {
+      var v = child.val();
+      msgs.push({ id: child.key, uid: v.uid, authUid: v.authUid, text: v.text, image: v.image, ts: v.ts });
     });
-  }
-}, function(err) {
-  document.getElementById('err-box').textContent = '⚠ Failed to load: ' + err.message;
-  document.getElementById('err-box').style.display = 'block';
-  document.getElementById('loading').style.display = 'none';
+    msgs.sort(function(a, b) { return (b.ts || 0) - (a.ts || 0); });
+
+    document.getElementById('msg-count').textContent = msgs.length ? '(' + msgs.length + ')' : '';
+
+    var feed = document.getElementById('feed');
+    var empty = document.getElementById('empty');
+
+    if (!msgs.length) { feed.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+
+    var html = '';
+    for (var i = 0; i < msgs.length; i++) {
+      var m = msgs[i];
+      html += '<div class="msg-card">';
+      html += '<div class="msg-meta">';
+      html += '<span class="msg-id">' + escHtml(m.uid) + '</span>';
+      html += '<span>' + (m.ts ? formatDate(m.ts) : '—') + '</span>';
+      if (m.authUid && m.authUid === myAuthUid) html += '<button class="del-btn" data-id="' + m.id + '">delete</button>';
+      html += '</div>';
+      if (m.text)  html += '<div class="msg-body">' + escHtml(m.text) + '</div>';
+      if (m.image) html += '<img class="msg-image" src="' + m.image + '" alt="attached image" loading="lazy" />';
+      html += '</div>';
+    }
+    feed.innerHTML = html;
+
+    var btns = feed.querySelectorAll('.del-btn');
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].addEventListener('click', function() {
+        var id = this.getAttribute('data-id');
+        authReady.then(function() {
+          return db.ref('messages/' + id).remove();
+        }).catch(function(err) {
+          console.error('Delete failed:', err);
+        });
+      });
+    }
+  }, function(err) {
+    document.getElementById('err-box').textContent = '⚠ Failed to load: ' + err.message;
+    document.getElementById('err-box').style.display = 'block';
+    document.getElementById('loading').style.display = 'none';
+  });
 });
 </script>
 </body>
