@@ -8,6 +8,7 @@
   <script src="/js/style.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <style>
     #compose {
       border: 1px solid var(--border);
@@ -116,6 +117,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
+var auth = firebase.auth();
 
 var ID_KEY = 'guestbook_uid';
 var myId = localStorage.getItem(ID_KEY);
@@ -124,6 +126,19 @@ if (!myId) {
   localStorage.setItem(ID_KEY, myId);
 }
 document.getElementById('user-id-display').textContent = myId;
+
+// myAuthUid is what the security rules actually check.
+// myId above stays as the display label — cosmetic only now.
+var myAuthUid = null;
+var authReady = new Promise(function(resolve) {
+  auth.onAuthStateChanged(function(user) {
+    if (user) { myAuthUid = user.uid; resolve(user.uid); }
+  });
+});
+auth.signInAnonymously().catch(function(err) {
+  console.error('Anonymous auth failed:', err);
+  setStatus('Auth error: ' + err.message);
+});
 
 function setStatus(msg) { document.getElementById('status').textContent = msg; }
 
@@ -198,11 +213,14 @@ document.getElementById('submit-btn').addEventListener('click', function() {
   btn.disabled = true;
   setStatus('Posting…');
 
-  db.ref('messages').push({
-    uid:   myId,
-    text:  text || null,
-    image: pendingBase64 || null,
-    ts:    firebase.database.ServerValue.TIMESTAMP
+  authReady.then(function() {
+    return db.ref('messages').push({
+      uid:      myId,
+      authUid:  myAuthUid,
+      text:     text || null,
+      image:    pendingBase64 || null,
+      ts:       firebase.database.ServerValue.TIMESTAMP
+    });
   }).then(function() {
     document.getElementById('msg-text').value = '';
     pendingBase64 = null;
@@ -245,7 +263,7 @@ db.ref('messages').on('value', function(snap) {
     html += '<div class="msg-meta">';
     html += '<span class="msg-id">' + escHtml(m.uid) + '</span>';
     html += '<span>' + (m.ts ? formatDate(m.ts) : '—') + '</span>';
-    if (m.uid === myId) html += '<button class="del-btn" data-id="' + m.id + '">delete</button>';
+    if (m.authUid && m.authUid === myAuthUid) html += '<button class="del-btn" data-id="' + m.id + '">delete</button>';
     html += '</div>';
     if (m.text)  html += '<div class="msg-body">' + escHtml(m.text) + '</div>';
     if (m.image) html += '<img class="msg-image" src="' + m.image + '" alt="attached image" loading="lazy" />';
@@ -256,7 +274,12 @@ db.ref('messages').on('value', function(snap) {
   var btns = feed.querySelectorAll('.del-btn');
   for (var j = 0; j < btns.length; j++) {
     btns[j].addEventListener('click', function() {
-      db.ref('messages/' + this.getAttribute('data-id')).remove();
+      var id = this.getAttribute('data-id');
+      authReady.then(function() {
+        return db.ref('messages/' + id).remove();
+      }).catch(function(err) {
+        console.error('Delete failed:', err);
+      });
     });
   }
 }, function(err) {
