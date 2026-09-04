@@ -135,6 +135,50 @@ function evalMath(expr) {
     return null;
 }
 
+function getEmbedHTML(query) {
+    const url = query.trim();
+
+    let m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([\w-]{11})/);
+    if (m) {
+        return `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${m[1]}"
+            title="YouTube video" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>`;
+    }
+
+    m = url.match(/vimeo\.com\/(\d+)/);
+    if (m) {
+        return `<iframe width="100%" height="315" src="https://player.vimeo.com/video/${m[1]}"
+            frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+    }
+
+    m = url.match(/open\.spotify\.com\/(track|album|playlist|episode)\/([\w]+)/);
+    if (m) {
+        return `<iframe style="border-radius:12px" width="100%" height="152"
+            src="https://open.spotify.com/embed/${m[1]}/${m[2]}"
+            frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>`;
+    }
+
+    if (/soundcloud\.com\/[\w-]+\/[\w-]+/.test(url)) {
+        return `<iframe width="100%" height="166" scrolling="no" frameborder="no"
+            src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff5500"></iframe>`;
+    }
+
+    m = url.match(/^https?:\/\/(?:www\.)?twitch\.tv\/([a-zA-Z0-9_]+)\/?$/);
+    if (m && m[1] !== 'videos') {
+        return `<iframe src="https://player.twitch.tv/?channel=${m[1]}&parent=${location.hostname}"
+            width="100%" height="315" frameborder="0" allowfullscreen></iframe>`;
+    }
+
+    m = url.match(/clips\.twitch\.tv\/([\w-]+)/) || url.match(/twitch\.tv\/\w+\/clip\/([\w-]+)/);
+    if (m) {
+        return `<iframe src="https://clips.twitch.tv/embed?clip=${m[1]}&parent=${location.hostname}"
+            width="100%" height="315" frameborder="0" allowfullscreen></iframe>`;
+    }
+
+    return null;
+}
+
 /* =============================================================
    RESULTS BOX HELPERS
 ============================================================= */
@@ -169,14 +213,44 @@ function showShortcutHint(keyword, query) {
     }
 }
 
+function showEmbed(html) {
+    const box = getBox();
+    box.style.display = "block";
+    box.innerHTML = `
+        <div class="sr-label sr-embed-label">
+            embed
+            <span class="sr-embed-controls">
+                <button class="sr-embed-btn" onclick="togglePinEmbed()" title="Pin on top">📌</button>
+                <button class="sr-embed-btn" onclick="closeEmbed()" title="Close">✕</button>
+            </span>
+        </div>
+        ${html}`;
+}
+
+function isShowingEmbed() {
+    const label = getBox().querySelector(".sr-label");
+    return label && label.textContent.trim().startsWith("embed");
+}
+
+function togglePinEmbed() {
+    getBox().classList.toggle("pinned-embed");
+}
+
+function closeEmbed() {
+    const box = getBox();
+    box.classList.remove("pinned-embed");
+    box.style.display = "none";
+    box.innerHTML = "";
+}
+
 function clearSpecialResults() {
-    if (isShowingCalc() || isShowingShortcut()) {
+    if (isShowingCalc() || isShowingShortcut() || isShowingEmbed()) {
         const box = getBox();
+        box.classList.remove("pinned-embed");
         box.style.display = "none";
         box.innerHTML = "";
     }
 }
-
 /* =============================================================
    ENGINE / RECENT SEARCH PERSISTENCE
 ============================================================= */
@@ -184,6 +258,7 @@ function clearSpecialResults() {
 function clearSearchInput() {
     const input = document.getElementById("search-input");
     input.value = "";
+    closeEmbed();
     input.focus();
     filterSite();
 }
@@ -355,7 +430,7 @@ function filterSite() {
     const q   = raw.trim().toLowerCase();
     const box = getBox();
 
-    if (isShowingCalc() || isShowingShortcut()) return;
+    if (isShowingCalc() || isShowingShortcut() || isShowingEmbed()) return;
 
     if (!q) {
         const recent = getRecentSearches();
@@ -384,7 +459,14 @@ function doSearch() {
 
     const engine = document.getElementById("engine-select").value;
 
-    // 0. Full https:// URLs — navigate immediately
+    // 0. Embeddable links — show inline instead of navigating
+    const embed = getEmbedHTML(text);
+    if (embed) {
+        showEmbed(embed);
+        return;
+    }
+
+    // 0b. Full https:// URLs — navigate immediately
     if (/^https?:\/\//i.test(text)) {
         window.location.href = text;
         return;
@@ -438,6 +520,7 @@ document.addEventListener("DOMContentLoaded", () => {
     input.focus();
 
     input.addEventListener("focus", () => {
+        if (isShowingEmbed()) return;
         filterSite();
     });
 
@@ -457,6 +540,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const hasSpace = spaceAt !== -1;
         const keyword  = (hasSpace ? text.slice(0, spaceAt) : text).toLowerCase();
         const query    = hasSpace ? text.slice(spaceAt + 1).trim() : "";
+        const embed = getEmbedHTML(text);
+
+        if (embed) {
+            showEmbed(embed);
+            return;
+        }
 
         if (shortcuts[keyword]) {
             showShortcutHint(keyword, query);
@@ -473,10 +562,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.addEventListener("click", e => {
-        if (!e.target.closest("#search-bar") && !e.target.closest("#site-results") && !e.target.closest("#favorites-bar")) {
-            const box = getBox();
-            box.style.display = "none";
-        }
+    if (isShowingEmbed()) return;
+    if (!e.target.closest("#search-bar") && !e.target.closest("#site-results") && !e.target.closest("#favorites-bar")) {
+        const box = getBox();
+        box.style.display = "none";
+    }
     });
 
     document.addEventListener("keydown", e => {

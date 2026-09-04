@@ -240,3 +240,43 @@
     box-sizing: border-box;
 }
 .fav-icon img { width: 16px; height: 16px; display: block; }
+
+#site-results.pinned-embed {
+    margin-bottom: 0;
+    position: fixed;
+    top: auto;
+    left: auto;
+    bottom: 20px;
+    right: 20px;
+    width: 340px;
+    max-width: 90vw;
+    z-index: 9999;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    border-radius: 8px;
+}
+
+#site-results.pinned-embed iframe {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+}
+
+#site-results.pinned-embed iframe:not([src*="spotify"]) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+}
+
+.sr-embed-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sr-embed-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 4px;
+}
