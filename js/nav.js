@@ -58,6 +58,7 @@ ${item(`<img src="/assets/smileys/transfer.png" style="width:16px;height:16px;ve
       ${item(`<img src="/assets/smileys/code-woman.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/html.html", "HTML")}
       ${item(`<img src="/assets/smileys/counter.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/math-history.html", "Math History")}
       ${item(`<img src="/assets/smileys/counter.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/math-prereq.html", "Math Prerequisites")}
+      ${item(`<img src="/assets/smileys/guitar.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/stuff/tabs.html", "Guitar Tabs")}
     </details><br>
     ${item(`<img src="/assets/smileys/spbubble.png" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/messages.html", "Messages")}
     ${item(`<img src="/assets/smileys/aboutali.PNG" style="width:16px;height:16px;vertical-align:middle;image-rendering:pixelated;">`, "/pages/about.html", "About")}
