@@ -162,28 +162,54 @@
   #top-bar button:hover { opacity: 1; }
   #top-bar button:active { opacity: 0.4; }
 
-  #timer-bar {
-    display: flex;
-    gap: 0;
-    border: 1px solid var(--fg);
-    width: 100%;
-    flex-shrink: 0;
+  #inc-btn {
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
 
-  #timer-bar > div {
+  #timer-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid var(--fg);
+    padding: 6px 12px;
+    width: 100%;
+    flex-shrink: 0;
+    gap: 8px;
+  }
+
+  .timer-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     flex: 1;
-    padding: 8px;
+  }
+
+  .timer-label {
+    font-size: 0.65rem;
+    opacity: 0.6;
+    text-transform: lowercase;
+    white-space: nowrap;
+  }
+
+  .timer-val {
+    font-size: 0.85rem;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #timer-toggle-btn {
     font-family: "Courier New", monospace;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     background: var(--bg);
     color: var(--fg);
-    border-right: 1px solid var(--fg);
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    border: 1px solid var(--fg);
+    padding: 2px 6px;
+    cursor: pointer;
+    opacity: 0.6;
+    flex-shrink: 0;
   }
-  #timer-bar > div:last-child { border-right: none; }
+  #timer-toggle-btn:hover { opacity: 1; }
 
   /* Modal */
   #modal-overlay {
@@ -265,12 +291,19 @@
     <div id="top-bar">
       <button id="undo-btn">↩ undo</button>
       <button id="counter-name-display" title="tap to rename"></button>
-      <button id="step-btn" title="tap to change step">+1/tap</button>
+      <button id="inc-btn" title="tap to change increment">+1/tap</button>
       <button id="reset-btn">reset</button>
     </div>
     <div id="timer-bar">
-      <div>total: <span id="total-timer">00:00:00</span></div>
-      <div>since tap: <span id="last-tap-timer">00:00:00</span></div>
+      <div class="timer-box">
+        <span class="timer-label">total hunt time</span>
+        <span id="total-time-val" class="timer-val">00:00:00</span>
+      </div>
+      <button id="timer-toggle-btn" title="pause/resume timer">⏸</button>
+      <div class="timer-box">
+        <span class="timer-label">since last tap</span>
+        <span id="last-tap-val" class="timer-val">00:00:00</span>
+      </div>
     </div>
     <div id="count-display" style="text-align:center; cursor:pointer;" title="tap to edit">0</div>
     <button id="hit-btn">+1 ENCOUNTER</button>
@@ -321,7 +354,6 @@
       closeModal();
     }
     overlay.addEventListener('keydown', onKey, { once: true });
-    // also catch it on document in case overlay isn't focused
     document.addEventListener('keydown', onKey, { once: true });
   });
 
@@ -341,8 +373,6 @@
     active: null
   };
 
-  let sessionStartTime = Date.now();
-
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -359,70 +389,61 @@
   }
 
   function getActive() {
-    const active = state.counters.find(c => c.id === state.active) || null;
-    if (active) {
-      if (typeof active.increment !== 'number' || active.increment < 1) active.increment = 1;
-      if (typeof active.totalTime !== 'number') active.totalTime = 0;
-    }
-    return active;
+    return state.counters.find(c => c.id === state.active) || null;
   }
 
-  function commitCurrentSession() {
-    const active = getActive();
-    if (active) {
-      const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
-      if (elapsed > 0) {
-        active.totalTime = (active.totalTime || 0) + elapsed;
-        sessionStartTime = Date.now();
-      }
-    }
-  }
-
-  function formatTime(sec) {
-    if (!sec || sec < 0 || isNaN(sec)) return '00:00:00';
+  function formatTime(totalSeconds) {
+    const sec = Math.max(0, Math.floor(totalSeconds || 0));
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
-    const s = Math.floor(sec % 60);
+    const s = sec % 60;
     const pad = n => String(n).padStart(2, '0');
     return `${pad(h)}:${pad(m)}:${pad(s)}`;
   }
 
-  function updateTimers() {
+  function updateTimerDisplays() {
     const active = getActive();
     if (!active) return;
-    const now = Date.now();
-    const elapsedSession = Math.floor((now - sessionStartTime) / 1000);
-    const totalSec = (active.totalTime || 0) + elapsedSession;
 
-    const totalEl = document.getElementById('total-timer');
-    if (totalEl) totalEl.textContent = formatTime(totalSec);
+    const totalEl = document.getElementById('total-time-val');
+    const lastTapEl = document.getElementById('last-tap-val');
+    const toggleBtn = document.getElementById('timer-toggle-btn');
 
-    const lastEl = document.getElementById('last-tap-timer');
-    if (lastEl) {
+    if (totalEl) {
+      totalEl.textContent = formatTime(active.totalTime || 0);
+    }
+
+    if (toggleBtn) {
+      const running = active.timerRunning !== false;
+      toggleBtn.textContent = running ? '⏸' : '▶';
+      toggleBtn.title = running ? 'pause timer' : 'resume timer';
+    }
+
+    if (lastTapEl) {
       if (active.lastTapTime) {
-        const sinceTapSec = Math.floor((now - active.lastTapTime) / 1000);
-        lastEl.textContent = formatTime(sinceTapSec);
+        const elapsed = (Date.now() - active.lastTapTime) / 1000;
+        lastTapEl.textContent = formatTime(elapsed);
       } else {
-        lastEl.textContent = '00:00:00';
+        lastTapEl.textContent = '--:--:--';
       }
     }
   }
 
-  setInterval(updateTimers, 1000);
+  let lastTick = Date.now();
+  setInterval(() => {
+    const now = Date.now();
+    const delta = (now - lastTick) / 1000;
+    lastTick = now;
 
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') {
-      commitCurrentSession();
-      saveState();
-    } else {
-      sessionStartTime = Date.now();
+    const active = getActive();
+    if (active && active.timerRunning !== false) {
+      active.totalTime = (active.totalTime || 0) + delta;
     }
-  });
+    updateTimerDisplays();
+  }, 200);
 
-  window.addEventListener('beforeunload', () => {
-    commitCurrentSession();
-    saveState();
-  });
+  window.addEventListener('beforeunload', saveState);
+  window.addEventListener('pagehide', saveState);
 
   function render() {
     const tabsEl = document.getElementById('counter-tabs');
@@ -458,12 +479,14 @@
     if (active) {
       ui.style.display = 'flex';
       empty.style.display = 'none';
-      const inc = active.increment || 1;
       document.getElementById('counter-name-display').textContent = active.name;
       document.getElementById('count-display').textContent = active.count;
-      document.getElementById('step-btn').textContent = `+${inc}/tap`;
+
+      const inc = active.increment || 1;
+      document.getElementById('inc-btn').textContent = `+${inc}/tap`;
       document.getElementById('hit-btn').textContent = `+${inc} ${inc > 1 ? 'ENCOUNTERS' : 'ENCOUNTER'}`;
-      updateTimers();
+
+      updateTimerDisplays();
     } else {
       ui.style.display = 'none';
       empty.style.display = 'block';
@@ -475,31 +498,32 @@
       const id = e.target.dataset.id;
       const name = state.counters.find(c=>c.id===id)?.name;
       openConfirm(`delete "${name}"?`, () => {
-        commitCurrentSession();
         state.counters = state.counters.filter(c => c.id !== id);
         if (state.active === id) state.active = state.counters[0]?.id || null;
-        sessionStartTime = Date.now();
         saveState(); render();
       });
       return;
     }
     const tab = e.target.closest('.tab');
     if (tab) {
-      if (tab.dataset.id !== state.active) {
-        commitCurrentSession();
-        state.active = tab.dataset.id;
-        sessionStartTime = Date.now();
-        saveState(); render();
-      }
+      state.active = tab.dataset.id;
+      saveState(); render();
       return;
     }
     if (e.target.id === 'add-counter-btn') {
       openModal('new counter', '', name => {
-        commitCurrentSession();
         const id = genId();
-        state.counters.push({ id, name, count: 0, increment: 1, totalTime: 0, lastTapTime: null, history: [] });
+        state.counters.push({
+          id,
+          name,
+          count: 0,
+          increment: 1,
+          totalTime: 0,
+          lastTapTime: null,
+          timerRunning: true,
+          history: []
+        });
         state.active = id;
-        sessionStartTime = Date.now();
         saveState(); render();
       });
     }
@@ -526,25 +550,30 @@
     });
   });
 
-  document.getElementById('step-btn').addEventListener('click', () => {
+  document.getElementById('inc-btn').addEventListener('click', () => {
     const active = getActive();
     if (!active) return;
-    openModal('set step amount', String(active.increment || 1), val => {
-      const n = parseInt(val, 10);
-      if (!isNaN(n) && n > 0) {
-        active.increment = n;
-        saveState(); render();
-      }
+    openModal('set increment', String(active.increment || 1), val => {
+      const n = parseInt(val);
+      if (isNaN(n) || n < 1) return;
+      active.increment = n;
+      saveState(); render();
     }, 'number');
+  });
+
+  document.getElementById('timer-toggle-btn').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    active.timerRunning = active.timerRunning === false ? true : false;
+    saveState(); render();
   });
 
   document.getElementById('hit-btn').addEventListener('click', () => {
     const active = getActive();
     if (!active) return;
-    commitCurrentSession();
+    const inc = active.increment || 1;
     active.history.push(active.count);
     if (active.history.length > 200) active.history.shift();
-    const inc = active.increment || 1;
     active.count += inc;
     active.lastTapTime = Date.now();
     saveState(); render();
@@ -566,7 +595,6 @@
       active.count = 0;
       active.totalTime = 0;
       active.lastTapTime = null;
-      sessionStartTime = Date.now();
       saveState(); render();
     });
   });
@@ -589,7 +617,7 @@
     document.getElementById('modal-title').textContent = title;
     const input = document.getElementById('modal-input');
     input.type = inputType;
-    input.min = inputType === 'number' ? '0' : '';
+    input.min = inputType === 'number' ? '1' : '';
     input.style.display = '';
     input.value = value;
     document.getElementById('modal-confirm').textContent = 'confirm';
@@ -629,8 +657,6 @@
 
   // Export
   document.getElementById('export-btn').addEventListener('click', () => {
-    commitCurrentSession();
-    saveState();
     const data = JSON.stringify(state, null, 2);
     const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -658,7 +684,6 @@
         if (!parsed.counters) throw new Error();
         openConfirm('overwrite current data with backup?', () => {
           state = parsed;
-          sessionStartTime = Date.now();
           saveState();
           render();
         });
@@ -701,7 +726,6 @@
     const lastReminded = parseInt(localStorage.getItem(REMINDED_KEY) || '0');
     const total = totalEncounters();
     if (total - lastReminded < REMINDER_INTERVAL) return;
-    // Mark as reminded NOW so it won't fire again for another 100
     localStorage.setItem(REMINDED_KEY, total);
     openReminderModal(total);
   }
