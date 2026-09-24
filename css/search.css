@@ -250,21 +250,36 @@
     right: 20px;
     width: 340px;
     max-width: 90vw;
+    min-width: 200px;
+    min-height: 150px;
     z-index: 9999;
     box-shadow: 0 8px 24px rgba(0,0,0,0.35);
     border-radius: 8px;
+    overflow: hidden;
+}
+
+.sr-edge-right {
+    position: absolute;
+    top: 0; right: 0;
+    width: 8px; height: 100%;
+    cursor: ew-resize;
+}
+.sr-edge-bottom {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 8px;
+    cursor: ns-resize;
+}
+.sr-edge-corner {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 14px; height: 14px;
+    cursor: nwse-resize;
 }
 
 #site-results.pinned-embed iframe {
     width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-}
-
-#site-results.pinned-embed iframe:not([src*="spotify"]) {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
+    display: block;
 }
 
 .sr-embed-label {
@@ -280,3 +295,4 @@
     font-size: 14px;
     padding: 2px 4px;
 }
+

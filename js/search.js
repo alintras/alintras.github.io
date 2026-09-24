@@ -93,7 +93,7 @@ const shortcuts = {
     tw:        q => `https://x.com/search?q=${encodeURIComponent(q)}`,
     bp:        q => `https://bulbapedia.bulbagarden.net/wiki/Special:Search?search=${encodeURIComponent(q)}`,
     pw:        q => `https://www.pokewiki.de/Spezial:Suche?search=${encodeURIComponent(q)}`,
-    ig:        q => `https://www.instagram.com/${encodeURIComponent(q)}/`,
+    ig:        q => `https://imginn.com/${encodeURIComponent(q)}/`,
     emoji:     q => `https://emojipedia.org/search/?q=${encodeURIComponent(q)}`,
     op:        q => `https://onepiece.tube/anime/folge/${encodeURIComponent(q)}`,
     ud:        q => `https://www.urbandictionary.com/define.php?term=${encodeURIComponent(q)}`,
@@ -187,6 +187,10 @@ function getBox() {
     return document.getElementById("site-results");
 }
 
+function notifyObstacleChange() {
+    if (typeof refreshObstacleCache === "function") refreshObstacleCache();
+}
+
 function isShowingCalc() {
     const label = getBox().querySelector(".sr-label");
     return label && label.textContent.trim() === "calculator";
@@ -212,7 +216,7 @@ function showShortcutHint(keyword, query) {
         box.innerHTML = `<div class="sr-label">shortcut → ${keyword}</div><a>Press Enter to search <b>${query}</b></a>`;
     }
 }
-
+/*<button class="sr-embed-btn" onclick="togglePinEmbed()" title="Pin on top">📌</button>*/
 function showEmbed(html) {
     const box = getBox();
     box.style.display = "block";
@@ -220,27 +224,81 @@ function showEmbed(html) {
         <div class="sr-label sr-embed-label">
             embed
             <span class="sr-embed-controls">
-                <button class="sr-embed-btn" onclick="togglePinEmbed()" title="Pin on top">📌</button>
                 <button class="sr-embed-btn" onclick="closeEmbed()" title="Close">✕</button>
             </span>
         </div>
-        ${html}`;
+        ${html}
+        <div class="sr-edge-right"></div>
+        <div class="sr-edge-bottom"></div>
+        <div class="sr-edge-corner"></div>`;
+    attachResizeHandles(box);
 }
+
+/*
+function togglePinEmbed() {
+    const box = getBox();
+    box.classList.toggle("pinned-embed");
+    notifyObstacleChange();
+}
+*/
+
+const boxResizeObserver = new ResizeObserver(entries => {
+    for (const entry of entries) {
+        const box = entry.target;
+        if (!box.classList.contains("pinned-embed")) continue;
+        const iframe = box.querySelector("iframe");
+        const labelH = box.querySelector(".sr-embed-label")?.offsetHeight || 26;
+        if (iframe) iframe.style.height = `${entry.contentRect.height - labelH}px`;
+        notifyObstacleChange();
+    }
+});
 
 function isShowingEmbed() {
     const label = getBox().querySelector(".sr-label");
     return label && label.textContent.trim().startsWith("embed");
 }
 
-function togglePinEmbed() {
-    getBox().classList.toggle("pinned-embed");
+function attachResizeHandles(box) {
+    const startDrag = (e, resizeW, resizeH) => {
+        e.preventDefault();
+        const startX = e.clientX, startY = e.clientY;
+        const startW = box.offsetWidth, startH = box.offsetHeight;
+        box.querySelectorAll("iframe").forEach(f => f.style.pointerEvents = "none");
+
+        const onMove = ev => {
+            if (resizeW) {
+                const newW = Math.min(Math.max(startW + (startX - ev.clientX), 200), window.innerWidth * 0.9);
+                box.style.width = `${newW}px`;
+            }
+            if (resizeH) {
+                const newH = Math.min(Math.max(startH + (startY - ev.clientY), 150), window.innerHeight * 0.9);
+                const iframe = box.querySelector("iframe");
+                const labelH = box.querySelector(".sr-embed-label")?.offsetHeight || 26;
+                if (iframe) iframe.style.height = `${newH - labelH}px`;
+            }
+            notifyObstacleChange();
+        };
+        const onUp = () => {
+            box.querySelectorAll("iframe").forEach(f => f.style.pointerEvents = "");
+            document.removeEventListener("mousemove", onMove);
+            document.removeEventListener("mouseup", onUp);
+        };
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+    };
+
+    box.querySelector(".sr-edge-right")?.addEventListener("mousedown", e => startDrag(e, true, false));
+    box.querySelector(".sr-edge-bottom")?.addEventListener("mousedown", e => startDrag(e, false, true));
+    box.querySelector(".sr-edge-corner")?.addEventListener("mousedown", e => startDrag(e, true, true));
 }
+
 
 function closeEmbed() {
     const box = getBox();
     box.classList.remove("pinned-embed");
     box.style.display = "none";
     box.innerHTML = "";
+    notifyObstacleChange();
 }
 
 function clearSpecialResults() {
@@ -514,6 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadEngine();
     renderFavoritesBar();
     renderFavoritesSidebar();
+    boxResizeObserver.observe(getBox());
 
     const input = document.getElementById("search-input");
 
