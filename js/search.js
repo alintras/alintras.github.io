@@ -201,21 +201,27 @@ function isShowingShortcut() {
     return label && label.textContent.trim().startsWith("shortcut");
 }
 
-function showCalc(val) {
-    const box = getBox();
-    box.style.display = "block";
-    box.innerHTML = `<div class="sr-label">calculator</div><a>= ${val}</a>`;
+function formatNumber(n) {
+    return n.toLocaleString("de-DE", { maximumFractionDigits: 10 });
 }
 
-function showShortcutHint(keyword, query) {
-    const box = getBox();
-    box.style.display = "block";
-    if (!query) {
-        box.innerHTML = `<div class="sr-label">shortcut → ${keyword}</div><a>Press Enter to open <b>${shortcutBases[keyword]}</b></a>`;
-    } else {
-        box.innerHTML = `<div class="sr-label">shortcut → ${keyword}</div><a>Press Enter to search <b>${query}</b></a>`;
-    }
-}
+function showCalc(val) {
+   const box = getBox();
+   box.style.display = "block";
+   box.innerHTML = `<div class="sr-label">calculator</div><a>= ${formatNumber(val)}</a>`;
+ }
+
+ function showShortcutHint(keyword, query) {
+     const box = getBox();
+     box.style.display = "block";
+     const url = query ? shortcuts[keyword](query) : shortcutBases[keyword];
+     if (!query) {
+      box.innerHTML = `<div class="sr-label">shortcut → ${keyword}</div><a href="${url}">Press Enter to open <b>${shortcutBases[keyword]}</b></a>`;
+     } else {
+      box.innerHTML = `<div class="sr-label">shortcut → ${keyword}</div><a href="${url}">Press Enter to search <b>${query}</b></a>`;
+     }
+ }
+
 /*<button class="sr-embed-btn" onclick="togglePinEmbed()" title="Pin on top">📌</button>*/
 function showEmbed(html) {
     const box = getBox();
