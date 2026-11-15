@@ -251,3 +251,139 @@
     white-space: pre;
     font-family: monospace;
 }
+
+/* ============================================================
+   WEATHER WIDGET & 24H DROPDOWN
+   ============================================================ */
+#weather-widget {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  font-size: 0.95em;
+  width: fit-content;
+  background: var(--bg);
+  color: var(--fg);
+  position: relative;
+}
+
+#weather-display {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+#weather-display:hover,
+#weather-toggle-arrow:hover {
+  text-decoration: underline;
+}
+
+#weather-toggle-arrow {
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+}
+
+/* Das Dropdown im festen Spalten-Raster */
+.weather-dropdown {
+  position: absolute;
+  top: 100%;
+  left: -1px;
+  right: -1px;
+  margin-top: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.forecast-title {
+  font-size: 0.8em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  border-bottom: 1px dashed var(--border-muted);
+  padding-bottom: 2px;
+  opacity: 0.8;
+}
+
+.forecast-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Exakte Spalten-Ausrichtung: Uhrzeit | Temperatur | Zustand */
+.forecast-item {
+  display: grid;
+  grid-template-columns: 75px 55px 75px;
+  align-items: center;
+  font-size: 0.85em;
+}
+
+.forecast-time {
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.forecast-temp {
+  font-weight: bold;
+  text-align: right;
+  padding-right: 6px;
+}
+
+.forecast-cond {
+  opacity: 0.8;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.weather-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#weather-city-input {
+  background: var(--bg);
+  color: var(--fg);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  font-family: monospace;
+  font-size: 0.95em;
+  width: 120px;
+  padding: 0 2px;
+  outline: none;
+}
+
+.weather-btn {
+  background: none;
+  color: var(--fg);
+  border: 1px solid var(--border);
+  font-family: monospace;
+  font-size: 0.85em;
+  padding: 1px 5px;
+  cursor: pointer;
+}
+
+.weather-btn:hover {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.weather-status {
+  white-space: nowrap;
+  opacity: 0.7;
+}
+
+/* Mobile Optimierung */
+@media (max-width: 600px) {
+  .title-row {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  #weather-widget {
+    margin-top: 2px;
+  }
+}
