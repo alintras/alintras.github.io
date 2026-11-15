@@ -93,6 +93,14 @@
     padding: 20px 30px;
     border-top: 1px solid var(--border);
     margin-top: auto;
+    word-break: break-word;
+  }
+
+  .main-footer p {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
   }
   
   /* ============================================================
