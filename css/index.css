@@ -395,3 +395,38 @@
     margin-top: 2px;
   }
 }
+
+/* ============================================================
+   WEATHER AUTOCOMPLETE SUGGESTIONS
+   ============================================================ */
+.weather-form-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.weather-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  z-index: 300;
+  max-height: 150px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.suggestion-item {
+  padding: 4px 6px;
+  font-size: 0.85em;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--fg);
+}
+
+.suggestion-item:hover {
+  background: var(--fg);
+  color: var(--bg);
+}

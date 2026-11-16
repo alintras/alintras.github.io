@@ -90,21 +90,51 @@ const WeatherWidget = {
   renderForm() {
     const currentName = this.currentLoc ? this.currentLoc.name : '';
     this.container.innerHTML = `
-      <form id="weather-form" class="weather-form">
-        <input type="text" id="weather-city-input" value="${currentName}" placeholder="City..." autocomplete="off" required />
-        <button type="submit" class="weather-btn">OK</button>
-        <button type="button" id="weather-cancel" class="weather-btn">✕</button>
-      </form>
+      <div class="weather-form-wrapper">
+        <form id="weather-form" class="weather-form">
+          <input type="text" id="weather-city-input" value="${currentName}" placeholder="City..." autocomplete="off" required />
+          <button type="submit" class="weather-btn">OK</button>
+          <button type="button" id="weather-cancel" class="weather-btn">✕</button>
+        </form>
+        <div id="weather-suggestions" class="weather-suggestions" style="display: none;"></div>
+      </div>
     `;
 
     const input = document.getElementById('weather-city-input');
+    const suggestionsBox = document.getElementById('weather-suggestions');
     input.focus();
     input.select();
+
+    let debounceTimer;
+    input.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      clearTimeout(debounceTimer);
+
+      if (query.length < 2) {
+        suggestionsBox.style.display = 'none';
+        suggestionsBox.innerHTML = '';
+        return;
+      }
+
+      debounceTimer = setTimeout(() => {
+        this.fetchSuggestions(query, suggestionsBox);
+      }, 300); // 300ms Verzögerung beim Tippen
+    });
+
+    // Schließen bei Klick außerhalb
+    document.addEventListener('click', (e) => {
+      if (!this.container.contains(e.target)) {
+        suggestionsBox.style.display = 'none';
+      }
+    }, { once: true });
 
     document.getElementById('weather-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const city = input.value.trim();
-      if (city) await this.searchCity(city);
+      if (city) {
+        suggestionsBox.style.display = 'none';
+        await this.searchCity(city);
+      }
     });
 
     document.getElementById('weather-cancel').addEventListener('click', () => {
@@ -114,6 +144,55 @@ const WeatherWidget = {
         this.renderTrigger('[+ weather]');
       }
     });
+  },
+
+  async fetchSuggestions(query, suggestionsBox) {
+    try {
+      const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=de&format=json`;
+      const res = await fetch(geoUrl);
+      const data = await res.json();
+
+      if (!data.results || data.results.length === 0) {
+        suggestionsBox.style.display = 'none';
+        return;
+      }
+
+      let html = '';
+      data.results.forEach(place => {
+        // Details wie Bundesland / Region und Land zusammenbauen
+        const details = [place.admin1, place.country_code].filter(Boolean).join(', ');
+        const label = details ? `${place.name} (${details})` : place.name;
+
+        html += `<div class="suggestion-item" data-place='${JSON.stringify({
+          name: place.name,
+          country: place.country_code || place.country || '',
+          lat: place.latitude,
+          lon: place.longitude,
+          timezone: place.timezone || 'auto'
+        })}'>${label}</div>`;
+      });
+
+      suggestionsBox.innerHTML = html;
+      suggestionsBox.style.display = 'block';
+
+      // Klick-Event auf die Vorschläge
+      suggestionsBox.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const locData = JSON.parse(item.getAttribute('data-place'));
+          suggestionsBox.style.display = 'none';
+          this.selectLocation(locData);
+        });
+      });
+    } catch (err) {
+      suggestionsBox.style.display = 'none';
+    }
+  },
+
+  selectLocation(locData) {
+    this.currentLoc = locData;
+    this.setCookie(this.config.cookieName, JSON.stringify(locData), 365);
+    this.deleteCookie(this.config.cacheKey);
+    this.loadWeather(locData);
   },
 
   async searchCity(query) {
@@ -138,11 +217,7 @@ const WeatherWidget = {
         timezone: place.timezone || 'auto'
       };
 
-      this.currentLoc = locData;
-      this.setCookie(this.config.cookieName, JSON.stringify(locData), 365);
-      this.deleteCookie(this.config.cacheKey);
-
-      this.loadWeather(locData);
+      this.selectLocation(locData);
     } catch (err) {
       this.renderTrigger('err [retry]');
     }
@@ -257,7 +332,7 @@ const WeatherWidget = {
   },
 
   getCookie(name) {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
     return match ? decodeURIComponent(match[2]) : null;
   },
 
