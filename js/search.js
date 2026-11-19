@@ -211,10 +211,12 @@ function isShowingShortcut() {
 }
 
 function formatNumber(n) {
-    // Sehr kleine oder sehr große Zahlen sauber darstellen, sonst bis zu 8 Nachkommastellen
+    if (typeof n !== "number" || !Number.isFinite(n)) return String(n);
+
     if (n !== 0 && (Math.abs(n) < 1e-6 || Math.abs(n) >= 1e12)) {
         return n.toExponential(6).replace(".", ",");
     }
+
     return n.toLocaleString("de-DE", {
         minimumFractionDigits: 0,
         maximumFractionDigits: 8
