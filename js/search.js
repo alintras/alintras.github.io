@@ -122,15 +122,24 @@ function normalizeURL(str) {
 }
 
 function isMath(str) {
-    return /\d/.test(str)
-        && /[+\-*/^%]/.test(str)
-        && /^[\d\s().+\-*/^%]+$/.test(str.trim());
+    const clean = str.trim();
+    return /\d/.test(clean)
+        && /[+\-*/^%]/.test(clean)
+        && /^[\d\s().,+\-*/^%]+$/.test(clean);
 }
 
 function evalMath(expr) {
     try {
-        const val = Function(`"use strict"; return (${expr})`)();
-        if (typeof val === "number" && isFinite(val)) return val;
+        // Deutsches Komma zu Punkt + ^ zu Potenz (**) umwandeln
+        const normalized = expr
+            .replace(/,/g, ".")
+            .replace(/\^/g, "**");
+
+        const val = Function(`"use strict"; return (${normalized})`)();
+        if (typeof val === "number" && Number.isFinite(val)) {
+            // Rundungsfehler wie 0.1 + 0.2 = 0.30000000000000004 bereinigen
+            return Number(val.toPrecision(12));
+        }
     } catch { /* ignore */ }
     return null;
 }
@@ -202,14 +211,26 @@ function isShowingShortcut() {
 }
 
 function formatNumber(n) {
-    return n.toLocaleString("de-DE", { maximumFractionDigits: 10 });
+    // Sehr kleine oder sehr große Zahlen sauber darstellen, sonst bis zu 8 Nachkommastellen
+    if (n !== 0 && (Math.abs(n) < 1e-6 || Math.abs(n) >= 1e12)) {
+        return n.toExponential(6).replace(".", ",");
+    }
+    return n.toLocaleString("de-DE", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 8
+    });
 }
 
 function showCalc(val) {
-   const box = getBox();
-   box.style.display = "block";
-   box.innerHTML = `<div class="sr-label">calculator</div><a>= ${formatNumber(val)}</a>`;
- }
+    const box = getBox();
+    const formatted = formatNumber(val);
+    box.style.display = "block";
+    box.innerHTML = `
+        <div class="sr-label">calculator (click to copy)</div>
+        <a href="#" onclick="event.preventDefault(); navigator.clipboard.writeText('${formatted}'); this.textContent = '= ${formatted} ✓';">
+            = ${formatted}
+        </a>`;
+}
 
  function showShortcutHint(keyword, query) {
      const box = getBox();
