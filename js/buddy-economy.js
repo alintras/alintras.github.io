@@ -3,7 +3,7 @@
 
 let totalCoins = parseInt(localStorage.getItem('buddy_coins') || '0');
 
-function formatNumber(n) {
+function formatFloorNumber(n) {
     return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
