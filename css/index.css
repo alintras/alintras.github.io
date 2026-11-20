@@ -234,16 +234,25 @@
   }
   
   @media (max-width: 600px) {
-      .update-component {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-        margin-top: 20px;
-        padding: 10px;
-        width: calc(100% - 20px);
-        margin-left: 10px;
-      }
+    #github-update.update-component,
+    .update-component {
+      display: inline-flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 2px 6px;
+      margin: 4px 0 0 0;
+      padding: 3px 6px;
+      width: auto;
+      line-height: 1.1;
+      font-size: 0.8rem;
   }
+
+  #github-update.update-component *,
+  .update-component * {
+    line-height: 1.1;
+  }
+}
 
   .search-help,
   #favorites-bar details,
