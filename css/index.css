@@ -203,21 +203,34 @@
   }
   
   /* GITHUB UPDATE COMPONENT */
-  .update-component {
-      display: inline-flex;
-      width: auto;
-      padding: 5px;
-      background: var(--bg);
-      border-top: 1px solid var(--border);
-      border-left: 4px solid var(--fg);
-      font-size: 0.9rem;
-  }
-    
-  .update-component .label {
-      font-weight: bold;
-      text-transform: uppercase;
-      flex-shrink: 0;
-  }
+.update-component {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    width: auto;
+    padding: 3px 6px;
+    line-height: 1.2;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    border-left: 4px solid var(--fg);
+    font-size: 0.85rem;
+}
+
+.update-component .label {
+    font-weight: bold;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    line-height: 1.2;
+}
+
+.update-component #commit-message,
+.update-component #commit-date {
+    line-height: 1.2;
+    margin: 0;
+    padding: 0;
+}
+
 
   .home-button {
     position: fixed;
