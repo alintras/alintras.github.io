@@ -1,7 +1,7 @@
 function initReminder(options) {
   var opts = Object.assign({
     ip: 'alintras.duckdns.org',
-    version: '1.8.8',
+    version: '1.8.x',
     maxPlayers: 5,
     hostNote: 'hosted on a 1GB RAM netbook on my desk',
     statusUrl: 'https://api.mcsrvstat.us/3/' + encodeURIComponent('alintras.duckdns.org'),
@@ -44,7 +44,7 @@ function initReminder(options) {
     '<div id="_mc-main-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0">' +
       '<span title="' + esc(opts.hostNote) + '" style="display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:help">' +
         '<span id="_mc-dot" style="color:#888;flex-shrink:0">●</span>' +
-        '<span id="_mc-status" style="overflow:hidden;text-overflow:ellipsis">minecraft · ?/' + esc(opts.maxPlayers) + ' · ' + esc(opts.version) + '</span>' +
+        '<span id="_mc-status" style="overflow:hidden;text-overflow:ellipsis">minecraft ' + esc(opts.version) + ' · ?/' + esc(opts.maxPlayers) + '</span>' +
       '</span>' +
       '<span style="display:flex;align-items:center;gap:4px;flex-shrink:0">' +
         '<button id="_mc-copy" type="button" title="' + esc(opts.hostNote) + '" style="' + btnBase + ';max-width:155px;overflow:hidden;text-overflow:ellipsis">' + esc(opts.ip) + '</button>' +
@@ -104,7 +104,7 @@ function initReminder(options) {
   var curOnline = '?', curMax = opts.maxPlayers, curVer = opts.version;
   function upd() {
     var el = document.getElementById('_mc-status');
-    if (el) el.textContent = 'minecraft ' + curOnline + '/' + curMax + ' · ' + curVer;
+    if (el) el.textContent = 'minecraft ' + curVer + ' | ' + curOnline + '/' + curMax;
   }
 
   document.getElementById('_mc-copy').addEventListener('click', function() {
@@ -135,10 +135,6 @@ function initReminder(options) {
       } else {
         dot.style.color = '#e74c3c';
         curOnline = 0;
-      }
-      if (d && d.version) {
-        var v = String(d.version).replace(/^[A-Za-z_.-]+\s+/, '');
-        if (v) curVer = v;
       }
       upd();
     }).catch(function() {

@@ -62,7 +62,7 @@ async function fetchLatestCommit(username, repo) {
 
       if (!lastCommit) return;
   
-      messageElement.textContent = lastCommit.commit.message + '  ';
+      messageElement.textContent = lastCommit.commit.message;
       
       const commitDate = new Date(lastCommit.commit.author.date);
       dateElement.textContent = `(${commitDate.toLocaleDateString()})`;
