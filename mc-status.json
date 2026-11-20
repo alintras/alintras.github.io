@@ -1,1 +1,1 @@
-{"events":[{"time":"00:24","type":"join","player":"alintras"},{"time":"00:28","type":"join","player":"alintras"}],"stats":{"totalPlayers":18,"topPlaytime":"53h 27m","updated":"00:30"}}
+{"events":[{"time":"00:24","type":"join","player":"alintras"},{"time":"00:28","type":"leave","player":"alintras"},{"time":"00:28","type":"join","player":"alintras"}],"stats":{"totalPlayers":18,"topPlaytime":"53h 27m","updated":"00:34"}}
