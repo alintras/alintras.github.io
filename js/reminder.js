@@ -70,14 +70,16 @@ function initReminder(options) {
   }
 
   document.getElementById('_mc-copy').addEventListener('click', function() {
-    var b = this, orig = b.textContent;
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(opts.ip).then(function() {
-        b.textContent = 'copied!';
-        setTimeout(function() { b.textContent = orig; }, 1300);
-      });
-    }
-  });
+  var b = this, orig = opts.ip;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(opts.ip).then(function() {
+      b.textContent = 'copied!';
+      clearTimeout(b._mcTimer);
+      b._mcTimer = setTimeout(function() { b.textContent = orig; }, 5000);
+    });
+  }
+});
+
 
   var loaded = false;
   document.getElementById('_mc-toggle').addEventListener('click', function() {
