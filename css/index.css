@@ -88,21 +88,6 @@
     color: var(--fg);
   }
   
-  .main-footer {
-    width: 100%;
-    padding: 20px 30px;
-    border-top: 1px solid var(--border);
-    margin-top: auto;
-    word-break: break-word;
-  }
-
-  .main-footer p {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px 8px;
-  }
-  
   /* ============================================================
      EXISTING INDEX SPECIFIC STYLES
      ============================================================ */
@@ -201,36 +186,53 @@
   #ascii-footer::-webkit-scrollbar {
       display: none;
   }
-  
-  /* GITHUB UPDATE COMPONENT */
+
+.main-footer {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  word-break: break-word;
+}
+
+.main-footer p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0 0 8px 0;
+}
+
+/* GITHUB UPDATE COMPONENT */
+#github-update.update-component,
 .update-component {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    width: auto;
-    padding: 3px 6px;
-    line-height: 1.2;
-    background: var(--bg);
-    border-top: 1px solid var(--border);
-    border-left: 4px solid var(--fg);
-    font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  width: auto;
+  padding: 4px 8px;
+  margin: 0;
+  line-height: 1.15;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  border-left: 4px solid var(--fg);
+  font-size: 0.85rem;
 }
 
+#github-update .label,
 .update-component .label {
-    font-weight: bold;
-    text-transform: uppercase;
-    flex-shrink: 0;
-    line-height: 1.2;
+  font-weight: bold;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  line-height: 1.15;
 }
 
-.update-component #commit-message,
-.update-component #commit-date {
-    line-height: 1.2;
-    margin: 0;
-    padding: 0;
+#github-update #commit-message,
+#github-update #commit-date {
+  line-height: 1.15;
 }
-
 
   .home-button {
     position: fixed;
@@ -246,17 +248,20 @@
     image-rendering: pixelated;
   }
   
-  @media (max-width: 600px) {
-      .update-component {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 5px;
-        margin-top: 20px;
-        padding: 10px;
-        width: calc(100% - 20px);
-        margin-left: 10px;
-      }
+@media (max-width: 600px) {
+  .update-component {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3px 6px;
+    margin-top: 6px;
+    margin-left: 0;
+    padding: 3px 6px;
+    width: auto;
+    line-height: 1.15;
+    font-size: 0.82rem;
   }
+}
 
   .search-help,
   #favorites-bar details,
