@@ -118,32 +118,43 @@ function initReminder(options) {
     }
   });
 
-  var loaded = false;
   document.getElementById('_mc-toggle').addEventListener('click', function() {
     var p = document.getElementById('_mc-panel'), open = p.style.display === 'none';
     p.style.display = open ? 'block' : 'none';
     this.textContent = open ? 'log ▾' : 'log';
-    if (open && !loaded) { loaded = true; loadDetails(); }
+    if (open) { loadDetails(); }
   });
 
-  fetch(opts.statusUrl).then(function(r) { return r.json(); }).then(function(d) {
-    var dot = document.getElementById('_mc-dot');
-    if (d && d.online) {
-      dot.style.color = '#2ecc71';
-      curOnline = (d.players && typeof d.players.online === 'number') ? d.players.online : 0;
-      curMax = (d.players && typeof d.players.max === 'number') ? d.players.max : opts.maxPlayers;
-    } else {
-      dot.style.color = '#e74c3c';
-      curOnline = 0;
+  function updateMainStatus() {
+    fetch(opts.statusUrl).then(function(r) { return r.json(); }).then(function(d) {
+      var dot = document.getElementById('_mc-dot');
+      if (d && d.online) {
+        dot.style.color = '#2ecc71';
+        curOnline = (d.players && typeof d.players.online === 'number') ? d.players.online : 0;
+        curMax = (d.players && typeof d.players.max === 'number') ? d.players.max : opts.maxPlayers;
+      } else {
+        dot.style.color = '#e74c3c';
+        curOnline = 0;
+      }
+      if (d && d.version) {
+        var v = String(d.version).replace(/^[A-Za-z_.-]+\s+/, '');
+        if (v) curVer = v;
+      }
+      upd();
+    }).catch(function() {
+      var dot = document.getElementById('_mc-dot');
+      if (dot) dot.style.color = '#e74c3c';
+    });
+  }
+
+  updateMainStatus();
+  setInterval(function() {
+    updateMainStatus();
+    var p = document.getElementById('_mc-panel');
+    if (p && p.style.display === 'block') {
+      loadDetails();
     }
-    if (d && d.version) {
-      var v = String(d.version).replace(/^[A-Za-z_.-]+\s+/, '');
-      if (v) curVer = v;
-    }
-    upd();
-  }).catch(function() {
-    document.getElementById('_mc-dot').style.color = '#e74c3c';
-  });
+  }, 60000);
 
   function loadDetails() {
     var ev = document.getElementById('_mc-events'), st = document.getElementById('_mc-stats');
