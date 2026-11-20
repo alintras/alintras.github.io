@@ -98,10 +98,9 @@ a:hover {
 .main-footer {
   width: 100%;
   box-sizing: border-box;
-  padding: 20px 30px;
+  padding: 14px 20px;
   border-top: 1px solid var(--border);
-  bottom: 0px;
-  text-align: 0;
+  text-align: left;
 }
 
 /* =========================
