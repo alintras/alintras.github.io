@@ -27,7 +27,7 @@
     <script src="/js/index.js" defer></script>
     <script src="/js/service-worker.js" defer></script>
     <script src="/js/stats.js" defer></script>
-    <script src="/js/reminder.js" defer></script>
+    <script src="/js/reminder.js"></script>
     <script src="/js/weather.js" defer></script>
 
     <script src="/js/buddy-state.js" defer></script>
@@ -42,7 +42,6 @@
     <script defer>
     document.addEventListener('DOMContentLoaded', function() {
         initStats('site-stats');
-        initReminder();
     });
 </script>
 </head>
@@ -185,6 +184,10 @@
         <span id="commit-date"></span>
       </div>
 </footer>
+
+<script>
+  initReminder();
+</script>
 
 </body>
 </html>
