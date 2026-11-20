@@ -55,7 +55,12 @@ async function fetchLatestCommit(username, repo) {
       if (!response.ok) throw new Error('Network response was not ok');
       
       const data = await response.json();
-      const lastCommit = data[0];
+      const lastCommit = data.find(c =>
+        c && c.commit && c.commit.message &&
+        !c.commit.message.trim().startsWith('mc:')
+      ) || data[0];
+
+      if (!lastCommit) return;
   
       messageElement.textContent = lastCommit.commit.message + '  ';
       

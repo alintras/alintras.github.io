@@ -8,8 +8,6 @@ function initReminder(options) {
     logStatsUrl: 'mc-status.json'
   }, options || {});
 
-  if (localStorage.getItem('mcBarHidden')) return;
-
   var dark = document.documentElement.classList.contains('dark') ||
              document.body.classList.contains('dark') ||
              document.body.classList.contains('dark-mode') ||
@@ -43,16 +41,19 @@ function initReminder(options) {
       '</div>' +
       '<div id="_mc-events" style="display:flex;flex-direction:column;gap:2px;max-height:120px;overflow-y:auto"></div>' +
     '</div>' +
-    '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0">' +
+    '<div id="_mc-main-row" style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0">' +
       '<span title="' + esc(opts.hostNote) + '" style="display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:help">' +
         '<span id="_mc-dot" style="color:#888;flex-shrink:0">●</span>' +
-        '<span id="_mc-status" style="overflow:hidden;text-overflow:ellipsis">mc · ?/' + esc(opts.maxPlayers) + ' · ' + esc(opts.version) + '</span>' +
+        '<span id="_mc-status" style="overflow:hidden;text-overflow:ellipsis">minecraft · ?/' + esc(opts.maxPlayers) + ' · ' + esc(opts.version) + '</span>' +
       '</span>' +
       '<span style="display:flex;align-items:center;gap:4px;flex-shrink:0">' +
         '<button id="_mc-copy" type="button" title="' + esc(opts.hostNote) + '" style="' + btnBase + ';max-width:155px;overflow:hidden;text-overflow:ellipsis">' + esc(opts.ip) + '</button>' +
         '<button id="_mc-toggle" type="button" style="' + btnBase + '">log</button>' +
-        '<button id="_mc-close" type="button" style="' + btnBase + '">×</button>' +
+        '<button id="_mc-collapse" type="button" title="minimize" style="' + btnBase + '">▾</button>' +
       '</span>' +
+    '</div>' +
+    '<div id="_mc-mini-row" style="display:none;justify-content:flex-end">' +
+      '<button id="_mc-expand" type="button" title="show mc status" style="' + btnBase + '">▴</button>' +
     '</div>';
 
   document.body.appendChild(bar);
@@ -63,23 +64,59 @@ function initReminder(options) {
     });
   }
 
+  function setMinimized(min) {
+    var mainRow = document.getElementById('_mc-main-row');
+    var miniRow = document.getElementById('_mc-mini-row');
+    var panel   = document.getElementById('_mc-panel');
+    var togBtn  = document.getElementById('_mc-toggle');
+
+    if (min) {
+      panel.style.display = 'none';
+      togBtn.textContent = 'log';
+      mainRow.style.display = 'none';
+      miniRow.style.display = 'flex';
+      bar.style.left = 'auto';
+      bar.style.borderLeft = '1px solid ' + fg;
+      bar.style.padding = '4px 6px';
+      localStorage.setItem('mcBarMinimized', '1');
+    } else {
+      miniRow.style.display = 'none';
+      mainRow.style.display = 'flex';
+      bar.style.left = '0';
+      bar.style.borderLeft = 'none';
+      bar.style.padding = '6px 10px';
+      localStorage.removeItem('mcBarMinimized');
+    }
+  }
+
+  if (localStorage.getItem('mcBarMinimized') === '1') {
+    setMinimized(true);
+  }
+
+  document.getElementById('_mc-collapse').addEventListener('click', function() {
+    setMinimized(true);
+  });
+
+  document.getElementById('_mc-expand').addEventListener('click', function() {
+    setMinimized(false);
+  });
+
   var curOnline = '?', curMax = opts.maxPlayers, curVer = opts.version;
   function upd() {
     var el = document.getElementById('_mc-status');
-    if (el) el.textContent = 'mc ' + curOnline + '/' + curMax + ' · ' + curVer;
+    if (el) el.textContent = 'minecraft ' + curOnline + '/' + curMax + ' · ' + curVer;
   }
 
   document.getElementById('_mc-copy').addEventListener('click', function() {
-  var b = this, orig = opts.ip;
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(opts.ip).then(function() {
-      b.textContent = 'copied!';
-      clearTimeout(b._mcTimer);
-      b._mcTimer = setTimeout(function() { b.textContent = orig; }, 5000);
-    });
-  }
-});
-
+    var b = this, orig = opts.ip;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(opts.ip).then(function() {
+        b.textContent = 'copied!';
+        clearTimeout(b._mcTimer);
+        b._mcTimer = setTimeout(function() { b.textContent = orig; }, 5000);
+      });
+    }
+  });
 
   var loaded = false;
   document.getElementById('_mc-toggle').addEventListener('click', function() {
@@ -87,11 +124,6 @@ function initReminder(options) {
     p.style.display = open ? 'block' : 'none';
     this.textContent = open ? 'log ▾' : 'log';
     if (open && !loaded) { loaded = true; loadDetails(); }
-  });
-
-  document.getElementById('_mc-close').addEventListener('click', function() {
-    localStorage.setItem('mcBarHidden', '1');
-    bar.remove();
   });
 
   fetch(opts.statusUrl).then(function(r) { return r.json(); }).then(function(d) {
