@@ -16,10 +16,6 @@
     <meta property="og:title" content="Ali's Homepage">
     <meta property="og:description" content="Welcome to my personal homepage. Try out the search features!">
     <meta property="og:image" content="images/og-image.jpg">
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://twitter.com/alintrass">
-    <meta property="twitter:title" content="Alintras">
-    <meta property="twitter:description" content="Alintas">
 
     <link rel="stylesheet" href="/css/search.css">
     <link rel="stylesheet" href="/css/nav.css">
@@ -31,7 +27,7 @@
     <script src="/js/index.js" defer></script>
     <script src="/js/service-worker.js" defer></script>
     <script src="/js/stats.js" defer></script>
-    <script src="/js/reminder.js" defer></script>
+    <script src="/js/reminder.js"></script>
     <script src="/js/weather.js" defer></script>
 
     <script src="/js/buddy-state.js" defer></script>
@@ -46,7 +42,6 @@
     <script defer>
     document.addEventListener('DOMContentLoaded', function() {
         initStats('site-stats');
-        initReminder();
     });
 </script>
 </head>
@@ -189,6 +184,10 @@
         <span id="commit-date"></span>
       </div>
 </footer>
+
+<script>
+  initReminder();
+</script>
 
 </body>
 </html>
