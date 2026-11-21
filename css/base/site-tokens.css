@@ -1,0 +1,13 @@
+:root {
+  --site-bg: #ffffff;
+  --site-fg: #131313;
+  --site-border: #131313;
+  --site-border-muted: #cccccc;
+}
+
+:root[data-theme="dark"] {
+  --site-bg: #111111;
+  --site-fg: #e0e0e0;
+  --site-border: #555555;
+  --site-border-muted: #444444;
+}
