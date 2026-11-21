@@ -3,6 +3,11 @@
   --site-fg: #131313;
   --site-border: #131313;
   --site-border-muted: #cccccc;
+
+  --bg: var(--site-bg);
+  --fg: var(--site-fg);
+  --border: var(--site-border);
+  --border-muted: var(--site-border-muted);
 }
 
 :root[data-theme="dark"] {
@@ -10,4 +15,9 @@
   --site-fg: #e0e0e0;
   --site-border: #555555;
   --site-border-muted: #444444;
+
+  --bg: var(--site-bg);
+  --fg: var(--site-fg);
+  --border: var(--site-border);
+  --border-muted: var(--site-border-muted);
 }
