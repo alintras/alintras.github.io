@@ -1,0 +1,51 @@
+label {
+  display: block;
+  font-size: 10px;
+  margin-top: 12px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.presets {
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.presets a {
+  color: var(--fg);
+  cursor: pointer;
+  margin-right: 8px;
+  text-decoration: underline;
+}
+
+.style-row {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.sb {
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 11px;
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 36px;
+}
+
+.sb.on {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+a.dl {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--fg);
+  cursor: pointer;
+}

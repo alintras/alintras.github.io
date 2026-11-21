@@ -5,18 +5,6 @@
         pre, code { font-family: monospace; font-size: 0.9em; }
         pre { background: none; padding: 0; overflow-x: auto; }
         input, select, textarea { border: 1px solid var(--border); background: var(--bg); color: var(--fg); padding: 2px 4px; }
-        .back-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px;
-            background: var(--fg);
-            color: var(--bg);
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            z-index: 1000;
-        }
         button { border: 1px solid var(--border); background: var(--bg); color: var(--fg); cursor: pointer; padding: 4px 10px; }
         button:hover { background: var(--fg); color: var(--bg); }
         table { border-collapse: collapse; }

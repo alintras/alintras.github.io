@@ -1,5 +1,4 @@
 
-        .container { max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
         .cps-page-header { text-align: center; padding: 20px 0; border-bottom: 1px solid var(--border); }
         #historyList { margin-top: 15px; }
         .panel { border: 1px solid var(--border); padding: 20px; }
