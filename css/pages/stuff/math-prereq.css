@@ -6,4 +6,16 @@
         table { border-collapse: collapse; border: 1px solid var(--border); }
         th, td { border: 1px solid var(--border); padding: 5px; }
         img { max-width: 100%; }
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px;
+            background: var(--fg);
+            color: var(--bg);
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 1000;
+        }
     

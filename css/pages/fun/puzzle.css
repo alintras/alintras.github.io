@@ -19,6 +19,7 @@
   .pbox { border: 2px solid #1a3a8a; padding: 16px; background: linear-gradient(160deg,#e8f0ff,#d0dcff); }
   .pbox-title { font-size: 15px; font-weight: bold; color: #1a3a8a; letter-spacing: 1px; }
   .pbox-meta { font-size: 10px; color: #4a6aaa; margin-top: 2px; }
+  .photo-note { font-size: 10px; opacity: 0.6; margin-top: 8px; }
   .pbox-img { width: 100%; height: 150px; border: 1px solid #a0b8e0; margin-top: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 10px; background: #c8d8f0; color: #8aaad0; }
   .pbox-img img { width: 100%; height: 100%; object-fit: cover; }
   canvas { border: 1px solid var(--border); width: 100%; max-height: 70vh; cursor: grab; display: none; touch-action: none; }

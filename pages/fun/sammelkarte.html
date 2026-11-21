@@ -32,11 +32,11 @@
     <div class="stars" id="stars">
       <span onclick="setStar(1)">★</span><span onclick="setStar(2)">★</span><span onclick="setStar(3)">★</span><span onclick="setStar(4)">★</span><span onclick="setStar(5)">☆</span>
     </div>
-    <label style="margin-top:12px" data-t="sk_stats">Stats</label>
+    <label class="stats-label" data-t="sk_stats">Stats</label>
     <div class="stats-row">
-      <div><label style="margin-top:0">Key 1</label><input type="text" id="s1k" value="SPD" oninput="u()"></div>
-      <div><label style="margin-top:0">Key 2</label><input type="text" id="s2k" value="STR" oninput="u()"></div>
-      <div><label style="margin-top:0">Key 3</label><input type="text" id="s3k" value="DEF" oninput="u()"></div>
+      <div><label class="stat-key-label">Key 1</label><input type="text" id="s1k" value="SPD" oninput="u()"></div>
+      <div><label class="stat-key-label">Key 2</label><input type="text" id="s2k" value="STR" oninput="u()"></div>
+      <div><label class="stat-key-label">Key 3</label><input type="text" id="s3k" value="DEF" oninput="u()"></div>
       <div><input type="number" id="s1v" value="92" min="0" max="99" oninput="u()"></div>
       <div><input type="number" id="s2v" value="87" min="0" max="99" oninput="u()"></div>
       <div><input type="number" id="s3v" value="74" min="0" max="99" oninput="u()"></div>
@@ -51,15 +51,15 @@
         <div class="tc-top"><span class="tc-name" id="tc-name">MAX MUSTERMANN</span><span class="tc-rarity" id="tc-rarity">RARE</span></div>
         <div class="tc-photo" id="tc-photo">Photo</div>
         <div class="tc-body">
-          <div class="tc-team" id="tc-team" style="border-bottom:1px solid rgba(255,255,255,0.15)">FC Berlin</div>
-          <div class="tc-stats" style="border-bottom:1px solid rgba(255,255,255,0.15)">
+          <div class="tc-team" id="tc-team">FC Berlin</div>
+          <div class="tc-stats">
             <div class="tc-stat"><div class="tc-val" id="tc-s1v">92</div><div class="tc-key" id="tc-s1k">SPD</div></div>
             <div class="tc-stat"><div class="tc-val" id="tc-s2v">87</div><div class="tc-key" id="tc-s2k">STR</div></div>
             <div class="tc-stat"><div class="tc-val" id="tc-s3v">74</div><div class="tc-key" id="tc-s3k">DEF</div></div>
           </div>
-          <div class="tc-desc" id="tc-desc" style="border-top:1px solid rgba(255,255,255,0.1)">Fastest striker in the league.</div>
+          <div class="tc-desc" id="tc-desc">Fastest striker in the league.</div>
           <div class="tc-stars" id="tc-stars">★★★★☆</div>
-          <div class="tc-footer" style="border-top:1px solid rgba(255,255,255,0.1)"><span>TRADING CARDS 2024</span><span id="tc-num">#042 / 100</span></div>
+          <div class="tc-footer" id="tc-footer"><span>TRADING CARDS 2024</span><span id="tc-num">#042 / 100</span></div>
         </div>
       </div>
     </div>

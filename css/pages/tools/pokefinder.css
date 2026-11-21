@@ -7,6 +7,7 @@
       font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
       margin: 0.9rem 0 0.3rem; border-bottom: 1px solid var(--border, #000); padding-bottom: 2px;
     }
+    .iv-filter-note { font-size: 0.7rem; font-weight: normal; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin-bottom: 0.5rem; }
     .grid-iv { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; margin-bottom: 0.5rem; }
     .field { display: flex; flex-direction: column; gap: 2px; }

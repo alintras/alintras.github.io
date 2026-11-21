@@ -102,11 +102,23 @@
     flex: 2;
   }
 
+  #import-file { display: none; }
+
+  .counter-ui-layout {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+  }
+
   #count-display {
     font-size: clamp(3rem, 18vw, 7rem);
     font-weight: bold;
     line-height: 1;
     text-align: center;
+    cursor: pointer;
     letter-spacing: -2px;
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;

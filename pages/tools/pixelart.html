@@ -23,10 +23,10 @@
 
 <div id="toolbar">
   <div class="tool-group">
-    <button class="tool-btn active" data-tool="draw" title="Draw"><img src="/assets/smileys/pencil.png" style="width:18px; height:18px; vertical-align:-2px; image-rendering:pixelated;" alt="✏"></button>
-    <button class="tool-btn" data-tool="fill" title="Fill"><img src="/assets/smileys/bucket.png" style="width:18px; height:18px; vertical-align:-2px; image-rendering:pixelated;" alt="⬛"></button>
-    <button class="tool-btn" data-tool="erase" title="Erase"><img src="/assets/smileys/eraser.png" style="width:18px; height:18px; vertical-align:-2px; image-rendering:pixelated;" alt="✕"></button>
-    <button class="tool-btn" data-tool="eyedrop" title="Pick color"><img src="/assets/smileys/eyedrop.png" style="width:18px; height:18px; vertical-align:-2px; image-rendering:pixelated;" alt="⊙"></button>
+    <button class="tool-btn active" data-tool="draw" title="Draw"><img class="tool-icon" src="/assets/smileys/pencil.png" alt="✏"></button>
+    <button class="tool-btn" data-tool="fill" title="Fill"><img class="tool-icon" src="/assets/smileys/bucket.png" alt="⬛"></button>
+    <button class="tool-btn" data-tool="erase" title="Erase"><img class="tool-icon" src="/assets/smileys/eraser.png" alt="✕"></button>
+    <button class="tool-btn" data-tool="eyedrop" title="Pick color"><img class="tool-icon" src="/assets/smileys/eyedrop.png" alt="⊙"></button>
   </div>
   <div class="sep"></div>
   <div class="tool-group">
@@ -39,19 +39,19 @@
     <button id="save-btn">Save PNG</button>
   </div>
   <div class="sep"></div>
-  <div class="tool-group" style="font-size:0.8em;display:flex;align-items:center;gap:6px;">
-    <label style="display:flex;align-items:center;gap:4px;cursor:pointer;user-select:none;white-space:nowrap;">
+  <div class="tool-group tool-group-options">
+    <label class="tool-option">
       <input type="checkbox" id="transparent-empty" checked> Transp.
     </label>
-    <label style="display:flex;align-items:center;gap:4px;white-space:nowrap;">
-      bg: <input type="color" id="bg-color" value="#ffffff" style="width:26px;height:22px;border:1px solid var(--border);padding:0;cursor:pointer;background:none;">
+    <label class="tool-option-nowrap">
+      bg: <input type="color" id="bg-color" value="#ffffff" class="background-color-input">
     </label>
   </div>
   <div class="sep"></div>
-  <div class="tool-group" style="font-size:0.8em;display:flex;align-items:center;gap:4px;">
-    <button id="trace-load-btn" style="font-size:0.8em;">Trace</button>
-    <input type="file" id="trace-input" accept="image/*" style="display:none">
-    <input type="range" id="trace-opacity" min="10" max="90" value="40" style="width:54px" title="Trace opacity">
+  <div class="tool-group tool-group-trace">
+    <button id="trace-load-btn">Trace</button>
+    <input type="file" id="trace-input" class="trace-file-input" accept="image/*">
+    <input type="range" id="trace-opacity" min="10" max="90" value="40" title="Trace opacity">
     <button id="trace-clear-btn" style="display:none;font-size:0.8em;">✕</button>
   </div>
 </div>
@@ -76,7 +76,7 @@
 
 <div id="bottombar">
   <span id="undo-count"></span>
-  <span id="pos-info" style="margin-left:auto;"></span>
+  <span id="pos-info"></span>
 </div>
 
 <script>

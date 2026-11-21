@@ -53,6 +53,16 @@ button:disabled:active { background: var(--bg); color: var(--fg); }
     #aaa calc(50% + 0.5px), transparent calc(50% + 0.5px));
 }
 #custom-color { width: 32px; height: 28px; flex-shrink: 0; border: 1px solid var(--border); padding: 0; cursor: pointer; background: none; }
+.tool-icon { width: 18px; height: 18px; vertical-align: -2px; image-rendering: pixelated; }
+.trace-file-input { display: none; }
+.tool-group-options { font-size: 0.8em; display: flex; align-items: center; gap: 6px; }
+.tool-option { display: flex; align-items: center; gap: 4px; cursor: pointer; user-select: none; white-space: nowrap; }
+.tool-option-nowrap { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.background-color-input { width: 26px; height: 22px; border: 1px solid var(--border); padding: 0; cursor: pointer; background: none; }
+.tool-group-trace { font-size: 0.8em; display: flex; align-items: center; gap: 4px; }
+#trace-load-btn { font-size: 0.8em; }
+#trace-opacity { width: 54px; }
+#pos-info { margin-left: auto; }
 #active-swatch { width: 28px; height: 28px; flex-shrink: 0; border: 2px solid var(--fg); }
 
 #canvas-area {

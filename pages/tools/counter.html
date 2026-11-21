@@ -18,14 +18,14 @@
   <button id="export-btn" title="export backup">↓</button>
   <button id="keybind-btn" title="set hotkey"></button>
 </header>
-<input type="file" id="import-file" accept=".json" style="display:none">
+<input type="file" id="import-file" class="import-file-input" accept=".json">
 
 <div id="counter-tabs"></div>
 
 <div id="main">
   <div id="empty-state">no counters yet.<br>press [+] to add one.</div>
 
-  <div id="counter-ui" style="display:none; flex-direction:column; align-items:stretch; gap:12px; width:100%; flex:1; overflow:hidden;">
+  <div id="counter-ui" class="counter-ui-layout" style="display:none">
     <div id="top-bar">
       <button id="undo-btn">↩ undo</button>
       <button id="counter-name-display" title="tap to rename"></button>
@@ -43,7 +43,7 @@
         <span id="last-tap-val" class="timer-val">00:00:00</span>
       </div>
     </div>
-    <div id="count-display" style="text-align:center; cursor:pointer;" title="tap to edit">0</div>
+    <div id="count-display" title="tap to edit">0</div>
     <button id="hit-btn">+1 ENCOUNTER</button>
   </div>
 </div>

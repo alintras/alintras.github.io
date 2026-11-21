@@ -31,6 +31,7 @@
   .coin-year { font-family: monospace; font-size: 11px; margin-top: 6px; }
   .coin-val { font-family: monospace; font-size: 34px; font-weight: bold; }
   .coin-cur { font-family: monospace; font-size: 11px; margin-top: 2px; }
+  .coin-instruction { font-size: 10px; opacity: 0.5; }
   .coin-backtext { font-family: monospace; font-size: 9px; text-align: center; padding: 0 24px; margin-top: 8px; letter-spacing: 1px; }
   .m-gold .coin-face, .m-gold .coin-back { background: radial-gradient(circle at 35% 30%,#fff8d0,#d4a820 45%,#8a6010 80%,#5a3a00); box-shadow: 0 0 0 4px #e8c040,0 8px 40px rgba(180,120,0,0.6),inset 0 2px 8px rgba(255,255,180,0.5); }
   .m-gold .coin-ring { border: 1.5px solid rgba(255,230,100,0.5); }

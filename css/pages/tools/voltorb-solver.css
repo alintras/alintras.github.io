@@ -18,3 +18,5 @@ input[type=button]:hover { background: var(--fg); color: var(--bg); }
 #dropzone { border: 1px dashed var(--border); padding: 10px; margin: 4px 0; }
 table { border-color: var(--border); }
 a { color: inherit; text-decoration: none;}
+.solver-home { position: fixed; top: 10px; left: 10px; }
+.solver-home-icon { width: 24px; height: 24px; vertical-align: -7px; image-rendering: pixelated; }

@@ -26,6 +26,9 @@
   .z-title{text-align:center;font-size:28px;letter-spacing:6px;margin:6px 0 2px;color:#2a2a2a}
   .z-sub{text-align:center;font-size:10px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-bottom:16px}
   .z-hr{border:none;border-top:1px solid #c8a050;margin:12px 0}
+  .subject-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .subject-heading { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .grade-heading { text-align: center; }
   .z-info{font-size:13px;margin-bottom:3px;color:#333}
   table{width:100%;border-collapse:collapse;font-family:monospace;font-size:12px;margin-top:8px}
   th{text-align:left;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid #c8a050;padding:4px 6px;color:#888}

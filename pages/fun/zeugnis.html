@@ -32,8 +32,8 @@
     <label data-t="z_notes">Notes</label><textarea id="note" rows="2" oninput="u()">Max has shown great effort and made excellent progress this year.</textarea>
     <label data-t="z_teacher">Class teacher</label><input type="text" id="sig1" value="Dr. H. Miller" oninput="u()">
     <label data-t="z_principal">Principal</label><input type="text" id="sig2" value="A. Johnson" oninput="u()">
-    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0">
-    <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px" data-t="z_subjects">Subjects</div>
+    <hr class="subject-divider">
+    <div class="subject-heading" data-t="z_subjects">Subjects</div>
     <div id="slist"></div>
     <a class="add-link" onclick="addS()" data-t="z_add_subject">+ Add subject</a>
     <br><button class="sec" onclick="u()" data-t="z_update">Update</button>
@@ -48,7 +48,7 @@
       <div class="z-sub" id="z-sub">Annual Report · 2023/2024</div>
       <div class="z-info"><span data-t="z_verliehen_an">Student</span>: <strong id="z-name">Max Mustermann</strong> &nbsp;|&nbsp; <span data-t="z_klasse">Class</span>: <strong id="z-grade">8b</strong></div>
       <hr class="z-hr">
-      <table><thead><tr><th data-t="z_fach">Subject</th><th style="text-align:center" data-t="z_note_col">Grade</th></tr></thead><tbody id="z-tbody"></tbody></table>
+      <table><thead><tr><th data-t="z_fach">Subject</th><th class="grade-heading" data-t="z_note_col">Grade</th></tr></thead><tbody id="z-tbody"></tbody></table>
       <hr class="z-hr">
       <div class="z-info"><span data-t="z_versetzt">Promoted to class</span>: <strong id="z-next">9b</strong></div>
       <div class="z-note" id="z-note">Max has shown great effort and made excellent progress this year.</div>
