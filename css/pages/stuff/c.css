@@ -1,0 +1,10 @@
+
+      a { color: inherit; text-decoration: none; }
+      p { margin-bottom: 16px; line-height: 1.6; }
+      table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+      th, td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; font-size: 0.9em; }
+      th { font-weight: bold; }
+      td:first-child { font-family: monospace; white-space: nowrap; }
+      footer { margin-top: 40px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 0.8em; opacity: 0.6; }
+      @media(max-width:600px){ td:first-child { white-space: normal; } }
+    

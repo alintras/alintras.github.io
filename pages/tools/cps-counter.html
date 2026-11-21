@@ -7,29 +7,7 @@
     <title>CPS Test - 10 Second Click Speed Test</title>
     <link rel="stylesheet" href="/css/style.css">
     <script src="/js/style.js"></script>
-    <style>
-        .container { max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 20px; }
-        .panel { border: 1px solid var(--border); padding: 20px; }
-        .score-display { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .stat { border: 1px solid var(--border); padding: 15px; flex: 1; text-align: center; min-width: 120px; }
-        .stat-label { font-size: 0.9em; opacity: 0.8; margin-bottom: 5px; }
-        .stat-value { font-size: 1.5em; font-weight: bold; }
-        .timer-display { text-align: center; margin-bottom: 20px; }
-        .timer { font-size: 3em; font-weight: bold; }
-        .timer-label { font-size: 1em; opacity: 0.8; margin-top: 5px; }
-        .click-area { border: 2px dashed var(--border); padding: 60px 20px; text-align: center; cursor: pointer; user-select: none; transition: background 0.1s, color 0.1s; }
-        .click-area:active { background: var(--fg); color: var(--bg); }
-        .click-area.disabled { opacity: 0.5; pointer-events: none; }
-        .click-text { font-size: 1.5em; font-weight: bold; }
-        .click-count { font-size: 4em; font-weight: bold; margin-top: 10px; }
-        .controls { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
-        button { background: var(--bg); color: var(--fg); border: 1px solid var(--border); padding: 12px 24px; cursor: pointer; text-transform: uppercase; font-weight: bold; font-family: inherit; transition: background 0.2s; }
-        button:hover { background: var(--fg); color: var(--bg); }
-        .result-message { text-align: center; margin-top: 20px; font-size: 1.2em; font-weight: bold; min-height: 30px; }
-        .leaderboard-entry { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-muted); padding: 10px 0; }
-        ul { list-style-type: square; padding-left: 20px; margin-top: 10px; }
-        li { margin: 8px 0; }
-    </style>
+    <link rel="stylesheet" href="/css/pages/tools/cps-counter.css">
 </head>
 <body>
     <div class="container">
