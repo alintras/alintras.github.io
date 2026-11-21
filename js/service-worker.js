@@ -1,4 +1,4 @@
-const CACHE_NAME = "alintras-homepage-v2"; // Increment this to force an update
+const CACHE_NAME = "alintras-homepage-v3"; // Increment this to force an update
 
 const PRECACHE_ASSETS = [
   "/",
@@ -6,10 +6,13 @@ const PRECACHE_ASSETS = [
   "/css/index.css",
   "/css/search.css",
   "/css/nav.css",
+  "/css/base/site-tokens.css",
   "/js/style.js",
   "/js/nav.js",
   "/js/search.js",
-  "/js/index.js"
+  "/js/index.js",
+  "/js/pages/home/index-1.js",
+  "/js/pages/home/index-2.js"
 ];
 
 // ── Stream transfer support ──────────────────────────────────────────────────

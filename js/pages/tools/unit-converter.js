@@ -1,0 +1,161 @@
+
+        const unitData = {
+            length: {
+                meter: 1,
+                kilometer: 1000,
+                centimeter: 1/100,
+                millimeter: 1/1000,
+                micrometer: 1/1000000,
+                inch: 0.0254, // already exact (defined)
+                foot: 0.3048,
+                yard: 0.9144,
+                mile: 1609.344, // FIXED
+                nautical_mile: 1852
+            },
+            weight: { kilogram: 1, gram: 0.001, milligram: 0.000001, metric_ton: 1000, ounce: 0.0283495, pound: 0.453592, stone: 6.35029, carat: 0.0002 },
+            volume: { liter: 1, milliliter: 0.001, cubic_meter: 1000, teaspoon: 0.00492892, tablespoon: 0.0147868, cup: 0.236588, fluid_ounce: 0.0295735, gallon: 3.78541 },
+            area: { sq_meter: 1, sq_km: 1000000, hectare: 10000, acre: 4046.86, sq_mile: 2589988.11, sq_foot: 0.092903, sq_inch: 0.00064516 },
+            speed: {
+                "m/s": 1,
+                "km/h": 1000/3600, // FIXED
+                mph: 1609.344/3600, // FIXED
+                knot: 1852/3600, // FIXED
+                mach: 343
+            },
+            temp: { isTemp: true }
+        };
+    
+        let currentCat = 'length';
+        const valFrom = document.getElementById('valFrom');
+        const valTo = document.getElementById('valTo');
+        const unitFrom = document.getElementById('unitFrom');
+        const unitTo = document.getElementById('unitTo');
+        const decimalPlaces = document.getElementById('decimalPlaces');
+    
+        function roundTo(num, dp) {
+            const factor = Math.pow(10, dp);
+            return Math.round((num + Number.EPSILON) * factor) / factor;
+        }
+    
+        function formatReadable(num) {
+            if (num === 0) return "0";
+            
+            let dp = parseInt(decimalPlaces.value);
+            if (isNaN(dp) || dp < 0) dp = 0;
+            if (dp > 20) dp = 20;
+    
+            const abs = Math.abs(num);
+            if (abs < Math.pow(10, -dp) && abs !== 0) return num.toExponential(dp);
+            
+            const parts = num.toFixed(dp).split(' ');
+            if (parts[1]) {
+                parts[1] = parts[1].replace(/0+$/, '');
+                if (parts[1] === '') parts.pop();
+            }
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+            
+            return parts[1] && parts[1] !== "" ? parts.join('.') : parts[0]; 
+        }
+    
+        function populate() {
+            unitFrom.innerHTML = ''; unitTo.innerHTML = '';
+            const opts = currentCat === 'temp' ? ['Celsius', 'Fahrenheit', 'Kelvin', 'Rankine', 'Réaumur'] : Object.keys(unitData[currentCat]);
+            opts.forEach(o => {
+                unitFrom.add(new Option(o.replace(/_/g, ' ').toUpperCase(), o));
+                unitTo.add(new Option(o.replace(/_/g, ' ').toUpperCase(), o));
+            });
+            unitTo.selectedIndex = Math.min(1, unitTo.options.length - 1);
+            convert();
+        }
+    
+        function convert() {
+            const v = parseFloat(valFrom.value);
+            if (isNaN(v)) { 
+                valTo.value = ''; 
+                document.getElementById('arithmeticDisplay').textContent = '---'; 
+                return; 
+            }
+    
+            const from = unitFrom.value;
+            const to = unitTo.value;
+    
+            if (currentCat === 'temp') {
+                handleTemp(v, from, to);
+            } else {
+                const f = unitData[currentCat][from];
+                const t = unitData[currentCat][to];
+    
+                if (!f || !t || t === 0) return;
+    
+                const dp = parseInt(decimalPlaces.value) || 0;
+                const resRaw = (v * f) / t;
+                const res = roundTo(resRaw, dp);
+    
+                valTo.value = formatReadable(res);
+    
+                const factor = f / t;
+                const factorRounded = roundTo(factor, dp);
+    
+                const formulaStr = factor >= 1 
+                    ? `Formula: [Value] * ${formatReadable(factorRounded)}` 
+                    : `Formula: [Value] / ${formatReadable(roundTo(1/factor, dp))}`;
+                
+                const arithmeticStr = factor >= 1
+                    ? `${formatReadable(v)} × ${formatReadable(factorRounded)} = ${formatReadable(res)}`
+                    : `${formatReadable(v)} ÷ ${formatReadable(roundTo(1/factor, dp))} = ${formatReadable(res)}`;
+    
+                document.getElementById('formulaDisplay').textContent = formulaStr;
+                document.getElementById('arithmeticDisplay').textContent = arithmeticStr;
+            }
+        }
+    
+        function handleTemp(v, from, to) {
+            let c, f1, g1;
+            if(from === 'Celsius') { c = v; f1 = `${v}`; g1 = "[°C]"; }
+            else if(from === 'Fahrenheit') { c = (v-32)*5/9; f1 = `(${v}-32)×5/9`; g1 = "([°F]-32)×5/9"; }
+            else if(from === 'Kelvin') { c = v-273.15; f1 = `${v}-273.15`; g1 = "[K]-273.15"; }
+            else if(from === 'Rankine') { c = (v-491.67)*5/9; f1 = `(${v}-491.67)×5/9`; g1 = "([°R]-491.67)×5/9"; }
+            else { c = v * 1.25; f1 = `${v}×1.25`; g1 = "[°Ré]×1.25"; }
+    
+            let res, f2, g2;
+            if(to === 'Celsius') { res = c; f2 = f1; g2 = g1; }
+            else if(to === 'Fahrenheit') { res = (c*9/5)+32; f2 = `(${f1})×9/5+32`; g2 = `(${g1})×9/5+32`; }
+            else if(to === 'Kelvin') { res = c+273.15; f2 = `(${f1})+273.15`; g2 = `(${g1})+273.15`; }
+            else if(to === 'Rankine') { res = (c+273.15)*9/5; f2 = `((${f1})+273.15)×9/5`; g2 = `((${g1})+273.15)×9/5`; }
+            else { res = c * 0.8; f2 = `(${f1})×0.8`; g2 = `(${g1})×0.8`; }
+    
+            const dp = parseInt(decimalPlaces.value) || 0;
+            res = roundTo(res, dp);
+    
+            const unitSymbol = {
+                Celsius: "°C",
+                Fahrenheit: "°F",
+                Kelvin: "K",
+                Rankine: "°R",
+                Réaumur: "°Ré"
+            };
+    
+            valTo.value = formatReadable(res);
+            document.getElementById('formulaDisplay').textContent = `Formula: ${g2}`;
+            document.getElementById('arithmeticDisplay').textContent = `${f2} = ${formatReadable(res)}${unitSymbol[to]}`;
+        }
+    
+        document.getElementById('categoryTabs').addEventListener('click', (e) => {
+            if (e.target.dataset.cat) {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentCat = e.target.dataset.cat;
+                populate();
+            }
+        });
+    
+        [valFrom, decimalPlaces].forEach(el => el.addEventListener('input', convert));
+        [unitFrom, unitTo].forEach(el => el.addEventListener('change', convert));
+        
+        document.getElementById('swapBtn').addEventListener('click', () => {
+            const t = unitFrom.value; unitFrom.value = unitTo.value; unitTo.value = t;
+            convert();
+        });
+    
+        populate();
+    

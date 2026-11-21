@@ -1,0 +1,3 @@
+<!--
+showareas("area");
+//-->

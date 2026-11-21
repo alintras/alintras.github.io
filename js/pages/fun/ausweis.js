@@ -1,0 +1,69 @@
+
+const countries = {
+  DE:{name:'BUNDESREPUBLIK DEUTSCHLAND',type:'PERSONALAUSWEIS',flag:'🇩🇪',bg:'linear-gradient(160deg,#1a3a6b 0%,#0d2347 60%,#1a1a4a 100%)',stripe:'linear-gradient(90deg,#000 33%,#dd0000 33%,#dd0000 66%,#ffce00 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'IDD'},
+  AT:{name:'REPUBLIK ÖSTERREICH',type:'PERSONALAUSWEIS',flag:'🇦🇹',bg:'linear-gradient(160deg,#c0392b 0%,#922b21 100%)',stripe:'linear-gradient(90deg,#cc0000 33%,#fff 33%,#fff 66%,#cc0000 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'AUT'},
+  CH:{name:'SCHWEIZERISCHE EIDGENOSSENSCHAFT',type:'IDENTITÄTSKARTE',flag:'🇨🇭',bg:'linear-gradient(160deg,#c0392b 0%,#7b241c 100%)',stripe:'#cc0000',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'CHE'},
+  FR:{name:'RÉPUBLIQUE FRANÇAISE',type:"CARTE D'IDENTITÉ",flag:'🇫🇷',bg:'linear-gradient(160deg,#1a3a7a 0%,#0d2050 40%,#8B0000 100%)',stripe:'linear-gradient(90deg,#002395 33%,#fff 33%,#fff 66%,#ED2939 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'FRA'},
+  IT:{name:'REPUBBLICA ITALIANA',type:'CARTA DI IDENTITÀ',flag:'🇮🇹',bg:'linear-gradient(160deg,#1e6b3a 0%,#0d3a20 40%,#8B0000 100%)',stripe:'linear-gradient(90deg,#009246 33%,#fff 33%,#fff 66%,#CE2B37 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ITA'},
+  ES:{name:'REINO DE ESPAÑA',type:'DOCUMENTO NACIONAL DE IDENTIDAD',flag:'🇪🇸',bg:'linear-gradient(160deg,#c0392b 0%,#7b241c 60%,#8B6914 100%)',stripe:'linear-gradient(90deg,#AA151B 25%,#F1BF00 25%,#F1BF00 75%,#AA151B 75%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ESP'},
+  NL:{name:'KONINKRIJK DER NEDERLANDEN',type:'IDENTITEITSKAART',flag:'🇳🇱',bg:'linear-gradient(160deg,#1a3a7a 0%,#0d2050 100%)',stripe:'linear-gradient(90deg,#AE1C28 33%,#fff 33%,#fff 66%,#21468B 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'NLD'},
+  PL:{name:'RZECZPOSPOLITA POLSKA',type:'DOWÓD OSOBISTY',flag:'🇵🇱',bg:'linear-gradient(160deg,#c0392b 0%,#7b241c 100%)',stripe:'linear-gradient(90deg,#fff 50%,#dc143c 50%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'POL'},
+  SE:{name:'KONUNGARIKET SVERIGE',type:'IDENTITETSKORT',flag:'🇸🇪',bg:'linear-gradient(160deg,#006AA7 0%,#004f7c 100%)',stripe:'linear-gradient(90deg,#006AA7 40%,#FECC02 40%,#FECC02 60%,#006AA7 60%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'SWE'},
+  GB:{name:'UNITED KINGDOM OF GREAT BRITAIN',type:'IDENTITY DOCUMENT',flag:'🇬🇧',bg:'linear-gradient(160deg,#012169 0%,#001040 100%)',stripe:'linear-gradient(90deg,#012169 30%,#C8102E 30%,#C8102E 70%,#012169 70%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'GBR'},
+  NO:{name:'KONGERIKET NORGE',type:'IDENTITETSKORT',flag:'🇳🇴',bg:'linear-gradient(160deg,#EF2B2D 0%,#a01a1c 100%)',stripe:'linear-gradient(90deg,#EF2B2D 35%,#fff 35%,#fff 45%,#002868 45%,#002868 55%,#fff 55%,#fff 65%,#EF2B2D 65%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'NOR'},
+  DK:{name:'KONGERIGET DANMARK',type:'IDENTITETSKORT',flag:'🇩🇰',bg:'linear-gradient(160deg,#C60C30 0%,#8B0820 100%)',stripe:'linear-gradient(90deg,#C60C30 40%,#fff 40%,#fff 60%,#C60C30 60%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'DNK'},
+  FI:{name:'SUOMI FINLAND',type:'HENKILÖKORTTI',flag:'🇫🇮',bg:'linear-gradient(160deg,#003580 0%,#002560 100%)',stripe:'linear-gradient(90deg,#fff 30%,#003580 30%,#003580 70%,#fff 70%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'FIN'},
+  PT:{name:'REPÚBLICA PORTUGUESA',type:'CARTÃO DE CIDADÃO',flag:'🇵🇹',bg:'linear-gradient(160deg,#006600 0%,#003d00 40%,#CC0000 100%)',stripe:'linear-gradient(90deg,#006600 40%,#CC0000 40%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'PRT'},
+  GR:{name:'ΕΛΛΗΝΙΚΉ ΔΗΜΟΚΡΑΤΊΑ',type:'ΔΕΛΤΊΟ ΤΑΥΤΌΤΗΤΑΣ',flag:'🇬🇷',bg:'linear-gradient(160deg,#0D5EAF 0%,#083d73 100%)',stripe:'linear-gradient(90deg,#0D5EAF 0%,#fff 11%,#0D5EAF 22%,#fff 33%,#0D5EAF 44%,#fff 55%,#0D5EAF 66%,#fff 77%,#0D5EAF 88%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'GRC'},
+  RU:{name:'РОССИЙСКАЯ ФЕДЕРАЦИЯ',type:'ПАСПОРТ ГРАЖДАНИНА',flag:'🇷🇺',bg:'linear-gradient(160deg,#1c3d6e 0%,#0d2244 100%)',stripe:'linear-gradient(90deg,#fff 33%,#0039A6 33%,#0039A6 66%,#D52B1E 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'RUS'},
+  US:{name:'UNITED STATES OF AMERICA',type:'PASSPORT CARD',flag:'🇺🇸',bg:'linear-gradient(160deg,#002868 0%,#001540 60%,#BF0A30 100%)',stripe:'linear-gradient(90deg,#BF0A30 0%,#002868 50%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'USA'},
+  CA:{name:'CANADA',type:'IDENTITY CARD',flag:'🇨🇦',bg:'linear-gradient(160deg,#FF0000 0%,#CC0000 40%,#8B0000 100%)',stripe:'linear-gradient(90deg,#FF0000 20%,#fff 20%,#fff 80%,#FF0000 80%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'CAN'},
+  MX:{name:'ESTADOS UNIDOS MEXICANOS',type:'CÉDULA DE IDENTIDAD',flag:'🇲🇽',bg:'linear-gradient(160deg,#006847 0%,#004530 40%,#8B0000 100%)',stripe:'linear-gradient(90deg,#006847 33%,#fff 33%,#fff 66%,#CE1126 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'MEX'},
+  BR:{name:'REPÚBLICA FEDERATIVA DO BRASIL',type:'CARTEIRA DE IDENTIDADE',flag:'🇧🇷',bg:'linear-gradient(160deg,#009c3b 0%,#006b28 60%,#002776 100%)',stripe:'#FEDD00',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'BRA'},
+  AR:{name:'REPÚBLICA ARGENTINA',type:'DOCUMENTO NACIONAL DE IDENTIDAD',flag:'🇦🇷',bg:'linear-gradient(160deg,#74ACDF 0%,#4a7aaa 50%,#fff 100%)',stripe:'linear-gradient(90deg,#74ACDF 33%,#fff 33%,#fff 66%,#74ACDF 66%)',textColor:'#003087',labelColor:'rgba(0,48,135,0.6)',code:'ARG'},
+  CN:{name:'中华人民共和国',type:'居民身份证',flag:'🇨🇳',bg:'linear-gradient(160deg,#DE2910 0%,#9c1a0a 60%,#6b1208 100%)',stripe:'#DE2910',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'CHN'},
+  IN:{name:'INDIA / भारत',type:'AADHAAR IDENTITY CARD',flag:'🇮🇳',bg:'linear-gradient(160deg,#FF9933 0%,#d4761a 40%,#138808 100%)',stripe:'linear-gradient(90deg,#FF9933 33%,#fff 33%,#fff 66%,#138808 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.7)',code:'IND'},
+  JP:{name:'日本国',type:'個人番号カード',flag:'🇯🇵',bg:'linear-gradient(160deg,#2c5f8a 0%,#1a3d5c 60%,#0d2035 100%)',stripe:'linear-gradient(90deg,#BC002D 0%,#2c5f8a 30%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'JPN'},
+  KR:{name:'대한민국',type:'주민등록증',flag:'🇰🇷',bg:'linear-gradient(160deg,#003478 0%,#001f4d 100%)',stripe:'linear-gradient(90deg,#003478 40%,#CD2E3A 40%,#CD2E3A 60%,#003478 60%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'KOR'},
+  TR:{name:'TÜRKİYE CUMHURİYETİ',type:'KİMLİK KARTI',flag:'🇹🇷',bg:'linear-gradient(160deg,#E30A17 0%,#9c0710 100%)',stripe:'#E30A17',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'TUR'},
+  SA:{name:'المملكة العربية السعودية',type:'بطاقة الهوية الوطنية',flag:'🇸🇦',bg:'linear-gradient(160deg,#006C35 0%,#004522 100%)',stripe:'#006C35',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'SAU'},
+  AE:{name:'الإمارات العربية المتحدة',type:'IDENTITY CARD',flag:'🇦🇪',bg:'linear-gradient(160deg,#00732F 0%,#004d20 40%,#FF0000 100%)',stripe:'linear-gradient(90deg,#00732F 25%,#fff 25%,#fff 50%,#000 50%,#000 75%,#FF0000 75%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ARE'},
+  IL:{name:'מדינת ישראל',type:'תעודת זהות',flag:'🇮🇱',bg:'linear-gradient(160deg,#003399 0%,#001f66 100%)',stripe:'linear-gradient(90deg,#003399 25%,#fff 25%,#fff 75%,#003399 75%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ISR'},
+  TH:{name:'ราชอาณาจักรไทย',type:'บัตรประจำตัวประชาชน',flag:'🇹🇭',bg:'linear-gradient(160deg,#A51931 0%,#6d0f1e 30%,#2D2A4A 100%)',stripe:'linear-gradient(90deg,#A51931 20%,#fff 20%,#fff 40%,#2D2A4A 40%,#2D2A4A 60%,#fff 60%,#fff 80%,#A51931 80%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'THA'},
+  SG:{name:'REPUBLIC OF SINGAPORE',type:'IDENTITY CARD',flag:'🇸🇬',bg:'linear-gradient(160deg,#EF3340 0%,#b51f2a 40%,#fff 100%)',stripe:'linear-gradient(90deg,#EF3340 50%,#fff 50%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'SGP'},
+  ZA:{name:'REPUBLIC OF SOUTH AFRICA',type:'SMART ID CARD',flag:'🇿🇦',bg:'linear-gradient(160deg,#007A4D 0%,#005233 40%,#001489 100%)',stripe:'linear-gradient(90deg,#007A4D 0%,#FFB612 30%,#007A4D 30%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'ZAF'},
+  NG:{name:'FEDERAL REPUBLIC OF NIGERIA',type:'NATIONAL ID CARD',flag:'🇳🇬',bg:'linear-gradient(160deg,#008751 0%,#005233 40%,#ffffff 100%)',stripe:'linear-gradient(90deg,#008751 33%,#fff 33%,#fff 66%,#008751 66%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'NGA'},
+  EG:{name:'جمهورية مصر العربية',type:'بطاقة تحقيق الشخصية',flag:'🇪🇬',bg:'linear-gradient(160deg,#CE1126 0%,#8B0b17 33%,#fff 33%,#fff 66%,#000 66%)',stripe:'linear-gradient(90deg,#CE1126 33%,#fff 33%,#fff 66%,#000 66%)',textColor:'#CE1126',labelColor:'rgba(0,0,0,0.5)',code:'EGY'},
+  AU:{name:'COMMONWEALTH OF AUSTRALIA',type:'IDENTITY CARD',flag:'🇦🇺',bg:'linear-gradient(160deg,#00008B 0%,#000055 100%)',stripe:'linear-gradient(90deg,#00008B 40%,#CC0000 40%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'AUS'},
+  NZ:{name:'NEW ZEALAND / AOTEAROA',type:'IDENTITY CARD',flag:'🇳🇿',bg:'linear-gradient(160deg,#003087 0%,#001f5c 100%)',stripe:'linear-gradient(90deg,#003087 40%,#CC0000 40%)',textColor:'#fff',labelColor:'rgba(255,255,255,0.6)',code:'NZL'},
+};
+function fd(v){if(!v)return'';const[y,m,d]=v.split('-');return`${d}.${m}.${y}`;}
+function lp(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const s=e.target.result;document.getElementById('pd').innerHTML=`<img src="${s}"><input type="file" accept="image/*" onchange="lp(this)">`;document.getElementById('c-photo').innerHTML=`<img src="${s}" style="width:100%;height:100%;object-fit:cover">`;};r.readAsDataURL(f);}
+function sp(f,l,d,p){document.getElementById('fn').value=f;document.getElementById('ln').value=l;document.getElementById('dob').value=d;document.getElementById('pob').value=p;u();}
+function u(){
+  const code=document.getElementById('country').value;
+  const c=countries[code];
+  const fn=document.getElementById('fn').value.toUpperCase();
+  const ln=document.getElementById('ln').value.toUpperCase();
+  const dob=document.getElementById('dob').value;
+  const pob=document.getElementById('pob').value.toUpperCase();
+  const exp=document.getElementById('exp').value;
+  const num=document.getElementById('num').value;
+  document.getElementById('card-bg').style.background=c.bg;
+  document.getElementById('card-stripe').style.background=c.stripe;
+  ['c-country-label','c-type-label'].forEach(id=>document.getElementById(id).style.color=c.textColor);
+  document.getElementById('c-fields').style.color=c.textColor;
+  document.getElementById('c-num').style.color=c.labelColor;
+  document.getElementById('c-mrz').style.color=c.labelColor;
+  document.querySelectorAll('#c-fields .l').forEach(el=>el.style.color=c.labelColor);
+  document.getElementById('c-country-label').textContent=c.name;
+  document.getElementById('c-type-label').textContent=c.type;
+  document.getElementById('c-flag').textContent=c.flag;
+  document.getElementById('c-name').textContent=`${ln}, ${fn}`;
+  document.getElementById('c-dob').textContent=fd(dob);
+  document.getElementById('c-pob').textContent=pob;
+  document.getElementById('c-exp').textContent=fd(exp);
+  document.getElementById('c-num').textContent=num;
+  document.getElementById('c-mrz').innerHTML=`${c.code}&lt;&lt;${ln}&lt;&lt;${fn}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>${num}${(dob||'').replace(/-/g,'').slice(2)}&lt;5&lt;3001152${c.code.slice(0,1)}&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;`;
+}
+document.addEventListener('langready', u);

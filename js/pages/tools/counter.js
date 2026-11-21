@@ -1,0 +1,430 @@
+
+  const HOTKEY_KEY = 'shiny_counter_hotkey';
+  let hotkey = localStorage.getItem(HOTKEY_KEY) || ' ';
+
+  function hotkeyLabel(k) {
+    return k === ' ' ? 'space' : k;
+  }
+
+  function updateKeybindBtn() {
+    document.getElementById('keybind-btn').textContent = '[' + hotkeyLabel(hotkey) + ']';
+  }
+
+  document.getElementById('keybind-btn').addEventListener('click', () => {
+    document.getElementById('keybind-btn').blur();
+    const overlay = document.getElementById('modal-overlay');
+    document.getElementById('modal-title').textContent = 'press any key...';
+    document.getElementById('modal-input').style.display = 'none';
+    document.getElementById('modal-confirm').style.display = 'none';
+    document.getElementById('modal-cancel').textContent = 'cancel';
+    modalCallback = null;
+    overlay.classList.add('open');
+
+    function onKey(e) {
+      e.preventDefault();
+      if (e.key === 'Escape') { closeModal(); return; }
+      hotkey = e.key;
+      localStorage.setItem(HOTKEY_KEY, hotkey);
+      updateKeybindBtn();
+      closeModal();
+    }
+    overlay.addEventListener('keydown', onKey, { once: true });
+    document.addEventListener('keydown', onKey, { once: true });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (document.getElementById('modal-overlay').classList.contains('open')) return;
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === hotkey) {
+      e.preventDefault();
+      document.getElementById('hit-btn').click();
+    }
+  });
+
+  const STORAGE_KEY = 'shiny_counters_v1';
+
+  let state = {
+    counters: [],
+    active: null
+  };
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) state = JSON.parse(raw);
+    } catch(e) {}
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function genId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  }
+
+  function getActive() {
+    return state.counters.find(c => c.id === state.active) || null;
+  }
+
+  function formatTime(totalSeconds) {
+    const sec = Math.max(0, Math.floor(totalSeconds || 0));
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    const pad = n => String(n).padStart(2, '0');
+    return `${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+
+  function updateTimerDisplays() {
+    const active = getActive();
+    if (!active) return;
+
+    const totalEl = document.getElementById('total-time-val');
+    const lastTapEl = document.getElementById('last-tap-val');
+    const toggleBtn = document.getElementById('timer-toggle-btn');
+
+    if (totalEl) {
+      totalEl.textContent = formatTime(active.totalTime || 0);
+    }
+
+    if (toggleBtn) {
+      const running = active.timerRunning !== false;
+      toggleBtn.textContent = running ? '⏸' : '▶';
+      toggleBtn.title = running ? 'pause timer' : 'resume timer';
+    }
+
+    if (lastTapEl) {
+      if (active.lastTapTime) {
+        const elapsed = (Date.now() - active.lastTapTime) / 1000;
+        lastTapEl.textContent = formatTime(elapsed);
+      } else {
+        lastTapEl.textContent = '--:--:--';
+      }
+    }
+  }
+
+  let lastTick = Date.now();
+  setInterval(() => {
+    const now = Date.now();
+    const delta = (now - lastTick) / 1000;
+    lastTick = now;
+
+    const active = getActive();
+    if (active && active.timerRunning !== false) {
+      active.totalTime = (active.totalTime || 0) + delta;
+    }
+    updateTimerDisplays();
+  }, 200);
+
+  window.addEventListener('beforeunload', saveState);
+  window.addEventListener('pagehide', saveState);
+
+  function render() {
+    const tabsEl = document.getElementById('counter-tabs');
+    tabsEl.innerHTML = '';
+
+    state.counters.forEach(c => {
+      const tab = document.createElement('button');
+      tab.className = 'tab' + (c.id === state.active ? ' active' : '');
+      tab.dataset.id = c.id;
+
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = c.name;
+      tab.appendChild(nameSpan);
+
+      const closeSpan = document.createElement('span');
+      closeSpan.className = 'tab-close';
+      closeSpan.textContent = '×';
+      closeSpan.dataset.id = c.id;
+      tab.appendChild(closeSpan);
+
+      tabsEl.appendChild(tab);
+    });
+
+    const addBtn = document.createElement('button');
+    addBtn.id = 'add-counter-btn';
+    addBtn.textContent = '[+]';
+    tabsEl.appendChild(addBtn);
+
+    const active = getActive();
+    const ui = document.getElementById('counter-ui');
+    const empty = document.getElementById('empty-state');
+
+    if (active) {
+      ui.style.display = 'flex';
+      empty.style.display = 'none';
+      document.getElementById('counter-name-display').textContent = active.name;
+      document.getElementById('count-display').textContent = active.count;
+
+      const inc = active.increment || 1;
+      document.getElementById('inc-btn').textContent = `+${inc}/tap`;
+      document.getElementById('hit-btn').textContent = `+${inc} ${inc > 1 ? 'ENCOUNTERS' : 'ENCOUNTER'}`;
+
+      updateTimerDisplays();
+    } else {
+      ui.style.display = 'none';
+      empty.style.display = 'block';
+    }
+  }
+
+  document.getElementById('counter-tabs').addEventListener('click', e => {
+    if (e.target.classList.contains('tab-close')) {
+      const id = e.target.dataset.id;
+      const name = state.counters.find(c=>c.id===id)?.name;
+      openConfirm(`delete "${name}"?`, () => {
+        state.counters = state.counters.filter(c => c.id !== id);
+        if (state.active === id) state.active = state.counters[0]?.id || null;
+        saveState(); render();
+      });
+      return;
+    }
+    const tab = e.target.closest('.tab');
+    if (tab) {
+      state.active = tab.dataset.id;
+      saveState(); render();
+      return;
+    }
+    if (e.target.id === 'add-counter-btn') {
+      openModal('new counter', '', name => {
+        const id = genId();
+        state.counters.push({
+          id,
+          name,
+          count: 0,
+          increment: 1,
+          totalTime: 0,
+          lastTapTime: null,
+          timerRunning: true,
+          history: []
+        });
+        state.active = id;
+        saveState(); render();
+      });
+    }
+  });
+
+  document.getElementById('count-display').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    openModal('set count', String(active.count), val => {
+      const n = parseInt(val);
+      if (isNaN(n) || n < 0) return;
+      active.history.push(active.count);
+      active.count = n;
+      saveState(); render();
+    }, 'number');
+  });
+
+  document.getElementById('counter-name-display').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    openModal('rename counter', active.name, name => {
+      active.name = name;
+      saveState(); render();
+    });
+  });
+
+  document.getElementById('inc-btn').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    openModal('set increment', String(active.increment || 1), val => {
+      const n = parseInt(val);
+      if (isNaN(n) || n < 1) return;
+      active.increment = n;
+      saveState(); render();
+    }, 'number');
+  });
+
+  document.getElementById('timer-toggle-btn').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    active.timerRunning = active.timerRunning === false ? true : false;
+    saveState(); render();
+  });
+
+  document.getElementById('hit-btn').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    const inc = active.increment || 1;
+    active.history.push(active.count);
+    if (active.history.length > 200) active.history.shift();
+    active.count += inc;
+    active.lastTapTime = Date.now();
+    saveState(); render();
+    checkReminder();
+  });
+
+  document.getElementById('undo-btn').addEventListener('click', () => {
+    const active = getActive();
+    if (!active || !active.history.length) return;
+    active.count = active.history.pop();
+    saveState(); render();
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    const active = getActive();
+    if (!active) return;
+    openConfirm(`reset "${active.name}" to 0?`, () => {
+      active.history = [];
+      active.count = 0;
+      active.totalTime = 0;
+      active.lastTapTime = null;
+      saveState(); render();
+    });
+  });
+
+  let modalCallback = null;
+
+  function openConfirm(message, cb) {
+    document.getElementById('modal-title').textContent = message;
+    document.getElementById('modal-input').style.display = 'none';
+    document.getElementById('modal-confirm').textContent = 'yes';
+    document.getElementById('modal-confirm').style.display = '';
+    document.getElementById('modal-cancel').textContent = 'no';
+    document.getElementById('modal-skip').style.display = 'none';
+    modalCallback = cb;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function openModal(title, value, cb, inputType = 'text') {
+    modalCallback = cb;
+    document.getElementById('modal-title').textContent = title;
+    const input = document.getElementById('modal-input');
+    input.type = inputType;
+    input.min = inputType === 'number' ? '1' : '';
+    input.style.display = '';
+    input.value = value;
+    document.getElementById('modal-confirm').textContent = 'confirm';
+    document.getElementById('modal-confirm').style.display = '';
+    document.getElementById('modal-cancel').textContent = 'cancel';
+    document.getElementById('modal-skip').style.display = 'none';
+    document.getElementById('modal-overlay').classList.add('open');
+    setTimeout(() => input.focus(), 50);
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.getElementById('modal-confirm').style.display = '';
+    document.getElementById('modal-skip').style.display = 'none';
+    modalCallback = null;
+  }
+
+  function confirmModal() {
+    const input = document.getElementById('modal-input');
+    if (input.style.display !== 'none') {
+      const val = input.value.trim();
+      if (!val) { input.focus(); return; }
+    }
+    if (modalCallback) modalCallback(document.getElementById('modal-input').value.trim());
+    closeModal();
+  }
+
+  document.getElementById('modal-cancel').addEventListener('click', closeModal);
+  document.getElementById('modal-confirm').addEventListener('click', confirmModal);
+  document.getElementById('modal-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirmModal();
+    if (e.key === 'Escape') closeModal();
+  });
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+
+  // Export
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const data = JSON.stringify(state, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `shiny-counters-${date}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    localStorage.setItem('shiny_last_export', totalEncounters());
+  });
+
+  // Import
+  document.getElementById('import-btn').addEventListener('click', () => {
+    document.getElementById('import-file').click();
+  });
+
+  document.getElementById('import-file').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const parsed = JSON.parse(ev.target.result);
+        if (!parsed.counters) throw new Error();
+        openConfirm('overwrite current data with backup?', () => {
+          state = parsed;
+          saveState();
+          render();
+        });
+      } catch {
+        openConfirm('invalid backup file.', () => {});
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  // Reminder
+  const REMINDER_INTERVAL = 100;
+  const REMINDER_KEY = 'shiny_reminder_enabled';
+  const REMINDED_KEY = 'shiny_last_reminded';
+
+  function totalEncounters() {
+    return state.counters.reduce((sum, c) => sum + c.count, 0);
+  }
+
+  function reminderEnabled() {
+    return localStorage.getItem(REMINDER_KEY) !== 'false';
+  }
+
+  function updateReminderBtn() {
+    const on = reminderEnabled();
+    const btn = document.getElementById('reminder-btn');
+    btn.textContent = on ? '[🔔]' : '[🔕]';
+    btn.title = on ? 'backup reminder on' : 'backup reminder off';
+  }
+
+  document.getElementById('reminder-btn').addEventListener('click', () => {
+    const next = !reminderEnabled();
+    localStorage.setItem(REMINDER_KEY, next);
+    updateReminderBtn();
+  });
+
+  function checkReminder() {
+    if (!reminderEnabled()) return;
+    const lastReminded = parseInt(localStorage.getItem(REMINDED_KEY) || '0');
+    const total = totalEncounters();
+    if (total - lastReminded < REMINDER_INTERVAL) return;
+    localStorage.setItem(REMINDED_KEY, total);
+    openReminderModal(total);
+  }
+
+  function openReminderModal(total) {
+    document.getElementById('modal-title').textContent = `${total} encounters — export a backup?`;
+    document.getElementById('modal-input').style.display = 'none';
+    document.getElementById('modal-confirm').textContent = 'export';
+    document.getElementById('modal-confirm').style.display = '';
+    document.getElementById('modal-cancel').textContent = 'not now';
+    const skip = document.getElementById('modal-skip');
+    skip.textContent = "don't ask again";
+    skip.style.display = '';
+    skip.onclick = () => {
+      localStorage.setItem(REMINDER_KEY, 'false');
+      updateReminderBtn();
+      closeModal();
+    };
+    modalCallback = () => { document.getElementById('export-btn').click(); };
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  loadState();
+  if (state.counters.length === 0) state.active = null;
+  updateKeybindBtn();
+  updateReminderBtn();
+  render();
