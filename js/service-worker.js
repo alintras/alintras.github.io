@@ -1,4 +1,4 @@
-const CACHE_NAME = "alintras-homepage-v2"; // Increment this to force an update
+const CACHE_NAME = "alintras-homepage-v3";
 
 const PRECACHE_ASSETS = [
   "/",
