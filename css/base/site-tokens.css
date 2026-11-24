@@ -21,3 +21,31 @@
   --border: var(--site-border);
   --border-muted: var(--site-border-muted);
 }
+
+/* =========================
+   STUFF PAGE LAYOUT TOKENS
+   ========================= */
+/* Zentral änderbar für alle Stuff-Seiten */
+:root {
+  --stuff-max-width: 720px;
+  --stuff-margin-y: 40px;
+  --stuff-padding-x: 20px;
+  --stuff-footer-margin-top: 40px;
+  --stuff-heading-line-height: 1.4;
+  --stuff-text-line-height: 1.6;
+  --stuff-code-font-size: 0.9em;
+  --stuff-table-font-size: 0.9em;
+}
+
+@media (max-width: 600px) {
+  :root {
+    --stuff-max-width: 100%;
+    --stuff-padding-x: 16px;
+    --stuff-margin-y: 20px;
+    --stuff-footer-margin-top: 30px;
+  }
+}
+
+[data-theme="dark"] {
+  --stuff-code-bg: #1a1a1a;
+}
