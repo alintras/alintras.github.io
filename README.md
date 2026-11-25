@@ -1,2 +1,1 @@
-# alintras.github.io
-http://alintras.github.io/
+[http://alintras.is-a.dev/](https://alintras.is-a.dev/)
