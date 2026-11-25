@@ -24,13 +24,20 @@
     height: 100%;
     margin: 0;
   }
+
+  html {
+    overflow-x: clip;
+  }
   
   body {
     display: flex;
     flex-direction: column;
+    width: 100%;
+    min-width: 0;
     min-height: 100vh;
     background: var(--bg);
     color: var(--fg);
+    overflow-x: clip;
   }
   
   a {
@@ -48,6 +55,15 @@
    
   #main-content {
     padding: 20px;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #layout,
+  #layout-content,
+  main {
+    min-width: 0;
+    max-width: 100%;
   }
   
   /* ============================================================
@@ -176,7 +192,8 @@
   
   #ascii-footer {
       display: block;
-      width: fit-content;
+      width: 100%;
+      max-width: 100%;
       min-height: 50px;
       white-space: pre;
       overflow-x: auto;
@@ -276,12 +293,6 @@
   #main-content h2,
   #main-content p {
     width: fit-content;
-}
-
-.dancer {
-    display: inline-block;
-    white-space: pre;
-    font-family: monospace;
 }
 
 /* ============================================================

@@ -1,8 +1,4 @@
 
-    #wrap { max-width: 960px; padding: 1rem; }
-    h1 { font-size: 1.2rem; margin: 0 0 0.4rem; }
-    p.desc { margin: 0 0 1rem; font-size: 0.85rem; }
-
     .section-label {
       font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
       margin: 0.9rem 0 0.3rem; border-bottom: 1px solid var(--border, #000); padding-bottom: 2px;

@@ -1,0 +1,65 @@
+/* =========================
+   TOOL PAGE – SHARED LAYOUT
+   Gemeinsame Styles für reguläre Tool-Seiten
+   (ohne vollwertige App-Layouts wie pixelart, counter, voltorb-solver, vscalendar)
+   ========================= */
+
+/* --- Layout (werte aus site-tokens.css) --- */
+body {
+  max-width: var(--tool-max-width);
+  margin: var(--tool-margin-y) auto;
+  padding: 0 var(--tool-padding-x);
+}
+
+/* --- Container (falls Tool kein eigenes .container hat) --- */
+.container {
+  max-width: var(--tool-max-width);
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 var(--tool-padding-x);
+  box-sizing: border-box;
+}
+
+/* --- Typografie --- */
+h1 {
+  font-size: 1.4em;
+  margin-bottom: 6px;
+  line-height: var(--tool-heading-line-height);
+}
+
+h2 {
+  font-size: 1.2em;
+  margin: 24px 0 8px;
+  line-height: var(--tool-heading-line-height);
+}
+
+p {
+  margin-bottom: 16px;
+  line-height: var(--tool-text-line-height);
+}
+
+/* --- Panel (gemeinsame Kartenkomponente) --- */
+.panel {
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 24px;
+  background: var(--bg);
+  box-sizing: border-box;
+}
+
+/* --- Mobile-Anpassungen --- */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.2em;
+  }
+
+  h2 {
+    font-size: 1.1em;
+    margin: 20px 0 6px;
+  }
+
+  .panel {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+}

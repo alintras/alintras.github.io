@@ -31,6 +31,9 @@ function initStats(target) {
     }
 
     // --- Score (live counter) ---
+    function formatNumber(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
     function updateScore() {
         if (scoreEl && typeof totalCoins !== 'undefined') {
             scoreEl.textContent = `| score: ${formatNumber(totalCoins)}`;

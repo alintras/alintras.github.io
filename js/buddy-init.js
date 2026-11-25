@@ -13,13 +13,6 @@ function initDancers() {
     if (!dancerRow) {
         dancerRow = document.createElement('div');
         dancerRow.id = 'dancer-row';
-        dancerRow.style.display = 'flex';
-        dancerRow.style.flexDirection = 'row';
-        dancerRow.style.flexWrap = 'nowrap';
-        dancerRow.style.gap = '25px';
-        dancerRow.style.alignItems = 'flex-start';
-        dancerRow.style.width = '100%';
-        dancerRow.style.marginTop = '10px';
         footerEl.appendChild(dancerRow);
     }
 
@@ -27,17 +20,6 @@ function initDancers() {
         const dancer = document.createElement('div');
         dancer.className = 'dancer';
         dancer.dataset.id = 'dancer-' + i;
-        dancer.style.whiteSpace = 'pre';
-        dancer.style.cursor = 'grab';
-        dancer.style.userSelect = 'none';
-        dancer.style.webkitUserSelect = 'none';
-        dancer.style.touchAction = 'none';
-        dancer.style.fontFamily = 'monospace';
-        dancer.style.fontSize = '12px';
-        dancer.style.lineHeight = '1.2';
-        dancer.style.color = 'currentColor';
-        dancer.style.display = 'inline-block';
-        dancer.style.zIndex = '999';
         dancer.textContent = dancerFrames[0];
 
         const dancerObj = {
@@ -59,7 +41,7 @@ function initDancers() {
             try {
                 const pos = JSON.parse(saved);
                 const outer = getOuterBounds();
-                const clampedX = Math.max(outer.minX, Math.min(pos.x, outer.maxX - 60));
+                const clampedX = Math.max(outer.minX, Math.min(pos.x, outer.maxX - (dancer.offsetWidth || 60)));
                 const clampedY = Math.max(outer.minY, Math.min(pos.y, outer.maxY - 60));
 
                 if (!isNaN(clampedX) && !isNaN(clampedY) && clampedY > 50) {

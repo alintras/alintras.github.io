@@ -17,12 +17,6 @@ function placeDancersInStartingRow() {
     if (!container) {
         container = document.createElement('div');
         container.id = 'dancer-row';
-        container.style.display = 'flex';
-        container.style.flexDirection = 'row';
-        container.style.gap = '20px';
-        container.style.marginTop = '12px';
-        container.style.marginBottom = '12px';
-        container.style.alignItems = 'flex-start';
 
         const anchorEl = document.querySelector('.search-help') ||
                          document.querySelector('#search-input') ||

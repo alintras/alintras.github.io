@@ -66,9 +66,10 @@ code {
 }
 
 pre {
-  background: none;
-  padding: 0;
+  background: var(--stuff-code-bg, #f5f5f5);
+  padding: 12px;
   overflow-x: auto;
+  border-radius: 4px;
 }
 
 /* --- Tabellen --- */

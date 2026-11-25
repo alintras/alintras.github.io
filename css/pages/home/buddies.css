@@ -1,0 +1,38 @@
+#dancer-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 20px 25px;
+  width: 100%;
+  max-width: 100%;
+  margin: 10px 0 12px;
+}
+
+.dancer {
+  display: inline-block;
+  flex: 0 0 auto;
+  white-space: pre;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  color: currentColor;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.dancer.dragging {
+  cursor: grabbing;
+}
+
+.buddy-floating-text {
+  position: absolute;
+  z-index: 9998;
+  pointer-events: none;
+  font-family: monospace;
+  font-weight: bold;
+  transition: top var(--floating-text-duration) ease-out,
+    opacity var(--floating-text-duration) ease-in;
+}

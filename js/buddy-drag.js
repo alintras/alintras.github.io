@@ -55,7 +55,10 @@ function makeDraggable(d) {
         const pageX = clientX + window.scrollX;
         const pageY = clientY + window.scrollY;
 
-        el.style.left = (pageX - offsetX) + 'px';
+        const outer = getOuterBounds();
+        const maxLeft = Math.max(outer.minX, outer.maxX - el.getBoundingClientRect().width);
+        const left = Math.min(Math.max(pageX - offsetX, outer.minX), maxLeft);
+        el.style.left = left + 'px';
         el.style.top = (pageY - offsetY) + 'px';
 
         d.vx = (pageX - lastX) / dt * 16;

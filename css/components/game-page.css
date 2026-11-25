@@ -1,0 +1,24 @@
+/* =========================
+   GAME PAGE – SHARED LAYOUT
+   Sanfter gemeinsamer Rahmen für Spieleseiten
+   Setzt nur Außenmaße; Canvas, Ruffle und spielspezifische
+   Layouts (idle.css, mroops.css usw.) bleiben unangetastet.
+   ========================= */
+
+/* --- Seitenrahmen (werte aus site-tokens.css) --- */
+body {
+  max-width: var(--game-max-width);
+  margin: var(--game-margin-y) auto;
+  padding: 0 var(--game-padding-x);
+}
+
+/* --- Überschriften außerhalb des Spielbereichs --- */
+h1 {
+  margin-bottom: 16px;
+}
+
+/* --- Hinweistexte / Info-Blöcke außerhalb des Spiels --- */
+p.info,
+.info {
+  margin-top: 16px;
+}

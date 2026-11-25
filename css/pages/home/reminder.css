@@ -1,0 +1,154 @@
+#mc-bottom-bar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 9999;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100vw;
+  padding: 6px 10px;
+  overflow: hidden;
+  border-top: 1px solid var(--fg);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Courier New", monospace;
+  font-size: 0.82em;
+}
+
+#mc-bottom-bar.is-minimized {
+  inset-inline: auto 0;
+  width: auto;
+  max-width: 100vw;
+  padding: 4px 6px;
+  border-left: 1px solid var(--fg);
+}
+
+.mc-panel {
+  max-height: 35vh;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  overflow-y: auto;
+  border-bottom: 1px dashed var(--fg);
+}
+
+.mc-panel[hidden] {
+  display: none;
+}
+
+.mc-panel-header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.mc-muted {
+  color: var(--fg);
+  opacity: 0.6;
+}
+
+.mc-events {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.mc-event {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.mc-event-action {
+  font-weight: bold;
+}
+
+.mc-event-action.is-join {
+  color: #2ecc71;
+}
+
+.mc-event-action.is-leave {
+  color: #e74c3c;
+}
+
+.mc-main-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.mc-status-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.mc-status-dot {
+  flex: 0 0 auto;
+  color: #888;
+}
+
+.mc-status {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mc-controls {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+}
+
+.mc-button {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border: 1px solid var(--fg);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  line-height: 1.2;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mc-copy {
+  max-width: 155px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mc-mini-row {
+  display: none;
+  justify-content: flex-end;
+}
+
+.is-minimized .mc-main-row {
+  display: none;
+}
+
+.is-minimized .mc-mini-row {
+  display: flex;
+}
+
+@media (max-width: 480px) {
+  .mc-main-row {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mc-controls {
+    justify-content: flex-end;
+  }
+}

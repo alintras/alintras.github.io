@@ -11,6 +11,25 @@ window.addEventListener('resize', refreshObstacleCache);
 window.addEventListener('scroll', refreshObstacleCache);
 setInterval(refreshObstacleCache, 500);
 
+window.addEventListener('resize', () => {
+    requestAnimationFrame(() => {
+        const outer = getOuterBounds();
+        dancers.forEach(d => {
+            if (!d.isMoved) return;
+
+            const x = parseFloat(d.el.style.left);
+            const width = d.el.getBoundingClientRect().width;
+            const maxX = Math.max(outer.minX, outer.maxX - width);
+            const clampedX = Math.min(Math.max(x, outer.minX), maxX);
+
+            if (clampedX !== x) {
+                d.el.style.left = clampedX + 'px';
+                d.vx = 0;
+            }
+        });
+    });
+});
+
 function getObstacleRects() {
     const selectors = [
         '#search-input', '#engine-select', '#search-button', '#clock',
@@ -62,7 +81,7 @@ function getOuterBounds() {
 
     return {
         minX: sidebar ? sidebar.getBoundingClientRect().right + window.scrollX : 0,
-        maxX: window.innerWidth + window.scrollX,
+        maxX: document.documentElement.clientWidth + window.scrollX,
         minY: header ? header.getBoundingClientRect().bottom + window.scrollY : 0,
         maxY: footer ? footer.getBoundingClientRect().top + window.scrollY : (document.documentElement.scrollHeight || window.innerHeight)
     };

@@ -4,15 +4,11 @@
 function createFloatingText(x, y, text, color = 'white', duration = 1500) {
     const el = document.createElement('div');
     el.textContent = text;
-    el.style.position = 'absolute';
+    el.className = 'buddy-floating-text';
     el.style.left = `${x}px`;
     el.style.top = `${y}px`;
     el.style.color = color;
-    el.style.fontFamily = 'monospace';
-    el.style.fontWeight = 'bold';
-    el.style.pointerEvents = 'none';
-    el.style.zIndex = '10000';
-    el.style.transition = `top ${duration}ms ease-out, opacity ${duration}ms ease-in`;
+    el.style.setProperty('--floating-text-duration', `${duration}ms`);
     document.body.appendChild(el);
 
     void el.offsetWidth;

@@ -1,0 +1,72 @@
+/* =========================
+   INFO / MESSAGES PAGE – SHARED LAYOUT
+   Gemeinsame Styles für about.html und messages.html
+   ========================= */
+
+/* --- Layout (werte aus site-tokens.css) --- */
+body {
+  max-width: var(--info-max-width);
+  margin: var(--info-margin-y) auto;
+  padding: 0 var(--info-padding-x);
+}
+
+/* --- Typografie --- */
+h1 {
+  font-size: 1.4em;
+  margin-bottom: 6px;
+  line-height: var(--info-heading-line-height);
+}
+
+h2 {
+  font-size: 1.2em;
+  margin: 24px 0 8px;
+  line-height: var(--info-heading-line-height);
+}
+
+p {
+  margin-bottom: 16px;
+  line-height: var(--info-text-line-height);
+}
+
+/* --- About Content --- */
+.about-content {
+  padding: var(--info-padding-x);
+}
+
+/* --- Messages Layout (basisfür messages.html, ergänzt messages.css) --- */
+#compose {
+  margin-bottom: 32px;
+}
+
+#feed-header {
+  margin-bottom: 12px;
+}
+
+.msg-card {
+  margin-bottom: 10px;
+}
+
+#loading,
+#empty {
+  padding: 12px 0;
+}
+
+#err-box {
+  margin-bottom: 16px;
+}
+
+/* --- Mobile-Anpassungen --- */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.2em;
+  }
+
+  h2 {
+    font-size: 1.1em;
+    margin: 20px 0 6px;
+  }
+
+  .msg-card {
+    padding: 8px 12px;
+  }
+}

@@ -37,7 +37,7 @@
   --stuff-table-font-size: 0.9em;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   :root {
     --stuff-max-width: 100%;
     --stuff-padding-x: 16px;
@@ -48,4 +48,117 @@
 
 [data-theme="dark"] {
   --stuff-code-bg: #1a1a1a;
+}
+
+/* =========================
+   INFO / MESSAGES PAGE LAYOUT TOKENS
+   ========================= */
+/* Zentral änderbar für about.html und messages.html */
+:root {
+  --info-max-width: 720px;
+  --info-margin-y: 40px;
+  --info-padding-x: 20px;
+  --info-heading-line-height: 1.4;
+  --info-text-line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --info-max-width: 100%;
+    --info-padding-x: 16px;
+    --info-margin-y: 20px;
+  }
+}
+
+/* =========================
+   TOOL PAGE LAYOUT TOKENS
+   ========================= */
+/* Zentral änderbar für alle regulären Tool-Seiten */
+:root {
+  --tool-max-width: 800px;
+  --tool-margin-y: 40px;
+  --tool-padding-x: 20px;
+  --tool-heading-line-height: 1.4;
+  --tool-text-line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --tool-max-width: 100%;
+    --tool-padding-x: 16px;
+    --tool-margin-y: 20px;
+  }
+}
+
+/* =========================
+   FUN PAGE LAYOUT TOKENS
+   ========================= */
+/* Zentral änderbar für alle regulären Fun-Seiten */
+:root {
+  --fun-max-width: 900px;
+  --fun-margin-y: 40px;
+  --fun-padding-x: 20px;
+  --fun-heading-line-height: 1.4;
+  --fun-text-line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --fun-max-width: 100%;
+    --fun-padding-x: 16px;
+    --fun-margin-y: 20px;
+  }
+}
+
+/* =========================
+   GAME PAGE LAYOUT TOKENS
+   ========================= */
+/* Zentral änderbar für alle Spieleseiten */
+:root {
+  --game-max-width: 900px;
+  --game-margin-y: 20px;
+  --game-padding-x: 20px;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --game-max-width: 100%;
+    --game-padding-x: 16px;
+    --game-margin-y: 16px;
+  }
+}
+
+/* =========================
+   HOME BUTTON
+   ========================= */
+:root {
+  --home-btn-bg: #ffffff;
+  --home-btn-fg: #131313;
+  --home-btn-border-color: #131313;
+  --home-btn-hover-bg: #f0f0f0;
+  --home-btn-hover-fg: #131313;
+  --home-btn-hover-border-color: #666666;
+  --home-btn-padding: 5px 8px;
+  --home-btn-radius: 4px;
+  --home-btn-font-size: 0.9rem;
+  --home-btn-gap: 6px;
+  --home-btn-border-width: 1px;
+  --home-btn-offset: 10px;
+}
+
+:root[data-theme="dark"] {
+  --home-btn-bg: #1a1a1a;
+  --home-btn-fg: #e0e0e0;
+  --home-btn-border-color: #666666;
+  --home-btn-hover-bg: #2a2a2a;
+  --home-btn-hover-fg: #ffffff;
+  --home-btn-hover-border-color: #999999;
+}
+
+@media (max-width: 480px) {
+  :root {
+    --home-btn-padding: 4px 6px;
+    --home-btn-font-size: 0.85rem;
+    --home-btn-gap: 5px;
+  }
 }

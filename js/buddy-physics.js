@@ -19,8 +19,9 @@ function triggerBounce(d, x, y) {
 function resolveObstaclesForDancer(d, obstacles, iterations = 3) {
     let x = d.isMoved ? parseFloat(d.el.style.left) : (d.el.getBoundingClientRect().left + window.scrollX);
     let y = d.isMoved ? parseFloat(d.el.style.top) : (d.el.getBoundingClientRect().top + window.scrollY);
-    const width = d.el.offsetWidth || 50;
-    const height = d.el.offsetHeight || 50;
+    const bounds = d.el.getBoundingClientRect();
+    const width = bounds.width || 50;
+    const height = bounds.height || 50;
     let pushed = false;
 
     for (let iter = 0; iter < iterations; iter++) {
@@ -139,9 +140,10 @@ function globalPhysicsLoop() {
         const pos = resolveObstaclesForDancer(d, cachedObstacles);
         let x = pos.x, y = pos.y;
         const width = pos.width, height = pos.height;
+        const maxX = Math.max(outer.minX, outer.maxX - width);
 
         if (x < outer.minX) { x = outer.minX; d.vx = Math.abs(d.vx) * BOUNCE + 1; d.physicsActive = true; triggerBounce(d, x, y); }
-        if (x > outer.maxX - width) { x = outer.maxX - width; d.vx = -Math.abs(d.vx) * BOUNCE - 1; d.physicsActive = true; triggerBounce(d, x, y); }
+        if (x > maxX) { x = maxX; d.vx = -Math.abs(d.vx) * BOUNCE - 1; d.physicsActive = true; triggerBounce(d, x, y); }
         if (y < outer.minY) { y = outer.minY; d.vy = Math.abs(d.vy) * BOUNCE + 1; d.physicsActive = true; triggerBounce(d, x, y); }
         if (y > outer.maxY - height) { y = outer.maxY - height; d.vy = -Math.abs(d.vy) * BOUNCE - 1; d.physicsActive = true; triggerBounce(d, x, y); }
 
@@ -158,6 +160,16 @@ function globalPhysicsLoop() {
 
         x += d.vx;
         y += d.vy;
+
+        if (x < outer.minX) {
+            x = outer.minX;
+            d.vx = Math.abs(d.vx) * BOUNCE + 1;
+            triggerBounce(d, x, y);
+        } else if (x > maxX) {
+            x = maxX;
+            d.vx = -Math.abs(d.vx) * BOUNCE - 1;
+            triggerBounce(d, x, y);
+        }
 
         d.el.style.left = x + 'px';
         d.el.style.top = y + 'px';
