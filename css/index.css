@@ -1,23 +1,6 @@
-/* ============================================================
-   GLOBAL & THEME (From former style.css)
-   ============================================================ */
-   :root {
-    --bg: #ffffff;
-    --fg: #131313;
-    --border: #131313;
-    --border-muted: #cccccc;
-  }
-  
-  [data-theme="dark"] {
-    --bg: #111111;
-    --fg: #e0e0e0;
-    --border: #555555;
-    --border-muted: #444444;
-  }
-  
-  * {
-    font-family: monospace;
-    box-sizing: border-box;
+* {
+  font-family: monospace;
+  box-sizing: border-box;
   }
   
   html, body {

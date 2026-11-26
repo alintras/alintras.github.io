@@ -18,13 +18,21 @@ window.addEventListener('resize', () => {
             if (!d.isMoved) return;
 
             const x = parseFloat(d.el.style.left);
+            const y = parseFloat(d.el.style.top);
             const width = d.el.getBoundingClientRect().width;
+            const height = d.el.getBoundingClientRect().height;
             const maxX = Math.max(outer.minX, outer.maxX - width);
+            const maxY = Math.max(outer.minY, outer.maxY - height);
             const clampedX = Math.min(Math.max(x, outer.minX), maxX);
+            const clampedY = Math.min(Math.max(y, outer.minY), maxY);
 
-            if (clampedX !== x) {
+            if (Number.isFinite(x) && clampedX !== x) {
                 d.el.style.left = clampedX + 'px';
                 d.vx = 0;
+            }
+            if (Number.isFinite(y) && clampedY !== y) {
+                d.el.style.top = clampedY + 'px';
+                d.vy = 0;
             }
         });
     });

@@ -50,22 +50,10 @@ function newPSol(rTotals, cTotals, initTiles) {
     rowData: [{},{},{},{},{}], colData: [{},{},{},{},{}]
   };
 
-  updateAllRowData(ps);
-  updateAllColData(ps);
-
+  if(!updateAllRowData(ps) || !updateAllColData(ps)) return null;
   if(!isPossible(ps)) return null;
   if(!applyHeuristics(ps)) return null;
   return ps;
-}
-
-function clonePSol(ps) {
-  var tiles=[], inv=[];
-  for(var y=0;y<5;y++){tiles[y]=[];for(var x=0;x<5;x++)tiles[y][x]=cloneTile(ps.tiles[y][x]);}
-  for(var x=0;x<5;x++){inv[x]=[];for(var y=0;y<5;y++)inv[x][y]=cloneTile(ps.inv[x][y]);}
-  var rowData=[], colData=[];
-  for(var i=0;i<5;i++){rowData[i]={rp:ps.rowData[i].rp,rv:ps.rowData[i].rv,nut:ps.rowData[i].nut};}
-  for(var i=0;i<5;i++){colData[i]={rp:ps.colData[i].rp,rv:ps.colData[i].rv,nut:ps.colData[i].nut};}
-  return {rTotals:ps.rTotals,cTotals:ps.cTotals,tiles:tiles,inv:inv,rowData:rowData,colData:colData};
 }
 
 function updateRowData(ps, y) {
@@ -95,7 +83,8 @@ function updateColData(ps, x) {
 function updateAllColData(ps){for(var x=0;x<5;x++)if(!updateColData(ps,x))return false;return true;}
 
 function lineIsPossible(d) {
-  return d.rp>=0 && d.rv>=0 && d.nut>=0 && d.rv<=d.nut && (d.nut-d.rv)*3>=d.rp;
+  return d.rp>=0 && d.rv>=0 && d.nut>=0 && d.rv<=d.nut &&
+    d.nut-d.rv<=d.rp && d.rp<=(d.nut-d.rv)*3;
 }
 
 function isPossible(ps) {
@@ -116,24 +105,11 @@ function isWon(ps) {
   return true;
 }
 
-function isSolved(ps) {
-  for(var y=0;y<5;y++) for(var x=0;x<5;x++) if(!tileIsSolved(ps.tiles[y][x])) return false;
-  return true;
-}
-
 function syncInvFromTiles(ps) {
   for(var y=0;y<5;y++) for(var x=0;x<5;x++) ps.inv[x][y]=cloneTile(ps.tiles[y][x]);
 }
 function syncTilesFromInv(ps) {
   for(var y=0;y<5;y++) for(var x=0;x<5;x++) ps.tiles[y][x]=cloneTile(ps.inv[x][y]);
-}
-
-function updateAt(ps, x, y, tile) {
-  ps.tiles[y][x]=cloneTile(tile);
-  if(!updateRowData(ps,y)) return false;
-  ps.inv[x][y]=cloneTile(tile);
-  if(!updateColData(ps,x)) return false;
-  return applyHeuristics(ps);
 }
 
 function h0(d,line){ if(d.rv+d.rp!==d.nut) return false; var u=false; for(var i=0;i<5;i++){var t=line[i];if(!tileIsSolved(t)&&(t[2]||t[3])){t[2]=false;t[3]=false;u=true;}} return u; }
@@ -187,69 +163,141 @@ function applyHeuristics(ps) {
 }
 
 function allPossibleSolvedBoards(ps) {
-  var stack=[clonePSol(ps)];
-  var boardCounts={}, total=0;
-  while(stack.length>0){
-    var cur=stack.pop();
-    var found=false;
-    outer:
-    for(var y=0;y<5;y++){
-      for(var x=0;x<5;x++){
-        var t=cur.tiles[y][x];
-        if(!tileIsSolved(t)){
-          for(var v=0;v<4;v++){
-            if(t[v]){
-              var cp=clonePSol(cur);
-              if(!updateAt(cp,x,y,newSolvedTile(v))) continue;
-              if(!isPossible(cp)) continue;
-              if(isSolved(cp)){
-                var key=boardKey(cp.tiles);
-                boardCounts[key]=(boardCounts[key]||0)+1;
-                total++;
-              } else {
-                stack.push(cp);
-              }
-            }
-          }
-          found=true; break outer;
+  var rowOptions=[], safeCounts=new Array(25);
+  for(var i=0;i<25;i++) safeCounts[i]=0;
+
+  for(var y=0;y<5;y++){
+    rowOptions[y]=[];
+    var values=new Array(5);
+    function buildRow(x, points, voltorbs) {
+      if(x===5){
+        if(points===ps.rTotals[y].pts && voltorbs===ps.rTotals[y].v)
+          rowOptions[y].push(values.slice());
+        return;
+      }
+      var tile=ps.tiles[y][x];
+      for(var value=0;value<4;value++){
+        if(!tile[value]) continue;
+        var nextPoints=points+(value===0?0:value);
+        var nextVoltorbs=voltorbs+(value===0?1:0);
+        if(nextPoints>ps.rTotals[y].pts || nextVoltorbs>ps.rTotals[y].v) continue;
+        values[x]=value;
+        buildRow(x+1,nextPoints,nextVoltorbs);
+      }
+    }
+    buildRow(0,0,0);
+    if(rowOptions[y].length===0) return {safeCounts:safeCounts,total:0};
+  }
+
+  function stateKey(points,voltorbs) {
+    var key='';
+    for(var x=0;x<5;x++) key+=points[x]+','+voltorbs[x]+';';
+    return key;
+  }
+
+  function columnsRemainPossible(points,voltorbs,rowsUsed) {
+    var cellsLeft=5-rowsUsed;
+    for(var x=0;x<5;x++){
+      var pointsLeft=ps.cTotals[x].pts-points[x];
+      var voltorbsLeft=ps.cTotals[x].v-voltorbs[x];
+      if(voltorbsLeft<0 || voltorbsLeft>cellsLeft ||
+        pointsLeft<0 || pointsLeft<cellsLeft-voltorbsLeft ||
+        pointsLeft>(cellsLeft-voltorbsLeft)*3) return false;
+    }
+    return true;
+  }
+
+  var forward=[{}], zeroPoints=[0,0,0,0,0], zeroVoltorbs=[0,0,0,0,0];
+  var initialKey=stateKey(zeroPoints,zeroVoltorbs);
+  forward[0][initialKey]={points:zeroPoints,voltorbs:zeroVoltorbs,ways:1};
+
+  for(var y=0;y<5;y++){
+    var nextStates={};
+    for(var stateId in forward[y]){
+      var state=forward[y][stateId];
+      for(var oi=0;oi<rowOptions[y].length;oi++){
+        var row=rowOptions[y][oi];
+        var points=state.points.slice(),voltorbs=state.voltorbs.slice();
+        for(var x=0;x<5;x++){
+          points[x]+=row[x];
+          if(row[x]===0) voltorbs[x]++;
         }
+        if(!columnsRemainPossible(points,voltorbs,y+1)) continue;
+        var key=stateKey(points,voltorbs);
+        if(nextStates[key]) nextStates[key].ways+=state.ways;
+        else nextStates[key]={points:points,voltorbs:voltorbs,ways:state.ways};
+      }
+    }
+    forward[y+1]=nextStates;
+  }
+
+  var backward=[null,null,null,null,null,{}];
+  for(var stateId in forward[5]) backward[5][stateId]=1;
+  for(var y=4;y>=0;y--){
+    backward[y]={};
+    for(var stateId in forward[y]){
+      var state=forward[y][stateId], completions=0;
+      for(var oi=0;oi<rowOptions[y].length;oi++){
+        var row=rowOptions[y][oi];
+        var points=state.points.slice(),voltorbs=state.voltorbs.slice();
+        for(var x=0;x<5;x++){
+          points[x]+=row[x];
+          if(row[x]===0) voltorbs[x]++;
+        }
+        var nextKey=stateKey(points,voltorbs);
+        if(backward[y+1][nextKey])
+          completions+=backward[y+1][nextKey];
+      }
+      backward[y][stateId]=completions;
+    }
+
+    for(var stateId in forward[y]){
+      var state=forward[y][stateId];
+      for(var oi=0;oi<rowOptions[y].length;oi++){
+        var row=rowOptions[y][oi];
+        var points=state.points.slice(),voltorbs=state.voltorbs.slice();
+        for(var x=0;x<5;x++){
+          points[x]+=row[x];
+          if(row[x]===0) voltorbs[x]++;
+        }
+        var suffixWays=backward[y+1][stateKey(points,voltorbs)]||0;
+        var boardWays=state.ways*suffixWays;
+        if(boardWays===0) continue;
+        for(var x=0;x<5;x++)
+          if(row[x]!==0) safeCounts[y*5+x]+=boardWays;
       }
     }
   }
-  return {counts:boardCounts,total:total};
+
+  return {safeCounts:safeCounts,total:backward[0][initialKey]||0};
 }
 
-function boardKey(tiles){
-  var k='';
-  for(var y=0;y<5;y++) for(var x=0;x<5;x++) k+=tilePoints(tiles[y][x]);
-  return k;
-}
-
-function safetyOfEachGuess(ps) {
-  var res=allPossibleSolvedBoards(ps);
+function safetyFromSolvedBoards(ps, res) {
   var safety={}, total=res.total;
+  if(total===0) return {safety:safety,total:0};
   for(var y=0;y<5;y++){
     for(var x=0;x<5;x++){
       if(!tileIsSolved(ps.tiles[y][x])){
-        var safe=0;
-        for(var key in res.counts){
-          if(parseInt(key[y*5+x])!==0) safe+=res.counts[key];
-        }
-        safety[y+'_'+x]=safe;
+        safety[y+'_'+x]=res.safeCounts[y*5+x];
       }
     }
   }
   return {safety:safety,total:total};
 }
 
-function safestUnsolvedPosition(ps) {
+function safetyOfEachGuess(ps) {
+  return safetyFromSolvedBoards(ps,allPossibleSolvedBoards(ps));
+}
+
+function safestUnsolvedPosition(ps, possibleBoards) {
+  var res=safetyFromSolvedBoards(ps,possibleBoards);
+  if(res.total===0) return {possible:false};
   if(isWon(ps)) return {possible:true,won:true};
   for(var y=0;y<5;y++) for(var x=0;x<5;x++){
     var t=ps.tiles[y][x];
     if(!tileIsSolved(t)&&!t[0])
       return {possible:true,won:false,x:x,y:y,safety:1.0};
   }
-  var res=safetyOfEachGuess(ps);
   var safety=res.safety, total=res.total;
   var bestX=-1,bestY=-1,bestN=-1;
   for(var y=0;y<5;y++){
@@ -257,13 +305,6 @@ function safestUnsolvedPosition(ps) {
       var key=y+'_'+x;
       if(!(key in safety)) continue;
       var n=safety[key];
-      if(n===total){
-        var t=cloneTile(ps.tiles[y][x]);
-        t[0]=false;
-        if(!tileIsPossible(t)) return {possible:false};
-        if(!updateAt(ps,x,y,t)) return {possible:false};
-        return safestUnsolvedPosition(ps);
-      }
       if(n>bestN && tileIsPossiblyNecessaryToWin(ps.tiles[y][x])){
         bestX=x;bestY=y;bestN=n;
       }
@@ -280,14 +321,34 @@ function solve(rTotals, cTotals, knownBoard) {
   }}
   var ps=newPSol(rTotals,cTotals,initTiles);
   if(!ps) return {possible:false};
+  var possibleBoards=allPossibleSolvedBoards(ps);
+  if(possibleBoards.total===0) return {possible:false};
   if(isWon(ps)) return {possible:true,won:true,tiles:ps.tiles};
-  var result=safestUnsolvedPosition(ps);
+  var result=safestUnsolvedPosition(ps,possibleBoards);
   result.tiles=ps.tiles;
   return result;
 }
 
-function readHint(id){ var v=parseInt(document.getElementById(id).value); return isNaN(v)?0:v; }
+function readHint(id){ return Number(document.getElementById(id).value); }
 function setConsole(html){ document.getElementById('con').innerHTML=html; }
+
+function validateHints(hints) {
+  var lines=hints.rt.concat(hints.ct);
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i];
+    if(!Number.isInteger(line.pts) || !Number.isInteger(line.v) ||
+      line.pts<0 || line.pts>15 || line.v<0 || line.v>5 ||
+      line.pts<5-line.v || line.pts>(5-line.v)*3) return false;
+  }
+  var rowPoints=0,colPoints=0,rowVoltorbs=0,colVoltorbs=0;
+  for(var i=0;i<5;i++){
+    rowPoints+=hints.rt[i].pts;
+    rowVoltorbs+=hints.rt[i].v;
+    colPoints+=hints.ct[i].pts;
+    colVoltorbs+=hints.ct[i].v;
+  }
+  return rowPoints===colPoints && rowVoltorbs===colVoltorbs;
+}
 
 function highlightCell(x,y){
   for(var ry=0;ry<5;ry++) for(var rx=0;rx<5;rx++)
@@ -334,6 +395,10 @@ function renderBoard(tiles){
 function doSolve(){
   if(gameOver) return;
   var h=buildHintsFromInputs();
+  if(!validateHints(h)){
+    setConsole('Invalid hints — check that every row and column has valid totals and that both sets add up equally.');
+    highlightCell(null,null); renderBoard(null); return;
+  }
   var result=solve(h.rt,h.ct,userBoard);
   if(!result.possible){
     setConsole('Board is impossible — check your hint values.');
@@ -364,13 +429,14 @@ function doSolve(){
   }
   var msg='';
   if(safelist.length>0) msg+='Safe to flip: <b>'+safelist.join(', ')+'</b><br/>';
-  var sp=Math.round((1-result.safety)*100);
+  var riskPercent=(1-result.safety)*100;
+  var sp=percentLabel(riskPercent);
   msg+='&#9658; Flip highlighted card <b>'+colLetter(bx)+(by+1)+'</b>';
   if(result.safety<1){
     msg+=' &mdash; ';
-    if(sp===0) msg+='guaranteed safe';
-    else if(sp<=5) msg+='almost certainly safe ('+sp+'% Voltorb)';
-    else if(sp<=25) msg+=(100-sp)+'% safe ('+sp+'% Voltorb)';
+    if(riskPercent<0.5) msg+='almost certainly safe (&lt;1% Voltorb)';
+    else if(riskPercent<=5) msg+='almost certainly safe ('+sp+'% Voltorb)';
+    else if(riskPercent<=25) msg+=Math.round(100-riskPercent)+'% safe ('+sp+'% Voltorb)';
     else msg+='risky! '+sp+'% Voltorb chance';
   } else {
     msg+=' &mdash; safe';
@@ -385,6 +451,7 @@ function doSolve(){
 }
 
 function colLetter(x){ return 'ABCDE'[x]; }
+function percentLabel(percent){ return percent>0 && percent<0.5?'&lt;1':String(Math.round(percent)); }
 var skipped={};
 
 function markCell(x,y,val){ skipped={}; userBoard[y][x]=val; doSolve(); }
@@ -401,14 +468,22 @@ function markVoltorb(x,y){
 function skipCell(x,y){
   skipped[y+'_'+x]=true;
   var h=buildHintsFromInputs();
+  if(!validateHints(h)){
+    setConsole('Invalid hints — check that every row and column has valid totals and that both sets add up equally.');
+    highlightCell(null,null); renderBoard(null); return;
+  }
   var initTiles=[];
   for(var ry=0;ry<5;ry++){initTiles[ry]=[];for(var rx=0;rx<5;rx++){
     initTiles[ry][rx]=userBoard[ry][rx]!==null?newSolvedTile(userBoard[ry][rx]):newUnsolvedTile();
   }}
   var ps=newPSol(h.rt,h.ct,initTiles);
   if(!ps){setConsole('Board impossible.');return;}
-  renderBoard(ps.tiles);
   var res=safetyOfEachGuess(ps);
+  if(res.total===0){
+    setConsole('Board is impossible — check your hint values.');
+    highlightCell(null,null); renderBoard(null); return;
+  }
+  renderBoard(ps.tiles);
   var bestX=-1,bestY=-1,bestN=-1;
   for(var ry=0;ry<5;ry++){
     for(var rx=0;rx<5;rx++){
@@ -423,7 +498,7 @@ function skipCell(x,y){
   }
   if(bestX===-1){skipped={};doSolve();return;}
   highlightCell(bestX,bestY);
-  var sp=Math.round((1-bestN/res.total)*100);
+  var sp=percentLabel((1-bestN/res.total)*100);
   var msg='&#9658; Flip <b>'+colLetter(bestX)+(bestY+1)+'</b>';
   msg+=' &mdash; '+sp+'% Voltorb chance';
   msg+='<br/>What did you get? ';
@@ -445,6 +520,10 @@ function clickCell(x,y){
   }
   highlightCell(x,y);
   var h=buildHintsFromInputs();
+  if(!validateHints(h)){
+    setConsole('Invalid hints — check that every row and column has valid totals and that both sets add up equally.');
+    renderBoard(null); return;
+  }
   var initTiles=[];
   for(var ry=0;ry<5;ry++){initTiles[ry]=[];for(var rx=0;rx<5;rx++){
     initTiles[ry][rx]=userBoard[ry][rx]!==null?newSolvedTile(userBoard[ry][rx]):newUnsolvedTile();
@@ -452,13 +531,17 @@ function clickCell(x,y){
   var ps=newPSol(h.rt,h.ct,initTiles);
   var msg='Card <b>'+colLetter(x)+(y+1)+'</b>: ';
   if(!ps){msg+='board impossible.';setConsole(msg);return;}
+  var res=safetyOfEachGuess(ps);
+  if(res.total===0){
+    setConsole('Board is impossible — check your hint values.');
+    highlightCell(null,null); renderBoard(null); return;
+  }
   var t=ps.tiles[y][x];
   if(tileIsSolved(t)){
     msg+= tileIsVoltorb(t)?'Voltorb.':'Value '+tilePoints(t)+'.';
   } else {
-    var res=safetyOfEachGuess(ps);
     var n=res.safety[y+'_'+x]||0, tot=res.total;
-    var sp=Math.round((1-n/tot)*100);
+    var sp=percentLabel((1-n/tot)*100);
     msg+=sp+'% Voltorb chance.';
   }
   msg+='<br/>What did you get? ';

@@ -127,6 +127,17 @@ function resolveDancerCollisions() {
             }
         }
     }
+
+    const outer = getOuterBounds();
+    dancers.forEach(d => {
+        if (!d.isMoved) return;
+        const x = parseFloat(d.el.style.left);
+        const maxX = Math.max(outer.minX, outer.maxX - d.el.getBoundingClientRect().width);
+        const clampedX = Math.min(Math.max(x, outer.minX), maxX);
+        if (Number.isFinite(x) && clampedX !== x) {
+            d.el.style.left = clampedX + 'px';
+        }
+    });
 }
 
 function globalPhysicsLoop() {

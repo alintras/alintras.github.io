@@ -99,7 +99,7 @@
     display: block; /* Ensures the ellipsis calculation works properly */
 }
 #site-results a:last-child { border-bottom: none; }
-#site-results a:hover { background: var(--border); color: var(--border); }
+#site-results a:hover { background: var(--fg); color: var(--bg); }
 #site-results .sr-label {
     padding: 2px 6px;
     font-size: 0.75em;
@@ -114,8 +114,8 @@
 }
 #site-results .sr-clear:hover {
     opacity: 1;
-    background: var(--border);
-    color: var(--border);
+    background: var(--fg);
+    color: var(--bg);
 }
 
 @media (max-width: 600px) {
@@ -295,4 +295,3 @@
     font-size: 14px;
     padding: 2px 4px;
 }
-

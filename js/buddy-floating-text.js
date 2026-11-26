@@ -11,6 +11,11 @@ function createFloatingText(x, y, text, color = 'white', duration = 1500) {
     el.style.setProperty('--floating-text-duration', `${duration}ms`);
     document.body.appendChild(el);
 
+    const viewportLeft = window.scrollX;
+    const viewportRight = viewportLeft + document.documentElement.clientWidth;
+    const maxLeft = Math.max(viewportLeft, viewportRight - el.getBoundingClientRect().width);
+    el.style.left = `${Math.min(Math.max(x, viewportLeft), maxLeft)}px`;
+
     void el.offsetWidth;
     el.style.top = `${y - 60}px`;
     el.style.opacity = '0';

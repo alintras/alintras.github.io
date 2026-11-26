@@ -9,6 +9,9 @@ const sitePages = [
     { title: "Home",                          url: "/index.html",                                 tags: ["home", "about", "ali", "alintras"] },
     // Tools
     { title: "PMD RT Wondermail Generator",   url: "/pages/tools/wondermail/wondermail.html",     tags: ["tool", "pokemon", "mystery dungeon", "wondermail", "pmd"] },
+    { title: "GEN 3 Pokémon Finder",          url: "/pages/tools/pokefinder.html",                tags: ["tool", "pokemon", "finder", "gen 3", "pokefinder"] },
+    { title: "Shiny Counter",                 url: "/pages/tools/counter.html",                   tags: ["tool", "pokemon", "shiny", "counter"] },
+    { title: "Pixel Art",                     url: "/pages/tools/pixelart.html",                  tags: ["tool", "pixel", "art", "drawing"] },
     { title: "HGSS Voltorb Solver",           url: "/pages/tools/voltorb-solver.html",            tags: ["tool", "voltorb", "flip", "heartgold", "soulsilver", "pokemon", "solver"] },
     { title: "CPS Counter",                   url: "/pages/tools/cps-counter.html",               tags: ["tool", "cps", "click", "counter"] },
     { title: "Password Generator",            url: "/pages/tools/password-generator.html",        tags: ["tool", "password", "generator", "security"] },
@@ -16,13 +19,8 @@ const sitePages = [
     { title: "Quote Generator",               url: "/pages/tools/random-quote-generator.html",    tags: ["tool", "quote", "random", "generator"] },
     // Fun
     { title: "Simple Physics",                url: "/pages/fun/simple-physics.html",              tags: ["fun", "physics", "simulation"] },
-    { title: "Castaway",                      url: "/pages/fun/castaway/castaway.html",           tags: ["fun", "game", "castaway"] },
-    { title: "Mr.Oops!!",                     url: "/pages/fun/mroops.html",                      tags: ["fun", "game", "mroops", "oops"] },
     { title: "Love Compatibility Calculator", url: "/pages/fun/love-calculator.html",             tags: ["fun", "love", "calculator", "compatibility"] },
     { title: "Valentines 2026",               url: "/pages/fun/vivi.html",                        tags: ["fun", "valentine", "love"] },
-    { title: "Perfect Circle Game",           url: "/pages/fun/perfect-circle.html",              tags: ["fun", "game", "circle", "draw"] },
-    { title: "Infinite TicTacToe",            url: "/pages/fun/infinite-ttt.html",                tags: ["fun", "game", "tic tac toe", "infinite"] },
-    { title: "Pong",                          url: "/pages/fun/pong.html",                        tags: ["fun", "game", "pong"] },
     { title: "ID Generator",                  url: "/pages/fun/ausweis.html",                     tags: ["fun", "generator", "id", "ausweis", "personalausweis"] },
     { title: "License Generator",             url: "/pages/fun/fuehrerschein.html",               tags: ["fun", "generator", "license", "führerschein"] },
     { title: "Coin Generator",                url: "/pages/fun/muenze.html",                      tags: ["fun", "generator", "coin", "münze"] },
@@ -32,12 +30,21 @@ const sitePages = [
     { title: "Newspaper Generator",           url: "/pages/fun/zeitung.html",                     tags: ["fun", "generator", "newspaper", "zeitung"] },
     { title: "Report Card Generator",         url: "/pages/fun/zeugnis.html",                     tags: ["fun", "generator", "report card", "zeugnis"] },
     { title: "Custom Puzzle Generator",       url: "/pages/fun/puzzle.html",                      tags: ["fun", "generator", "puzzle"] },
+    // Games
+    { title: "Castaway",                      url: "/pages/games/castaway/castaway.html",         tags: ["games", "game", "castaway"] },
+    { title: "Mr.Oops!!",                     url: "/pages/games/mroops.html",                    tags: ["games", "game", "mroops", "oops"] },
+    { title: "Infinite TicTacToe",            url: "/pages/games/infinite-ttt.html",              tags: ["games", "game", "tic tac toe", "infinite"] },
+    { title: "Pong",                          url: "/pages/games/pong.html",                      tags: ["games", "game", "pong"] },
+    { title: "Perfect Circle Game",           url: "/pages/games/perfect-circle.html",            tags: ["games", "game", "circle", "draw"] },
     // Stuff
     { title: "Git",                           url: "/pages/stuff/git.html",                       tags: ["stuff", "git", "programming", "guide"] },
     { title: "HTML",                          url: "/pages/stuff/html.html",                      tags: ["stuff", "html", "programming", "guide"] },
     { title: "C",                             url: "/pages/stuff/c.html",                         tags: ["stuff", "c", "programming", "guide"] },
     { title: "Math History",                  url: "/pages/stuff/math-history.html",              tags: ["stuff", "math", "history", "mathematics"] },
     { title: "Math Prerequisites",            url: "/pages/stuff/math-prereq.html",               tags: ["stuff", "math", "prerequisites", "mathematics"] },
+    { title: "Guitar Tabs",                   url: "/pages/stuff/tabs.html",                      tags: ["stuff", "guitar", "tabs", "songs"] },
+    { title: "Messages",                      url: "/pages/messages.html",                        tags: ["messages", "guestbook", "contact"] },
+    { title: "About",                         url: "/pages/about.html",                           tags: ["about", "ali", "profile"] },
 ];
 
 /* =============================================================
